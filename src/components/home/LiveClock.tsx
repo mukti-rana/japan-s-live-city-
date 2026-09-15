@@ -49,13 +49,18 @@ export default function LiveClock({
   const dateLabel = `${rest.join(", ")} (${weekday})`;
 
   return (
-    <div suppressHydrationWarning>
-      <p className="text-sm font-medium text-foreground/80">
+    <div>
+      <p className="text-sm font-medium text-foreground/80" suppressHydrationWarning>
         {greetingFor(hour)}
       </p>
       {children}
-      <p className="mt-3 text-xs text-foreground/70">{dateLabel}</p>
-      <p className="mt-0.5 text-4xl font-semibold tabular-nums tracking-tight text-foreground sm:text-5xl">
+      <p className="mt-3 text-xs text-foreground/70" suppressHydrationWarning>
+        {dateLabel}
+      </p>
+      <p
+        className="mt-0.5 text-4xl font-semibold tabular-nums tracking-tight text-foreground sm:text-5xl"
+        suppressHydrationWarning
+      >
         {time}
       </p>
     </div>

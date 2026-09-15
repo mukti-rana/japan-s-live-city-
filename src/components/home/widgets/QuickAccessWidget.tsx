@@ -8,6 +8,7 @@ import {
   Calculator,
   Activity,
   ShieldAlert,
+  Home,
 } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 
@@ -18,6 +19,7 @@ const QUICK_LINKS = [
   { label: "Yen Convert", sub: "Live exchange rate", href: "/yen-converter", icon: Coins, accent: "sakura" },
   { label: "Japan AI", sub: "Ask in Japanese", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
   { label: "Salary Calc", sub: "Estimate income", href: "/salary-calculator", icon: Calculator, accent: "azure" },
+  { label: "Rent Calc", sub: "Move-in costs", href: "/rent-calculator", icon: Home, accent: "azure" },
   { label: "Earthquakes", sub: "Recent activity", href: "/earthquakes", icon: Activity, accent: "sakura" },
   { label: "Emergency", sub: "Active alerts", href: "/emergency", icon: ShieldAlert, accent: "azure" },
 ];

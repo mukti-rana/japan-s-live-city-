@@ -9,7 +9,13 @@ import {
 
 export default function TrainListWidget() {
   return (
-    <WidgetFrame icon={TrainFront} label="Live Train Status" accent="azure" viewAll>
+    <WidgetFrame
+      icon={TrainFront}
+      label="Live Train Status"
+      accent="azure"
+      viewAll
+      viewAllHref="/trains"
+    >
       <Tabs tabs={mockTrainTabs} />
 
       <ul className="flex flex-col">

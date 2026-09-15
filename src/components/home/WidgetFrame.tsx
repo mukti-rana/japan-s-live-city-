@@ -1,6 +1,7 @@
 import { type LucideIcon } from "lucide-react";
 import { type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import GlassCard from "@/components/ui/GlassCard";
 
 const ACCENTS = {
@@ -16,6 +17,7 @@ export default function WidgetFrame({
   accent = "azure",
   action,
   viewAll = false,
+  viewAllHref,
   live = false,
   children,
   className = "",
@@ -25,6 +27,7 @@ export default function WidgetFrame({
   accent?: keyof typeof ACCENTS;
   action?: ReactNode;
   viewAll?: boolean;
+  viewAllHref?: string;
   live?: boolean;
   children: ReactNode;
   className?: string;
@@ -52,14 +55,21 @@ export default function WidgetFrame({
           </span>
         )}
 
-        {viewAll && (
-          <button
-            type="button"
+        {viewAll && viewAllHref && (
+          <Link
+            href={viewAllHref}
             className="flex items-center gap-0.5 text-[11px] font-medium text-muted transition-colors hover:text-azure"
           >
             View all
             <ChevronRight size={12} />
-          </button>
+          </Link>
+        )}
+
+        {viewAll && !viewAllHref && (
+          <span className="flex items-center gap-0.5 text-[11px] font-medium text-muted/50">
+            View all
+            <ChevronRight size={12} />
+          </span>
         )}
       </div>
 

@@ -44,37 +44,6 @@ export const mockTrainLines = [
   { name: "Kintetsu Nara Line", note: "", color: "#F2544A", status: "Normal" },
 ];
 
-export const mockNews = [
-  {
-    time: "20:15",
-    headline: "Japan to boost EV charging stations nationwide",
-    category: "Business",
-    gradient: "from-azure/40 to-mint/20",
-    image: "/images/news-ev.jpg",
-  },
-  {
-    time: "18:42",
-    headline: "Typhoon forecasted to approach Okinawa this weekend",
-    category: "Weather",
-    gradient: "from-azure/30 to-sakura/20",
-    image: "/images/news-storm.jpg",
-  },
-  {
-    time: "16:30",
-    headline: 'New anime series "Tokyo Horizon" sets release date',
-    category: "Entertainment",
-    gradient: "from-sakura/40 to-azure/20",
-    image: "/images/news-tech.jpg",
-  },
-  {
-    time: "14:20",
-    headline: "¥1,000 discount campaign for JR Pass starts next month",
-    category: "Travel",
-    gradient: "from-gold/30 to-azure/20",
-    image: "/images/news-train.jpg",
-  },
-];
-
 export const mockEventTabs = ["All", "Festival", "Concert", "Exhibition", "Fireworks"];
 
 export const mockTodaysEvents = [
@@ -110,43 +79,6 @@ export const mockTodaysEvents = [
     gradient: "from-gold/30 to-mint/20",
     image: "/images/event-nara.jpg",
   },
-];
-
-export const mockPlaceTabs = ["Tokyo", "Kyoto", "Osaka", "Others"];
-
-export const mockPopularPlaces = [
-  {
-    name: "Shibuya Crossing",
-    city: "Tokyo",
-    status: "Open",
-    visitors: "12.3K",
-    gradient: "from-sakura/40 to-azure/25",
-    image: "/images/place-shibuya.jpg",
-  },
-  {
-    name: "Tokyo Skytree",
-    city: "Tokyo",
-    status: "Open",
-    visitors: "8.9K",
-    gradient: "from-azure/40 to-sakura/20",
-    image: "/images/place-skytree.jpg",
-  },
-  {
-    name: "Asakusa Temple",
-    city: "Tokyo",
-    status: "Open",
-    visitors: "6.7K",
-    gradient: "from-gold/40 to-sakura/20",
-    image: "/images/place-asakusa.jpg",
-  },
-];
-
-export const mockTrending = [
-  { tag: "#Japan", posts: "1.2M posts", change: "32%", gradient: "from-gold/40 to-sakura/20" },
-  { tag: "#Messi", posts: "980K posts", change: "28%", gradient: "from-azure/40 to-mint/20" },
-  { tag: "#iPhone17", posts: "760K posts", change: "21%", gradient: "from-muted/30 to-azure/20" },
-  { tag: "#Tokyo", posts: "620K posts", change: "18%", gradient: "from-sakura/40 to-gold/20" },
-  { tag: "#Kyoto", posts: "540K posts", change: "15%", gradient: "from-gold/30 to-sakura/25" },
 ];
 
 export const mockSun = {

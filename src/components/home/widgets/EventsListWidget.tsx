@@ -6,7 +6,13 @@ import { mockTodaysEvents, mockEventTabs } from "@/lib/mock/dashboard";
 
 export default function EventsListWidget() {
   return (
-    <WidgetFrame icon={CalendarDays} label="Today's Events" accent="sakura" viewAll>
+    <WidgetFrame
+      icon={CalendarDays}
+      label="Today's Events"
+      accent="sakura"
+      viewAll
+      viewAllHref="/events"
+    >
       <Tabs tabs={mockEventTabs} />
 
       <ul className="flex flex-col">
