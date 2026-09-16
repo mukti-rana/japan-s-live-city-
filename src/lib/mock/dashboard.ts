@@ -44,43 +44,6 @@ export const mockTrainLines = [
   { name: "Kintetsu Nara Line", note: "", color: "#F2544A", status: "Normal" },
 ];
 
-export const mockEventTabs = ["All", "Festival", "Concert", "Exhibition", "Fireworks"];
-
-export const mockTodaysEvents = [
-  {
-    name: "Kyoto Night Light Festival",
-    city: "Kyoto",
-    time: "18:00 - 22:00",
-    attendees: "12.4K",
-    gradient: "from-sakura/40 to-gold/20",
-    image: "/images/event-kyoto.jpg",
-  },
-  {
-    name: "Osaka Food Festival",
-    city: "Osaka",
-    time: "10:00 - 21:00",
-    attendees: "8.7K",
-    gradient: "from-gold/40 to-sakura/20",
-    image: "/images/event-food.jpg",
-  },
-  {
-    name: "Tokyo Game Show 2026",
-    city: "Tokyo",
-    time: "09:00 - 18:00",
-    attendees: "24.6K",
-    gradient: "from-azure/40 to-sakura/20",
-    image: "/images/event-gaming.jpg",
-  },
-  {
-    name: "Nara Autumn Festival",
-    city: "Nara",
-    time: "13:00 - 17:00",
-    attendees: "5.2K",
-    gradient: "from-gold/30 to-mint/20",
-    image: "/images/event-nara.jpg",
-  },
-];
-
 export const mockSun = {
   sunrise: "05:45",
   sunset: "18:12",
