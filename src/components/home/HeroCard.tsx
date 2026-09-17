@@ -3,13 +3,24 @@
 import Image from "next/image";
 import { MapPin, Moon, Sun, CloudSun, Cloud } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
+import WeatherIcon from "@/components/ui/WeatherIcon";
 import { mockCity, mockWeather, mockForecast } from "@/lib/mock/dashboard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 
 const FORECAST_ICONS = { sun: Sun, partly: CloudSun, cloud: Cloud };
 
 export default function HeroCard() {
   const { t } = useLanguage();
+  const { status, location, weather } = useLiveLocation();
+
+  const isLive = status === "ready" && Boolean(location || weather);
+  const cityName = location?.name ?? mockCity.name;
+  const tempC = weather ? Math.round(weather.tempC) : mockWeather.tempC;
+  const condition = weather?.condition ?? mockWeather.condition;
+  const humidity = weather ? `${weather.humidity}%` : `${mockWeather.humidity}%`;
+  const wind = weather ? `${Math.round(weather.windKmh)} km/h` : `${mockWeather.windMs} m/s`;
+  const feelsLike = weather ? `${Math.round(weather.feelsLikeC)}°C` : `${mockWeather.feelsLikeC}°C`;
 
   return (
     <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
@@ -29,12 +40,22 @@ export default function HeroCard() {
             <div className="mt-1 flex items-center gap-1.5">
               <MapPin size={20} className="text-sakura" />
               <span className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                {mockCity.name}
+                {cityName}
               </span>
+              {isLive && (
+                <span className="flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-medium text-mint">
+                  <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
+                  {t("widget.live")}
+                </span>
+              )}
             </div>
-            <p className="ml-7 font-jp text-sm text-foreground/60">
-              {mockCity.nameJa}
-            </p>
+            {isLive ? (
+              location?.countryName && location.countryName !== "Japan" ? (
+                <p className="ml-7 text-sm text-foreground/60">{location.countryName}</p>
+              ) : null
+            ) : (
+              <p className="ml-7 font-jp text-sm text-foreground/60">{mockCity.nameJa}</p>
+            )}
           </LiveClock>
 
           <div className="mt-4 flex items-start gap-2">
@@ -53,21 +74,21 @@ export default function HeroCard() {
         <div className="rounded-xl border border-glass-border bg-glass-bg p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-azure/15 text-azure">
-              <Moon size={24} />
+              {weather ? <WeatherIcon icon={weather.icon} size={24} /> : <Moon size={24} />}
             </div>
             <div>
               <p className="text-3xl font-semibold leading-none text-foreground">
-                {mockWeather.tempC}°C
+                {tempC}°C
               </p>
-              <p className="mt-1 text-sm text-muted">{mockWeather.condition}</p>
+              <p className="mt-1 text-sm text-muted">{condition}</p>
             </div>
           </div>
 
           <div className="mt-4 grid grid-cols-3 gap-2 border-t border-glass-border pt-3 text-center">
             {[
-              { label: t("hero.humidity"), value: `${mockWeather.humidity}%` },
-              { label: t("hero.wind"), value: `${mockWeather.windMs} m/s` },
-              { label: t("hero.feelsLike"), value: `${mockWeather.feelsLikeC}°C` },
+              { label: t("hero.humidity"), value: humidity },
+              { label: t("hero.wind"), value: wind },
+              { label: t("hero.feelsLike"), value: feelsLike },
             ].map((stat) => (
               <div key={stat.label}>
                 <p className="text-[10px] text-muted">{stat.label}</p>
