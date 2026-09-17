@@ -17,7 +17,7 @@ const QUICK_LINKS = [
   { label: "Weather", sub: "Check forecast", href: "/weather", icon: CloudSun, accent: "azure" },
   { label: "JLPT Quiz", sub: "Practice N5–N1", href: "/jlpt", icon: GraduationCap, accent: "sakura" },
   { label: "Yen Convert", sub: "Live exchange rate", href: "/yen-converter", icon: Coins, accent: "sakura" },
-  { label: "Japan AI", sub: "Ask in Japanese", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
+  { label: "LIVE CITY AI", sub: "Ask Japan anything", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
   { label: "Salary Calc", sub: "Estimate income", href: "/salary-calculator", icon: Calculator, accent: "azure" },
   { label: "Rent Calc", sub: "Move-in costs", href: "/rent-calculator", icon: Home, accent: "azure" },
   { label: "Earthquakes", sub: "Recent activity", href: "/earthquakes", icon: Activity, accent: "sakura" },
