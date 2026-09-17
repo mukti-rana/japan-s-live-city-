@@ -115,6 +115,12 @@ const zh: Record<TranslationKey, string> = {
   "events.tomorrow": "明天",
   "events.inDaysPrefix": "还有",
   "events.noneFound": "未找到活动。",
+
+  "weather.today": "今天",
+  "weather.hourlyTitle": "逐小时预报",
+  "weather.dailyTitle": "6天预报",
+  "weather.updated": "更新于",
+  "weather.unavailable": "实时天气暂不可用",
 };
 
 export default zh;

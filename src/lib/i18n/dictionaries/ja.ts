@@ -115,6 +115,12 @@ const ja: Record<TranslationKey, string> = {
   "events.tomorrow": "明日",
   "events.inDaysPrefix": "あと",
   "events.noneFound": "イベントが見つかりません。",
+
+  "weather.today": "今日",
+  "weather.hourlyTitle": "時間ごとの予報",
+  "weather.dailyTitle": "6日間の予報",
+  "weather.updated": "更新",
+  "weather.unavailable": "現在、ライブ天気情報は利用できません",
 };
 
 export default ja;

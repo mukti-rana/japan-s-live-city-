@@ -115,6 +115,12 @@ const ne: Record<TranslationKey, string> = {
   "events.tomorrow": "भोलि",
   "events.inDaysPrefix": "",
   "events.noneFound": "कुनै कार्यक्रम फेला परेन।",
+
+  "weather.today": "आज",
+  "weather.hourlyTitle": "घण्टागत पूर्वानुमान",
+  "weather.dailyTitle": "६ दिनको पूर्वानुमान",
+  "weather.updated": "अपडेट भयो",
+  "weather.unavailable": "लाइभ मौसम अहिले उपलब्ध छैन",
 };
 
 export default ne;

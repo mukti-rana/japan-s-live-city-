@@ -115,6 +115,12 @@ const ko: Record<TranslationKey, string> = {
   "events.tomorrow": "내일",
   "events.inDaysPrefix": "",
   "events.noneFound": "이벤트를 찾을 수 없습니다.",
+
+  "weather.today": "오늘",
+  "weather.hourlyTitle": "시간별 예보",
+  "weather.dailyTitle": "6일 예보",
+  "weather.updated": "업데이트",
+  "weather.unavailable": "실시간 날씨 정보를 사용할 수 없습니다",
 };
 
 export default ko;

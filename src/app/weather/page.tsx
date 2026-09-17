@@ -1,24 +1,38 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, Sunrise, Sunset, Droplets, Wind } from "lucide-react";
+import { MapPin, Sunrise, Sunset } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import WeatherIcon from "@/components/ui/WeatherIcon";
-import { CITIES } from "@/lib/data/cities";
+import WeatherScene from "@/components/ui/WeatherScene";
+import HourlyForecastRow from "@/components/weather/HourlyForecastRow";
+import DailyForecastList from "@/components/weather/DailyForecastList";
+import T from "@/components/i18n/T";
+import { CITIES, getCity } from "@/lib/data/cities";
 import { getWeather, type WeatherSnapshot } from "@/lib/services/weather";
+import { isNightNow } from "@/lib/weather/time";
 
 export const metadata: Metadata = {
   title: "Weather — Live City Japan",
   description: "Live weather conditions for major Japanese cities.",
 };
 
-export default async function WeatherPage() {
+export default async function WeatherPage({ searchParams }: PageProps<"/weather">) {
+  const { city: citySlugParam } = await searchParams;
+  const citySlug = Array.isArray(citySlugParam) ? citySlugParam[0] : citySlugParam;
+  const selectedCity = getCity(citySlug ?? "") ?? getCity("tokyo")!;
+
   const cityWeather = await Promise.all(
     CITIES.map(async (city) => ({
       city,
       weather: await getWeather(city.lat, city.lon).catch<WeatherSnapshot | null>(() => null),
     })),
   );
+
+  const selected = cityWeather.find((c) => c.city.slug === selectedCity.slug)!;
+  const otherCities = cityWeather.filter((c) => c.city.slug !== selectedCity.slug);
+  const weather = selected.weather;
+  const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
 
   return (
     <div className="flex flex-col gap-5">
@@ -36,62 +50,137 @@ export default async function WeatherPage() {
         </div>
       </Reveal>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {cityWeather.map(({ city, weather }, i) => (
-          <Reveal key={city.slug} delay={0.06 + i * 0.06}>
-            <Link href={`/${city.slug}`}>
-              <GlassCard className="p-5">
-                <div className="flex items-center gap-1.5 text-xs text-gold">
-                  <MapPin size={13} />
-                  {city.region}
-                </div>
-                <h2 className="mt-1 text-lg font-semibold text-foreground">
-                  {city.name}
-                </h2>
-
-                {weather ? (
-                  <>
-                    <div className="mt-3 flex items-center gap-3">
-                      <WeatherIcon icon={weather.icon} size={32} className="text-gold" />
-                      <div>
-                        <p className="text-2xl font-semibold leading-none text-foreground">
-                          {weather.tempC}°C
-                        </p>
-                        <p className="mt-1 text-xs text-muted">
-                          {weather.condition}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted">
-                      <span className="flex items-center gap-1.5">
-                        <Droplets size={13} className="text-azure" />
-                        {weather.humidity}%
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Wind size={13} className="text-azure" />
-                        {weather.windKmh} km/h
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Sunrise size={13} className="text-gold" />
-                        {weather.sunrise}
-                      </span>
-                      <span className="flex items-center gap-1.5">
-                        <Sunset size={13} className="text-sakura" />
-                        {weather.sunset}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <p className="mt-3 text-xs text-sakura">
-                    Live weather unavailable
-                  </p>
-                )}
-              </GlassCard>
-            </Link>
-          </Reveal>
+      <div className="flex gap-2">
+        {cityWeather.map(({ city }) => (
+          <Link
+            key={city.slug}
+            href={`/weather?city=${city.slug}`}
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
+              city.slug === selectedCity.slug
+                ? "border-gold/40 bg-gold/15 text-gold"
+                : "border-glass-border bg-glass-bg text-muted hover:text-foreground"
+            }`}
+          >
+            {city.name}
+          </Link>
         ))}
       </div>
+
+      <Reveal delay={0.06}>
+        {weather ? (
+          <div className="relative overflow-hidden rounded-3xl border border-glass-border">
+            <div className="absolute inset-0">
+              <WeatherScene
+                icon={weather.icon}
+                isNight={isNight}
+                variant="backdrop"
+                className="h-full w-full"
+              />
+            </div>
+            <div className="relative z-10 flex flex-col gap-6 p-6 sm:p-8">
+              <div>
+                <div className="flex items-center gap-1.5 text-sm text-foreground/80">
+                  <MapPin size={15} />
+                  {selectedCity.region}, Japan
+                </div>
+                <div className="mt-1 flex items-end gap-3">
+                  <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                    {weather.tempC}°
+                  </h2>
+                  <div className="mb-1">
+                    <p className="text-sm font-medium text-foreground">{weather.condition}</p>
+                    <p className="text-xs text-foreground/70">
+                      H:{weather.todayHigh}° L:{weather.todayLow}°
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-1 text-xs text-foreground/60">
+                  <T k="weather.updated" /> {weather.updatedAt.slice(11, 16)} JST
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 sm:max-w-xs">
+                <div className="flex items-center gap-1.5 rounded-xl border border-glass-border bg-glass-bg px-3 py-2 text-xs text-foreground/80">
+                  <Sunrise size={14} className="text-gold" />
+                  {weather.sunrise}
+                </div>
+                <div className="flex items-center gap-1.5 rounded-xl border border-glass-border bg-glass-bg px-3 py-2 text-xs text-foreground/80">
+                  <Sunset size={14} className="text-sakura" />
+                  {weather.sunset}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-glass-border bg-glass-bg p-4">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-foreground/70">
+                  <T k="weather.hourlyTitle" />
+                </p>
+                <HourlyForecastRow hours={weather.hourly} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <GlassCard className="p-5">
+            <p className="text-xs text-sakura">
+              <T k="weather.unavailable" />
+            </p>
+          </GlassCard>
+        )}
+      </Reveal>
+
+      {weather && (
+        <Reveal delay={0.1}>
+          <GlassCard className="p-5">
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted">
+              <T k="weather.dailyTitle" />
+            </p>
+            <DailyForecastList
+              today={{
+                high: weather.todayHigh,
+                low: weather.todayLow,
+                icon: weather.icon,
+                precipProbability: weather.todayPrecipProbability,
+              }}
+              days={weather.forecast}
+            />
+          </GlassCard>
+        </Reveal>
+      )}
+
+      {otherCities.length > 0 && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {otherCities.map(({ city, weather: cw }, i) => (
+            <Reveal key={city.slug} delay={0.14 + i * 0.06}>
+              <Link href={`/weather?city=${city.slug}`}>
+                <GlassCard className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs text-gold">
+                        <MapPin size={12} />
+                        {city.region}
+                      </div>
+                      <h3 className="mt-0.5 text-sm font-semibold text-foreground">
+                        {city.name}
+                      </h3>
+                    </div>
+                    {cw ? (
+                      <div className="flex items-center gap-2">
+                        <WeatherIcon icon={cw.icon} size={22} className="text-gold" />
+                        <span className="text-lg font-semibold text-foreground">
+                          {cw.tempC}°
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-sakura">
+                        <T k="weather.unavailable" />
+                      </span>
+                    )}
+                  </div>
+                </GlassCard>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

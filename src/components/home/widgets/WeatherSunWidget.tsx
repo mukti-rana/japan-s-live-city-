@@ -1,18 +1,56 @@
 "use client";
 
-import { Sun, Moon, CloudMoon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Sun } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
-import { mockSun, mockHourly, mockCity } from "@/lib/mock/dashboard";
+import WeatherIcon from "@/components/ui/WeatherIcon";
+import { CITIES } from "@/lib/data/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useLiveLocation } from "@/lib/geo/useLiveLocation";
+import { dayProgress } from "@/lib/weather/time";
+import type { WeatherSnapshot } from "@/lib/services/weather";
 
-const HOURLY_ICONS = { moon: Moon, "cloud-moon": CloudMoon };
+const DEFAULT_CITY = CITIES.find((c) => c.slug === "tokyo")!;
 
 export default function WeatherSunWidget() {
   const { t } = useLanguage();
+  const { status, location, weather: liveWeather } = useLiveLocation();
+  const [fallbackWeather, setFallbackWeather] = useState<WeatherSnapshot | null>(null);
+
+  // Live geolocation didn't produce weather (still resolving, denied, or
+  // unavailable) — fetch a real snapshot for a default city instead of
+  // ever falling back to mock data.
+  useEffect(() => {
+    if (liveWeather) return;
+    let cancelled = false;
+    fetch(`/api/weather/live?lat=${DEFAULT_CITY.lat}&lon=${DEFAULT_CITY.lon}`)
+      .then((r) => (r.ok ? (r.json() as Promise<WeatherSnapshot>) : null))
+      .then((data) => {
+        if (!cancelled && data) setFallbackWeather(data);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [liveWeather]);
+
+  const weather = liveWeather ?? fallbackWeather;
+  const cityName = status === "ready" ? (location?.name ?? DEFAULT_CITY.name) : DEFAULT_CITY.name;
+
+  if (!weather) {
+    return (
+      <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold">
+        <p className="py-4 text-center text-xs text-muted">{t("widget.unavailableRightNow")}</p>
+      </WidgetFrame>
+    );
+  }
+
+  const progress = dayProgress(weather.sunrise, weather.sunset);
+  const hours = weather.hourly.slice(0, 4);
 
   return (
     <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold">
-      <p className="-mt-1 text-center text-xs text-muted">{mockCity.name}</p>
+      <p className="-mt-1 text-center text-xs text-muted">{cityName}</p>
 
       <div className="flex items-center gap-3">
         <div className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl">
@@ -40,13 +78,13 @@ export default function WeatherSunWidget() {
           <div>
             <p className="text-[10px] text-muted">{t("widget.sunrise")}</p>
             <p className="text-sm font-semibold tabular-nums text-foreground">
-              {mockSun.sunrise}
+              {weather.sunrise}
             </p>
           </div>
           <div>
             <p className="text-[10px] text-muted">{t("widget.sunset")}</p>
             <p className="text-sm font-semibold tabular-nums text-foreground">
-              {mockSun.sunset}
+              {weather.sunset}
             </p>
           </div>
         </div>
@@ -55,28 +93,22 @@ export default function WeatherSunWidget() {
       <div className="h-1 overflow-hidden rounded-full bg-glass-bg-strong">
         <div
           className="h-full rounded-full bg-gradient-to-r from-gold to-sakura"
-          style={{ width: `${mockSun.progress * 100}%` }}
+          style={{ width: `${progress * 100}%` }}
         />
       </div>
 
       <div className="grid grid-cols-4 gap-1 border-t border-glass-border pt-3">
-        {mockHourly.map((hour) => {
-          const Icon = HOURLY_ICONS[hour.icon];
-          return (
-            <div
-              key={hour.time}
-              className="flex flex-col items-center gap-1.5"
-            >
-              <span className="text-[10px] text-muted">
-                {hour.time === "Now" ? t("widget.now") : hour.time}
-              </span>
-              <Icon size={15} className="text-azure" />
-              <span className="text-xs font-medium tabular-nums text-foreground">
-                {hour.tempC}°
-              </span>
-            </div>
-          );
-        })}
+        {hours.map((hour) => (
+          <div key={hour.time} className="flex flex-col items-center gap-1.5">
+            <span className="text-[10px] text-muted">
+              {hour.hourLabel === "Now" ? t("widget.now") : hour.hourLabel}
+            </span>
+            <WeatherIcon icon={hour.icon} size={15} className="text-azure" />
+            <span className="text-xs font-medium tabular-nums text-foreground">
+              {hour.tempC}°
+            </span>
+          </div>
+        ))}
       </div>
     </WidgetFrame>
   );

@@ -44,17 +44,4 @@ export const mockTrainLines = [
   { name: "Kintetsu Nara Line", note: "", color: "#F2544A", status: "Normal" },
 ];
 
-export const mockSun = {
-  sunrise: "05:45",
-  sunset: "18:12",
-  progress: 0.72,
-};
-
-export const mockHourly = [
-  { time: "Now", tempC: 24, icon: "moon" as const },
-  { time: "22:00", tempC: 22, icon: "cloud-moon" as const },
-  { time: "01:00", tempC: 20, icon: "moon" as const },
-  { time: "04:00", tempC: 19, icon: "moon" as const },
-];
-
 export const mockTrainSummary = "No major delays at the moment";

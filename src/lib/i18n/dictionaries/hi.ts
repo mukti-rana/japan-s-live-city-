@@ -115,6 +115,12 @@ const hi: Record<TranslationKey, string> = {
   "events.tomorrow": "कल",
   "events.inDaysPrefix": "",
   "events.noneFound": "कोई कार्यक्रम नहीं मिला।",
+
+  "weather.today": "आज",
+  "weather.hourlyTitle": "प्रति घंटा पूर्वानुमान",
+  "weather.dailyTitle": "6-दिवसीय पूर्वानुमान",
+  "weather.updated": "अपडेट किया गया",
+  "weather.unavailable": "लाइव मौसम अभी उपलब्ध नहीं है",
 };
 
 export default hi;

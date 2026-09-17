@@ -8,18 +8,9 @@ import WeatherScene from "@/components/ui/WeatherScene";
 import { mockCity, mockWeather, mockForecast } from "@/lib/mock/dashboard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
+import { isNightNow } from "@/lib/weather/time";
 
 const FORECAST_ICON_KIND = { sun: "clear", partly: "partly", cloud: "cloud" } as const;
-
-function isNightNow(sunrise: string, sunset: string): boolean {
-  const nowJst = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Tokyo",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(new Date());
-  return nowJst < sunrise || nowJst >= sunset;
-}
 
 export default function HeroCard() {
   const { t } = useLanguage();

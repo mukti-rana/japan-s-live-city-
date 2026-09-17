@@ -113,6 +113,12 @@ const en = {
   "events.tomorrow": "Tomorrow",
   "events.inDaysPrefix": "In ",
   "events.noneFound": "No events found.",
+
+  "weather.today": "Today",
+  "weather.hourlyTitle": "Hourly Forecast",
+  "weather.dailyTitle": "6-Day Forecast",
+  "weather.updated": "Updated",
+  "weather.unavailable": "Live weather unavailable",
 } as const;
 
 export default en;
