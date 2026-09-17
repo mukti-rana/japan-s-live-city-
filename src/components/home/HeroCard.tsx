@@ -78,30 +78,30 @@ export default function HeroCard() {
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        <div className="rounded-xl border border-glass-border bg-glass-bg p-4">
-          <div className="flex items-center gap-3">
-            <WeatherScene icon={sceneIcon} isNight={isNight} className="h-14 w-16 shrink-0" />
-            <div>
-              <p className="text-3xl font-semibold leading-none text-foreground">
-                {tempC}°C
-              </p>
-              <p className="mt-1 text-sm text-muted">{condition}</p>
-            </div>
+        <div className="relative overflow-hidden rounded-xl border border-glass-border">
+          <div className="absolute inset-0">
+            <WeatherScene icon={sceneIcon} isNight={isNight} variant="panel" className="h-full w-full" />
           </div>
+          <div className="relative z-10 p-4">
+            <p className="text-3xl font-semibold leading-none text-foreground">
+              {tempC}°C
+            </p>
+            <p className="mt-1 text-sm text-foreground/75">{condition}</p>
 
-          <div className="mt-4 grid grid-cols-3 gap-2 border-t border-glass-border pt-3 text-center">
-            {[
-              { label: t("hero.humidity"), value: humidity },
-              { label: t("hero.wind"), value: wind },
-              { label: t("hero.feelsLike"), value: feelsLike },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-[10px] text-muted">{stat.label}</p>
-                <p className="mt-0.5 text-sm font-medium text-foreground">
-                  {stat.value}
-                </p>
-              </div>
-            ))}
+            <div className="mt-4 grid grid-cols-3 gap-2 border-t border-glass-border pt-3 text-center">
+              {[
+                { label: t("hero.humidity"), value: humidity },
+                { label: t("hero.wind"), value: wind },
+                { label: t("hero.feelsLike"), value: feelsLike },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <p className="text-[10px] text-foreground/60">{stat.label}</p>
+                  <p className="mt-0.5 text-sm font-medium text-foreground">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

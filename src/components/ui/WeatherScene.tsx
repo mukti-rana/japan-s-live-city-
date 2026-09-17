@@ -8,13 +8,14 @@ import type { WeatherIconKind } from "@/lib/services/weather";
 // night — driven directly by the same real icon kind used elsewhere,
 // never a decorative stand-in.
 //
-// `variant` picks between the original small hero-card box ("compact",
-// the default — pixel-for-pixel unchanged) and a large full-bleed page
-// background ("backdrop", used by the /weather page). Tailwind's JIT
-// compiler needs literal class strings, so each variant gets its own
-// small style lookup rather than concatenating arbitrary values.
+// `variant` picks the scale: "compact" (the original small hero-card
+// icon, pixel-for-pixel unchanged), "panel" (fills a medium card, e.g.
+// the hero's weather stat box), or "backdrop" (large full-bleed page
+// background, used by /weather). Tailwind's JIT compiler needs literal
+// class strings, so each variant gets its own small style lookup rather
+// than concatenating arbitrary values.
 
-type Variant = "compact" | "backdrop";
+type Variant = "compact" | "panel" | "backdrop";
 
 const SKY: Record<WeatherIconKind, { day: string; night: string }> = {
   clear: { day: "from-gold/50 to-azure/40", night: "from-[#141033] to-[#0b0e1a]" },
@@ -29,11 +30,13 @@ const SKY: Record<WeatherIconKind, { day: string; night: string }> = {
 
 const ROOT_RADIUS: Record<Variant, string> = {
   compact: "rounded-2xl",
+  panel: "rounded-xl",
   backdrop: "rounded-3xl",
 };
 
 const SUN_STYLES: Record<Variant, string> = {
   compact: "absolute right-3 top-3 h-6 w-6",
+  panel: "absolute right-[8%] top-[12%] h-9 w-9 sm:h-11 sm:w-11",
   backdrop: "absolute right-[10%] top-[12%] h-16 w-16 sm:h-24 sm:w-24",
 };
 
@@ -49,6 +52,7 @@ function Sun({ variant }: { variant: Variant }) {
 
 const MOON_STYLES: Record<Variant, string> = {
   compact: "absolute right-3 top-3 h-6 w-6",
+  panel: "absolute right-[8%] top-[12%] h-8 w-8 sm:h-10 sm:w-10",
   backdrop: "absolute right-[10%] top-[12%] h-14 w-14 sm:h-20 sm:w-20",
 };
 
@@ -69,6 +73,14 @@ const STAR_SETS: Record<Variant, { x: number; y: number; delay: number }[]> = {
     { x: 34, y: 12, delay: 1.1 },
     { x: 12, y: 34, delay: 1.6 },
   ],
+  panel: [
+    { x: 12, y: 10, delay: 0 },
+    { x: 28, y: 22, delay: 0.5 },
+    { x: 48, y: 8, delay: 1.0 },
+    { x: 65, y: 26, delay: 1.4 },
+    { x: 18, y: 40, delay: 0.8 },
+    { x: 55, y: 42, delay: 0.2 },
+  ],
   backdrop: [
     { x: 10, y: 8, delay: 0 },
     { x: 24, y: 20, delay: 0.4 },
@@ -82,10 +94,17 @@ const STAR_SETS: Record<Variant, { x: number; y: number; delay: number }[]> = {
   ],
 };
 
+const STAR_UNIT: Record<Variant, "px" | "%"> = { compact: "px", panel: "%", backdrop: "%" };
+const STAR_SIZE: Record<Variant, string> = {
+  compact: "h-[3px] w-[3px]",
+  panel: "h-1 w-1",
+  backdrop: "h-1 w-1 sm:h-[5px] sm:w-[5px]",
+};
+
 function Stars({ variant }: { variant: Variant }) {
   const stars = STAR_SETS[variant];
-  const unit = variant === "backdrop" ? "%" : "px";
-  const size = variant === "backdrop" ? "h-1 w-1 sm:h-[5px] sm:w-[5px]" : "h-[3px] w-[3px]";
+  const unit = STAR_UNIT[variant];
+  const size = STAR_SIZE[variant];
   return (
     <>
       {stars.map((s, i) => (
@@ -104,12 +123,15 @@ function Stars({ variant }: { variant: Variant }) {
 const CLOUD_SIZE: Record<Variant, string> = {
   compact:
     "h-4 w-9 before:h-4 before:w-5 before:-left-2 before:-top-1.5 after:h-5 after:w-5 after:-right-1.5 after:-top-2",
+  panel:
+    "h-5 w-11 before:h-5 before:w-7 before:-left-2.5 before:-top-2 after:h-6 after:w-7 after:-right-2 after:-top-2.5",
   backdrop:
     "h-6 w-16 sm:h-9 sm:w-24 before:h-6 before:w-10 sm:before:h-9 sm:before:w-14 before:-left-3 before:-top-1.5 after:h-7 after:w-10 sm:after:h-10 sm:after:w-14 after:-right-2 after:-top-2",
 };
 
 const CLOUD_OPACITY: Record<Variant, string> = {
   compact: "bg-foreground/75 before:bg-foreground/75 after:bg-foreground/75",
+  panel: "bg-foreground/45 before:bg-foreground/45 after:bg-foreground/45",
   backdrop: "bg-foreground/35 before:bg-foreground/35 after:bg-foreground/35",
 };
 
@@ -125,21 +147,26 @@ function Cloud({ variant, position }: { variant: Variant; position: string }) {
 
 const CLOUD_POSITIONS: Record<Variant, Record<"primary" | "secondary", string>> = {
   compact: { primary: "left-2 top-7", secondary: "left-6 top-9 opacity-70" },
+  panel: { primary: "left-[10%] top-[18%]", secondary: "left-[42%] top-[32%] opacity-70" },
   backdrop: { primary: "left-[38%] top-[10%]", secondary: "left-[55%] top-[20%] opacity-70" },
 };
 
+const RAIN_GEOMETRY: Record<Variant, { fall: number; height: (fast: boolean) => number; top: string }> = {
+  compact: { fall: 26, height: (fast) => (fast ? 10 : 7), top: "top-6" },
+  panel: { fall: 90, height: (fast) => (fast ? 16 : 11), top: "top-[26%]" },
+  backdrop: { fall: 220, height: (fast) => (fast ? 32 : 22), top: "top-[40%]" },
+};
+
 function Rain({ count = 5, fast = false, variant }: { count?: number; fast?: boolean; variant: Variant }) {
-  const fallDistance = variant === "backdrop" ? 220 : 26;
-  const dropHeight = variant === "backdrop" ? (fast ? 32 : 22) : fast ? 10 : 7;
-  const top = variant === "backdrop" ? "top-[40%]" : "top-6";
+  const { fall, height, top } = RAIN_GEOMETRY[variant];
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
         <motion.span
           key={i}
           className={`absolute w-[2px] rounded-full bg-azure/80 ${top}`}
-          style={{ left: `${5 + i * (90 / count)}%`, height: dropHeight }}
-          animate={{ y: [0, fallDistance], opacity: [0, 1, 0] }}
+          style={{ left: `${5 + i * (90 / count)}%`, height: height(fast) }}
+          animate={{ y: [0, fall], opacity: [0, 1, 0] }}
           transition={{
             duration: fast ? 0.55 : 0.9,
             repeat: Infinity,
@@ -152,9 +179,14 @@ function Rain({ count = 5, fast = false, variant }: { count?: number; fast?: boo
   );
 }
 
+const SNOW_GEOMETRY: Record<Variant, { fall: number; top: string }> = {
+  compact: { fall: 28, top: "top-5" },
+  panel: { fall: 85, top: "top-[22%]" },
+  backdrop: { fall: 200, top: "top-[35%]" },
+};
+
 function Snow({ count = 5, variant }: { count?: number; variant: Variant }) {
-  const fallDistance = variant === "backdrop" ? 200 : 28;
-  const top = variant === "backdrop" ? "top-[35%]" : "top-5";
+  const { fall, top } = SNOW_GEOMETRY[variant];
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
@@ -162,7 +194,7 @@ function Snow({ count = 5, variant }: { count?: number; variant: Variant }) {
           key={i}
           className={`absolute h-1 w-1 rounded-full bg-foreground/90 ${top}`}
           style={{ left: `${5 + i * (90 / count)}%` }}
-          animate={{ y: [0, fallDistance], x: [0, i % 2 === 0 ? 4 : -4, 0] }}
+          animate={{ y: [0, fall], x: [0, i % 2 === 0 ? 4 : -4, 0] }}
           transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.3, ease: "easeInOut" }}
         />
       ))}
@@ -180,20 +212,28 @@ function Lightning() {
   );
 }
 
+const FOG_BANDS: Record<Variant, number[]> = {
+  compact: [10, 24, 38],
+  panel: [15, 32, 50],
+  backdrop: [20, 42, 64, 84],
+};
+const FOG_SIZE: Record<Variant, string> = {
+  compact: "h-2 w-11",
+  panel: "h-2.5 w-2/3",
+  backdrop: "h-3 w-2/3 sm:h-4",
+};
+const FOG_UNIT: Record<Variant, "px" | "%"> = { compact: "px", panel: "%", backdrop: "%" };
+const FOG_LEFT: Record<Variant, number | string> = { compact: 3, panel: "5%", backdrop: "5%" };
+
 function Fog({ variant }: { variant: Variant }) {
-  const bands =
-    variant === "backdrop"
-      ? [{ y: 20 }, { y: 42 }, { y: 64 }, { y: 84 }]
-      : [{ y: 10 }, { y: 24 }, { y: 38 }];
-  const size = variant === "backdrop" ? "h-3 w-2/3 sm:h-4" : "h-2 w-11";
-  const unit = variant === "backdrop" ? "%" : "px";
+  const bands = FOG_BANDS[variant];
   return (
     <>
-      {bands.map((b, i) => (
+      {bands.map((y, i) => (
         <motion.span
-          key={b.y}
-          className={`absolute rounded-full bg-foreground/60 ${size}`}
-          style={{ left: variant === "backdrop" ? "5%" : 3, top: `${b.y}${unit}` }}
+          key={y}
+          className={`absolute rounded-full bg-foreground/60 ${FOG_SIZE[variant]}`}
+          style={{ left: FOG_LEFT[variant], top: `${y}${FOG_UNIT[variant]}` }}
           animate={{ x: [-4, 4, -4] }}
           transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -215,6 +255,7 @@ export default function WeatherScene({
 }) {
   const sky = SKY[icon][isNight ? "night" : "day"];
   const pos = CLOUD_POSITIONS[variant];
+  const bigVariant = variant !== "compact";
 
   return (
     <div
@@ -250,28 +291,28 @@ export default function WeatherScene({
       {icon === "drizzle" && (
         <>
           <Cloud variant={variant} position={pos.primary} />
-          <Rain variant={variant} count={variant === "backdrop" ? 10 : 3} />
+          <Rain variant={variant} count={bigVariant ? (variant === "backdrop" ? 10 : 7) : 3} />
         </>
       )}
 
       {icon === "rain" && (
         <>
           <Cloud variant={variant} position={pos.primary} />
-          <Rain variant={variant} count={variant === "backdrop" ? 16 : 5} fast />
+          <Rain variant={variant} count={bigVariant ? (variant === "backdrop" ? 16 : 11) : 5} fast />
         </>
       )}
 
       {icon === "snow" && (
         <>
           <Cloud variant={variant} position={pos.primary} />
-          <Snow variant={variant} count={variant === "backdrop" ? 16 : 5} />
+          <Snow variant={variant} count={bigVariant ? (variant === "backdrop" ? 16 : 11) : 5} />
         </>
       )}
 
       {icon === "storm" && (
         <>
           <Cloud variant={variant} position={pos.primary} />
-          <Rain variant={variant} count={variant === "backdrop" ? 14 : 4} fast />
+          <Rain variant={variant} count={bigVariant ? (variant === "backdrop" ? 14 : 9) : 4} fast />
           <Lightning />
         </>
       )}
