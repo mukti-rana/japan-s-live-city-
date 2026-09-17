@@ -186,12 +186,17 @@ export async function POST(req: Request) {
           break;
         }
       } catch (err) {
+        console.error("[ai/assistant] stream loop error:", err);
         const detail =
           err instanceof Anthropic.AuthenticationError
             ? "The configured API key was rejected."
             : err instanceof Anthropic.RateLimitError
               ? "LIVE CITY AI is rate limited right now. Try again shortly."
-              : "Something went wrong talking to LIVE CITY AI.";
+              : err instanceof Anthropic.APIError
+                ? `LIVE CITY AI's request failed (${err.status}): ${err.message}`
+                : err instanceof Error
+                  ? `Something went wrong talking to LIVE CITY AI: ${err.message}`
+                  : "Something went wrong talking to LIVE CITY AI.";
         writeNdjson(controller, { type: "error", message: detail });
       } finally {
         controller.close();
