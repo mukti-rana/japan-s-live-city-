@@ -1,14 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { MapPin, Moon, Sun, CloudSun, Cloud } from "lucide-react";
+import { MapPin } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
 import WeatherIcon from "@/components/ui/WeatherIcon";
+import WeatherScene from "@/components/ui/WeatherScene";
 import { mockCity, mockWeather, mockForecast } from "@/lib/mock/dashboard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 
-const FORECAST_ICONS = { sun: Sun, partly: CloudSun, cloud: Cloud };
+const FORECAST_ICON_KIND = { sun: "clear", partly: "partly", cloud: "cloud" } as const;
+
+function isNightNow(sunrise: string, sunset: string): boolean {
+  const nowJst = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date());
+  return nowJst < sunrise || nowJst >= sunset;
+}
 
 export default function HeroCard() {
   const { t } = useLanguage();
@@ -21,6 +32,11 @@ export default function HeroCard() {
   const humidity = weather ? `${weather.humidity}%` : `${mockWeather.humidity}%`;
   const wind = weather ? `${Math.round(weather.windKmh)} km/h` : `${mockWeather.windMs} m/s`;
   const feelsLike = weather ? `${Math.round(weather.feelsLikeC)}°C` : `${mockWeather.feelsLikeC}°C`;
+
+  // Defaults to a night scene when there's no live sunrise/sunset yet,
+  // matching this card's night-skyline artwork.
+  const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
+  const sceneIcon = weather?.icon ?? "clear";
 
   return (
     <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
@@ -73,9 +89,7 @@ export default function HeroCard() {
       <div className="flex flex-col gap-3 p-4">
         <div className="rounded-xl border border-glass-border bg-glass-bg p-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-azure/15 text-azure">
-              {weather ? <WeatherIcon icon={weather.icon} size={24} /> : <Moon size={24} />}
-            </div>
+            <WeatherScene icon={sceneIcon} isNight={isNight} className="h-14 w-16 shrink-0" />
             <div>
               <p className="text-3xl font-semibold leading-none text-foreground">
                 {tempC}°C
@@ -100,19 +114,28 @@ export default function HeroCard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 rounded-xl border border-glass-border bg-glass-bg p-3 text-center">
-          {mockForecast.map((day) => {
-            const Icon = FORECAST_ICONS[day.icon];
-            return (
-              <div key={day.day} className="flex flex-col items-center gap-1">
-                <Icon size={18} className="text-gold" />
-                <p className="text-[11px] text-muted">{day.day}</p>
-                <p className="text-xs font-medium tabular-nums text-foreground">
+        <div className="flex gap-2 overflow-x-auto rounded-xl border border-glass-border bg-glass-bg p-3">
+          {weather ? (
+            weather.forecast.map((day) => (
+              <div key={day.date} className="flex min-w-[52px] flex-1 flex-col items-center gap-1 text-center">
+                <WeatherIcon icon={day.icon} size={16} className="text-gold" />
+                <p className="text-[10px] text-muted">{day.weekday}</p>
+                <p className="text-[11px] font-medium tabular-nums text-foreground">
                   {day.high}°/{day.low}°
                 </p>
               </div>
-            );
-          })}
+            ))
+          ) : (
+            mockForecast.map((day) => (
+              <div key={day.day} className="flex min-w-[52px] flex-1 flex-col items-center gap-1 text-center">
+                <WeatherIcon icon={FORECAST_ICON_KIND[day.icon]} size={16} className="text-gold" />
+                <p className="text-[10px] text-muted">{day.day}</p>
+                <p className="text-[11px] font-medium tabular-nums text-foreground">
+                  {day.high}°/{day.low}°
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

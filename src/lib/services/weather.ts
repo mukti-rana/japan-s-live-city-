@@ -47,6 +47,15 @@ function iconKindFor(code: number): WeatherIconKind {
   return "cloud";
 }
 
+export interface ForecastDay {
+  date: string;
+  weekday: string;
+  high: number;
+  low: number;
+  icon: WeatherIconKind;
+  condition: string;
+}
+
 export interface WeatherSnapshot {
   tempC: number;
   feelsLikeC: number;
@@ -59,10 +68,13 @@ export interface WeatherSnapshot {
   todayHigh: number;
   todayLow: number;
   updatedAt: string;
+  forecast: ForecastDay[];
 }
 
+const WEEKDAY_FORMAT = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Asia/Tokyo" });
+
 export async function getWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code&forecast_days=7&timezone=Asia%2FTokyo`;
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) {
@@ -79,14 +91,32 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
       wind_speed_10m: number;
     };
     daily: {
+      time: string[];
       sunrise: string[];
       sunset: string[];
       temperature_2m_max: number[];
       temperature_2m_min: number[];
+      weather_code: number[];
     };
   };
 
   const time = (iso: string) => iso.slice(11, 16);
+
+  // index 0 is today (already shown as the current snapshot above) — the
+  // forecast strip covers the next 5 real days from the same response,
+  // no extra request needed.
+  const forecast: ForecastDay[] = data.daily.time.slice(1, 6).map((dateStr, i) => {
+    const idx = i + 1;
+    const code = data.daily.weather_code[idx];
+    return {
+      date: dateStr,
+      weekday: WEEKDAY_FORMAT.format(new Date(`${dateStr}T00:00:00+09:00`)),
+      high: Math.round(data.daily.temperature_2m_max[idx]),
+      low: Math.round(data.daily.temperature_2m_min[idx]),
+      icon: iconKindFor(code),
+      condition: WEATHER_LABELS[code] ?? "Unknown",
+    };
+  });
 
   return {
     tempC: Math.round(data.current.temperature_2m),
@@ -100,5 +130,6 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
     todayHigh: Math.round(data.daily.temperature_2m_max[0]),
     todayLow: Math.round(data.daily.temperature_2m_min[0]),
     updatedAt: data.current.time,
+    forecast,
   };
 }
