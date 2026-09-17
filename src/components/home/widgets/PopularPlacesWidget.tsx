@@ -7,7 +7,7 @@ export default async function PopularPlacesWidget() {
   const places = await getPopularPlaces();
 
   return (
-    <WidgetFrame icon={Landmark} label="Popular Places" accent="gold">
+    <WidgetFrame icon={Landmark} labelKey="widget.popularPlaces" accent="gold">
       <PopularPlacesGrid places={places} />
     </WidgetFrame>
   );

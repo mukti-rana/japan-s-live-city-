@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
-function greetingFor(hour: number) {
-  if (hour < 5) return "Good Night";
-  if (hour < 12) return "Good Morning";
-  if (hour < 17) return "Good Afternoon";
-  return "Good Evening";
+function greetingKeyFor(hour: number): TranslationKey {
+  if (hour < 5) return "hero.goodNight";
+  if (hour < 12) return "hero.goodMorning";
+  if (hour < 17) return "hero.goodAfternoon";
+  return "hero.goodEvening";
 }
 
 export default function LiveClock({
@@ -16,6 +18,7 @@ export default function LiveClock({
   timeZone: string;
   children?: ReactNode;
 }) {
+  const { t } = useLanguage();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export default function LiveClock({
   return (
     <div>
       <p className="text-sm font-medium text-foreground/80" suppressHydrationWarning>
-        {greetingFor(hour)}
+        {t(greetingKeyFor(hour))}
       </p>
       {children}
       <p className="mt-3 text-xs text-foreground/70" suppressHydrationWarning>

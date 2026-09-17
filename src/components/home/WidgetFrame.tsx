@@ -3,6 +3,8 @@ import { type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import GlassCard from "@/components/ui/GlassCard";
+import T from "@/components/i18n/T";
+import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
 const ACCENTS = {
   sakura: "bg-sakura/15 text-sakura",
@@ -13,7 +15,7 @@ const ACCENTS = {
 
 export default function WidgetFrame({
   icon: Icon,
-  label,
+  labelKey,
   accent = "azure",
   action,
   viewAll = false,
@@ -23,7 +25,7 @@ export default function WidgetFrame({
   className = "",
 }: {
   icon: LucideIcon;
-  label: string;
+  labelKey: TranslationKey;
   accent?: keyof typeof ACCENTS;
   action?: ReactNode;
   viewAll?: boolean;
@@ -42,7 +44,7 @@ export default function WidgetFrame({
             <Icon size={15} />
           </div>
           <p className="text-xs font-semibold uppercase tracking-wide text-foreground/90">
-            {label}
+            <T k={labelKey} />
           </p>
         </div>
 
@@ -51,7 +53,7 @@ export default function WidgetFrame({
         {live && (
           <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
             <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
-            Live
+            <T k="widget.live" />
           </span>
         )}
 
@@ -60,14 +62,14 @@ export default function WidgetFrame({
             href={viewAllHref}
             className="flex items-center gap-0.5 text-[11px] font-medium text-muted transition-colors hover:text-azure"
           >
-            View all
+            <T k="widget.viewAll" />
             <ChevronRight size={12} />
           </Link>
         )}
 
         {viewAll && !viewAllHref && (
           <span className="flex items-center gap-0.5 text-[11px] font-medium text-muted/50">
-            View all
+            <T k="widget.viewAll" />
             <ChevronRight size={12} />
           </span>
         )}

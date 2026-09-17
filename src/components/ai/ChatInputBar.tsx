@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Sparkles, Loader2, Paperclip, X } from "lucide-react";
-import { LANGUAGES } from "@/lib/ai/languages";
+import { LANGUAGES, type LanguageCode } from "@/lib/ai/languages";
 
 export interface AttachedImage {
   previewUrl: string;
@@ -27,8 +27,8 @@ export default function ChatInputBar({
   onSubmit: () => void;
   disabled: boolean;
   loading: boolean;
-  language: string;
-  onLanguageChange: (code: string) => void;
+  language: LanguageCode;
+  onLanguageChange: (code: LanguageCode) => void;
   image: AttachedImage | null;
   onAttach: (file: File) => void;
   onRemoveImage: () => void;
@@ -71,7 +71,7 @@ export default function ChatInputBar({
         <div className="flex items-center gap-2">
           <select
             value={language}
-            onChange={(e) => onLanguageChange(e.target.value)}
+            onChange={(e) => onLanguageChange(e.target.value as LanguageCode)}
             disabled={disabled}
             className="rounded-lg border border-glass-border bg-glass-bg px-2 py-1 text-[11px] text-muted outline-none disabled:opacity-50"
           >
@@ -95,6 +95,7 @@ export default function ChatInputBar({
             ref={fileInputRef}
             type="file"
             accept="image/png,image/jpeg,image/webp,image/gif"
+            capture="environment"
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];

@@ -1,7 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Globe2, ArrowUpRight } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import { mockMapCities } from "@/lib/mock/dashboard";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 // Stylised dotted archipelago — a real interactive map lives at /map.
 // Each path is a band of the island chain; duplicating with small offsets
@@ -30,11 +33,13 @@ const OFFSETS = [
 ];
 
 export default function JapanMapWidget() {
+  const { t } = useLanguage();
+
   return (
-    <WidgetFrame icon={Globe2} label="Japan Map" accent="azure" live>
+    <WidgetFrame icon={Globe2} labelKey="widget.japanMap" accent="azure" live>
       <Link
         href="/map"
-        aria-label="Open the full interactive Japan map"
+        aria-label={t("widget.openFullMap")}
         className="relative block h-56 overflow-hidden rounded-xl bg-[#0a1024] transition-opacity hover:opacity-90"
       >
         <svg viewBox="0 0 300 240" className="h-full w-full" aria-hidden="true">
@@ -95,7 +100,7 @@ export default function JapanMapWidget() {
         ))}
 
         <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full border border-glass-border bg-glass-bg-strong px-2.5 py-1 text-[10px] font-medium text-azure backdrop-blur-sm">
-          Open full map
+          {t("widget.openFullMap")}
           <ArrowUpRight size={12} />
         </span>
       </Link>

@@ -1,5 +1,6 @@
 import { Newspaper } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
+import T from "@/components/i18n/T";
 import { getLatestNews, type NewsItem } from "@/lib/services/news";
 import { formatRelativeTime } from "@/lib/format";
 
@@ -14,14 +15,14 @@ export default async function NewsWidget() {
   return (
     <WidgetFrame
       icon={Newspaper}
-      label="Latest News"
+      labelKey="widget.latestNews"
       accent="azure"
       viewAll
       viewAllHref="/news"
     >
       {topItems.length === 0 ? (
         <p className="text-xs text-sakura">
-          News is temporarily unavailable.
+          <T k="widget.newsUnavailable" />
         </p>
       ) : (
         <ul className="flex flex-col">
@@ -50,7 +51,7 @@ export default async function NewsWidget() {
 
       {failedSources.length > 0 && (
         <p className="text-[10px] text-muted">
-          Unavailable right now: {failedSources.join(", ")}
+          <T k="widget.unavailableRightNow" /> {failedSources.join(", ")}
         </p>
       )}
     </WidgetFrame>

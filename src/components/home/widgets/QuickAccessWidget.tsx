@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Zap,
   TrainFront,
@@ -9,28 +11,42 @@ import {
   Activity,
   ShieldAlert,
   Home,
+  Languages,
+  Camera,
 } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
-const QUICK_LINKS = [
-  { label: "Train Routes", sub: "Plan your trip", href: "/trains", icon: TrainFront, accent: "azure" },
-  { label: "Weather", sub: "Check forecast", href: "/weather", icon: CloudSun, accent: "azure" },
-  { label: "JLPT Quiz", sub: "Practice N5–N1", href: "/jlpt", icon: GraduationCap, accent: "sakura" },
-  { label: "Yen Convert", sub: "Live exchange rate", href: "/yen-converter", icon: Coins, accent: "sakura" },
-  { label: "LIVE CITY AI", sub: "Ask Japan anything", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
-  { label: "Salary Calc", sub: "Estimate income", href: "/salary-calculator", icon: Calculator, accent: "azure" },
-  { label: "Rent Calc", sub: "Move-in costs", href: "/rent-calculator", icon: Home, accent: "azure" },
-  { label: "Earthquakes", sub: "Recent activity", href: "/earthquakes", icon: Activity, accent: "sakura" },
-  { label: "Emergency", sub: "Active alerts", href: "/emergency", icon: ShieldAlert, accent: "azure" },
+const QUICK_LINKS: {
+  labelKey: TranslationKey;
+  subKey: TranslationKey;
+  href: string;
+  icon: typeof TrainFront;
+  accent: "azure" | "sakura";
+}[] = [
+  { labelKey: "quickaccess.trainRoutes", subKey: "quickaccess.trainRoutesSub", href: "/trains", icon: TrainFront, accent: "azure" },
+  { labelKey: "quickaccess.weather", subKey: "quickaccess.weatherSub", href: "/weather", icon: CloudSun, accent: "azure" },
+  { labelKey: "quickaccess.jlpt", subKey: "quickaccess.jlptSub", href: "/jlpt", icon: GraduationCap, accent: "sakura" },
+  { labelKey: "quickaccess.yen", subKey: "quickaccess.yenSub", href: "/yen-converter", icon: Coins, accent: "sakura" },
+  { labelKey: "quickaccess.ai", subKey: "quickaccess.aiSub", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
+  { labelKey: "quickaccess.explainJapanese", subKey: "quickaccess.explainJapaneseSub", href: "/explain-japanese", icon: Languages, accent: "azure" },
+  { labelKey: "quickaccess.signAssistant", subKey: "quickaccess.signAssistantSub", href: "/sign-assistant", icon: Camera, accent: "sakura" },
+  { labelKey: "quickaccess.salary", subKey: "quickaccess.salarySub", href: "/salary-calculator", icon: Calculator, accent: "azure" },
+  { labelKey: "quickaccess.rent", subKey: "quickaccess.rentSub", href: "/rent-calculator", icon: Home, accent: "azure" },
+  { labelKey: "quickaccess.earthquakes", subKey: "quickaccess.earthquakesSub", href: "/earthquakes", icon: Activity, accent: "sakura" },
+  { labelKey: "quickaccess.emergency", subKey: "quickaccess.emergencySub", href: "/emergency", icon: ShieldAlert, accent: "azure" },
 ];
 
 export default function QuickAccessWidget() {
+  const { t } = useLanguage();
+
   return (
-    <WidgetFrame icon={Zap} label="Quick Access" accent="azure">
+    <WidgetFrame icon={Zap} labelKey="quickaccess.title" accent="azure">
       <div className="grid grid-cols-2 gap-2">
-        {QUICK_LINKS.map(({ label, sub, href, icon: Icon, accent }) => (
+        {QUICK_LINKS.map(({ labelKey, subKey, href, icon: Icon, accent }) => (
           <a
-            key={label}
+            key={labelKey}
             href={href}
             className="flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg p-2.5 transition-colors hover:border-azure/30 hover:bg-glass-bg-strong"
           >
@@ -45,10 +61,10 @@ export default function QuickAccessWidget() {
             </span>
             <span className="min-w-0">
               <span className="block truncate text-[11px] font-medium text-foreground">
-                {label}
+                {t(labelKey)}
               </span>
               <span className="block truncate text-[9px] text-muted">
-                {sub}
+                {t(subKey)}
               </span>
             </span>
           </a>

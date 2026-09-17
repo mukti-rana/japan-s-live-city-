@@ -1,12 +1,17 @@
+"use client";
+
 import { Sun, Moon, CloudMoon } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import { mockSun, mockHourly, mockCity } from "@/lib/mock/dashboard";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const HOURLY_ICONS = { moon: Moon, "cloud-moon": CloudMoon };
 
 export default function WeatherSunWidget() {
+  const { t } = useLanguage();
+
   return (
-    <WidgetFrame icon={Sun} label="Weather & Sun" accent="gold">
+    <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold">
       <p className="-mt-1 text-center text-xs text-muted">{mockCity.name}</p>
 
       <div className="flex items-center gap-3">
@@ -33,13 +38,13 @@ export default function WeatherSunWidget() {
 
         <div className="grid flex-1 grid-cols-2 gap-2 text-center">
           <div>
-            <p className="text-[10px] text-muted">Sunrise</p>
+            <p className="text-[10px] text-muted">{t("widget.sunrise")}</p>
             <p className="text-sm font-semibold tabular-nums text-foreground">
               {mockSun.sunrise}
             </p>
           </div>
           <div>
-            <p className="text-[10px] text-muted">Sunset</p>
+            <p className="text-[10px] text-muted">{t("widget.sunset")}</p>
             <p className="text-sm font-semibold tabular-nums text-foreground">
               {mockSun.sunset}
             </p>
@@ -62,7 +67,9 @@ export default function WeatherSunWidget() {
               key={hour.time}
               className="flex flex-col items-center gap-1.5"
             >
-              <span className="text-[10px] text-muted">{hour.time}</span>
+              <span className="text-[10px] text-muted">
+                {hour.time === "Now" ? t("widget.now") : hour.time}
+              </span>
               <Icon size={15} className="text-azure" />
               <span className="text-xs font-medium tabular-nums text-foreground">
                 {hour.tempC}°

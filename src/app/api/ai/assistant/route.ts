@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { buildSystemPrompt } from "@/lib/ai/systemPrompt";
+import { buildSystemPrompt, type AssistantMode } from "@/lib/ai/systemPrompt";
 import { ALL_TOOLS } from "@/lib/ai/tools";
 import { executeTool, INTERNAL_TOOL_SOURCES } from "@/lib/ai/executeTool";
 import { writeNdjson } from "@/lib/ai/ndjsonStream";
@@ -14,8 +14,11 @@ const MAX_TOKENS = 6144;
 interface RequestBody {
   messages?: ChatMessage[];
   language?: string;
+  mode?: AssistantMode;
   image?: { base64: string; mediaType: "image/jpeg" | "image/png" | "image/webp" | "image/gif" };
 }
+
+const VALID_MODES: AssistantMode[] = ["chat", "explain-japanese", "sign-assistant"];
 
 function dedupeByUrl(links: WebSourceLink[]): WebSourceLink[] {
   const seen = new Set<string>();
@@ -43,6 +46,9 @@ export async function POST(req: Request) {
 
   const language =
     typeof body.language === "string" && body.language.trim() ? body.language : DEFAULT_LANGUAGE;
+  const mode: AssistantMode = VALID_MODES.includes(body.mode as AssistantMode)
+    ? (body.mode as AssistantMode)
+    : "chat";
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return Response.json(
@@ -97,8 +103,8 @@ export async function POST(req: Request) {
           const stream = client.messages.stream({
             model: "claude-sonnet-5",
             max_tokens: MAX_TOKENS,
-            system: buildSystemPrompt(language),
-            tools: ALL_TOOLS,
+            system: buildSystemPrompt(language, mode),
+            tools: mode === "chat" ? ALL_TOOLS : [],
             messages: workingMessages,
           });
 

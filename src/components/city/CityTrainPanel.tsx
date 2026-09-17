@@ -1,19 +1,23 @@
+"use client";
+
 import { TrainFront } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import type { CitySlug } from "@/lib/data/cities";
 import { CITY_TRAIN_LINES } from "@/lib/data/cities";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function CityTrainPanel({ city }: { city: CitySlug }) {
+  const { t } = useLanguage();
   const lines = CITY_TRAIN_LINES[city];
 
   return (
     <WidgetFrame
       icon={TrainFront}
-      label="Train Status"
+      labelKey="widget.trainStatus"
       accent="azure"
       action={
         <span className="rounded-full border border-glass-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted">
-          Demo data
+          {t("footer.demoData")}
         </span>
       }
     >
@@ -41,8 +45,7 @@ export default function CityTrainPanel({ city }: { city: CitySlug }) {
         ))}
       </ul>
       <p className="mt-1 text-[11px] text-muted">
-        Placeholder line statuses — a live feed will replace this once a
-        train-data provider is connected.
+        {t("widget.trainPlaceholderNote")}
       </p>
     </WidgetFrame>
   );

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import MessageList from "@/components/ai/MessageList";
 import ChatInputBar, { type AttachedImage } from "@/components/ai/ChatInputBar";
 import { readNdjsonStream } from "@/lib/ai/ndjsonStream";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEFAULT_LANGUAGE } from "@/lib/ai/languages";
 import type { UIMessage } from "@/components/ai/uiTypes";
 
@@ -14,9 +15,22 @@ function newId(): string {
 }
 
 export default function ChatAssistant({ configured }: { configured: boolean }) {
+  const { language: siteLanguage, ready: siteLanguageReady } = useLanguage();
   const [messages, setMessages] = useState<UIMessage[]>([]);
   const [input, setInput] = useState("");
   const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
+
+  // Seed the chat's language from the site-wide preference once, right
+  // after it's resolved from localStorage post-mount — but only once, so a
+  // later change to the global switcher doesn't retroactively change an
+  // in-progress conversation's language out from under the user.
+  useEffect(() => {
+    if (siteLanguageReady) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLanguage(siteLanguage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [siteLanguageReady]);
   const [image, setImage] = useState<AttachedImage | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);

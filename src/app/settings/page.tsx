@@ -3,6 +3,7 @@ import Link from "next/link";
 import { UserCircle, LogOut, LogIn } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
+import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -34,6 +35,18 @@ export default async function SettingsPage() {
         </div>
       </Reveal>
 
+      <Reveal delay={0.06}>
+        <GlassCard className="p-5">
+          <p className="text-sm font-semibold text-foreground">Language</p>
+          <p className="mt-1 text-xs text-muted">
+            Choose the language used across LIVE CITY.
+          </p>
+          <div className="mt-3">
+            <LanguageSwitcher variant="settings" />
+          </div>
+        </GlassCard>
+      </Reveal>
+
       {!isSupabaseConfigured && (
         <Reveal delay={0.08}>
           <SupabaseNotConfigured />
@@ -56,8 +69,8 @@ export default async function SettingsPage() {
             </div>
 
             <p className="mt-4 text-xs text-muted">
-              Preferences like preferred language, favorite city, and saved
-              tools are coming in a later update.
+              Preferences like favorite city and saved tools are coming in a
+              later update.
             </p>
 
             <form action={signOutAction} className="mt-4">

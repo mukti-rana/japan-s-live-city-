@@ -16,24 +16,27 @@ import {
   X,
 } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
 
-const NAV_ITEMS = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "Japan Map", href: "/map", icon: Map },
-  { label: "Trains", href: "/trains", icon: TrainFront },
-  { label: "Weather", href: "/weather", icon: CloudSun },
-  { label: "News", href: "/news", icon: Newspaper },
-  { label: "Events", href: "/events", icon: CalendarDays },
-  { label: "Trending", href: "/trending", icon: Flame },
-  { label: "Cities", href: "/cities", icon: MapPin },
-  { label: "Settings", href: "/settings", icon: Settings },
+const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[] = [
+  { labelKey: "nav.home", href: "/", icon: Home },
+  { labelKey: "nav.map", href: "/map", icon: Map },
+  { labelKey: "nav.trains", href: "/trains", icon: TrainFront },
+  { labelKey: "nav.weather", href: "/weather", icon: CloudSun },
+  { labelKey: "nav.news", href: "/news", icon: Newspaper },
+  { labelKey: "nav.events", href: "/events", icon: CalendarDays },
+  { labelKey: "nav.trending", href: "/trending", icon: Flame },
+  { labelKey: "nav.cities", href: "/cities", icon: MapPin },
+  { labelKey: "nav.settings", href: "/settings", icon: Settings },
 ];
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -41,7 +44,7 @@ export default function Sidebar() {
         type="button"
         onClick={() => setOpen(true)}
         className="fixed bottom-5 left-5 z-40 rounded-full border border-glass-border bg-panel p-3 shadow-lg backdrop-blur-xl lg:hidden"
-        aria-label="Open navigation"
+        aria-label={t("nav.openMenu")}
       >
         <Menu size={18} />
       </button>
@@ -50,7 +53,7 @@ export default function Sidebar() {
         <button
           type="button"
           onClick={() => setOpen(false)}
-          aria-label="Close navigation"
+          aria-label={t("nav.closeMenu")}
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
         />
       )}
@@ -64,21 +67,21 @@ export default function Sidebar() {
           type="button"
           onClick={() => setOpen(false)}
           className="absolute right-3 top-3 rounded-lg p-1 text-muted hover:text-foreground lg:hidden"
-          aria-label="Close navigation"
+          aria-label={t("nav.closeMenu")}
         >
           <X size={18} />
         </button>
 
         <nav className="flex flex-1 flex-col gap-1 px-3 pt-6 lg:pt-4">
-          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+          {NAV_ITEMS.map(({ labelKey, href, icon: Icon }) => {
             const active =
               href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(href) ||
-                  (label === "Cities" && CITY_PATHS.includes(pathname));
+                  (labelKey === "nav.cities" && CITY_PATHS.includes(pathname));
             return (
               <a
-                key={label}
+                key={labelKey}
                 href={href}
                 className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                   active
@@ -95,7 +98,7 @@ export default function Sidebar() {
                 >
                   <Icon size={16} />
                 </span>
-                {label}
+                {t(labelKey)}
               </a>
             );
           })}

@@ -15,7 +15,7 @@ export default async function EventsListWidget({
   return (
     <WidgetFrame
       icon={CalendarDays}
-      label="Festivals & Events"
+      labelKey="widget.festivalsEvents"
       accent="sakura"
       viewAll={linkToAll}
       viewAllHref={linkToAll ? "/events" : undefined}

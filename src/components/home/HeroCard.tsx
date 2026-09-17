@@ -1,11 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import { MapPin, Moon, Sun, CloudSun, Cloud } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
 import { mockCity, mockWeather, mockForecast } from "@/lib/mock/dashboard";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const FORECAST_ICONS = { sun: Sun, partly: CloudSun, cloud: Cloud };
 
 export default function HeroCard() {
+  const { t } = useLanguage();
+
   return (
     <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
       <div className="relative min-h-[240px] overflow-hidden rounded-2xl p-5 sm:p-6">
@@ -38,7 +43,7 @@ export default function HeroCard() {
               <p className="font-jp text-sm text-foreground/85">
                 今日もいい一日を
               </p>
-              <p className="text-xs text-muted">Have a great day</p>
+              <p className="text-xs text-muted">{t("hero.haveGreatDay")}</p>
             </div>
           </div>
         </div>
@@ -60,9 +65,9 @@ export default function HeroCard() {
 
           <div className="mt-4 grid grid-cols-3 gap-2 border-t border-glass-border pt-3 text-center">
             {[
-              { label: "Humidity", value: `${mockWeather.humidity}%` },
-              { label: "Wind", value: `${mockWeather.windMs} m/s` },
-              { label: "Feels like", value: `${mockWeather.feelsLikeC}°C` },
+              { label: t("hero.humidity"), value: `${mockWeather.humidity}%` },
+              { label: t("hero.wind"), value: `${mockWeather.windMs} m/s` },
+              { label: t("hero.feelsLike"), value: `${mockWeather.feelsLikeC}°C` },
             ].map((stat) => (
               <div key={stat.label}>
                 <p className="text-[10px] text-muted">{stat.label}</p>

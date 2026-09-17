@@ -4,10 +4,11 @@ import { useState } from "react";
 import { CalendarDays } from "lucide-react";
 import Tabs from "@/components/ui/Tabs";
 import Thumb from "@/components/ui/Thumb";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { EnrichedFestival } from "@/lib/services/events";
 import type { EventCategory } from "@/lib/data/events";
 
-const CATEGORY_TABS: ("All" | EventCategory)[] = ["All", "Festival", "Fireworks"];
+const CATEGORY_VALUES: ("All" | EventCategory)[] = ["All", "Festival", "Fireworks"];
 
 export default function EventsGrid({
   festivals,
@@ -16,7 +17,15 @@ export default function EventsGrid({
   festivals: EnrichedFestival[];
   limit?: number;
 }) {
+  const { t } = useLanguage();
   const [category, setCategory] = useState<"All" | EventCategory>("All");
+
+  const categoryLabels: Record<"All" | EventCategory, string> = {
+    All: t("tabs.all"),
+    Festival: t("tabs.festival"),
+    Fireworks: t("tabs.fireworks"),
+  };
+  const categoryTabs = CATEGORY_VALUES.map((v) => categoryLabels[v]);
 
   const filtered = festivals.filter(
     (f) => category === "All" || f.category === category,
@@ -26,9 +35,12 @@ export default function EventsGrid({
   return (
     <div className="flex flex-col gap-3">
       <Tabs
-        tabs={CATEGORY_TABS}
-        value={category}
-        onChange={(t) => setCategory(t as "All" | EventCategory)}
+        tabs={categoryTabs}
+        value={categoryLabels[category]}
+        onChange={(label) => {
+          const match = CATEGORY_VALUES.find((v) => categoryLabels[v] === label);
+          if (match) setCategory(match);
+        }}
       />
 
       <ul className="flex flex-col">
@@ -69,10 +81,10 @@ export default function EventsGrid({
                   }`}
                 >
                   {festival.occurrence.status === "ongoing"
-                    ? "Ongoing"
+                    ? t("events.ongoing")
                     : festival.occurrence.daysUntil === 1
-                      ? "Tomorrow"
-                      : `In ${festival.occurrence.daysUntil}d`}
+                      ? t("events.tomorrow")
+                      : `${t("events.inDaysPrefix")}${festival.occurrence.daysUntil}d`}
                 </span>
               </div>
               <p className="mt-1 text-[10px] text-muted">
@@ -88,7 +100,7 @@ export default function EventsGrid({
 
         {visible.length === 0 && (
           <p className="py-4 text-center text-xs text-muted">
-            No {category.toLowerCase()} events found.
+            {t("events.noneFound")}
           </p>
         )}
       </ul>

@@ -1,5 +1,6 @@
 import { Flame, ExternalLink } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
+import T from "@/components/i18n/T";
 import { getTrendingTopics, type TrendingTopic } from "@/lib/services/trending";
 
 export default async function TrendingWidget() {
@@ -8,14 +9,14 @@ export default async function TrendingWidget() {
   return (
     <WidgetFrame
       icon={Flame}
-      label="Trending Now"
+      labelKey="widget.trendingNow"
       accent="sakura"
       viewAll
       viewAllHref="/trending"
     >
       {!topics ? (
         <p className="text-xs text-muted">
-          Trending topics are temporarily unavailable.
+          <T k="widget.trendingUnavailable" />
         </p>
       ) : (
         <ol className="flex flex-col">
@@ -44,7 +45,7 @@ export default async function TrendingWidget() {
         </ol>
       )}
       <p className="mt-1 text-[10px] text-muted">
-        Most-viewed on Japanese Wikipedia, past 24h
+        <T k="widget.trendingSubtitle" />
       </p>
     </WidgetFrame>
   );
