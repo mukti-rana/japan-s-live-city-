@@ -119,6 +119,8 @@ const en = {
   "weather.dailyTitle": "6-Day Forecast",
   "weather.updated": "Updated",
   "weather.unavailable": "Live weather unavailable",
+  "weather.myLocation": "My Location",
+  "weather.locationUnavailable": "Location unavailable — showing Tokyo",
 } as const;
 
 export default en;

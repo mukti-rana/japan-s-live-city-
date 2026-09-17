@@ -121,6 +121,8 @@ const zh: Record<TranslationKey, string> = {
   "weather.dailyTitle": "6天预报",
   "weather.updated": "更新于",
   "weather.unavailable": "实时天气暂不可用",
+  "weather.myLocation": "我的位置",
+  "weather.locationUnavailable": "无法获取位置 — 显示东京天气",
 };
 
 export default zh;

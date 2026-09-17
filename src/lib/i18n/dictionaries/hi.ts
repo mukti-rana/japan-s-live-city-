@@ -121,6 +121,8 @@ const hi: Record<TranslationKey, string> = {
   "weather.dailyTitle": "6-दिवसीय पूर्वानुमान",
   "weather.updated": "अपडेट किया गया",
   "weather.unavailable": "लाइव मौसम अभी उपलब्ध नहीं है",
+  "weather.myLocation": "मेरा स्थान",
+  "weather.locationUnavailable": "स्थान उपलब्ध नहीं — टोक्यो दिखाया जा रहा है",
 };
 
 export default hi;

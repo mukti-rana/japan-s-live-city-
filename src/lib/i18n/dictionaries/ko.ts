@@ -121,6 +121,8 @@ const ko: Record<TranslationKey, string> = {
   "weather.dailyTitle": "6일 예보",
   "weather.updated": "업데이트",
   "weather.unavailable": "실시간 날씨 정보를 사용할 수 없습니다",
+  "weather.myLocation": "내 위치",
+  "weather.locationUnavailable": "위치를 사용할 수 없음 — 도쿄 표시 중",
 };
 
 export default ko;

@@ -121,6 +121,8 @@ const ja: Record<TranslationKey, string> = {
   "weather.dailyTitle": "6日間の予報",
   "weather.updated": "更新",
   "weather.unavailable": "現在、ライブ天気情報は利用できません",
+  "weather.myLocation": "現在地",
+  "weather.locationUnavailable": "位置情報を取得できません — 東京を表示中",
 };
 
 export default ja;

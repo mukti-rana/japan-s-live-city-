@@ -121,6 +121,8 @@ const ne: Record<TranslationKey, string> = {
   "weather.dailyTitle": "६ दिनको पूर्वानुमान",
   "weather.updated": "अपडेट भयो",
   "weather.unavailable": "लाइभ मौसम अहिले उपलब्ध छैन",
+  "weather.myLocation": "मेरो स्थान",
+  "weather.locationUnavailable": "स्थान उपलब्ध छैन — टोकियो देखाइँदै",
 };
 
 export default ne;
