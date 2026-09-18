@@ -30,6 +30,13 @@ const ko: Record<TranslationKey, string> = {
   "ai.attachImageTooltip": "이미지 첨부",
   "ai.notConfigured": "LIVE CITY AI가 아직 설정되지 않았습니다.",
   "ai.genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
+  "ai.homeGreetingTitle": "LIVE CITY AI",
+  "ai.homeGreeting": "안녕하세요! 저는 당신의 LIVE CITY AI입니다. 전철, 여행, 이벤트, 장소, 날씨, 언어 등 일본에 대해 무엇이든 물어보세요.",
+  "ai.poweredByClaude": "Claude 기반",
+  "ai.suggestedBestPlaces": "근처 가볼 만한 곳",
+  "ai.suggestedTrainDelays": "전철 지연이 있나요?",
+  "ai.suggestedHappening": "오늘 일본에서 일어나는 일",
+  "ai.suggestedRestaurants": "근처 맛집 찾기",
 
   "quickaccess.title": "빠른 액세스",
   "quickaccess.trainRoutes": "전철 노선",
@@ -118,11 +125,14 @@ const ko: Record<TranslationKey, string> = {
 
   "weather.today": "오늘",
   "weather.hourlyTitle": "시간별 예보",
-  "weather.dailyTitle": "6일 예보",
+  "weather.dailyTitle": "7일 예보",
   "weather.updated": "업데이트",
   "weather.unavailable": "실시간 날씨 정보를 사용할 수 없습니다",
   "weather.myLocation": "내 위치",
   "weather.locationUnavailable": "위치를 사용할 수 없음 — 도쿄 표시 중",
+  "weather.liveWeatherTitle": "실시간 날씨",
+  "weather.rainChance": "강수 확률",
+  "weather.uvIndex": "자외선 지수",
 };
 
 export default ko;

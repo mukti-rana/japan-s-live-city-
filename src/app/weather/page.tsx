@@ -12,6 +12,7 @@ import T from "@/components/i18n/T";
 import { CITIES, getCity } from "@/lib/data/cities";
 import { getWeather, type WeatherSnapshot } from "@/lib/services/weather";
 import { isNightNow } from "@/lib/weather/time";
+import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
 export const metadata: Metadata = {
   title: "Weather — Live City Japan",
@@ -37,7 +38,8 @@ export default async function WeatherPage({ searchParams }: PageProps<"/weather"
   const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
 
   return (
-    <div className="flex flex-col gap-5">
+    <LiveLocationProvider>
+      <div className="flex flex-col gap-5">
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
@@ -202,6 +204,7 @@ export default async function WeatherPage({ searchParams }: PageProps<"/weather"
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </LiveLocationProvider>
   );
 }

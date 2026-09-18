@@ -30,6 +30,13 @@ const ja: Record<TranslationKey, string> = {
   "ai.attachImageTooltip": "画像を添付",
   "ai.notConfigured": "LIVE CITY AIはまだ設定されていません。",
   "ai.genericError": "問題が発生しました。もう一度お試しください。",
+  "ai.homeGreetingTitle": "LIVE CITY AI",
+  "ai.homeGreeting": "こんにちは！LIVE CITY AIです。電車、旅行、イベント、観光地、天気、言語など、日本について何でも聞いてください。",
+  "ai.poweredByClaude": "Claude搭載",
+  "ai.suggestedBestPlaces": "近くのおすすめスポット",
+  "ai.suggestedTrainDelays": "電車の遅延はありますか？",
+  "ai.suggestedHappening": "今日の日本で起きていること",
+  "ai.suggestedRestaurants": "近くのレストランを探す",
 
   "quickaccess.title": "クイックアクセス",
   "quickaccess.trainRoutes": "電車ルート",
@@ -118,11 +125,14 @@ const ja: Record<TranslationKey, string> = {
 
   "weather.today": "今日",
   "weather.hourlyTitle": "時間ごとの予報",
-  "weather.dailyTitle": "6日間の予報",
+  "weather.dailyTitle": "7日間の予報",
   "weather.updated": "更新",
   "weather.unavailable": "現在、ライブ天気情報は利用できません",
   "weather.myLocation": "現在地",
   "weather.locationUnavailable": "位置情報を取得できません — 東京を表示中",
+  "weather.liveWeatherTitle": "ライブ天気",
+  "weather.rainChance": "降水確率",
+  "weather.uvIndex": "UV指数",
 };
 
 export default ja;

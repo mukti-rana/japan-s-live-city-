@@ -30,6 +30,13 @@ const zh: Record<TranslationKey, string> = {
   "ai.attachImageTooltip": "添加图片",
   "ai.notConfigured": "LIVE CITY AI 尚未配置。",
   "ai.genericError": "出了点问题，请重试。",
+  "ai.homeGreetingTitle": "LIVE CITY AI",
+  "ai.homeGreeting": "你好！我是你的 LIVE CITY AI。关于日本的任何问题都可以问我——电车、旅行、活动、景点、天气、语言等等。",
+  "ai.poweredByClaude": "由 Claude 驱动",
+  "ai.suggestedBestPlaces": "附近最值得去的地方",
+  "ai.suggestedTrainDelays": "有电车延误吗？",
+  "ai.suggestedHappening": "今天日本发生了什么？",
+  "ai.suggestedRestaurants": "查找附近的餐厅",
 
   "quickaccess.title": "快捷入口",
   "quickaccess.trainRoutes": "电车路线",
@@ -118,11 +125,14 @@ const zh: Record<TranslationKey, string> = {
 
   "weather.today": "今天",
   "weather.hourlyTitle": "逐小时预报",
-  "weather.dailyTitle": "6天预报",
+  "weather.dailyTitle": "7天预报",
   "weather.updated": "更新于",
   "weather.unavailable": "实时天气暂不可用",
   "weather.myLocation": "我的位置",
   "weather.locationUnavailable": "无法获取位置 — 显示东京天气",
+  "weather.liveWeatherTitle": "实时天气",
+  "weather.rainChance": "降雨概率",
+  "weather.uvIndex": "紫外线指数",
 };
 
 export default zh;

@@ -13,6 +13,8 @@
   --azure: #4da3ff;
   --mint: #4ade80;
   --panel: #0e1324;
+  --neon-cyan: #22d3ee;
+  --neon-purple: #a855f7;
 }
 
 @theme inline {
@@ -28,6 +30,8 @@
   --color-azure: var(--azure);
   --color-mint: var(--mint);
   --color-panel: var(--panel);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-purple: var(--neon-purple);
   --font-sans: var(--font-space-grotesk);
   --font-jp: var(--font-jp);
 }

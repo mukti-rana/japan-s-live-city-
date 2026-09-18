@@ -28,6 +28,13 @@ const en = {
   "ai.attachImageTooltip": "Attach an image",
   "ai.notConfigured": "LIVE CITY AI isn't configured yet.",
   "ai.genericError": "Something went wrong. Please try again.",
+  "ai.homeGreetingTitle": "LIVE CITY AI",
+  "ai.homeGreeting": "Hi there! I'm your LIVE CITY AI. Ask me anything about Japan — trains, travel, events, places, weather, language, and more.",
+  "ai.poweredByClaude": "Powered by Claude",
+  "ai.suggestedBestPlaces": "Best places to visit near me",
+  "ai.suggestedTrainDelays": "Are there any train delays?",
+  "ai.suggestedHappening": "What's happening in Japan today?",
+  "ai.suggestedRestaurants": "Find restaurants near me",
 
   "quickaccess.title": "Quick Access",
   "quickaccess.trainRoutes": "Train Routes",
@@ -116,11 +123,14 @@ const en = {
 
   "weather.today": "Today",
   "weather.hourlyTitle": "Hourly Forecast",
-  "weather.dailyTitle": "6-Day Forecast",
+  "weather.dailyTitle": "7-Day Forecast",
   "weather.updated": "Updated",
   "weather.unavailable": "Live weather unavailable",
   "weather.myLocation": "My Location",
   "weather.locationUnavailable": "Location unavailable — showing Tokyo",
+  "weather.liveWeatherTitle": "Live Weather",
+  "weather.rainChance": "Rain Chance",
+  "weather.uvIndex": "UV Index",
 } as const;
 
 export default en;

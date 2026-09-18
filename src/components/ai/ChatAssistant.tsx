@@ -14,7 +14,13 @@ function newId(): string {
   return Math.random().toString(36).slice(2);
 }
 
-export default function ChatAssistant({ configured }: { configured: boolean }) {
+export default function ChatAssistant({
+  configured,
+  initialQuery,
+}: {
+  configured: boolean;
+  initialQuery?: string;
+}) {
   const { language: siteLanguage, ready: siteLanguageReady } = useLanguage();
   const [messages, setMessages] = useState<UIMessage[]>([]);
   const [input, setInput] = useState("");
@@ -31,6 +37,16 @@ export default function ChatAssistant({ configured }: { configured: boolean }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [siteLanguageReady]);
+
+  // Auto-send a prefilled question from the homepage's AI card (?q=... on
+  // /ai-assistant) exactly once on mount — lets that card's "ask" actually
+  // do something instead of just linking to an empty chat.
+  useEffect(() => {
+    if (configured && initialQuery?.trim()) {
+      handleSubmit(initialQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [image, setImage] = useState<AttachedImage | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -53,12 +69,12 @@ export default function ChatAssistant({ configured }: { configured: boolean }) {
     reader.readAsDataURL(file);
   }
 
-  async function handleSubmit() {
-    if (!configured || !input.trim() || loading) return;
+  async function handleSubmit(textOverride?: string) {
+    const userText = (textOverride ?? input).trim();
+    if (!configured || !userText || loading) return;
 
     setFetchError(null);
     const outgoingHistory = messages.map((m) => ({ role: m.role, content: m.content }));
-    const userText = input.trim();
     const attachedImage = image;
 
     setMessages((prev) => [

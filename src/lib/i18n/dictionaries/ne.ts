@@ -30,6 +30,13 @@ const ne: Record<TranslationKey, string> = {
   "ai.attachImageTooltip": "तस्बिर संलग्न गर्नुहोस्",
   "ai.notConfigured": "LIVE CITY AI अझै कन्फिगर गरिएको छैन।",
   "ai.genericError": "केही गडबड भयो। फेरि प्रयास गर्नुहोस्।",
+  "ai.homeGreetingTitle": "LIVE CITY AI",
+  "ai.homeGreeting": "नमस्ते! म तपाईंको LIVE CITY AI हुँ। जापानको बारेमा जे पनि सोध्नुहोस् — रेल, यात्रा, कार्यक्रम, ठाउँहरू, मौसम, भाषा, र थप धेरै।",
+  "ai.poweredByClaude": "Claude द्वारा संचालित",
+  "ai.suggestedBestPlaces": "नजिकैका उत्कृष्ट ठाउँहरू",
+  "ai.suggestedTrainDelays": "कुनै रेल ढिलाइ छ?",
+  "ai.suggestedHappening": "आज जापानमा के भइरहेको छ?",
+  "ai.suggestedRestaurants": "नजिकैका रेस्टुरेन्ट खोज्नुहोस्",
 
   "quickaccess.title": "द्रुत पहुँच",
   "quickaccess.trainRoutes": "रेल मार्गहरू",
@@ -118,11 +125,14 @@ const ne: Record<TranslationKey, string> = {
 
   "weather.today": "आज",
   "weather.hourlyTitle": "घण्टागत पूर्वानुमान",
-  "weather.dailyTitle": "६ दिनको पूर्वानुमान",
+  "weather.dailyTitle": "७ दिनको पूर्वानुमान",
   "weather.updated": "अपडेट भयो",
   "weather.unavailable": "लाइभ मौसम अहिले उपलब्ध छैन",
   "weather.myLocation": "मेरो स्थान",
   "weather.locationUnavailable": "स्थान उपलब्ध छैन — टोकियो देखाइँदै",
+  "weather.liveWeatherTitle": "लाइभ मौसम",
+  "weather.rainChance": "वर्षाको सम्भावना",
+  "weather.uvIndex": "UV सूचकांक",
 };
 
 export default ne;

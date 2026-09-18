@@ -77,6 +77,7 @@ export interface WeatherSnapshot {
   todayHigh: number;
   todayLow: number;
   todayPrecipProbability: number;
+  todayUvIndex: number;
   updatedAt: string;
   forecast: ForecastDay[];
   hourly: HourlyPoint[];
@@ -85,7 +86,7 @@ export interface WeatherSnapshot {
 const WEEKDAY_FORMAT = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Asia/Tokyo" });
 
 export async function getWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&forecast_days=7&timezone=Asia%2FTokyo`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,uv_index_max&forecast_days=7&timezone=Asia%2FTokyo`;
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) {
@@ -115,15 +116,16 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
       temperature_2m_min: number[];
       weather_code: number[];
       precipitation_probability_max: number[];
+      uv_index_max: number[];
     };
   };
 
   const time = (iso: string) => iso.slice(11, 16);
 
   // index 0 is today (already shown as the current snapshot above) — the
-  // forecast strip covers the next 5 real days from the same response,
-  // no extra request needed.
-  const forecast: ForecastDay[] = data.daily.time.slice(1, 6).map((dateStr, i) => {
+  // forecast strip covers the next 6 real days from the same response
+  // (today + 6 = a true 7-day forecast), no extra request needed.
+  const forecast: ForecastDay[] = data.daily.time.slice(1, 7).map((dateStr, i) => {
     const idx = i + 1;
     const code = data.daily.weather_code[idx];
     return {
@@ -165,6 +167,7 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
     todayHigh: Math.round(data.daily.temperature_2m_max[0]),
     todayLow: Math.round(data.daily.temperature_2m_min[0]),
     todayPrecipProbability: data.daily.precipitation_probability_max[0] ?? 0,
+    todayUvIndex: Math.round(data.daily.uv_index_max[0] ?? 0),
     updatedAt: data.current.time,
     forecast,
     hourly,

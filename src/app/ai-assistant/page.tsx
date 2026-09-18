@@ -8,8 +8,10 @@ export const metadata: Metadata = {
     "A live window into Japan — ask about weather, trains, festivals, places, news, or plan a trip, with real sources.",
 };
 
-export default function AiAssistantPage() {
+export default async function AiAssistantPage({ searchParams }: PageProps<"/ai-assistant">) {
   const configured = Boolean(process.env.ANTHROPIC_API_KEY);
+  const { q } = await searchParams;
+  const initialQuery = Array.isArray(q) ? q[0] : q;
 
   return (
     <div className="flex flex-col gap-5">
@@ -27,7 +29,7 @@ export default function AiAssistantPage() {
       </Reveal>
 
       <Reveal delay={0.08}>
-        <ChatAssistant configured={configured} />
+        <ChatAssistant configured={configured} initialQuery={initialQuery} />
       </Reveal>
     </div>
   );
