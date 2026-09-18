@@ -37,6 +37,7 @@ const ko: Record<TranslationKey, string> = {
   "ai.suggestedTrainDelays": "전철 지연이 있나요?",
   "ai.suggestedHappening": "오늘 일본에서 일어나는 일",
   "ai.suggestedRestaurants": "근처 맛집 찾기",
+  "ai.conciergeLabel": "AI 컨시어지",
 
   "quickaccess.title": "빠른 액세스",
   "quickaccess.trainRoutes": "전철 노선",
@@ -88,6 +89,9 @@ const ko: Record<TranslationKey, string> = {
   "hero.wind": "바람",
   "hero.feelsLike": "체감 온도",
   "hero.alwaysAlive": "일본은 언제나 살아 숨쉽니다",
+  "hero.chooseCity": "도시를 선택하세요",
+  "hero.changeCity": "도시 변경",
+  "hero.selected": "선택됨",
 
   "widget.viewAll": "전체 보기",
   "widget.live": "실시간",
@@ -133,6 +137,12 @@ const ko: Record<TranslationKey, string> = {
   "weather.liveWeatherTitle": "실시간 날씨",
   "weather.rainChance": "강수 확률",
   "weather.uvIndex": "자외선 지수",
+
+  "citycam.title": "라이브 시티 캠",
+  "citycam.demoLabel": "데모 카메라",
+
+  "sidebar.collapse": "사이드바 접기",
+  "sidebar.expand": "사이드바 펼치기",
 };
 
 export default ko;

@@ -35,6 +35,7 @@ const en = {
   "ai.suggestedTrainDelays": "Are there any train delays?",
   "ai.suggestedHappening": "What's happening in Japan today?",
   "ai.suggestedRestaurants": "Find restaurants near me",
+  "ai.conciergeLabel": "AI Concierge",
 
   "quickaccess.title": "Quick Access",
   "quickaccess.trainRoutes": "Train Routes",
@@ -86,6 +87,9 @@ const en = {
   "hero.wind": "Wind",
   "hero.feelsLike": "Feels like",
   "hero.alwaysAlive": "Japan is always alive",
+  "hero.chooseCity": "Choose your city",
+  "hero.changeCity": "Change city",
+  "hero.selected": "Selected",
 
   "widget.viewAll": "View all",
   "widget.live": "Live",
@@ -131,6 +135,12 @@ const en = {
   "weather.liveWeatherTitle": "Live Weather",
   "weather.rainChance": "Rain Chance",
   "weather.uvIndex": "UV Index",
+
+  "citycam.title": "Live City Cam",
+  "citycam.demoLabel": "Demo Camera",
+
+  "sidebar.collapse": "Collapse sidebar",
+  "sidebar.expand": "Expand sidebar",
 } as const;
 
 export default en;

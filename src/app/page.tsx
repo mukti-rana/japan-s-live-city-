@@ -2,6 +2,7 @@ import HeroCard from "@/components/home/HeroCard";
 import AlwaysAliveCard from "@/components/home/AlwaysAliveCard";
 import AIAssistantCard from "@/components/home/AIAssistantCard";
 import LiveWeatherCard from "@/components/home/LiveWeatherCard";
+import LiveCityCamCard from "@/components/home/LiveCityCamCard";
 import Reveal from "@/components/ui/Reveal";
 import JapanMapWidget from "@/components/home/widgets/JapanMapWidget";
 import TrainListWidget from "@/components/home/widgets/TrainListWidget";
@@ -14,10 +15,10 @@ import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
 const COLUMNS = [
-  [JapanMapWidget, PopularPlacesWidget],
-  [TrainListWidget, TrendingWidget],
-  [NewsWidget, WeatherSunWidget],
-  [EventsListWidget, QuickAccessWidget],
+  [TrainListWidget, PopularPlacesWidget],
+  [NewsWidget, TrendingWidget],
+  [EventsListWidget, WeatherSunWidget],
+  [QuickAccessWidget],
 ];
 
 export default function Home() {
@@ -42,13 +43,22 @@ export default function Home() {
           </Reveal>
         </div>
 
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+          <Reveal delay={0.16}>
+            <JapanMapWidget />
+          </Reveal>
+          <Reveal delay={0.18}>
+            <LiveCityCamCard />
+          </Reveal>
+        </div>
+
         <div className="grid grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-4">
           {COLUMNS.map((column, columnIndex) => (
             <div key={columnIndex} className="flex flex-col gap-3">
               {column.map((WidgetComponent, rowIndex) => (
                 <Reveal
                   key={WidgetComponent.name}
-                  delay={0.2 + columnIndex * 0.06 + rowIndex * 0.1}
+                  delay={0.22 + columnIndex * 0.06 + rowIndex * 0.1}
                 >
                   <WidgetComponent />
                 </Reveal>

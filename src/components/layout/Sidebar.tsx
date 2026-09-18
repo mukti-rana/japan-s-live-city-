@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -14,12 +14,15 @@ import {
   Settings,
   Menu,
   X,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
+const SIDEBAR_COLLAPSED_KEY = "livecity:sidebarCollapsed";
 
 const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[] = [
   { labelKey: "nav.home", href: "/", icon: Home },
@@ -35,8 +38,35 @@ const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[]
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+
+  // SSR-safe default (expanded) corrected from localStorage post-mount —
+  // same hydration-safe pattern as LanguageContext's stored preference.
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+      if (stored === "true") {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCollapsed(true);
+      }
+    } catch {
+      // localStorage unavailable — keep default.
+    }
+  }, []);
+
+  function toggleCollapsed() {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
+      } catch {
+        // Ignore write failures — the in-memory state still updates.
+      }
+      return next;
+    });
+  }
 
   return (
     <>
@@ -59,9 +89,9 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 lg:sticky lg:top-16 lg:z-0 lg:h-[calc(100vh-4rem)] lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-[transform,width] duration-300 lg:sticky lg:top-16 lg:z-0 lg:h-[calc(100vh-4rem)] lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } ${collapsed ? "lg:w-[72px]" : "lg:w-60"}`}
       >
         <button
           type="button"
@@ -83,6 +113,7 @@ export default function Sidebar() {
               <a
                 key={labelKey}
                 href={href}
+                title={collapsed ? t(labelKey) : undefined}
                 className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
                   active
                     ? "bg-azure/10 text-foreground"
@@ -90,7 +121,7 @@ export default function Sidebar() {
                 }`}
               >
                 <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-lg ${
+                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
                     active
                       ? "bg-sakura/20 text-sakura"
                       : "text-muted group-hover:text-azure"
@@ -98,13 +129,24 @@ export default function Sidebar() {
                 >
                   <Icon size={16} />
                 </span>
-                {t(labelKey)}
+                <span className={`truncate ${collapsed ? "lg:hidden" : ""}`}>{t(labelKey)}</span>
               </a>
             );
           })}
         </nav>
 
-        <div className="relative h-44 overflow-hidden">
+        <button
+          type="button"
+          onClick={toggleCollapsed}
+          aria-label={t(collapsed ? "sidebar.expand" : "sidebar.collapse")}
+          title={t(collapsed ? "sidebar.expand" : "sidebar.collapse")}
+          className="mx-3 mb-2 hidden items-center justify-center gap-2 rounded-xl border border-glass-border px-3 py-2 text-xs font-medium text-muted transition-colors hover:bg-glass-bg hover:text-foreground lg:flex"
+        >
+          {collapsed ? <ChevronsRight size={15} /> : <ChevronsLeft size={15} />}
+          {!collapsed && t("sidebar.collapse")}
+        </button>
+
+        <div className={`relative h-44 overflow-hidden ${collapsed ? "lg:hidden" : ""}`}>
           <div className="absolute inset-0 bg-gradient-to-t from-sakura/25 via-[#1a1330] to-transparent" />
           <svg
             viewBox="0 0 240 180"

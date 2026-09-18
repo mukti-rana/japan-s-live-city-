@@ -2,7 +2,6 @@
 
 import Logo from "@/components/ui/Logo";
 import FooterClock from "@/components/layout/FooterClock";
-import { mockCity } from "@/lib/mock/dashboard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function Footer() {
@@ -28,7 +27,7 @@ export default function Footer() {
         <span className="rounded-full border border-gold/30 bg-gold/10 px-2 py-0.5 font-medium text-gold">
           {t("footer.demoData")}
         </span>
-        <FooterClock timeZone={mockCity.timeZone} />
+        <FooterClock timeZone="Asia/Tokyo" />
       </div>
     </footer>
   );

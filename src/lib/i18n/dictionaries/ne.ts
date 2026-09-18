@@ -37,6 +37,7 @@ const ne: Record<TranslationKey, string> = {
   "ai.suggestedTrainDelays": "कुनै रेल ढिलाइ छ?",
   "ai.suggestedHappening": "आज जापानमा के भइरहेको छ?",
   "ai.suggestedRestaurants": "नजिकैका रेस्टुरेन्ट खोज्नुहोस्",
+  "ai.conciergeLabel": "AI कन्सिअर्ज",
 
   "quickaccess.title": "द्रुत पहुँच",
   "quickaccess.trainRoutes": "रेल मार्गहरू",
@@ -88,6 +89,9 @@ const ne: Record<TranslationKey, string> = {
   "hero.wind": "हावा",
   "hero.feelsLike": "महसुस हुने तापक्रम",
   "hero.alwaysAlive": "जापान सधैं जीवन्त छ",
+  "hero.chooseCity": "आफ्नो शहर छान्नुहोस्",
+  "hero.changeCity": "शहर परिवर्तन गर्नुहोस्",
+  "hero.selected": "चयन गरिएको",
 
   "widget.viewAll": "सबै हेर्नुहोस्",
   "widget.live": "लाइभ",
@@ -133,6 +137,12 @@ const ne: Record<TranslationKey, string> = {
   "weather.liveWeatherTitle": "लाइभ मौसम",
   "weather.rainChance": "वर्षाको सम्भावना",
   "weather.uvIndex": "UV सूचकांक",
+
+  "citycam.title": "लाइभ सिटी क्याम",
+  "citycam.demoLabel": "डेमो क्यामेरा",
+
+  "sidebar.collapse": "साइडबार सुम्स्नुहोस्",
+  "sidebar.expand": "साइडबार फैलाउनुहोस्",
 };
 
 export default ne;

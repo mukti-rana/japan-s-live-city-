@@ -37,6 +37,7 @@ const hi: Record<TranslationKey, string> = {
   "ai.suggestedTrainDelays": "क्या कोई ट्रेन देरी है?",
   "ai.suggestedHappening": "आज जापान में क्या हो रहा है?",
   "ai.suggestedRestaurants": "मेरे पास के रेस्तरां खोजें",
+  "ai.conciergeLabel": "AI कंसीयज",
 
   "quickaccess.title": "त्वरित पहुंच",
   "quickaccess.trainRoutes": "ट्रेन मार्ग",
@@ -88,6 +89,9 @@ const hi: Record<TranslationKey, string> = {
   "hero.wind": "हवा",
   "hero.feelsLike": "महसूस हो रहा तापमान",
   "hero.alwaysAlive": "जापान हमेशा जीवंत है",
+  "hero.chooseCity": "अपना शहर चुनें",
+  "hero.changeCity": "शहर बदलें",
+  "hero.selected": "चयनित",
 
   "widget.viewAll": "सभी देखें",
   "widget.live": "लाइव",
@@ -133,6 +137,12 @@ const hi: Record<TranslationKey, string> = {
   "weather.liveWeatherTitle": "लाइव मौसम",
   "weather.rainChance": "वर्षा की संभावना",
   "weather.uvIndex": "यूवी इंडेक्स",
+
+  "citycam.title": "लाइव सिटी कैम",
+  "citycam.demoLabel": "डेमो कैमरा",
+
+  "sidebar.collapse": "साइडबार संक्षिप्त करें",
+  "sidebar.expand": "साइडबार विस्तृत करें",
 };
 
 export default hi;

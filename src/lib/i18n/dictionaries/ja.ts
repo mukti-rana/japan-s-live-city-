@@ -37,6 +37,7 @@ const ja: Record<TranslationKey, string> = {
   "ai.suggestedTrainDelays": "電車の遅延はありますか？",
   "ai.suggestedHappening": "今日の日本で起きていること",
   "ai.suggestedRestaurants": "近くのレストランを探す",
+  "ai.conciergeLabel": "AIコンシェルジュ",
 
   "quickaccess.title": "クイックアクセス",
   "quickaccess.trainRoutes": "電車ルート",
@@ -88,6 +89,9 @@ const ja: Record<TranslationKey, string> = {
   "hero.wind": "風",
   "hero.feelsLike": "体感温度",
   "hero.alwaysAlive": "日本は、いつも生きている",
+  "hero.chooseCity": "都市を選択",
+  "hero.changeCity": "都市を変更",
+  "hero.selected": "選択中",
 
   "widget.viewAll": "すべて見る",
   "widget.live": "ライブ",
@@ -133,6 +137,12 @@ const ja: Record<TranslationKey, string> = {
   "weather.liveWeatherTitle": "ライブ天気",
   "weather.rainChance": "降水確率",
   "weather.uvIndex": "UV指数",
+
+  "citycam.title": "ライブシティカム",
+  "citycam.demoLabel": "デモカメラ",
+
+  "sidebar.collapse": "サイドバーを折りたたむ",
+  "sidebar.expand": "サイドバーを展開",
 };
 
 export default ja;

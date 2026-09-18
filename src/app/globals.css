@@ -15,6 +15,13 @@
   --panel: #0e1324;
   --neon-cyan: #22d3ee;
   --neon-purple: #a855f7;
+
+  /* Time-of-day ambient accents — updated at runtime by useAmbientLighting()
+     based on local JST hour. Defaults here match the "night" phase so
+     server-rendered/first-paint markup never flashes an incorrect tint. */
+  --ambient-primary: #4da3ff;
+  --ambient-secondary: #a855f7;
+  --ambient-glow: rgba(77, 163, 255, 0.35);
 }
 
 @theme inline {

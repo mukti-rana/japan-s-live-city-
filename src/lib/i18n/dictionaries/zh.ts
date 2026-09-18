@@ -37,6 +37,7 @@ const zh: Record<TranslationKey, string> = {
   "ai.suggestedTrainDelays": "有电车延误吗？",
   "ai.suggestedHappening": "今天日本发生了什么？",
   "ai.suggestedRestaurants": "查找附近的餐厅",
+  "ai.conciergeLabel": "AI 礼宾",
 
   "quickaccess.title": "快捷入口",
   "quickaccess.trainRoutes": "电车路线",
@@ -88,6 +89,9 @@ const zh: Record<TranslationKey, string> = {
   "hero.wind": "风速",
   "hero.feelsLike": "体感温度",
   "hero.alwaysAlive": "日本永远充满活力",
+  "hero.chooseCity": "选择您的城市",
+  "hero.changeCity": "更改城市",
+  "hero.selected": "已选择",
 
   "widget.viewAll": "查看全部",
   "widget.live": "实时",
@@ -133,6 +137,12 @@ const zh: Record<TranslationKey, string> = {
   "weather.liveWeatherTitle": "实时天气",
   "weather.rainChance": "降雨概率",
   "weather.uvIndex": "紫外线指数",
+
+  "citycam.title": "实时城市摄像头",
+  "citycam.demoLabel": "演示摄像头",
+
+  "sidebar.collapse": "收起侧边栏",
+  "sidebar.expand": "展开侧边栏",
 };
 
 export default zh;

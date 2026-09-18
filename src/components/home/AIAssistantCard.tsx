@@ -48,6 +48,9 @@ export default function AIAssistantCard() {
             <p className="text-sm font-semibold text-foreground">
               <T k="ai.homeGreetingTitle" />
             </p>
+            <p className="text-[11px] uppercase tracking-wide text-foreground/50">
+              <T k="ai.conciergeLabel" />
+            </p>
             <p className="text-[11px] text-neon-cyan">
               <T k="ai.poweredByClaude" />
             </p>
