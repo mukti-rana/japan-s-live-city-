@@ -44,9 +44,15 @@ export default function HeroCard() {
   const needsPicker = !isLive && !isManual && !isLoadingLocation;
 
   const weather = isLive ? liveWeather : isManual ? manualWeather : null;
+  // The city (not the more granular area) is what drives photo/atmosphere
+  // matching, so "Tsuruhashi" in Osaka still shows Osaka's real skyline.
   const matchedCity = isLive ? (location?.name ? findHeroCity(location.name) : undefined) : (manualCity ?? undefined);
 
-  const cityName = isLive ? (location?.name ?? matchedCity?.name) : manualCity?.name;
+  // Headline prefers the precise, real reverse-geocoded area (e.g.
+  // "Tsuruhashi") when the geocoder returns one more specific than the
+  // city — falling back to the city name otherwise, never a guess.
+  const displayName = isLive ? (location?.area || location?.name || matchedCity?.name) : manualCity?.name;
+  const showCityContext = isLive && Boolean(location?.area);
   const subLabel = isLive && location?.countryName && location.countryName !== "Japan" ? location.countryName : undefined;
 
   const heroImage = matchedCity?.heroImage ?? null;
@@ -105,7 +111,7 @@ export default function HeroCard() {
                 <div className="mt-1 flex items-center gap-1.5">
                   <MapPin size={20} className="text-sakura" />
                   <span className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    {cityName}
+                    {displayName}
                   </span>
                   {isLive && (
                     <span className="flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-medium text-mint">
@@ -120,8 +126,15 @@ export default function HeroCard() {
                     </span>
                   )}
                 </div>
-                {matchedCity?.nameJa && (
-                  <p className="ml-7 font-jp text-sm text-foreground/60">{matchedCity.nameJa}</p>
+                {showCityContext ? (
+                  <p className="ml-7 text-sm text-foreground/60">
+                    {location?.name}
+                    {matchedCity?.nameJa && <span className="font-jp"> · {matchedCity.nameJa}</span>}
+                  </p>
+                ) : (
+                  matchedCity?.nameJa && (
+                    <p className="ml-7 font-jp text-sm text-foreground/60">{matchedCity.nameJa}</p>
+                  )
                 )}
                 {subLabel && <p className="ml-7 text-sm text-foreground/60">{subLabel}</p>}
                 {isManual && (

@@ -5,6 +5,7 @@ import type { WeatherSnapshot } from "@/lib/services/weather";
 
 export interface LiveLocation {
   name: string;
+  area: string | null;
   countryName: string | null;
 }
 
@@ -74,8 +75,14 @@ export function LiveLocationProvider({ children }: { children: ReactNode }) {
         const weatherData = weatherResult.status === "fulfilled" ? weatherResult.value : null;
 
         const name = geo?.city || geo?.locality || geo?.principalSubdivision || null;
+        // BigDataCloud's `locality` is the most granular real place name it
+        // returns (neighborhood/ward/district level) — surfaced separately
+        // from `name` (the broader city) only when it's genuinely more
+        // specific, so callers can show "Tsuruhashi, Osaka" instead of just
+        // "Osaka" when the data supports it, without ever duplicating text.
+        const area = geo?.locality && geo.locality !== name ? geo.locality : null;
 
-        if (name) setLocation({ name, countryName: geo?.countryName ?? null });
+        if (name) setLocation({ name, area, countryName: geo?.countryName ?? null });
         if (weatherData) setWeather(weatherData);
         setStatus(name || weatherData ? "ready" : "error");
       },
