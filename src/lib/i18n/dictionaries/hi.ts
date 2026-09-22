@@ -139,7 +139,6 @@ const hi: Record<TranslationKey, string> = {
   "weather.uvIndex": "यूवी इंडेक्स",
 
   "citycam.title": "लाइव सिटी कैम",
-  "citycam.demoLabel": "डेमो कैमरा",
 
   "sidebar.collapse": "साइडबार संक्षिप्त करें",
   "sidebar.expand": "साइडबार विस्तृत करें",

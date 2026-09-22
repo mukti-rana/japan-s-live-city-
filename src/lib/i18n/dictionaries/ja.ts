@@ -139,7 +139,6 @@ const ja: Record<TranslationKey, string> = {
   "weather.uvIndex": "UV指数",
 
   "citycam.title": "ライブシティカム",
-  "citycam.demoLabel": "デモカメラ",
 
   "sidebar.collapse": "サイドバーを折りたたむ",
   "sidebar.expand": "サイドバーを展開",

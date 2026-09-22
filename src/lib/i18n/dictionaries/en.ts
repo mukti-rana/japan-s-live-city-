@@ -137,7 +137,6 @@ const en = {
   "weather.uvIndex": "UV Index",
 
   "citycam.title": "Live City Cam",
-  "citycam.demoLabel": "Demo Camera",
 
   "sidebar.collapse": "Collapse sidebar",
   "sidebar.expand": "Expand sidebar",

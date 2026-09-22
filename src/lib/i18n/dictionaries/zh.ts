@@ -139,7 +139,6 @@ const zh: Record<TranslationKey, string> = {
   "weather.uvIndex": "紫外线指数",
 
   "citycam.title": "实时城市摄像头",
-  "citycam.demoLabel": "演示摄像头",
 
   "sidebar.collapse": "收起侧边栏",
   "sidebar.expand": "展开侧边栏",

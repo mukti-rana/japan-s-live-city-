@@ -139,7 +139,6 @@ const ne: Record<TranslationKey, string> = {
   "weather.uvIndex": "UV सूचकांक",
 
   "citycam.title": "लाइभ सिटी क्याम",
-  "citycam.demoLabel": "डेमो क्यामेरा",
 
   "sidebar.collapse": "साइडबार सुम्स्नुहोस्",
   "sidebar.expand": "साइडबार फैलाउनुहोस्",

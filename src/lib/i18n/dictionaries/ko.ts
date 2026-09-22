@@ -139,7 +139,6 @@ const ko: Record<TranslationKey, string> = {
   "weather.uvIndex": "자외선 지수",
 
   "citycam.title": "라이브 시티 캠",
-  "citycam.demoLabel": "데모 카메라",
 
   "sidebar.collapse": "사이드바 접기",
   "sidebar.expand": "사이드바 펼치기",
