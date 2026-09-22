@@ -141,6 +141,16 @@ const ne: Record<TranslationKey, string> = {
   "train.minDelay": "मिनेट ढिलाइ",
   "train.demoNote": "डेमो डाटा — वास्तविक स्थिति देख्न लाइभ अपरेटर फिड जोड्नुहोस्",
   "train.delaysReported": "अहिले केही लाइनहरूमा ढिलाइ छ",
+
+  "news.pageTitle": "जापान लाइभ न्युज",
+  "news.pageSubtitle": "जापानभरका समाचारहरू — दिनभर अपडेट हुन्छ।",
+  "news.allJapan": "सम्पूर्ण जापान",
+  "news.uncategorized": "अवर्गीकृत",
+  "news.topStories": "जापानका मुख्य समाचार",
+  "news.latestJapanNews": "जापानका ताजा समाचार",
+  "news.nearYou": "तपाईं नजिकै",
+  "news.nearYouEmpty": "यो शहरसँग सम्बन्धित हालैका समाचार भेटिएन।",
+  "news.explain": "व्याख्या गर्नुहोस्",
 };
 
 export default ne;

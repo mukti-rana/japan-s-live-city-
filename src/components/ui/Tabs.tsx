@@ -7,10 +7,16 @@ export default function Tabs({
   tabs,
   value,
   onChange,
+  getLabel,
 }: {
   tabs: string[];
   value?: string;
   onChange?: (tab: string) => void;
+  // Lets callers key tabs by a stable, locale-independent id while
+  // displaying a translated label — without this, a tab's identity and its
+  // on-screen text are the same string, which breaks selection state
+  // across a language switch for any tab whose label is translated.
+  getLabel?: (tab: string) => string;
 }) {
   const [internalActive, setInternalActive] = useState(tabs[0]);
   const groupId = useId();
@@ -43,7 +49,7 @@ export default function Tabs({
               className="absolute inset-0 rounded-lg bg-azure/20"
             />
           )}
-          <span className="relative">{tab}</span>
+          <span className="relative">{getLabel ? getLabel(tab) : tab}</span>
         </button>
       ))}
     </div>

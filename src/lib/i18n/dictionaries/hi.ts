@@ -141,6 +141,16 @@ const hi: Record<TranslationKey, string> = {
   "train.minDelay": "मिनट की देरी",
   "train.demoNote": "डेमो डेटा — वास्तविक स्थिति के लिए लाइव ऑपरेटर फ़ीड कनेक्ट करें",
   "train.delaysReported": "अभी कुछ लाइनों में देरी है",
+
+  "news.pageTitle": "जापान लाइव न्यूज़",
+  "news.pageSubtitle": "पूरे जापान से समाचार — दिन भर अपडेट होते रहते हैं।",
+  "news.allJapan": "संपूर्ण जापान",
+  "news.uncategorized": "अवर्गीकृत",
+  "news.topStories": "जापान की मुख्य खबरें",
+  "news.latestJapanNews": "जापान की ताज़ा खबरें",
+  "news.nearYou": "आपके आस-पास",
+  "news.nearYouEmpty": "इस शहर से जुड़ी कोई हालिया खबर नहीं मिली।",
+  "news.explain": "समझाएं",
 };
 
 export default hi;

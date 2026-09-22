@@ -141,6 +141,16 @@ const ko: Record<TranslationKey, string> = {
   "train.minDelay": "분 지연",
   "train.demoNote": "데모 데이터 — 실제 상태를 보려면 실시간 운영사 피드를 연결하세요",
   "train.delaysReported": "현재 일부 노선이 지연되고 있습니다",
+
+  "news.pageTitle": "일본 실시간 뉴스",
+  "news.pageSubtitle": "일본 전역의 뉴스 — 하루 종일 업데이트됩니다.",
+  "news.allJapan": "전체 일본",
+  "news.uncategorized": "미분류",
+  "news.topStories": "일본 주요 뉴스",
+  "news.latestJapanNews": "일본 최신 뉴스",
+  "news.nearYou": "내 주변",
+  "news.nearYouEmpty": "이 도시와 관련된 최근 뉴스가 없습니다.",
+  "news.explain": "설명하기",
 };
 
 export default ko;

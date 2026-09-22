@@ -139,6 +139,16 @@ const en = {
   "train.minDelay": "min delay",
   "train.demoNote": "Demo data — connect a live operator feed for real status",
   "train.delaysReported": "Some lines delayed right now",
+
+  "news.pageTitle": "Japan Live News",
+  "news.pageSubtitle": "News from across Japan — updated throughout the day.",
+  "news.allJapan": "All Japan",
+  "news.uncategorized": "Uncategorized",
+  "news.topStories": "Top Stories in Japan",
+  "news.latestJapanNews": "Latest Japan News",
+  "news.nearYou": "Near You",
+  "news.nearYouEmpty": "No recent headlines mention this city.",
+  "news.explain": "Explain",
 } as const;
 
 export default en;

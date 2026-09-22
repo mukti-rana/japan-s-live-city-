@@ -141,6 +141,16 @@ const zh: Record<TranslationKey, string> = {
   "train.minDelay": "分钟延误",
   "train.demoNote": "演示数据 — 连接实时运营方数据源以获取真实状态",
   "train.delaysReported": "目前部分线路有延误",
+
+  "news.pageTitle": "日本实时新闻",
+  "news.pageSubtitle": "来自日本各地的新闻 — 全天持续更新。",
+  "news.allJapan": "全日本",
+  "news.uncategorized": "未分类",
+  "news.topStories": "日本头条新闻",
+  "news.latestJapanNews": "日本最新新闻",
+  "news.nearYou": "您附近",
+  "news.nearYouEmpty": "没有提及该城市的近期新闻。",
+  "news.explain": "解释",
 };
 
 export default zh;

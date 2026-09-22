@@ -141,6 +141,16 @@ const ja: Record<TranslationKey, string> = {
   "train.minDelay": "分遅延",
   "train.demoNote": "デモデータ — 実際の運行状況を表示するにはライブフィードの接続が必要です",
   "train.delaysReported": "一部の路線で遅延が発生しています",
+
+  "news.pageTitle": "日本ライブニュース",
+  "news.pageSubtitle": "日本全国のニュース — 一日を通して更新されます。",
+  "news.allJapan": "全国",
+  "news.uncategorized": "未分類",
+  "news.topStories": "日本のトップニュース",
+  "news.latestJapanNews": "日本の最新ニュース",
+  "news.nearYou": "あなたの近く",
+  "news.nearYouEmpty": "この都市に関する最近のニュースはありません。",
+  "news.explain": "説明する",
 };
 
 export default ja;
