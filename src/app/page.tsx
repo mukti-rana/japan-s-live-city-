@@ -1,6 +1,5 @@
 import HeroCard from "@/components/home/HeroCard";
 import AlwaysAliveCard from "@/components/home/AlwaysAliveCard";
-import AIAssistantCard from "@/components/home/AIAssistantCard";
 import LiveWeatherCard from "@/components/home/LiveWeatherCard";
 import LiveCityCamCard from "@/components/home/LiveCityCamCard";
 import Reveal from "@/components/ui/Reveal";
@@ -34,14 +33,9 @@ export default function Home() {
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.3fr_1fr]">
-          <Reveal delay={0.1}>
-            <AIAssistantCard />
-          </Reveal>
-          <Reveal delay={0.14}>
-            <LiveWeatherCard />
-          </Reveal>
-        </div>
+        <Reveal delay={0.1}>
+          <LiveWeatherCard />
+        </Reveal>
 
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           <Reveal delay={0.16}>

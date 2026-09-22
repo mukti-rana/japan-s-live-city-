@@ -4,9 +4,8 @@ import { useState } from "react";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
-import WeatherIcon from "@/components/ui/WeatherIcon";
-import WeatherScene from "@/components/ui/WeatherScene";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
+import HeroAIBox from "@/components/home/HeroAIBox";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { isNightNow, currentSeasonJST } from "@/lib/weather/time";
@@ -20,17 +19,14 @@ export default function HeroCard() {
   const { status, location, weather: liveWeather } = useLiveLocation();
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
-  const [manualLoading, setManualLoading] = useState(false);
 
   function pickCity(city: HeroCityInfo) {
     setManualCity(city);
     setManualWeather(null);
-    setManualLoading(true);
     fetch(`/api/weather/live?lat=${city.lat}&lon=${city.lon}`)
       .then((r) => (r.ok ? (r.json() as Promise<WeatherSnapshot>) : null))
       .then((data) => setManualWeather(data))
-      .catch(() => setManualWeather(null))
-      .finally(() => setManualLoading(false));
+      .catch(() => setManualWeather(null));
   }
 
   function changeCity() {
@@ -163,60 +159,7 @@ export default function HeroCard() {
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        <div className="relative overflow-hidden rounded-xl border border-glass-border">
-          {weather ? (
-            <>
-              <div className="absolute inset-0">
-                <WeatherScene icon={sceneIcon} isNight={isNight} variant="panel" className="h-full w-full" />
-              </div>
-              <div className="relative z-10 p-4">
-                <p className="text-3xl font-semibold leading-none text-foreground">
-                  {Math.round(weather.tempC)}°C
-                </p>
-                <p className="mt-1 text-sm text-foreground/75">{weather.condition}</p>
-
-                <div className="mt-4 grid grid-cols-3 gap-2 border-t border-glass-border pt-3 text-center">
-                  {[
-                    { label: t("hero.humidity"), value: `${weather.humidity}%` },
-                    { label: t("hero.wind"), value: `${Math.round(weather.windKmh)} km/h` },
-                    { label: t("hero.feelsLike"), value: `${Math.round(weather.feelsLikeC)}°C` },
-                  ].map((stat) => (
-                    <div key={stat.label}>
-                      <p className="text-[10px] text-foreground/60">{stat.label}</p>
-                      <p className="mt-0.5 text-sm font-medium text-foreground">
-                        {stat.value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex h-[132px] items-center justify-center p-4">
-              {manualLoading || isLoadingLocation ? (
-                <div className="h-8 w-24 animate-pulse rounded-lg bg-glass-bg-strong" />
-              ) : (
-                <p className="text-xs text-sakura">{t("weather.unavailable")}</p>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto rounded-xl border border-glass-border bg-glass-bg p-3">
-          {weather ? (
-            weather.forecast.map((day) => (
-              <div key={day.date} className="flex min-w-[52px] flex-1 flex-col items-center gap-1 text-center">
-                <WeatherIcon icon={day.icon} size={16} className="text-gold" />
-                <p className="text-[10px] text-muted">{day.weekday}</p>
-                <p className="text-[11px] font-medium tabular-nums text-foreground">
-                  {day.high}°/{day.low}°
-                </p>
-              </div>
-            ))
-          ) : (
-            <div className="h-[68px] w-full animate-pulse rounded-lg bg-glass-bg-strong" />
-          )}
-        </div>
+        <HeroAIBox />
       </div>
     </div>
   );
