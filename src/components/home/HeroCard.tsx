@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { MapPin } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
@@ -51,24 +52,50 @@ export default function HeroCard() {
   const showCityContext = isLive && Boolean(location?.area);
   const subLabel = isLive && location?.countryName && location.countryName !== "Japan" ? location.countryName : undefined;
 
-  const heroImage = matchedCity?.heroImage ?? null;
+  const heroImages = matchedCity?.heroImages ?? [];
   const atmosphere = matchedCity?.atmosphere ?? DEFAULT_HERO_ATMOSPHERE;
   const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
   const sceneIcon = weather?.icon ?? "clear";
   const season = currentSeasonJST();
 
+  // Cycles through the matched city's real popular-place photos — resets
+  // to the first photo whenever the city itself changes, so switching
+  // cities never shows a stale index into the new city's (shorter or
+  // longer) photo list.
+  const [imageIndex, setImageIndex] = useState(0);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setImageIndex(0);
+  }, [matchedCity?.slug]);
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const id = setInterval(() => {
+      setImageIndex((i) => (i + 1) % heroImages.length);
+    }, 8000);
+    return () => clearInterval(id);
+  }, [heroImages.length, matchedCity?.slug]);
+
   return (
     <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
       <div className="relative min-h-[240px] overflow-hidden rounded-2xl p-5 sm:p-6">
-        {heroImage ? (
-          <Image
-            src={heroImage}
-            alt={`${matchedCity?.name ?? "Japan"} skyline`}
-            fill
-            priority
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="object-cover"
-          />
+        {heroImages.length > 0 ? (
+          heroImages.map((src, i) => (
+            <motion.div
+              key={src}
+              className="absolute inset-0"
+              animate={{ opacity: i === imageIndex ? 1 : 0 }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+            >
+              <Image
+                src={src}
+                alt={`${matchedCity?.name ?? "Japan"} — popular place`}
+                fill
+                priority={i === 0}
+                sizes="(min-width: 1024px) 60vw, 100vw"
+                className="object-cover"
+              />
+            </motion.div>
+          ))
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
         )}

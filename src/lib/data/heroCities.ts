@@ -1,15 +1,16 @@
 // City list for the homepage hero's dynamic background — independent of
 // src/lib/data/cities.ts's CitySlug (which only covers the 3 cities with
 // full /weather, /[city], and train-status support). This list exists
-// purely to give the hero a real photo/atmosphere and real coordinates
+// purely to give the hero real photos/atmosphere and real coordinates
 // (for a real weather fetch) for a wider set of major cities, without
 // expanding those other, more tightly-scoped features.
 //
-// Real hero-quality photography only exists for Tokyo today. Where a
-// usable landmark photo already exists elsewhere in the project
-// (src/lib/data/places.ts), it's reused here. Kobe/Fukuoka/Sendai have no
+// Real photography only exists for some cities today, reusing the same
+// real landmark photos already used elsewhere in the project
+// (src/lib/data/places.ts) — the hero cycles through all of a city's
+// photos rather than showing just one. Kobe/Fukuoka/Sendai have no
 // photography anywhere in the project, so they fall back to a gradient
-// "atmosphere" instead of a photo until real images are added.
+// "atmosphere" instead of photos until real images are added.
 export interface HeroCityInfo {
   slug: string;
   name: string;
@@ -17,7 +18,7 @@ export interface HeroCityInfo {
   region: string;
   lat: number;
   lon: number;
-  heroImage: string | null;
+  heroImages: string[];
   atmosphere: { day: string; night: string };
 }
 
@@ -29,7 +30,12 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kanto",
     lat: 35.6762,
     lon: 139.6503,
-    heroImage: "/images/hero-tokyo.jpg",
+    heroImages: [
+      "/images/hero-tokyo.jpg",
+      "/images/place-shibuya.jpg",
+      "/images/place-skytree.jpg",
+      "/images/place-asakusa.jpg",
+    ],
     atmosphere: { day: "from-azure/40 to-sakura/20", night: "from-[#141033] to-[#0b0e1a]" },
   },
   {
@@ -39,7 +45,11 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kansai",
     lat: 34.6937,
     lon: 135.5023,
-    heroImage: "/images/place-dotonbori-canal.jpg",
+    heroImages: [
+      "/images/place-dotonbori-canal.jpg",
+      "/images/place-osaka-castle.jpg",
+      "/images/place-umeda-sky.jpg",
+    ],
     atmosphere: { day: "from-sakura/40 to-azure/20", night: "from-[#2a1440] to-[#0b0e1a]" },
   },
   {
@@ -49,7 +59,11 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kansai",
     lat: 35.0116,
     lon: 135.7681,
-    heroImage: "/images/place-fushimi-inari.jpg",
+    heroImages: [
+      "/images/place-fushimi-inari.jpg",
+      "/images/place-kiyomizu.jpg",
+      "/images/place-arashiyama.jpg",
+    ],
     atmosphere: { day: "from-gold/40 to-sakura/20", night: "from-[#301a20] to-[#0b0e1a]" },
   },
   {
@@ -59,7 +73,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kansai",
     lat: 34.6851,
     lon: 135.8048,
-    heroImage: "/images/place-nara-park.jpg",
+    heroImages: ["/images/place-nara-park.jpg", "/images/place-todaiji.jpg"],
     atmosphere: { day: "from-gold/35 to-mint/20", night: "from-[#241f10] to-[#0b0e1a]" },
   },
   {
@@ -69,7 +83,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kansai",
     lat: 34.6901,
     lon: 135.1955,
-    heroImage: null,
+    heroImages: [],
     atmosphere: { day: "from-azure/40 to-mint/20", night: "from-[#0f2436] to-[#0b0e1a]" },
   },
   {
@@ -79,7 +93,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Chugoku",
     lat: 34.3853,
     lon: 132.4553,
-    heroImage: "/images/place-itsukushima.jpg",
+    heroImages: ["/images/place-itsukushima.jpg", "/images/place-genbaku-dome.jpg"],
     atmosphere: { day: "from-azure/40 to-sakura/20", night: "from-[#141c33] to-[#0b0e1a]" },
   },
   {
@@ -89,7 +103,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kyushu",
     lat: 33.5904,
     lon: 130.4017,
-    heroImage: null,
+    heroImages: [],
     atmosphere: { day: "from-gold/35 to-azure/25", night: "from-[#231d38] to-[#0b0e1a]" },
   },
   {
@@ -99,7 +113,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Hokkaido",
     lat: 43.0618,
     lon: 141.3545,
-    heroImage: "/images/place-sapporo-clock-tower.jpg",
+    heroImages: ["/images/place-sapporo-clock-tower.jpg", "/images/place-mount-hakodate.jpg"],
     atmosphere: { day: "from-azure/30 to-mint/20", night: "from-[#101f2c] to-[#0b0e1a]" },
   },
   {
@@ -109,7 +123,7 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Tohoku",
     lat: 38.2682,
     lon: 140.8694,
-    heroImage: null,
+    heroImages: [],
     atmosphere: { day: "from-mint/30 to-azure/25", night: "from-[#132a20] to-[#0b0e1a]" },
   },
 ];
