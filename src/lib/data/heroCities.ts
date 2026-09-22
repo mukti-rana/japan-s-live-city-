@@ -11,6 +11,19 @@
 // photos rather than showing just one. Kobe/Fukuoka/Sendai have no
 // photography anywhere in the project, so they fall back to a gradient
 // "atmosphere" instead of photos until real images are added.
+export interface HeroImage {
+  src: string;
+  // CSS object-position, e.g. "center 40%" — most of these source photos
+  // were shot as tall/portrait thumbnails (for a place-grid widget), so
+  // the hero's much wider letterbox only ever shows a narrow horizontal
+  // slice of them. Each position below was picked by actually looking at
+  // the photo and choosing the slice that keeps the recognizable subject
+  // in frame, instead of the default center crop (which, for a portrait
+  // photo, tends to land on whatever's in the middle — e.g. a foreground
+  // tree branch instead of the landmark itself). Omitted = plain center.
+  position?: string;
+}
+
 export interface HeroCityInfo {
   slug: string;
   name: string;
@@ -18,7 +31,7 @@ export interface HeroCityInfo {
   region: string;
   lat: number;
   lon: number;
-  heroImages: string[];
+  heroImages: HeroImage[];
   atmosphere: { day: string; night: string };
 }
 
@@ -31,10 +44,10 @@ export const HERO_CITIES: HeroCityInfo[] = [
     lat: 35.6762,
     lon: 139.6503,
     heroImages: [
-      "/images/hero-tokyo.jpg",
-      "/images/place-shibuya.jpg",
-      "/images/place-skytree.jpg",
-      "/images/place-asakusa.jpg",
+      { src: "/images/hero-tokyo.jpg" },
+      { src: "/images/place-shibuya.jpg" },
+      { src: "/images/place-skytree.jpg", position: "center 22%" },
+      { src: "/images/place-asakusa.jpg" },
     ],
     atmosphere: { day: "from-azure/40 to-sakura/20", night: "from-[#141033] to-[#0b0e1a]" },
   },
@@ -46,9 +59,9 @@ export const HERO_CITIES: HeroCityInfo[] = [
     lat: 34.6937,
     lon: 135.5023,
     heroImages: [
-      "/images/place-dotonbori-canal.jpg",
-      "/images/place-osaka-castle.jpg",
-      "/images/place-umeda-sky.jpg",
+      { src: "/images/place-dotonbori-canal.jpg" },
+      { src: "/images/place-osaka-castle.jpg", position: "center 62%" },
+      { src: "/images/place-umeda-sky.jpg", position: "center 32%" },
     ],
     atmosphere: { day: "from-sakura/40 to-azure/20", night: "from-[#2a1440] to-[#0b0e1a]" },
   },
@@ -60,9 +73,9 @@ export const HERO_CITIES: HeroCityInfo[] = [
     lat: 35.0116,
     lon: 135.7681,
     heroImages: [
-      "/images/place-fushimi-inari.jpg",
-      "/images/place-kiyomizu.jpg",
-      "/images/place-arashiyama.jpg",
+      { src: "/images/place-fushimi-inari.jpg" },
+      { src: "/images/place-kiyomizu.jpg" },
+      { src: "/images/place-arashiyama.jpg" },
     ],
     atmosphere: { day: "from-gold/40 to-sakura/20", night: "from-[#301a20] to-[#0b0e1a]" },
   },
@@ -73,7 +86,10 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Kansai",
     lat: 34.6851,
     lon: 135.8048,
-    heroImages: ["/images/place-nara-park.jpg", "/images/place-todaiji.jpg"],
+    heroImages: [
+      { src: "/images/place-nara-park.jpg", position: "center 62%" },
+      { src: "/images/place-todaiji.jpg" },
+    ],
     atmosphere: { day: "from-gold/35 to-mint/20", night: "from-[#241f10] to-[#0b0e1a]" },
   },
   {
@@ -93,7 +109,10 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Chugoku",
     lat: 34.3853,
     lon: 132.4553,
-    heroImages: ["/images/place-itsukushima.jpg", "/images/place-genbaku-dome.jpg"],
+    heroImages: [
+      { src: "/images/place-itsukushima.jpg", position: "center 38%" },
+      { src: "/images/place-genbaku-dome.jpg" },
+    ],
     atmosphere: { day: "from-azure/40 to-sakura/20", night: "from-[#141c33] to-[#0b0e1a]" },
   },
   {
@@ -113,7 +132,10 @@ export const HERO_CITIES: HeroCityInfo[] = [
     region: "Hokkaido",
     lat: 43.0618,
     lon: 141.3545,
-    heroImages: ["/images/place-sapporo-clock-tower.jpg", "/images/place-mount-hakodate.jpg"],
+    heroImages: [
+      { src: "/images/place-sapporo-clock-tower.jpg", position: "center 60%" },
+      { src: "/images/place-mount-hakodate.jpg" },
+    ],
     atmosphere: { day: "from-azure/30 to-mint/20", night: "from-[#101f2c] to-[#0b0e1a]" },
   },
   {

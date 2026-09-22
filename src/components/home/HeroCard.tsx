@@ -79,20 +79,21 @@ export default function HeroCard() {
     <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
       <div className="relative min-h-[240px] overflow-hidden rounded-2xl p-5 sm:p-6">
         {heroImages.length > 0 ? (
-          heroImages.map((src, i) => (
+          heroImages.map((img, i) => (
             <motion.div
-              key={src}
+              key={img.src}
               className="absolute inset-0"
               animate={{ opacity: i === imageIndex ? 1 : 0 }}
               transition={{ duration: 1.5, ease: "easeInOut" }}
             >
               <Image
-                src={src}
+                src={img.src}
                 alt={`${matchedCity?.name ?? "Japan"} — popular place`}
                 fill
                 priority={i === 0}
                 sizes="(min-width: 1024px) 60vw, 100vw"
                 className="object-cover"
+                style={{ objectPosition: img.position ?? "center" }}
               />
             </motion.div>
           ))
