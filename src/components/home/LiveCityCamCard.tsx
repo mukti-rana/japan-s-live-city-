@@ -1,28 +1,42 @@
 "use client";
 
+import { useState } from "react";
 import { ExternalLink } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import T from "@/components/i18n/T";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-
-// A genuinely real, currently-live public stream of Shibuya Scramble
-// Crossing from FNN Prime Online (a real Japanese news network, verified
-// YouTube channel) — confirmed live and embeddable before wiring this up.
-// If this specific stream ever goes offline, YouTube's own embedded
-// player shows its native "video unavailable" state rather than this app
-// inventing a fallback — still honest, never faked.
-const STREAM_VIDEO_ID = "dfVK7ld38Ys";
-const STREAM_WATCH_URL = `https://www.youtube.com/watch?v=${STREAM_VIDEO_ID}`;
+import { CITIES, type CitySlug } from "@/lib/data/cities";
+import { CITY_CAMS } from "@/lib/data/cityCams";
 
 export default function LiveCityCamCard() {
   const { t } = useLanguage();
+  const [citySlug, setCitySlug] = useState<CitySlug>("tokyo");
+  const cam = CITY_CAMS[citySlug];
 
   return (
     <GlassCard className="relative overflow-hidden p-0">
+      <div className="flex items-center gap-1.5 border-b border-glass-border p-2">
+        {CITIES.map((city) => (
+          <button
+            key={city.slug}
+            type="button"
+            onClick={() => setCitySlug(city.slug)}
+            className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+              citySlug === city.slug
+                ? "bg-azure/20 text-azure"
+                : "text-muted hover:text-foreground"
+            }`}
+          >
+            {city.name}
+          </button>
+        ))}
+      </div>
+
       <div className="relative aspect-video w-full">
         <iframe
-          src={`https://www.youtube.com/embed/${STREAM_VIDEO_ID}?autoplay=1&mute=1&rel=0&playsinline=1`}
-          title="Shibuya Scramble Crossing — live"
+          key={cam.videoId}
+          src={`https://www.youtube.com/embed/${cam.videoId}?autoplay=1&mute=1&rel=0&playsinline=1`}
+          title={`${cam.location} — live`}
           className="absolute inset-0 h-full w-full"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
@@ -40,15 +54,15 @@ export default function LiveCityCamCard() {
             <p className="text-sm font-semibold text-foreground">
               <T k="citycam.title" />
             </p>
-            <p className="font-mono text-[10px] text-foreground/70">CAM 01 · SHIBUYA, TOKYO</p>
+            <p className="font-mono text-[10px] text-foreground/70">{cam.location}</p>
           </div>
           <a
-            href={STREAM_WATCH_URL}
+            href={cam.watchUrl}
             target="_blank"
             rel="noreferrer"
             className="pointer-events-auto flex items-center gap-1 text-[10px] text-foreground/60 hover:text-foreground"
           >
-            FNN Prime Online
+            {cam.source}
             <ExternalLink size={10} />
           </a>
         </div>
