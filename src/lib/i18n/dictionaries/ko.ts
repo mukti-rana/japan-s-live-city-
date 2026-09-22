@@ -143,6 +143,10 @@ const ko: Record<TranslationKey, string> = {
 
   "sidebar.collapse": "사이드바 접기",
   "sidebar.expand": "사이드바 펼치기",
+
+  "train.minDelay": "분 지연",
+  "train.demoNote": "데모 데이터 — 실제 상태를 보려면 실시간 운영사 피드를 연결하세요",
+  "train.delaysReported": "현재 일부 노선이 지연되고 있습니다",
 };
 
 export default ko;

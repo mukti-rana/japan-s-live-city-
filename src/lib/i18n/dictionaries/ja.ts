@@ -143,6 +143,10 @@ const ja: Record<TranslationKey, string> = {
 
   "sidebar.collapse": "サイドバーを折りたたむ",
   "sidebar.expand": "サイドバーを展開",
+
+  "train.minDelay": "分遅延",
+  "train.demoNote": "デモデータ — 実際の運行状況を表示するにはライブフィードの接続が必要です",
+  "train.delaysReported": "一部の路線で遅延が発生しています",
 };
 
 export default ja;

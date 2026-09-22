@@ -13,15 +13,3 @@ export const mockMapCities = [
   { name: "Fukuoka", tempC: 27, x: 46, y: 208, active: false, labelDx: -4, labelDy: 6, labelAnchor: "start" },
 ];
 
-export const mockTrainTabs = ["All Lines", "JR", "Private", "Subway"];
-
-export const mockTrainLines = [
-  { name: "Tokaido Line", note: "Tokyo ↔ Atami", color: "#F2994A", status: "Normal" },
-  { name: "Yamanote Line", note: "Tokyo Loop", color: "#6FCF52", status: "Normal" },
-  { name: "Keihin-Tohoku Line", note: "", color: "#4DA3FF", status: "Normal" },
-  { name: "Hankyu Kyoto Line", note: "", color: "#F2704A", status: "Normal" },
-  { name: "Keihan Main Line", note: "", color: "#6FCF52", status: "Normal" },
-  { name: "Kintetsu Nara Line", note: "", color: "#F2544A", status: "Normal" },
-];
-
-export const mockTrainSummary = "No major delays at the moment";

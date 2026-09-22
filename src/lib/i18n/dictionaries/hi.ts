@@ -143,6 +143,10 @@ const hi: Record<TranslationKey, string> = {
 
   "sidebar.collapse": "साइडबार संक्षिप्त करें",
   "sidebar.expand": "साइडबार विस्तृत करें",
+
+  "train.minDelay": "मिनट की देरी",
+  "train.demoNote": "डेमो डेटा — वास्तविक स्थिति के लिए लाइव ऑपरेटर फ़ीड कनेक्ट करें",
+  "train.delaysReported": "अभी कुछ लाइनों में देरी है",
 };
 
 export default hi;

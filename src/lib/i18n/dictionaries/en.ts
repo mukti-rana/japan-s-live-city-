@@ -141,6 +141,10 @@ const en = {
 
   "sidebar.collapse": "Collapse sidebar",
   "sidebar.expand": "Expand sidebar",
+
+  "train.minDelay": "min delay",
+  "train.demoNote": "Demo data — connect a live operator feed for real status",
+  "train.delaysReported": "Some lines delayed right now",
 } as const;
 
 export default en;

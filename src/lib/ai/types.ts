@@ -22,6 +22,9 @@ export interface TrainLine {
   name: string;
   color: string;
   status: string;
+  category?: "jr" | "private" | "subway";
+  delayMinutes?: number;
+  note?: string;
 }
 
 export interface TrainCardData {

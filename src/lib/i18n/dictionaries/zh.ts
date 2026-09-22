@@ -143,6 +143,10 @@ const zh: Record<TranslationKey, string> = {
 
   "sidebar.collapse": "收起侧边栏",
   "sidebar.expand": "展开侧边栏",
+
+  "train.minDelay": "分钟延误",
+  "train.demoNote": "演示数据 — 连接实时运营方数据源以获取真实状态",
+  "train.delaysReported": "目前部分线路有延误",
 };
 
 export default zh;

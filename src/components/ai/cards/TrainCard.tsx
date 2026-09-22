@@ -24,6 +24,7 @@ export default function TrainCard({ data }: { data: TrainCardData }) {
               className={line.status === "Normal" ? "text-mint" : "text-sakura"}
             >
               {line.status}
+              {line.delayMinutes ? ` (${line.delayMinutes} min)` : ""}
             </span>
           </li>
         ))}

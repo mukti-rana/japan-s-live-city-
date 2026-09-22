@@ -143,6 +143,10 @@ const ne: Record<TranslationKey, string> = {
 
   "sidebar.collapse": "साइडबार सुम्स्नुहोस्",
   "sidebar.expand": "साइडबार फैलाउनुहोस्",
+
+  "train.minDelay": "मिनेट ढिलाइ",
+  "train.demoNote": "डेमो डाटा — वास्तविक स्थिति देख्न लाइभ अपरेटर फिड जोड्नुहोस्",
+  "train.delaysReported": "अहिले केही लाइनहरूमा ढिलाइ छ",
 };
 
 export default ne;
