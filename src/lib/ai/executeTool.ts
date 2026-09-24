@@ -10,7 +10,8 @@ import { getUpcomingFestivals } from "@/lib/services/events";
 import { getPopularPlaces } from "@/lib/services/places";
 import { getLatestNews } from "@/lib/services/news";
 import { getTrendingTopics } from "@/lib/services/trending";
-import { getCity, CITY_TRAIN_LINES, type CitySlug } from "@/lib/data/cities";
+import { getCity, type CitySlug } from "@/lib/data/cities";
+import { TRAIN_LINES, TRAIN_CITY_META, type TrainCity } from "@/lib/data/trainLines";
 import type {
   CardData,
   ItineraryCardData,
@@ -27,6 +28,10 @@ const ITEM_CAP = 6;
 
 function isCitySlug(value: unknown): value is CitySlug {
   return value === "tokyo" || value === "osaka" || value === "kyoto";
+}
+
+function isTrainCity(value: unknown): value is TrainCity {
+  return value === "tokyo" || value === "osaka" || value === "kyoto" || value === "nagoya" || value === "fukuoka";
 }
 
 function clampLimit(value: unknown, fallback: number, max = 20): number {
@@ -55,13 +60,15 @@ async function executeGetWeather(input: Record<string, unknown>): Promise<ToolEx
 }
 
 function executeGetTrainStatus(input: Record<string, unknown>): ToolExecutionResult {
-  if (!isCitySlug(input.city)) {
-    return { result: { error: "Unknown city — only tokyo, osaka, kyoto are supported." }, card: null };
+  if (!isTrainCity(input.city)) {
+    return {
+      result: { error: "Unknown city — only tokyo, osaka, kyoto, nagoya, fukuoka are supported." },
+      card: null,
+    };
   }
-  const city = getCity(input.city);
   const data = {
-    city: city?.name ?? input.city,
-    lines: CITY_TRAIN_LINES[input.city],
+    city: TRAIN_CITY_META[input.city].name,
+    lines: TRAIN_LINES[input.city],
     isLive: false as const,
     disclaimer: "This is placeholder/demo line-status data — no live train operator API is connected yet.",
   };

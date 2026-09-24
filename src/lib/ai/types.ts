@@ -20,11 +20,14 @@ export interface WeatherCardData extends WeatherSnapshot {
 
 export interface TrainLine {
   name: string;
+  nameJa?: string;
   color: string;
   status: string;
   category?: "jr" | "private" | "subway";
   delayMinutes?: number;
-  note?: string;
+  reason?: string;
+  affectedArea?: string;
+  direction?: string;
 }
 
 export interface TrainCardData {

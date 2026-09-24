@@ -16,11 +16,11 @@ export const CUSTOM_TOOLS: Anthropic.Messages.ToolUnion[] = [
   {
     name: "get_train_status",
     description:
-      "Get named train/subway lines for Tokyo, Osaka, or Kyoto. IMPORTANT: this is static placeholder/demo data for UI illustration only — it is NOT live real-time train operator data, since no free real-time Japan train API is connected in this app. You must always state clearly in your answer that this is demo data, not live status. For real current delay/service information, use web_search against the operator's own site or a news source.",
+      "Get named train/subway lines for Tokyo, Osaka, Kyoto, Nagoya, or Fukuoka. IMPORTANT: this is static placeholder/demo data for UI illustration only — it is NOT live real-time train operator data, since no free real-time Japan train API is connected in this app. You must always state clearly in your answer that this is demo data, not live status. For real current delay/service information, use web_search against the operator's own site or a news source.",
     input_schema: {
       type: "object",
       properties: {
-        city: { type: "string", enum: ["tokyo", "osaka", "kyoto"] },
+        city: { type: "string", enum: ["tokyo", "osaka", "kyoto", "nagoya", "fukuoka"] },
       },
       required: ["city"],
     },
