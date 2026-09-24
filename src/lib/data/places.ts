@@ -23,7 +23,7 @@ export type PlaceRegion = "Kanto" | "Kansai" | "Chugoku" | "Hokkaido" | "Chubu" 
 const CITY_ALIASES: Record<PlaceCity, string[]> = {
   Tokyo: ["Tokyo", "Shibuya", "Shinjuku", "Asakusa"],
   Kyoto: ["Kyoto"],
-  Osaka: ["Osaka", "Namba", "Umeda"],
+  Osaka: ["Osaka", "Namba", "Umeda", "Tennoji", "Tennōji"],
   Nara: ["Nara"],
   Hiroshima: ["Hiroshima"],
   Hokkaido: ["Hokkaido", "Sapporo", "Hakodate"],
@@ -71,7 +71,10 @@ export interface PlaceInfo {
   city: PlaceCity;
   category: PlaceCategory;
   wikipediaTitle: string;
-  image: string;
+  // Only real project photography — left undefined (never a stock/
+  // generic substitute) for places this project doesn't have a real
+  // photo of yet. UI falls back to a category icon on the gradient.
+  image?: string;
   gradient: string;
 }
 
@@ -156,6 +159,30 @@ export const POPULAR_PLACES: PlaceInfo[] = [
     wikipediaTitle: "Umeda_Sky_Building",
     image: "/images/place-umeda-sky.jpg",
     gradient: "from-azure/30 to-gold/20",
+  },
+  {
+    name: "Tsūtenkaku",
+    nameJa: "通天閣",
+    city: "Osaka",
+    category: "observation",
+    wikipediaTitle: "Tsūtenkaku",
+    gradient: "from-gold/40 to-sakura/20",
+  },
+  {
+    name: "Abeno Harukas",
+    nameJa: "あべのハルカス",
+    city: "Osaka",
+    category: "observation",
+    wikipediaTitle: "Abeno_Harukas",
+    gradient: "from-azure/30 to-neon-purple/20",
+  },
+  {
+    name: "Tennōji Zoo",
+    nameJa: "天王寺動物園",
+    city: "Osaka",
+    category: "natureParks",
+    wikipediaTitle: "Tennōji_Zoo",
+    gradient: "from-mint/30 to-gold/20",
   },
   {
     name: "Nara Park",

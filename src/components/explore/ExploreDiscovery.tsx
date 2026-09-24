@@ -195,14 +195,18 @@ function PlaceCard({ place }: { place: EnrichedPlace }) {
 
   return (
     <GlassCard className="flex flex-col overflow-hidden">
-      <div className="relative h-36 w-full overflow-hidden">
-        <Image
-          src={place.image}
-          alt={place.name}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover"
-        />
+      <div className={`relative h-36 w-full overflow-hidden bg-gradient-to-br ${place.gradient} bg-panel`}>
+        {place.image ? (
+          <Image
+            src={place.image}
+            alt={place.name}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <Icon size={28} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-foreground/40" />
+        )}
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-azure/15 px-2 py-0.5 text-[10px] font-medium text-azure">
