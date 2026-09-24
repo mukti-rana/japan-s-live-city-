@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const ko: Record<TranslationKey, string> = {
   "nav.home": "홈",
   "nav.map": "일본 지도",
+  "nav.explore": "탐험",
   "nav.trains": "전철",
   "nav.weather": "날씨",
   "nav.news": "뉴스",
@@ -92,7 +93,7 @@ const ko: Record<TranslationKey, string> = {
   "widget.live": "실시간",
   "widget.japanMap": "일본 지도",
   "widget.openFullMap": "전체 지도 열기",
-  "widget.popularPlaces": "인기 명소",
+  "widget.exploreJapan": "일본 탐험",
   "widget.liveTrainStatus": "실시간 전철 상황",
   "widget.trainStatus": "전철 상황",
   "widget.trainPlaceholderNote": "임시 노선 상태입니다 — 전철 데이터 제공업체와 연결되면 실시간 정보로 대체됩니다.",
@@ -151,6 +152,25 @@ const ko: Record<TranslationKey, string> = {
   "news.nearYou": "내 주변",
   "news.nearYouEmpty": "이 도시와 관련된 최근 뉴스가 없습니다.",
   "news.explain": "설명하기",
+
+  "explore.title": "일본 탐험",
+  "explore.subtitle": "유명한 장소, 숨은 명소, 현지 문화와 즐길 거리를 발견하세요.",
+  "explore.searchPlaceholder": "무엇을 경험하고 싶으신가요?",
+  "explore.allJapan": "전체 일본",
+  "explore.allCategories": "전체",
+  "explore.surpriseMe": "서프라이즈",
+  "explore.surpriseMeTagline": "예상치 못한 것을 발견해보세요.",
+  "explore.nearYou": "내 주변",
+  "explore.nearYouEmpty": "이 도시에는 아직 선정된 장소가 없습니다.",
+  "explore.viewOnWikipedia": "위키백과에서 보기",
+  "explore.exploreAll": "일본 전체 탐험하기",
+  "explore.noResults": "이 조건에 해당하는 결과가 없습니다.",
+  "explore.tryExpanding": "다른 도시나 카테고리를 시도해보세요.",
+  "explore.category.shrineTemple": "신사・사원",
+  "explore.category.historyCulture": "역사・문화",
+  "explore.category.natureParks": "자연・공원",
+  "explore.category.cityscape": "도심・번화가",
+  "explore.category.observation": "전망・건축",
 };
 
 export default ko;

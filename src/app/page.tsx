@@ -7,14 +7,14 @@ import JapanMapWidget from "@/components/home/widgets/JapanMapWidget";
 import TrainListWidget from "@/components/home/widgets/TrainListWidget";
 import NewsWidget from "@/components/home/widgets/NewsWidget";
 import EventsListWidget from "@/components/home/widgets/EventsListWidget";
-import PopularPlacesWidget from "@/components/home/widgets/PopularPlacesWidget";
+import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
 import WeatherSunWidget from "@/components/home/widgets/WeatherSunWidget";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
 const COLUMNS = [
-  [TrainListWidget, PopularPlacesWidget],
+  [TrainListWidget, ExploreJapanWidget],
   [NewsWidget, TrendingWidget],
   [EventsListWidget, WeatherSunWidget],
   [QuickAccessWidget],

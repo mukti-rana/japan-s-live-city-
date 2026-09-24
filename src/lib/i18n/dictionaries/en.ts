@@ -1,6 +1,7 @@
 const en = {
   "nav.home": "Home",
   "nav.map": "Japan Map",
+  "nav.explore": "Explore",
   "nav.trains": "Trains",
   "nav.weather": "Weather",
   "nav.news": "News",
@@ -90,7 +91,7 @@ const en = {
   "widget.live": "Live",
   "widget.japanMap": "Japan Map",
   "widget.openFullMap": "Open full map",
-  "widget.popularPlaces": "Popular Places",
+  "widget.exploreJapan": "Explore Japan",
   "widget.liveTrainStatus": "Live Train Status",
   "widget.trainStatus": "Train Status",
   "widget.trainPlaceholderNote": "Placeholder line statuses — a live feed will replace this once a train-data provider is connected.",
@@ -149,6 +150,25 @@ const en = {
   "news.nearYou": "Near You",
   "news.nearYouEmpty": "No recent headlines mention this city.",
   "news.explain": "Explain",
+
+  "explore.title": "Explore Japan",
+  "explore.subtitle": "Discover famous places, hidden gems, local culture & things to do.",
+  "explore.searchPlaceholder": "What do you want to experience?",
+  "explore.allJapan": "All Japan",
+  "explore.allCategories": "All",
+  "explore.surpriseMe": "Surprise Me",
+  "explore.surpriseMeTagline": "Discover something unexpected.",
+  "explore.nearYou": "Near You",
+  "explore.nearYouEmpty": "We don't have curated places here yet.",
+  "explore.viewOnWikipedia": "View on Wikipedia",
+  "explore.exploreAll": "Explore all of Japan",
+  "explore.noResults": "Nothing found for this selection.",
+  "explore.tryExpanding": "Try a different city or category.",
+  "explore.category.shrineTemple": "Shrine & Temple",
+  "explore.category.historyCulture": "History & Culture",
+  "explore.category.natureParks": "Nature & Parks",
+  "explore.category.cityscape": "Cityscape & Entertainment",
+  "explore.category.observation": "Observation & Architecture",
 } as const;
 
 export default en;

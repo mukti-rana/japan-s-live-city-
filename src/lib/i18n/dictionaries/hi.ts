@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const hi: Record<TranslationKey, string> = {
   "nav.home": "होम",
   "nav.map": "जापान मानचित्र",
+  "nav.explore": "एक्सप्लोर",
   "nav.trains": "ट्रेनें",
   "nav.weather": "मौसम",
   "nav.news": "समाचार",
@@ -92,7 +93,7 @@ const hi: Record<TranslationKey, string> = {
   "widget.live": "लाइव",
   "widget.japanMap": "जापान मानचित्र",
   "widget.openFullMap": "पूरा मानचित्र खोलें",
-  "widget.popularPlaces": "लोकप्रिय स्थान",
+  "widget.exploreJapan": "जापान एक्सप्लोर करें",
   "widget.liveTrainStatus": "लाइव ट्रेन स्थिति",
   "widget.trainStatus": "ट्रेन स्थिति",
   "widget.trainPlaceholderNote": "ये अस्थायी लाइन स्थितियां हैं — ट्रेन-डेटा प्रदाता से जुड़ने के बाद इसे लाइव फ़ीड से बदल दिया जाएगा।",
@@ -151,6 +152,25 @@ const hi: Record<TranslationKey, string> = {
   "news.nearYou": "आपके आस-पास",
   "news.nearYouEmpty": "इस शहर से जुड़ी कोई हालिया खबर नहीं मिली।",
   "news.explain": "समझाएं",
+
+  "explore.title": "जापान एक्सप्लोर करें",
+  "explore.subtitle": "प्रसिद्ध स्थान, छिपे हुए रत्न, स्थानीय संस्कृति और गतिविधियाँ खोजें।",
+  "explore.searchPlaceholder": "आप क्या अनुभव करना चाहते हैं?",
+  "explore.allJapan": "संपूर्ण जापान",
+  "explore.allCategories": "सभी",
+  "explore.surpriseMe": "मुझे चौंकाएं",
+  "explore.surpriseMeTagline": "कुछ अप्रत्याशित खोजें।",
+  "explore.nearYou": "आपके आस-पास",
+  "explore.nearYouEmpty": "इस शहर के लिए अभी तक कोई चयनित स्थान नहीं हैं।",
+  "explore.viewOnWikipedia": "Wikipedia पर देखें",
+  "explore.exploreAll": "संपूर्ण जापान एक्सप्लोर करें",
+  "explore.noResults": "इस चयन के लिए कुछ नहीं मिला।",
+  "explore.tryExpanding": "कोई अलग शहर या श्रेणी आज़माएं।",
+  "explore.category.shrineTemple": "श्राइन और मंदिर",
+  "explore.category.historyCulture": "इतिहास और संस्कृति",
+  "explore.category.natureParks": "प्रकृति और पार्क",
+  "explore.category.cityscape": "शहरी दृश्य और मनोरंजन",
+  "explore.category.observation": "दृश्यावलोकन और वास्तुकला",
 };
 
 export default hi;

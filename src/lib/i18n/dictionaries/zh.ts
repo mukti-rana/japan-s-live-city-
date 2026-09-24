@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const zh: Record<TranslationKey, string> = {
   "nav.home": "首页",
   "nav.map": "日本地图",
+  "nav.explore": "探索",
   "nav.trains": "电车",
   "nav.weather": "天气",
   "nav.news": "新闻",
@@ -92,7 +93,7 @@ const zh: Record<TranslationKey, string> = {
   "widget.live": "实时",
   "widget.japanMap": "日本地图",
   "widget.openFullMap": "打开完整地图",
-  "widget.popularPlaces": "热门景点",
+  "widget.exploreJapan": "探索日本",
   "widget.liveTrainStatus": "实时电车状态",
   "widget.trainStatus": "电车状态",
   "widget.trainPlaceholderNote": "这是占位线路状态——连接真实电车数据源后将替换为实时信息。",
@@ -151,6 +152,25 @@ const zh: Record<TranslationKey, string> = {
   "news.nearYou": "您附近",
   "news.nearYouEmpty": "没有提及该城市的近期新闻。",
   "news.explain": "解释",
+
+  "explore.title": "探索日本",
+  "explore.subtitle": "发现著名景点、小众秘境、当地文化与各种体验。",
+  "explore.searchPlaceholder": "您想体验什么？",
+  "explore.allJapan": "全日本",
+  "explore.allCategories": "全部",
+  "explore.surpriseMe": "惊喜一下",
+  "explore.surpriseMeTagline": "发现一些意想不到的地方。",
+  "explore.nearYou": "您附近",
+  "explore.nearYouEmpty": "该城市暂无精选地点。",
+  "explore.viewOnWikipedia": "在维基百科查看",
+  "explore.exploreAll": "探索全日本",
+  "explore.noResults": "未找到符合条件的地点。",
+  "explore.tryExpanding": "请尝试其他城市或分类。",
+  "explore.category.shrineTemple": "神社与寺院",
+  "explore.category.historyCulture": "历史与文化",
+  "explore.category.natureParks": "自然与公园",
+  "explore.category.cityscape": "城市景观与娱乐",
+  "explore.category.observation": "观景与建筑",
 };
 
 export default zh;

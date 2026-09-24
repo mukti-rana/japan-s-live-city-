@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const ja: Record<TranslationKey, string> = {
   "nav.home": "ホーム",
   "nav.map": "日本地図",
+  "nav.explore": "探索",
   "nav.trains": "電車",
   "nav.weather": "天気",
   "nav.news": "ニュース",
@@ -92,7 +93,7 @@ const ja: Record<TranslationKey, string> = {
   "widget.live": "ライブ",
   "widget.japanMap": "日本地図",
   "widget.openFullMap": "地図を開く",
-  "widget.popularPlaces": "人気スポット",
+  "widget.exploreJapan": "日本を探索",
   "widget.liveTrainStatus": "運行状況",
   "widget.trainStatus": "運行状況",
   "widget.trainPlaceholderNote": "仮の路線状況です — 実際の運行データ提供元と接続され次第、ライブ情報に置き換わります。",
@@ -151,6 +152,25 @@ const ja: Record<TranslationKey, string> = {
   "news.nearYou": "あなたの近く",
   "news.nearYouEmpty": "この都市に関する最近のニュースはありません。",
   "news.explain": "説明する",
+
+  "explore.title": "日本を探索",
+  "explore.subtitle": "有名スポット、穴場、地元の文化、体験を発見しよう。",
+  "explore.searchPlaceholder": "何を体験したいですか？",
+  "explore.allJapan": "全国",
+  "explore.allCategories": "すべて",
+  "explore.surpriseMe": "おまかせ",
+  "explore.surpriseMeTagline": "意外な発見をしてみよう。",
+  "explore.nearYou": "あなたの近く",
+  "explore.nearYouEmpty": "この都市の厳選スポットはまだありません。",
+  "explore.viewOnWikipedia": "Wikipediaで見る",
+  "explore.exploreAll": "日本全国を探索",
+  "explore.noResults": "該当するスポットが見つかりません。",
+  "explore.tryExpanding": "別の都市やカテゴリーをお試しください。",
+  "explore.category.shrineTemple": "神社・寺院",
+  "explore.category.historyCulture": "歴史・文化",
+  "explore.category.natureParks": "自然・公園",
+  "explore.category.cityscape": "街並み・繁華街",
+  "explore.category.observation": "展望・建築",
 };
 
 export default ja;

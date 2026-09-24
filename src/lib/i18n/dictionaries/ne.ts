@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const ne: Record<TranslationKey, string> = {
   "nav.home": "गृहपृष्ठ",
   "nav.map": "जापान नक्सा",
+  "nav.explore": "अन्वेषण",
   "nav.trains": "रेल",
   "nav.weather": "मौसम",
   "nav.news": "समाचार",
@@ -92,7 +93,7 @@ const ne: Record<TranslationKey, string> = {
   "widget.live": "लाइभ",
   "widget.japanMap": "जापान नक्सा",
   "widget.openFullMap": "पूर्ण नक्सा खोल्नुहोस्",
-  "widget.popularPlaces": "लोकप्रिय ठाउँहरू",
+  "widget.exploreJapan": "जापान अन्वेषण",
   "widget.liveTrainStatus": "लाइभ रेल स्थिति",
   "widget.trainStatus": "रेल स्थिति",
   "widget.trainPlaceholderNote": "यी अस्थायी लाइन स्थितिहरू हुन् — रेल-डाटा प्रदायकसँग जोडिएपछि यसलाई लाइभ फिडले विस्थापित गर्नेछ।",
@@ -151,6 +152,25 @@ const ne: Record<TranslationKey, string> = {
   "news.nearYou": "तपाईं नजिकै",
   "news.nearYouEmpty": "यो शहरसँग सम्बन्धित हालैका समाचार भेटिएन।",
   "news.explain": "व्याख्या गर्नुहोस्",
+
+  "explore.title": "जापान अन्वेषण",
+  "explore.subtitle": "प्रसिद्ध ठाउँहरू, लुकेका रत्नहरू, स्थानीय संस्कृति र गतिविधिहरू पत्ता लगाउनुहोस्।",
+  "explore.searchPlaceholder": "तपाईं के अनुभव गर्न चाहनुहुन्छ?",
+  "explore.allJapan": "सम्पूर्ण जापान",
+  "explore.allCategories": "सबै",
+  "explore.surpriseMe": "मलाई छक्क पार्नुहोस्",
+  "explore.surpriseMeTagline": "अप्रत्याशित केही पत्ता लगाउनुहोस्।",
+  "explore.nearYou": "तपाईं नजिकै",
+  "explore.nearYouEmpty": "यो शहरको लागि अझै छनौट गरिएका ठाउँहरू छैनन्।",
+  "explore.viewOnWikipedia": "Wikipedia मा हेर्नुहोस्",
+  "explore.exploreAll": "सम्पूर्ण जापान अन्वेषण गर्नुहोस्",
+  "explore.noResults": "यो छनौटको लागि केही फेला परेन।",
+  "explore.tryExpanding": "फरक शहर वा श्रेणी प्रयास गर्नुहोस्।",
+  "explore.category.shrineTemple": "शान्ति स्थल र मन्दिर",
+  "explore.category.historyCulture": "इतिहास र संस्कृति",
+  "explore.category.natureParks": "प्रकृति र पार्कहरू",
+  "explore.category.cityscape": "शहरी दृश्य र मनोरञ्जन",
+  "explore.category.observation": "दृश्यावलोकन र वास्तुकला",
 };
 
 export default ne;

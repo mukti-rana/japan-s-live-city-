@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Map,
+  Compass,
   TrainFront,
   CloudSun,
   Newspaper,
@@ -27,6 +28,7 @@ const SIDEBAR_COLLAPSED_KEY = "livecity:sidebarCollapsed";
 const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[] = [
   { labelKey: "nav.home", href: "/", icon: Home },
   { labelKey: "nav.map", href: "/map", icon: Map },
+  { labelKey: "nav.explore", href: "/explore", icon: Compass },
   { labelKey: "nav.trains", href: "/trains", icon: TrainFront },
   { labelKey: "nav.weather", href: "/weather", icon: CloudSun },
   { labelKey: "nav.news", href: "/news", icon: Newspaper },
