@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -15,6 +16,7 @@
   --panel: #0e1324;
   --neon-cyan: #22d3ee;
   --neon-purple: #a855f7;
+  --glow: rgba(77, 163, 255, 0.35);
 
   /* Time-of-day ambient accents — updated at runtime by useAmbientLighting()
      based on local JST hour. Defaults here match the "night" phase so
@@ -97,4 +99,82 @@ body {
 
 .leaflet-popup-close-button:hover {
   color: var(--foreground) !important;
+}
+
+/* Homepage-only "Ops" re-skin — a dense, Brutalist internal-dashboard
+   design system, applied ONLY within .ops-home (the homepage's own
+   content wrapper). Sidebar/topbar/footer and every other route keep the
+   app's normal dark glassmorphism identity untouched.
+
+   This works by overriding the same base tokens (--background, --azure,
+   etc.) that the @theme inline block above already re-exposes to
+   Tailwind's color utilities through a second var() indirection — a
+   custom property's var() references resolve using the *using* element's
+   own cascade, so any element inside .ops-home that renders e.g.
+   `bg-background` or `text-azure` automatically picks up these values
+   without touching each widget file. Card-shell radius/border/blur are
+   the one exception: those Tailwind utilities (rounded-2xl,
+   backdrop-blur-xl, border) hardcode their values rather than reading a
+   custom property, so they're retargeted below by class, scoped to
+   .ops-home. rounded-full (status dots, avatars, pill badges) is left
+   alone on purpose — those are functional shapes, not card corners. */
+.ops-home {
+  --background: #f8fafc;
+  --foreground: #1e3a8a;
+  --sakura: #d97706;
+  --gold: #d97706;
+  --glass-bg: #ffffff;
+  --glass-bg-strong: #e9eef6;
+  --glass-border: #dbeafe;
+  --muted: #475569;
+  --azure: #1e40af;
+  --mint: #16a34a;
+  --panel: #ffffff;
+  --neon-cyan: #1e40af;
+  --neon-purple: #3b82f6;
+  --glow: rgba(30, 64, 175, 0.35);
+
+  --font-sans: "Outfit", "Work Sans", sans-serif;
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.ops-home .rounded-2xl,
+.ops-home .rounded-xl,
+.ops-home .rounded-lg {
+  border-radius: 0;
+}
+
+.ops-home .border {
+  border-width: 2px;
+}
+
+.ops-home .backdrop-blur-xl,
+.ops-home .backdrop-blur-sm {
+  backdrop-filter: none;
+}
+
+/* A handful of homepage panels overlay text on a real photo, video, map
+   canvas, or illustrated weather scene that stays dark regardless of the
+   surrounding chrome theme (Hero, Always Alive, Live City Cam, Japan Map,
+   the Live Weather "now" panel). Their text was authored against the
+   app's normal dark-glass tokens; .ops-home's remap breaks it (dark
+   navy text on a still-dark photo). Applying this class to exactly that
+   overlay content re-opts it back into the original dark tokens,
+   independent of whichever chrome theme is currently wrapping it. */
+.dark-scene {
+  --foreground: #f4f4f8;
+  --muted: #8b8fa3;
+  --sakura: #ff6b9d;
+  --gold: #f2c572;
+  --azure: #4da3ff;
+  --mint: #4ade80;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --neon-cyan: #22d3ee;
+  --neon-purple: #a855f7;
+  --panel: #0e1324;
+  --glow: rgba(77, 163, 255, 0.35);
 }

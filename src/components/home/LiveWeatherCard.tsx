@@ -123,7 +123,7 @@ function NowTab({ weather, cityName }: { weather: WeatherSnapshot; cityName: str
   ];
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-glass-border">
+    <div className="dark-scene relative overflow-hidden rounded-2xl border border-glass-border">
       <div className="absolute inset-0">
         <WeatherScene icon={weather.icon} isNight={isNight} variant="panel" className="h-full w-full" />
       </div>

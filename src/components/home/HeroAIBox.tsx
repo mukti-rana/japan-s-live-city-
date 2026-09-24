@@ -33,7 +33,7 @@ export default function HeroAIBox() {
       <div className="relative flex flex-col gap-3">
         <div className="flex items-center gap-2.5">
           <motion.div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure via-neon-purple to-sakura text-foreground shadow-[0_0_16px_3px_rgba(168,85,247,0.4)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure via-neon-purple to-sakura text-white shadow-[0_0_16px_3px_rgba(168,85,247,0.4)]"
             animate={{ scale: [1, 1.06, 1] }}
             transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
           >
@@ -69,7 +69,7 @@ export default function HeroAIBox() {
         <button
           type="submit"
           aria-label={t("ai.askButton")}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure to-neon-purple text-foreground transition-opacity hover:opacity-90"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure to-neon-purple text-white transition-opacity hover:opacity-90"
         >
           <ArrowRight size={13} />
         </button>

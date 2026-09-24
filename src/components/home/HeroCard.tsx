@@ -103,7 +103,7 @@ export default function HeroCard() {
         <HeroAtmosphere condition={sceneIcon} season={season} isNight={isNight} />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0b0e1a]/90 via-[#0b0e1a]/55 to-[#0b0e1a]/20" />
 
-        <div className="relative">
+        <div className="dark-scene relative">
           <LiveClock timeZone="Asia/Tokyo">
             {isLoadingLocation && (
               <div className="mt-2 h-9 w-40 animate-pulse rounded-lg bg-glass-bg-strong" />
