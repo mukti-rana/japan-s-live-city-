@@ -32,7 +32,7 @@ export default function LiveCityCamCard() {
         ))}
       </div>
 
-      <div className="dark-scene relative aspect-video w-full">
+      <div className="relative aspect-video w-full">
         <iframe
           key={cam.videoId}
           src={`https://www.youtube.com/embed/${cam.videoId}?autoplay=1&mute=1&rel=0&playsinline=1`}

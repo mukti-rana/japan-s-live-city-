@@ -13,7 +13,7 @@ export default function AlwaysAliveCard() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e1a]/85 via-[#0b0e1a]/25 to-[#0b0e1a]/40" />
 
-      <div className="dark-scene relative flex h-full flex-col">
+      <div className="relative flex h-full flex-col">
         <span className="ml-auto flex items-center gap-1.5 rounded-full bg-mint/15 px-2.5 py-1 text-[10px] font-medium text-mint backdrop-blur-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
           <T k="widget.live" />

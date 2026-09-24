@@ -40,7 +40,7 @@ export default function JapanMapWidget() {
       <Link
         href="/map"
         aria-label={t("widget.openFullMap")}
-        className="dark-scene relative block h-56 overflow-hidden rounded-xl bg-[#0a1024] transition-opacity hover:opacity-90"
+        className="relative block h-56 overflow-hidden rounded-xl bg-[#0a1024] transition-opacity hover:opacity-90"
       >
         <svg viewBox="0 0 300 240" className="h-full w-full" aria-hidden="true">
           {OFFSETS.map((offset, oi) => (
