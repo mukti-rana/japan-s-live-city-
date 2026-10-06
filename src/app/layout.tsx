@@ -4,6 +4,11 @@ import TopBar from "@/components/layout/TopBar";
 import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+import { AuthProvider } from "@/lib/supabase/AuthContext";
+import { AccountPromptProvider } from "@/components/auth/AccountPromptProvider";
+import { FavoritesProvider } from "@/lib/personalization/FavoritesContext";
+import PreferencesSync from "@/lib/personalization/PreferencesSync";
+import { siteUrl } from "@/lib/siteUrl";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -18,6 +23,7 @@ const notoSansJp = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Live City Japan",
   description: "Everything you need to live, work & travel in Japan.",
 };
@@ -30,14 +36,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-screen flex-col bg-background text-foreground">
         <LanguageProvider>
-          <TopBar />
-          <div className="flex flex-1">
-            <Sidebar />
-            <main className="min-w-0 flex-1 p-3 pb-24 sm:p-4 lg:pb-4">
-              {children}
-            </main>
-          </div>
-          <Footer />
+          <AuthProvider>
+            <AccountPromptProvider>
+              <FavoritesProvider>
+                <PreferencesSync />
+                <TopBar />
+                <div className="flex flex-1">
+                  <Sidebar />
+                  <main className="min-w-0 flex-1 p-3 pb-24 sm:p-4 lg:pb-4">
+                    {children}
+                  </main>
+                </div>
+                <Footer />
+              </FavoritesProvider>
+            </AccountPromptProvider>
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

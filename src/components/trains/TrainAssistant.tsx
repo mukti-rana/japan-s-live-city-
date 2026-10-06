@@ -11,7 +11,7 @@ import TrainLineCard from "@/components/trains/TrainLineCard";
 import TrainStatusLegend from "@/components/trains/TrainStatusLegend";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
-import { useSavedLines } from "@/lib/trains/useSavedLines";
+import { useFavorites } from "@/lib/personalization/FavoritesContext";
 import { TRAIN_LINES, TRAIN_CITY_META, TRAIN_CITIES, findTrainCity, type TrainCity, type TrainLineInfo } from "@/lib/data/trainLines";
 import { TRAIN_STATUS_META, TRAIN_STATUS_ORDER, summarizeStatuses } from "@/lib/data/trainStatus";
 
@@ -28,7 +28,10 @@ export default function TrainAssistant() {
   const { t } = useLanguage();
   const router = useRouter();
   const { status: locationStatus, location } = useLiveLocation();
-  const { isFollowed, toggle, hydrated, followed } = useSavedLines();
+  const { items, ready: hydrated, isFavorite, toggle: toggleFavorite } = useFavorites();
+  const followed = items.line;
+  const isFollowed = (key: string) => isFavorite("line", key);
+  const toggle = (key: string) => toggleFavorite("line", key);
 
   const [citySelection, setCitySelection] = useState<string>(ALL_JAPAN);
   const [autoSelected, setAutoSelected] = useState(false);

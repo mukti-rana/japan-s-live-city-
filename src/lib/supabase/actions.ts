@@ -44,12 +44,6 @@ export async function signUpAction(formData: FormData) {
   redirect("/signup?check_email=1");
 }
 
-export async function signOutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/");
-}
-
 export async function requestPasswordResetAction(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const origin = await siteOrigin();

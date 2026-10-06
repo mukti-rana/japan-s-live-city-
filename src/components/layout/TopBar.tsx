@@ -1,13 +1,10 @@
 import Logo from "@/components/ui/Logo";
 import TopBarActions from "@/components/layout/TopBarActions";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { createClient } from "@/lib/supabase/server";
 
-export default async function TopBar() {
-  const user = isSupabaseConfigured
-    ? (await (await createClient()).auth.getUser()).data.user
-    : null;
-
+// Deliberately has no server-side user lookup: reading cookies here would
+// force every page in the app to render per request. Sign-in state is read
+// in the browser instead (see AuthProvider), so public pages stay static.
+export default function TopBar() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-glass-border bg-sidebar-bg/95 px-4 backdrop-blur-xl sm:px-6">
       <div className="flex items-center gap-2.5 lg:w-52">
@@ -22,7 +19,7 @@ export default async function TopBar() {
         </div>
       </div>
 
-      <TopBarActions userEmail={user?.email ?? null} />
+      <TopBarActions />
     </header>
   );
 }

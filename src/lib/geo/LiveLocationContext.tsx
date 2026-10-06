@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import { rememberCity } from "@/lib/geo/sessionCity";
 
 export interface LiveLocation {
   name: string;
@@ -82,7 +83,10 @@ export function LiveLocationProvider({ children }: { children: ReactNode }) {
         // "Osaka" when the data supports it, without ever duplicating text.
         const area = geo?.locality && geo.locality !== name ? geo.locality : null;
 
-        if (name) setLocation({ name, area, countryName: geo?.countryName ?? null });
+        if (name) {
+          setLocation({ name, area, countryName: geo?.countryName ?? null });
+          rememberCity(name);
+        }
         if (weatherData) setWeather(weatherData);
         setStatus(name || weatherData ? "ready" : "error");
       },

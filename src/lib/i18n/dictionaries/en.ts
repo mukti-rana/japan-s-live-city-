@@ -194,6 +194,16 @@ const en = {
   "trains.status.delayed": "Delayed",
   "trains.status.suspended": "Suspended",
   "trains.status.unknown": "Unknown",
+
+  "nav.alerts": "Alerts",
+  "auth.signIn": "Sign in",
+  "auth.createAccount": "Create account",
+  "account.promptTitle": "Make LIVE CITY yours.",
+  "account.promptBody": "Create a free account to save this and get personalized updates.",
+  "account.createFree": "Create free account",
+  "account.notNow": "Not now",
+  "favorites.save": "Save",
+  "favorites.saved": "Saved",
 } as const;
 
 export default en;

@@ -196,6 +196,16 @@ const ja: Record<TranslationKey, string> = {
   "trains.status.delayed": "遅延",
   "trains.status.suspended": "運転見合わせ",
   "trains.status.unknown": "状況不明",
+
+  "nav.alerts": "アラート",
+  "auth.signIn": "ログイン",
+  "auth.createAccount": "アカウント作成",
+  "account.promptTitle": "LIVE CITYをあなた仕様に。",
+  "account.promptBody": "無料アカウントを作成すると、お気に入りを保存して、あなた向けの情報を受け取れます。",
+  "account.createFree": "無料アカウントを作成",
+  "account.notNow": "今はしない",
+  "favorites.save": "保存",
+  "favorites.saved": "保存済み",
 };
 
 export default ja;

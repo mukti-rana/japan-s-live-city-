@@ -1,5 +1,6 @@
 import { MapPin, Sunrise, Sunset } from "lucide-react";
 import WeatherIcon from "@/components/ui/WeatherIcon";
+import FavoriteButton from "@/components/personalization/FavoriteButton";
 import type { CityInfo } from "@/lib/data/cities";
 import type { WeatherSnapshot } from "@/lib/services/weather";
 
@@ -26,6 +27,7 @@ export default function CityWeatherHero({
           <span className="font-jp text-lg text-foreground/60">
             {city.nameJa}
           </span>
+          <FavoriteButton kind="city" itemKey={city.slug} className="ml-1 self-center" />
         </div>
 
         {weather ? (

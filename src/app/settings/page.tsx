@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { UserCircle, LogOut, LogIn } from "lucide-react";
+import { UserCircle, Sparkles } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
+import SignOutButton from "@/components/auth/SignOutButton";
+import SavedItems from "@/components/personalization/SavedItems";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
-import { signOutAction } from "@/lib/supabase/actions";
 
 export const metadata: Metadata = {
   title: "Settings — Live City Japan",
   description: "Manage your Live City Japan account.",
+  robots: { index: false, follow: false },
 };
 
 export default async function SettingsPage() {
@@ -40,6 +42,7 @@ export default async function SettingsPage() {
           <p className="text-sm font-semibold text-foreground">Language</p>
           <p className="mt-1 text-xs text-muted">
             Choose the language used across LIVE CITY.
+            {user ? " It is saved to your account." : ""}
           </p>
           <div className="mt-3">
             <LanguageSwitcher variant="settings" />
@@ -50,6 +53,16 @@ export default async function SettingsPage() {
       {!isSupabaseConfigured && (
         <Reveal delay={0.08}>
           <SupabaseNotConfigured />
+        </Reveal>
+      )}
+
+      {isSupabaseConfigured && user && (
+        <Reveal delay={0.1}>
+          <GlassCard className="p-5">
+            <p className="text-sm font-semibold text-foreground">Saved</p>
+            <p className="mb-3 mt-1 text-xs text-muted">Your favorite cities, places and train lines.</p>
+            <SavedItems />
+          </GlassCard>
         </Reveal>
       )}
 
@@ -68,39 +81,37 @@ export default async function SettingsPage() {
               </div>
             </div>
 
-            <p className="mt-4 text-xs text-muted">
-              Preferences like favorite city and saved tools are coming in a
-              later update.
-            </p>
-
-            <form action={signOutAction} className="mt-4">
-              <button
-                type="submit"
-                className="flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-sakura/30"
-              >
-                <LogOut size={15} />
-                Sign out
-              </button>
-            </form>
+            <div className="mt-4">
+              <SignOutButton />
+            </div>
           </GlassCard>
         ) : (
-          <GlassCard className="flex flex-col items-center gap-3 p-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-azure/15 text-azure">
-              <UserCircle size={24} />
+          <GlassCard className="flex flex-col items-center gap-3 p-6 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-azure via-neon-purple to-sakura text-white">
+              <Sparkles size={22} />
             </div>
-            <p className="text-sm text-muted">
-              Log in to manage your account and preferences.
+            <p className="text-sm font-semibold text-foreground">Want a more personalized LIVE CITY?</p>
+            <p className="text-xs leading-relaxed text-muted">
+              Create a free account to save your favorite cities, places and train lines, and keep your
+              language everywhere you sign in.
             </p>
-            <Link
-              href="/login"
-              aria-disabled={!isSupabaseConfigured}
-              className={`flex items-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background ${
-                !isSupabaseConfigured ? "pointer-events-none opacity-40" : ""
-              }`}
-            >
-              <LogIn size={15} />
-              Log In
-            </Link>
+            <div className="flex w-full flex-col gap-2">
+              <Link
+                href="/signup"
+                className="flex items-center justify-center rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background"
+              >
+                Create account
+              </Link>
+              <Link
+                href="/login"
+                className="flex items-center justify-center rounded-xl border border-glass-border bg-glass-bg px-5 py-2.5 text-sm font-medium text-foreground/90 hover:text-foreground"
+              >
+                Sign in
+              </Link>
+              <Link href="/" className="pt-1 text-xs text-muted hover:text-azure">
+                Continue as guest
+              </Link>
+            </div>
           </GlassCard>
         )}
       </Reveal>

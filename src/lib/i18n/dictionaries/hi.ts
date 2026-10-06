@@ -196,6 +196,16 @@ const hi: Record<TranslationKey, string> = {
   "trains.status.delayed": "देरी",
   "trains.status.suspended": "सेवा रुकी हुई",
   "trains.status.unknown": "अज्ञात",
+
+  "nav.alerts": "अलर्ट",
+  "auth.signIn": "साइन इन",
+  "auth.createAccount": "खाता बनाएं",
+  "account.promptTitle": "LIVE CITY को अपना बनाएं।",
+  "account.promptBody": "इसे सेव करने और व्यक्तिगत अपडेट पाने के लिए निःशुल्क खाता बनाएं।",
+  "account.createFree": "निःशुल्क खाता बनाएं",
+  "account.notNow": "अभी नहीं",
+  "favorites.save": "सेव करें",
+  "favorites.saved": "सेव किया गया",
 };
 
 export default hi;

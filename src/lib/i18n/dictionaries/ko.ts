@@ -196,6 +196,16 @@ const ko: Record<TranslationKey, string> = {
   "trains.status.delayed": "지연",
   "trains.status.suspended": "운행 중단",
   "trains.status.unknown": "상태 알 수 없음",
+
+  "nav.alerts": "알림",
+  "auth.signIn": "로그인",
+  "auth.createAccount": "계정 만들기",
+  "account.promptTitle": "LIVE CITY를 나만의 것으로.",
+  "account.promptBody": "무료 계정을 만들어 이 항목을 저장하고 맞춤 업데이트를 받아보세요.",
+  "account.createFree": "무료 계정 만들기",
+  "account.notNow": "나중에",
+  "favorites.save": "저장",
+  "favorites.saved": "저장됨",
 };
 
 export default ko;

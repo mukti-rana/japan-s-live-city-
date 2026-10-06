@@ -11,6 +11,7 @@ import { requestPasswordResetAction } from "@/lib/supabase/actions";
 export const metadata: Metadata = {
   title: "Forgot Password — Live City Japan",
   description: "Reset your Live City Japan account password.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ForgotPasswordPage({

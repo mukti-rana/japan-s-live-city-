@@ -196,6 +196,16 @@ const ne: Record<TranslationKey, string> = {
   "trains.status.delayed": "ढिलाइ",
   "trains.status.suspended": "स्थगित",
   "trains.status.unknown": "अज्ञात",
+
+  "nav.alerts": "अलर्टहरू",
+  "auth.signIn": "साइन इन",
+  "auth.createAccount": "खाता बनाउनुहोस्",
+  "account.promptTitle": "LIVE CITY लाई आफ्नै बनाउनुहोस्।",
+  "account.promptBody": "यो सुरक्षित गर्न र व्यक्तिगत अपडेट पाउन निःशुल्क खाता बनाउनुहोस्।",
+  "account.createFree": "निःशुल्क खाता बनाउनुहोस्",
+  "account.notNow": "अहिले होइन",
+  "favorites.save": "सुरक्षित गर्नुहोस्",
+  "favorites.saved": "सुरक्षित गरियो",
 };
 
 export default ne;

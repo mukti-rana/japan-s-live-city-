@@ -7,6 +7,7 @@ import { Search, Sparkles, ExternalLink } from "lucide-react";
 import Tabs from "@/components/ui/Tabs";
 import GlassCard from "@/components/ui/GlassCard";
 import T from "@/components/i18n/T";
+import FavoriteButton from "@/components/personalization/FavoriteButton";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { PLACE_CATEGORY_META, PLACE_CATEGORY_ORDER } from "@/lib/data/placeCategories";
 import type { PlaceCity } from "@/lib/data/places";
@@ -207,6 +208,7 @@ function PlaceCard({ place }: { place: EnrichedPlace }) {
         ) : (
           <Icon size={28} className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-foreground/40" />
         )}
+        <FavoriteButton kind="place" itemKey={place.name} className="absolute right-2 top-2" />
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <span className="inline-flex w-fit items-center gap-1 rounded-full bg-azure/15 px-2 py-0.5 text-[10px] font-medium text-azure">

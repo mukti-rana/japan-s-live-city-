@@ -10,6 +10,7 @@ import { updatePasswordAction } from "@/lib/supabase/actions";
 export const metadata: Metadata = {
   title: "Reset Password — Live City Japan",
   description: "Set a new password for your Live City Japan account.",
+  robots: { index: false, follow: false },
 };
 
 export default async function ResetPasswordPage({

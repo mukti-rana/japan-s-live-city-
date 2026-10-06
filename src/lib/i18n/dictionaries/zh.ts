@@ -196,6 +196,16 @@ const zh: Record<TranslationKey, string> = {
   "trains.status.delayed": "延误",
   "trains.status.suspended": "运行暂停",
   "trains.status.unknown": "状态未知",
+
+  "nav.alerts": "提醒",
+  "auth.signIn": "登录",
+  "auth.createAccount": "创建账户",
+  "account.promptTitle": "让 LIVE CITY 成为你的专属。",
+  "account.promptBody": "创建免费账户，即可保存此内容并获取个性化更新。",
+  "account.createFree": "创建免费账户",
+  "account.notNow": "暂不",
+  "favorites.save": "收藏",
+  "favorites.saved": "已收藏",
 };
 
 export default zh;

@@ -33,8 +33,10 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+// Only the account-related routes need the session refreshed on the
+// server. Public pages are deliberately skipped: they don't read the user
+// on the server, so running (and calling Supabase) on every public request
+// would only add latency and cost.
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|images/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  matcher: ["/settings", "/login", "/signup", "/forgot-password", "/reset-password", "/auth/:path*"],
 };
