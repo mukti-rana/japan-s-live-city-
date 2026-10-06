@@ -23,7 +23,9 @@ export async function signInAction(formData: FormData) {
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
-  redirect("/settings");
+  // Back to the main site, not Settings — signing in is a personalization
+  // layer on top of the normal site, not a destination of its own.
+  redirect("/");
 }
 
 export async function signUpAction(formData: FormData) {
