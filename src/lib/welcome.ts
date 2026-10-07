@@ -5,12 +5,13 @@ import { useSyncExternalStore } from "react";
 const KEY = "livecity:welcomeSeen";
 const EVENT = "livecity:welcomeseen";
 
-// Remembers (on this device only) that the visitor has already been shown
-// the Sign in / Create account / Continue as guest choice, so it appears
-// once rather than on every visit. It holds no personal data.
+// Remembers (for this browser session only) that the visitor has already
+// answered the Sign in / Create account / Continue as guest choice, so it
+// isn't repeated on every page load — but it comes back the next time the
+// link is opened, until they sign in. It holds no personal data.
 export function markWelcomeSeen() {
   try {
-    window.localStorage.setItem(KEY, "1");
+    window.sessionStorage.setItem(KEY, "1");
   } catch {
     // Storage unavailable — the choice just won't be remembered.
   }
@@ -24,7 +25,7 @@ function subscribe(callback: () => void) {
 
 function getSnapshot(): "seen" | "new" {
   try {
-    return window.localStorage.getItem(KEY) === "1" ? "seen" : "new";
+    return window.sessionStorage.getItem(KEY) === "1" ? "seen" : "new";
   } catch {
     return "seen";
   }

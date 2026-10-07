@@ -9,9 +9,10 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/lib/supabase/AuthContext";
 import { markWelcomeSeen, useWelcomeState } from "@/lib/welcome";
 
-// First-visit welcome on the home page: sign in, create an account, or carry
-// on as a guest. It is never a wall — "Continue as guest" and Escape both
-// dismiss it, it appears once per device, and signed-in visitors never see it.
+// Welcome on the home page for anyone who isn't signed in: sign in, create an
+// account, or carry on as a guest. It is never a wall — "Continue as guest"
+// and Escape both dismiss it for the rest of the browser session, it returns
+// the next time the link is opened, and signed-in visitors never see it.
 // Only shown when accounts are actually configured, so it never offers a
 // sign-in that can't work.
 export default function WelcomeGate() {
