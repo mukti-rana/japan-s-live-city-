@@ -8,8 +8,8 @@ export default function AiOffNotice() {
     <GlassCard className="flex items-start gap-2.5 border-gold/25 bg-gold/5 p-4">
       <TriangleAlert size={16} className="mt-0.5 shrink-0 text-gold" />
       <p className="text-xs leading-relaxed text-muted">
-        LIVE CITY AI is turned off right now. The rest of the site — weather, trains, news, events and maps — works as
-        normal.
+        <span className="font-semibold text-foreground">Coming soon.</span> LIVE CITY AI is turned off right now. The rest
+        of the site — weather, trains, news, events and maps — works as normal.
       </p>
     </GlassCard>
   );

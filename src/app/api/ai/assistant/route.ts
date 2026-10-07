@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     return Response.json(
       {
         error:
-          "LIVE CITY AI is turned off right now. The rest of the site — weather, trains, news, events and maps — works as normal.",
+          "Coming soon — LIVE CITY AI is turned off right now. The rest of the site — weather, trains, news, events and maps — works as normal.",
       },
       { status: 503 },
     );
