@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { TrainFront, ChevronDown } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import Tabs from "@/components/ui/Tabs";
@@ -9,6 +10,8 @@ import { TRAIN_STATUS_META } from "@/lib/data/trainStatus";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 
+// The Home card is a preview; the full list (and every filter) lives on /trains.
+const HOME_LINE_CAP = 6;
 const DEFAULT_CITY: TrainCity = "tokyo";
 const ALL_LINES = "__all_lines__";
 const CATEGORY_FILTERS: string[] = [ALL_LINES, "jr", "private", "subway"];
@@ -20,10 +23,14 @@ export default function TrainListWidget() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const city = (location?.name ? findTrainCity(location.name) : undefined) ?? DEFAULT_CITY;
-  const lines = TRAIN_LINES[city].filter(
+  const filtered = TRAIN_LINES[city].filter(
     (line) => tab === ALL_LINES || line.category === (tab as TrainLineCategory),
   );
-  const hasDelays = lines.some((line) => line.status !== "normal");
+  const hasDelays = filtered.some((line) => line.status !== "normal");
+  // Lines with a problem first (the sort is stable, so each group keeps its order).
+  const ordered = [...filtered].sort((a, b) => Number(a.status === "normal") - Number(b.status === "normal"));
+  const lines = ordered.slice(0, HOME_LINE_CAP);
+  const hiddenCount = ordered.length - lines.length;
 
   function categoryLabel(tabValue: string) {
     if (tabValue === ALL_LINES) return t("tabs.allLines");
@@ -68,6 +75,12 @@ export default function TrainListWidget() {
           );
         })}
       </ul>
+
+      {hiddenCount > 0 && (
+        <Link href="/trains" className="-mt-1 text-center text-[11px] font-medium text-azure hover:underline">
+          {t("widget.viewAll")} (+{hiddenCount})
+        </Link>
+      )}
 
       <div className="flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-3 py-2.5">
         <TrainFront size={15} className="text-azure" />

@@ -76,8 +76,8 @@ export default function HeroCard() {
   }, [heroImages.length, matchedCity?.slug]);
 
   return (
-    <div className="grid grid-cols-1 gap-3 overflow-hidden rounded-2xl border border-glass-border bg-panel lg:grid-cols-[1.6fr_1fr]">
-      <div className="relative min-h-[240px] overflow-hidden rounded-2xl p-5 sm:p-6">
+    <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr]">
+      <div className="relative min-h-[240px] overflow-hidden p-5 sm:p-6">
         {heroImages.length > 0 ? (
           heroImages.map((img, i) => (
             <motion.div
@@ -186,7 +186,7 @@ export default function HeroCard() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 p-4">
+      <div className="flex flex-col gap-3 border-t border-glass-border p-4 lg:border-l lg:border-t-0">
         <HeroAIBox />
       </div>
     </div>
