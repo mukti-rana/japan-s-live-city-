@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import HeroCard from "@/components/home/HeroCard";
 import AlwaysAliveCard from "@/components/home/AlwaysAliveCard";
 import LiveWeatherCard from "@/components/home/LiveWeatherCard";
@@ -14,54 +15,97 @@ import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import WelcomeGate from "@/components/auth/WelcomeGate";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
-const COLUMNS = [
-  [TrainListWidget, ExploreJapanWidget],
-  [NewsWidget, TrendingWidget],
-  [EventsListWidget, WeatherSunWidget],
-  [QuickAccessWidget],
-];
+// One master grid for the whole page. Every section sits inside the same
+// centred container, cards in a row stretch to equal height (so bottoms line
+// up), and spacing comes in tiers: tight inside a section, wider between
+// sections. Nothing has a fixed height, so cards simply grow with their
+// content and the page itself is the only thing that scrolls.
+function Cell({
+  children,
+  delay = 0,
+  inView = true,
+  className = "",
+}: {
+  children: ReactNode;
+  delay?: number;
+  inView?: boolean;
+  className?: string;
+}) {
+  return (
+    <Reveal delay={delay} inView={inView} className={`h-full min-w-0 [&>*]:h-full ${className}`}>
+      {children}
+    </Reveal>
+  );
+}
 
 export default function Home() {
   return (
     <LiveLocationProvider>
       <WelcomeGate />
-      <div className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 gap-3 xl:grid-cols-[3fr_1fr]">
-          <Reveal>
-            <HeroCard />
-          </Reveal>
-          <Reveal delay={0.08}>
-            <AlwaysAliveCard />
-          </Reveal>
-        </div>
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 lg:gap-10">
+        {/* 1 — First screen: where you are, the time, the AI, then the weather */}
+        <section className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[3fr_1fr]">
+            <Cell inView={false}>
+              <HeroCard />
+            </Cell>
+            <Cell inView={false} delay={0.08}>
+              <AlwaysAliveCard />
+            </Cell>
+          </div>
+          <Cell inView={false} delay={0.1}>
+            <LiveWeatherCard />
+          </Cell>
+        </section>
 
-        <Reveal delay={0.1}>
-          <LiveWeatherCard />
-        </Reveal>
-
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-          <Reveal delay={0.16}>
+        {/* 2 — Across Japan: the map and a live view */}
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Cell>
             <JapanMapWidget />
-          </Reveal>
-          <Reveal delay={0.18}>
+          </Cell>
+          <Cell delay={0.06}>
             <LiveCityCamCard />
-          </Reveal>
-        </div>
+          </Cell>
+        </section>
 
-        <div className="grid grid-cols-1 items-start gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {COLUMNS.map((column, columnIndex) => (
-            <div key={columnIndex} className="flex flex-col gap-3">
-              {column.map((WidgetComponent, rowIndex) => (
-                <Reveal
-                  key={WidgetComponent.name}
-                  delay={0.22 + columnIndex * 0.06 + rowIndex * 0.1}
-                >
-                  <WidgetComponent />
-                </Reveal>
-              ))}
-            </div>
-          ))}
-        </div>
+        {/* 3 — Getting around and what's being reported */}
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Cell>
+            <TrainListWidget />
+          </Cell>
+          <div className="flex min-w-0 flex-col gap-4">
+            <Cell className="flex-1">
+              <NewsWidget />
+            </Cell>
+            <Cell delay={0.06} className="flex-1">
+              <TrendingWidget />
+            </Cell>
+          </div>
+        </section>
+
+        {/* 4 — What's on, with the sun times beside it */}
+        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <Cell className="lg:col-span-2">
+            <EventsListWidget columns={2} />
+          </Cell>
+          <Cell delay={0.06}>
+            <WeatherSunWidget />
+          </Cell>
+        </section>
+
+        {/* 5 — Discover */}
+        <section>
+          <Cell>
+            <ExploreJapanWidget />
+          </Cell>
+        </section>
+
+        {/* 6 — Tools */}
+        <section>
+          <Cell>
+            <QuickAccessWidget />
+          </Cell>
+        </section>
       </div>
     </LiveLocationProvider>
   );

@@ -78,7 +78,7 @@ export default function ExploreJapanGrid({ places }: { places: EnrichedPlace[] }
           <T k="explore.noResults" />
         </p>
       ) : (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3 lg:grid-cols-6">
           {filtered.slice(0, WIDGET_ITEM_CAP).map((place) => (
             <a
               key={place.name}

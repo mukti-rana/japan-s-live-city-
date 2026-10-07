@@ -43,7 +43,7 @@ export default function QuickAccessWidget() {
 
   return (
     <WidgetFrame icon={Zap} labelKey="quickaccess.title" accent="azure">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {QUICK_LINKS.map(({ labelKey, subKey, href, icon: Icon, accent }) => (
           <a
             key={labelKey}

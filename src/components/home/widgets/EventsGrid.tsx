@@ -13,9 +13,13 @@ const CATEGORY_VALUES: ("All" | EventCategory)[] = ["All", "Festival", "Firework
 export default function EventsGrid({
   festivals,
   limit,
+  columns = 1,
 }: {
   festivals: EnrichedFestival[];
   limit?: number;
+  // 2 lays the list out in two columns from the md breakpoint up, for wide
+  // placements (the Home page). Default keeps the single column used elsewhere.
+  columns?: 1 | 2;
 }) {
   const { t } = useLanguage();
   const [category, setCategory] = useState<"All" | EventCategory>("All");
@@ -43,7 +47,7 @@ export default function EventsGrid({
         }}
       />
 
-      <ul className="flex flex-col">
+      <ul className={columns === 2 ? "flex flex-col md:grid md:grid-cols-2 md:gap-x-8" : "flex flex-col"}>
         {visible.map((festival) => (
           <li
             key={festival.name}

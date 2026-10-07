@@ -6,9 +6,11 @@ import { getUpcomingFestivals } from "@/lib/services/events";
 export default async function EventsListWidget({
   limit = 5,
   linkToAll = true,
+  columns = 1,
 }: {
   limit?: number;
   linkToAll?: boolean;
+  columns?: 1 | 2;
 }) {
   const festivals = await getUpcomingFestivals();
 
@@ -20,7 +22,7 @@ export default async function EventsListWidget({
       viewAll={linkToAll}
       viewAllHref={linkToAll ? "/events" : undefined}
     >
-      <EventsGrid festivals={festivals} limit={limit} />
+      <EventsGrid festivals={festivals} limit={limit} columns={columns} />
     </WidgetFrame>
   );
 }
