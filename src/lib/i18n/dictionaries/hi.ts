@@ -257,6 +257,11 @@ const hi: Record<TranslationKey, string> = {
   "weather.v2.alerts": "मौसम चेतावनी",
   "weather.v2.alertsNotConnected": "आधिकारिक मौसम चेतावनियां अभी जुड़ी नहीं हैं। चेतावनी के लिए जापान मौसम विज्ञान एजेंसी देखें।",
   "weather.v2.openMap": "मौसम मानचित्र खोलें",
+
+  // First-visit welcome screen.
+  "welcome.title": "आपका जापान। आपके शहर। आपके अलर्ट।",
+  "welcome.subtitle": "पसंदीदा सेव करने के लिए साइन इन करें, या अतिथि के रूप में खुलकर देखें।",
+  "auth.continueGuest": "अतिथि के रूप में जारी रखें",
 };
 
 export default hi;

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft, Heart, MapPin, TrainFront, Languages } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import GuestLink from "@/components/auth/GuestLink";
 import Reveal from "@/components/ui/Reveal";
 
 const BENEFITS = [
@@ -85,13 +86,10 @@ export default function AuthShell({
 
       <Reveal delay={0.25}>
         <div className="relative text-center">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-azure"
-          >
+          <GuestLink className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-azure">
             <ArrowLeft size={14} />
             Continue exploring as guest
-          </Link>
+          </GuestLink>
         </div>
       </Reveal>
     </div>

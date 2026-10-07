@@ -11,6 +11,7 @@ import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
 import WeatherSunWidget from "@/components/home/widgets/WeatherSunWidget";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
+import WelcomeGate from "@/components/auth/WelcomeGate";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
 const COLUMNS = [
@@ -23,6 +24,7 @@ const COLUMNS = [
 export default function Home() {
   return (
     <LiveLocationProvider>
+      <WelcomeGate />
       <div className="flex flex-col gap-3">
         <div className="grid grid-cols-1 gap-3 xl:grid-cols-[3fr_1fr]">
           <Reveal>

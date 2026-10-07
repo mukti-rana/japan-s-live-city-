@@ -257,6 +257,11 @@ const ko: Record<TranslationKey, string> = {
   "weather.v2.alerts": "기상 특보",
   "weather.v2.alertsNotConnected": "공식 기상 특보는 아직 연결되어 있지 않아요. 특보는 일본 기상청에서 확인하세요.",
   "weather.v2.openMap": "날씨 지도 열기",
+
+  // First-visit welcome screen.
+  "welcome.title": "나의 일본. 나의 도시. 나의 알림.",
+  "welcome.subtitle": "로그인하면 즐겨찾기를 저장할 수 있어요. 게스트로 자유롭게 둘러볼 수도 있어요.",
+  "auth.continueGuest": "게스트로 계속하기",
 };
 
 export default ko;

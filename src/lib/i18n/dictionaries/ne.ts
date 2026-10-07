@@ -257,6 +257,11 @@ const ne: Record<TranslationKey, string> = {
   "weather.v2.alerts": "मौसम चेतावनी",
   "weather.v2.alertsNotConnected": "आधिकारिक मौसम चेतावनी अहिले जोडिएको छैन। चेतावनीका लागि जापान मौसम विज्ञान एजेन्सी हेर्नुहोस्।",
   "weather.v2.openMap": "मौसम नक्सा खोल्नुहोस्",
+
+  // First-visit welcome screen.
+  "welcome.title": "तपाईंको जापान। तपाईंका शहर। तपाईंका अलर्ट।",
+  "welcome.subtitle": "मनपर्ने कुरा सुरक्षित गर्न साइन इन गर्नुहोस्, वा अतिथिका रूपमा खुला रूपमा हेर्नुहोस्।",
+  "auth.continueGuest": "अतिथिका रूपमा जारी राख्नुहोस्",
 };
 
 export default ne;

@@ -255,6 +255,11 @@ const en = {
   "weather.v2.alerts": "Weather alerts",
   "weather.v2.alertsNotConnected": "Official weather warnings aren't connected yet. Check the Japan Meteorological Agency for warnings.",
   "weather.v2.openMap": "Open weather map",
+
+  // First-visit welcome screen.
+  "welcome.title": "Your Japan. Your cities. Your alerts.",
+  "welcome.subtitle": "Sign in to save your favorites, or explore freely as a guest.",
+  "auth.continueGuest": "Continue as guest",
 } as const;
 
 export default en;

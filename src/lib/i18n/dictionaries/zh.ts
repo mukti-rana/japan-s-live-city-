@@ -257,6 +257,11 @@ const zh: Record<TranslationKey, string> = {
   "weather.v2.alerts": "天气预警",
   "weather.v2.alertsNotConnected": "官方天气预警尚未接入。请在日本气象厅查看预警信息。",
   "weather.v2.openMap": "打开天气地图",
+
+  // First-visit welcome screen.
+  "welcome.title": "你的日本。你的城市。你的提醒。",
+  "welcome.subtitle": "登录即可保存收藏，也可以以访客身份自由浏览。",
+  "auth.continueGuest": "以访客身份继续",
 };
 
 export default zh;

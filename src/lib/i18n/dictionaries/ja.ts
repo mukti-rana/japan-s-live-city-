@@ -257,6 +257,11 @@ const ja: Record<TranslationKey, string> = {
   "weather.v2.alerts": "気象警報",
   "weather.v2.alertsNotConnected": "公式の気象警報はまだ接続されていません。警報は気象庁でご確認ください。",
   "weather.v2.openMap": "天気マップを開く",
+
+  // First-visit welcome screen.
+  "welcome.title": "あなたの日本。あなたの街。あなたの通知。",
+  "welcome.subtitle": "ログインするとお気に入りを保存できます。ゲストとして自由に見ることもできます。",
+  "auth.continueGuest": "ゲストとして続ける",
 };
 
 export default ja;
