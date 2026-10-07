@@ -9,6 +9,7 @@ import { readNdjsonStream } from "@/lib/ai/ndjsonStream";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEFAULT_LANGUAGE } from "@/lib/ai/languages";
 import type { UIMessage } from "@/components/ai/uiTypes";
+import AiOffNotice from "@/components/ai/AiOffNotice";
 
 function newId(): string {
   return Math.random().toString(36).slice(2);
@@ -153,17 +154,7 @@ export default function ChatAssistant({
 
   return (
     <div className="flex min-h-[60vh] flex-col gap-4">
-      {!configured && (
-        <GlassCard className="flex items-start gap-2.5 border-gold/25 bg-gold/5 p-4">
-          <TriangleAlert size={16} className="mt-0.5 shrink-0 text-gold" />
-          <p className="text-xs leading-relaxed text-muted">
-            LIVE CITY AI isn&apos;t configured yet. Add{" "}
-            <code className="rounded bg-glass-bg-strong px-1 py-0.5 text-foreground">ANTHROPIC_API_KEY</code>{" "}
-            to <code className="rounded bg-glass-bg-strong px-1 py-0.5 text-foreground">.env.local</code> and
-            restart the dev server to enable it.
-          </p>
-        </GlassCard>
-      )}
+      {!configured && <AiOffNotice />}
 
       {fetchError && (
         <GlassCard className="flex items-start gap-2.5 border-sakura/25 bg-sakura/5 p-4">

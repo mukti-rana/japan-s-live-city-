@@ -6,6 +6,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { useOneShotAssistant } from "@/lib/ai/useOneShotAssistant";
 import { useImageAttach } from "@/lib/ai/useImageAttach";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import AiOffNotice from "@/components/ai/AiOffNotice";
 
 export default function SignAssistantForm({ configured }: { configured: boolean }) {
   const { language, t } = useLanguage();
@@ -27,17 +28,7 @@ export default function SignAssistantForm({ configured }: { configured: boolean 
 
   return (
     <div className="flex flex-col gap-4">
-      {!configured && (
-        <GlassCard className="flex items-start gap-2.5 border-gold/25 bg-gold/5 p-4">
-          <TriangleAlert size={16} className="mt-0.5 shrink-0 text-gold" />
-          <p className="text-xs leading-relaxed text-muted">
-            LIVE CITY AI isn&apos;t configured yet. Add{" "}
-            <code className="rounded bg-glass-bg-strong px-1 py-0.5 text-foreground">ANTHROPIC_API_KEY</code>{" "}
-            to <code className="rounded bg-glass-bg-strong px-1 py-0.5 text-foreground">.env.local</code> and
-            restart the dev server to enable it.
-          </p>
-        </GlassCard>
-      )}
+      {!configured && <AiOffNotice />}
 
       <GlassCard className="flex flex-col gap-3 p-5">
         {image ? (
