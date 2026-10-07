@@ -52,7 +52,7 @@ export default function JapanMapView({ cities }: { cities: MapCityWithTemp[] }) 
       <Link
         href="/map"
         aria-label={t("widget.openFullMap")}
-        className="relative block aspect-[1.31] overflow-hidden rounded-xl bg-[#0a1024] transition-opacity hover:opacity-90 md:aspect-[520/240]"
+        className="relative block aspect-[1.31] flex-1 overflow-hidden rounded-xl bg-[#0a1024] transition-opacity hover:opacity-90 md:aspect-[520/240]"
       >
         <div className="absolute inset-y-0 left-1/2 w-[165%] -translate-x-1/2 md:left-0 md:w-full md:translate-x-0">
           <svg viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`} className="h-full w-full" aria-hidden="true">

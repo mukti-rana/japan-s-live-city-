@@ -40,7 +40,7 @@ export default function Home() {
   return (
     <LiveLocationProvider>
       <WelcomeGate />
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 lg:gap-8">
+      <div className="mx-auto flex w-full max-w-[2400px] flex-col gap-6 lg:gap-8">
         {/* Where you are, what time it is, the AI, and the weather — one connected unit */}
         <div className="flex flex-col gap-4">
           <Cell>
