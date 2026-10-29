@@ -12,6 +12,9 @@ export interface EventsQuery {
   when?: string;
   // A single chosen day, "YYYY-MM-DD" (Japan time).
   date?: string;
+  // A custom window (at most 62 days), used by the calendar.
+  from?: string;
+  to?: string;
   kind?: string;
   pref?: string;
   city?: string;
@@ -56,6 +59,8 @@ export interface EventsResult {
 
 const KINDS: EventKind[] = ["festival", "fireworks", "music", "food", "culture", "art", "sports", "community", "other"];
 const MAX_LIMIT = 30;
+const MAX_RANGE_LIMIT = 100;
+const MAX_RANGE_DAYS = 62;
 const RADII = [10, 25, 50, 100, 200];
 
 function currentRange(e: EventItem, today: string): DateRange {
@@ -69,6 +74,9 @@ function phaseOf(range: DateRange, today: string): Phase {
 
 function windowFor(query: EventsQuery, today: string): DateRange | null {
   if (isDate(query.date)) return { start: query.date, end: query.date };
+  if (isDate(query.from) && isDate(query.to) && query.to >= query.from && daysBetween(query.from, query.to) <= MAX_RANGE_DAYS) {
+    return { start: query.from, end: query.to };
+  }
   switch (query.when as When) {
     case "today":
       return { start: today, end: today };
@@ -182,7 +190,8 @@ export async function queryEvents(query: EventsQuery): Promise<EventsResult> {
   });
 
   const offset = Math.max(0, query.offset ?? 0);
-  const limit = Math.min(MAX_LIMIT, Math.max(1, query.limit ?? 12));
+  const cap = window && isDate(query.from) ? MAX_RANGE_LIMIT : MAX_LIMIT;
+  const limit = Math.min(cap, Math.max(1, query.limit ?? 12));
   return {
     items: items.slice(offset, offset + limit),
     total: items.length,
@@ -210,6 +219,8 @@ export function eventsQueryFromParams(params: URLSearchParams | Record<string, s
   return {
     when: get("when"),
     date: get("date"),
+    from: get("from"),
+    to: get("to"),
     kind: get("kind"),
     pref: get("pref"),
     city: get("city"),

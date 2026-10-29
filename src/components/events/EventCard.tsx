@@ -1,6 +1,7 @@
 "use client";
 
 import { CalendarDays, Clock, ExternalLink, Flame, Heart, Landmark, MapPin, Music, Navigation, Palette, PartyPopper, Trophy, Users, Utensils, type LucideIcon } from "lucide-react";
+import AddToCalendarButton from "@/components/calendar/AddToCalendarButton";
 import NewsImage from "@/components/news/NewsImage";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
@@ -194,6 +195,11 @@ export default function EventCard({
         </a>
       )}
       <SaveButton event={event} className="ml-auto" />
+      {variant !== "compact" && (
+        <div className="basis-full">
+          <AddToCalendarButton event={event} compact />
+        </div>
+      )}
     </div>
   );
 

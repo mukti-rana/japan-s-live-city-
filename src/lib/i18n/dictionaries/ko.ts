@@ -436,6 +436,8 @@ const ko: Record<TranslationKey, string> = {
   "events.home.empty": "아직 주변의 예정 행사가 없어 일본 전역 행사를 표시합니다.",
   "events.home.unavailable": "현재 행사 정보를 이용할 수 없습니다.",
   "events.errorTitle": "행사를 불러오지 못했습니다",
+  "nav.emergency": "긴급",
+  "nav.calendar": "캘린더",
 };
 
 export default ko;

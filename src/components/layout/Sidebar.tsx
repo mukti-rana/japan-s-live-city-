@@ -10,6 +10,7 @@ import {
   CloudSun,
   Newspaper,
   CalendarDays,
+  CalendarClock,
   Flame,
   MapPin,
   Settings,
@@ -26,7 +27,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
 const SIDEBAR_COLLAPSED_KEY = "livecity:sidebarCollapsed";
 
-const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[] = [
+const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home; danger?: boolean }[] = [
   { labelKey: "nav.home", href: "/", icon: Home },
   { labelKey: "nav.map", href: "/map", icon: Map },
   { labelKey: "nav.explore", href: "/explore", icon: Compass },
@@ -34,7 +35,8 @@ const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home }[]
   { labelKey: "nav.weather", href: "/weather", icon: CloudSun },
   { labelKey: "nav.news", href: "/news", icon: Newspaper },
   { labelKey: "nav.events", href: "/events", icon: CalendarDays },
-  { labelKey: "nav.alerts", href: "/emergency", icon: ShieldAlert },
+  { labelKey: "nav.calendar", href: "/calendar", icon: CalendarClock },
+  { labelKey: "nav.emergency", href: "/emergency", icon: ShieldAlert, danger: true },
   { labelKey: "nav.trending", href: "/trending", icon: Flame },
   { labelKey: "nav.cities", href: "/cities", icon: MapPin },
   { labelKey: "nav.settings", href: "/settings", icon: Settings },
@@ -107,7 +109,7 @@ export default function Sidebar() {
         </button>
 
         <nav className="flex flex-1 flex-col gap-1 px-3 pt-6 lg:pt-4">
-          {NAV_ITEMS.map(({ labelKey, href, icon: Icon }) => {
+          {NAV_ITEMS.map(({ labelKey, href, icon: Icon, danger }) => {
             const active =
               href === "/"
                 ? pathname === "/"
@@ -119,16 +121,20 @@ export default function Sidebar() {
                 href={href}
                 title={collapsed ? t(labelKey) : undefined}
                 className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-azure/10 text-foreground"
-                    : "text-muted hover:bg-glass-bg hover:text-foreground"
+                  danger
+                    ? "border border-red-500/50 bg-red-600/15 font-bold text-red-100 hover:bg-red-600/30"
+                    : active
+                      ? "bg-azure/10 text-foreground"
+                      : "text-muted hover:bg-glass-bg hover:text-foreground"
                 }`}
               >
                 <span
                   className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                    active
-                      ? "bg-sakura/20 text-sakura"
-                      : "text-muted group-hover:text-azure"
+                    danger
+                      ? "bg-red-600 text-white"
+                      : active
+                        ? "bg-sakura/20 text-sakura"
+                        : "text-muted group-hover:text-azure"
                   }`}
                 >
                   <Icon size={16} />

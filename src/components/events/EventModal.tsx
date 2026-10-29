@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { ExternalLink, Heart, MapPin, Navigation, X } from "lucide-react";
+import AddToCalendarButton from "@/components/calendar/AddToCalendarButton";
 import NewsImage from "@/components/news/NewsImage";
 import { EventFacts } from "@/components/events/EventCard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -251,6 +252,7 @@ export default function EventModal({ event, onClose }: { event: EventView | null
                 <Heart size={13} className={saved ? "fill-current" : ""} aria-hidden="true" />
                 {saved ? t("events.unsave") : t("events.save")}
               </button>
+              <AddToCalendarButton event={event} />
               <span className="text-[11px] text-muted">{t("events.savedNote")}</span>
             </div>
           </div>

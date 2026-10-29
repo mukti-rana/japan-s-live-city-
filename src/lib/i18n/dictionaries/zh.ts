@@ -436,6 +436,8 @@ const zh: Record<TranslationKey, string> = {
   "events.home.empty": "暂未找到您附近的近期活动，改为显示全日本的活动。",
   "events.home.unavailable": "暂时无法获取活动信息。",
   "events.errorTitle": "无法加载活动",
+  "nav.emergency": "紧急",
+  "nav.calendar": "日历",
 };
 
 export default zh;

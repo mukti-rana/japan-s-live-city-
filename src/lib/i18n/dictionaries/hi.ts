@@ -436,6 +436,8 @@ const hi: Record<TranslationKey, string> = {
   "events.home.empty": "आपके पास अभी कोई आगामी आयोजन नहीं मिला। इसके बजाय पूरे जापान के आयोजन दिखा रहे हैं।",
   "events.home.unavailable": "अभी आयोजन उपलब्ध नहीं हैं।",
   "events.errorTitle": "आयोजन लोड नहीं हो सके",
+  "nav.emergency": "आपातकालीन",
+  "nav.calendar": "कैलेंडर",
 };
 
 export default hi;

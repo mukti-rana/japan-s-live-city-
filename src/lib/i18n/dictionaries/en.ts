@@ -434,6 +434,8 @@ const en = {
   "events.home.empty": "No upcoming events found near you yet. Showing events across Japan instead.",
   "events.home.unavailable": "Events are unavailable right now.",
   "events.errorTitle": "Events couldn't be loaded",
+  "nav.emergency": "Emergency",
+  "nav.calendar": "Calendar",
 } as const;
 
 export default en;

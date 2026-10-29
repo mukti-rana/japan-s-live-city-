@@ -436,6 +436,8 @@ const ja: Record<TranslationKey, string> = {
   "events.home.empty": "お近くの予定されたイベントはまだ見つかりません。代わりに全国のイベントを表示します。",
   "events.home.unavailable": "現在イベント情報を利用できません。",
   "events.errorTitle": "イベントを読み込めませんでした",
+  "nav.emergency": "緊急",
+  "nav.calendar": "カレンダー",
 };
 
 export default ja;

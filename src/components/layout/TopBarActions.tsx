@@ -1,17 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Bell, MapPin } from "lucide-react";
+import { Search, Bell, MapPin, Siren } from "lucide-react";
 import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/lib/supabase/AuthContext";
 import { useSessionCity } from "@/lib/geo/sessionCity";
+import { E } from "@/lib/emergency/strings";
+import { useInline } from "@/lib/i18n/inline";
 
 export default function TopBarActions() {
   const { t } = useLanguage();
   const { user, loading } = useAuth();
   const city = useSessionCity();
   const email = user?.email ?? null;
+  const e = useInline(E);
 
   return (
     <div className="ml-auto flex items-center gap-2">
@@ -36,6 +39,16 @@ export default function TopBarActions() {
           <span className="max-w-[7rem] truncate">{city}</span>
         </span>
       )}
+
+      {/* Always one tap from any page: the Emergency Center. */}
+      <Link
+        href="/emergency"
+        aria-label={e("title")}
+        className="flex min-h-9 items-center gap-1.5 rounded-full bg-red-600 px-3 text-xs font-extrabold tracking-wide text-white hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      >
+        <Siren size={14} aria-hidden="true" />
+        {e("sos")}
+      </Link>
 
       <LanguageSwitcher variant="topbar" />
 

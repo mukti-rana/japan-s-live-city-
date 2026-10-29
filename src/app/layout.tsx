@@ -8,6 +8,7 @@ import { AuthProvider } from "@/lib/supabase/AuthContext";
 import { AccountPromptProvider } from "@/components/auth/AccountPromptProvider";
 import { FavoritesProvider } from "@/lib/personalization/FavoritesContext";
 import PreferencesSync from "@/lib/personalization/PreferencesSync";
+import ReminderHost from "@/components/calendar/ReminderHost";
 import { siteUrl } from "@/lib/siteUrl";
 import "./globals.css";
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <AccountPromptProvider>
               <FavoritesProvider>
                 <PreferencesSync />
+                <ReminderHost />
                 <TopBar />
                 <div className="flex flex-1">
                   <Sidebar />

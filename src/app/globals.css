@@ -156,3 +156,33 @@ body:has([data-auth-shell]) > div > button {
     animation: none;
   }
 }
+
+/* Printing the emergency readiness card: only the card is printed, in plain
+   black on white. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #readiness,
+  #readiness * {
+    visibility: visible;
+  }
+  #readiness {
+    position: absolute;
+    inset: 0;
+    background: #fff !important;
+    color: #000 !important;
+    border: none !important;
+  }
+  #readiness input,
+  #readiness textarea {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+  }
+  #readiness button,
+  #readiness p.text-xs,
+  #readiness p.text-sm.text-muted {
+    display: none !important;
+  }
+}

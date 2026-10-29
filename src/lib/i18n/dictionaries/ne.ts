@@ -436,6 +436,8 @@ const ne: Record<TranslationKey, string> = {
   "events.home.empty": "तपाईंको नजिक अहिलेसम्म आगामी कार्यक्रम भेटिएन। यसको सट्टा जापानभरका कार्यक्रम देखाउँदै।",
   "events.home.unavailable": "अहिले कार्यक्रमहरू उपलब्ध छैनन्।",
   "events.errorTitle": "कार्यक्रम लोड गर्न सकिएन",
+  "nav.emergency": "आपतकालीन",
+  "nav.calendar": "क्यालेन्डर",
 };
 
 export default ne;
