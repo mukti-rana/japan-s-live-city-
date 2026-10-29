@@ -6,7 +6,8 @@ import LiveCityCamCard from "@/components/home/LiveCityCamCard";
 import Reveal from "@/components/ui/Reveal";
 import JapanMapWidget from "@/components/home/widgets/JapanMapWidget";
 import TrainListWidget from "@/components/home/widgets/TrainListWidget";
-import NewsWidget from "@/components/home/widgets/NewsWidget";
+import HeadlinesMini from "@/components/news/HeadlinesMini";
+import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
 import EventsListWidget from "@/components/home/widgets/EventsListWidget";
 import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
@@ -66,13 +67,18 @@ export default function Home() {
           </Cell>
         </div>
 
+        {/* Local news for wherever you are — same service as the News tab */}
+        <Cell delay={0.18}>
+          <LatestNewsNearYou />
+        </Cell>
+
         {/* Getting around, what's being reported, what's on */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1.25fr_1fr_1fr] lg:gap-5">
           <Cell delay={0.2}>
             <TrainListWidget />
           </Cell>
           <Cell delay={0.24}>
-            <NewsWidget />
+            <HeadlinesMini />
           </Cell>
           <Cell delay={0.28} className="md:col-span-2 xl:col-span-1">
             <EventsListWidget limit={4} />

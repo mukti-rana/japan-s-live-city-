@@ -1,32 +1,34 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/ui/Reveal";
 import T from "@/components/i18n/T";
-import HeroAIBox from "@/components/home/HeroAIBox";
-import NewsExplorer from "@/components/news/NewsExplorer";
-import NewsNearYou from "@/components/news/NewsNearYou";
-import { getLatestNews, NEWS_SOURCES, type NewsItem } from "@/lib/services/news";
+import NewsHub from "@/components/news/NewsHub";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
+import { filtersFromParams, gridParams } from "@/lib/news/hubFilters";
+import { queryFromParams, queryNews, type NewsResult } from "@/lib/news/query";
+import { toQueryString } from "@/lib/news/queryString";
 
 export const metadata: Metadata = {
   title: "Japan Live News — Live City Japan",
   description:
-    "Real headlines from NHK, The Japan Times, Japan Today, and The Japan News — from across Japan, updated throughout the day.",
+    "News from across Japan and the world — NHK, The Japan Times, Japan Today, DW, Al Jazeera and video from official news channels, with local news for your city.",
 };
 
-export default async function NewsPage() {
-  const { items, failedSources } = await getLatestNews(20).catch<{
-    items: NewsItem[];
-    failedSources: string[];
-  }>(() => ({ items: [], failedSources: NEWS_SOURCES.map((s) => s.name) }));
+export default async function NewsPage({ searchParams }: PageProps<"/news">) {
+  const filters = filtersFromParams(await searchParams);
+
+  // The first page is fetched here so it arrives with the HTML. "Local" needs
+  // the visitor's place, which only the browser knows, so it loads there.
+  const initialResult: NewsResult | null =
+    filters.cat === "local"
+      ? null
+      : await queryNews(queryFromParams(new URLSearchParams(toQueryString(gridParams(filters, null))))).catch(() => null);
 
   return (
     <LiveLocationProvider>
-      <div className="flex flex-col gap-5">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5">
         <Reveal>
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-              🇯🇵 Live
-            </p>
+            <p className="text-xs font-medium uppercase tracking-widest text-sakura">🇯🇵 Live</p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               <T k="news.pageTitle" />
             </h1>
@@ -36,22 +38,7 @@ export default async function NewsPage() {
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_320px]">
-          <Reveal delay={0.06}>
-            <NewsExplorer items={items} failedSources={failedSources} />
-          </Reveal>
-
-          <div className="flex flex-col gap-5">
-            <Reveal delay={0.1}>
-              <NewsNearYou items={items} />
-            </Reveal>
-            <Reveal delay={0.14}>
-              <div className="overflow-hidden rounded-2xl border border-glass-border bg-panel p-1">
-                <HeroAIBox />
-              </div>
-            </Reveal>
-          </div>
-        </div>
+        <NewsHub initialFilters={filters} initialResult={initialResult} />
       </div>
     </LiveLocationProvider>
   );
