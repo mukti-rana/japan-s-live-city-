@@ -5,6 +5,7 @@ import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import AuthField from "@/components/ui/AuthField";
 import AuthShell from "@/components/auth/AuthShell";
+import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signInAction } from "@/lib/supabase/actions";
@@ -37,44 +38,36 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         </Reveal>
       )}
 
-      <Reveal delay={0.12}>
-        <GlassCard className="p-5">
-          <form action={signInAction} className="flex flex-col gap-3.5">
-            <AuthField
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-            <AuthField
-              label="Password"
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
+      <form action={signInAction} className="flex flex-col gap-3.5">
+        <AuthField
+          label="Email"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+        <AuthField
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          autoComplete="current-password"
+        />
 
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-xs text-muted transition-colors hover:text-azure"
-              >
-                Forgot password?
-              </Link>
-            </div>
+        <div className="flex justify-end">
+          <Link
+            href="/forgot-password"
+            className="text-xs text-muted transition-colors hover:text-azure focus-visible:text-azure focus-visible:outline-none focus-visible:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
-            <button
-              type="submit"
-              disabled={!isSupabaseConfigured}
-              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <LogIn size={15} />
-              Sign in
-            </button>
-          </form>
-        </GlassCard>
-      </Reveal>
+        <AuthSubmitButton disabled={!isSupabaseConfigured}>
+          <LogIn size={16} />
+          Sign in
+        </AuthSubmitButton>
+      </form>
     </AuthShell>
   );
 }

@@ -6,9 +6,17 @@ import { markWelcomeSeen } from "@/lib/welcome";
 
 // A link back to the site as a guest. Also records that the visitor has made
 // their choice, so the first-visit welcome doesn't appear again.
-export default function GuestLink({ className, children }: { className?: string; children: ReactNode }) {
+export default function GuestLink({
+  className,
+  label,
+  children,
+}: {
+  className?: string;
+  label?: string;
+  children: ReactNode;
+}) {
   return (
-    <Link href="/" onClick={markWelcomeSeen} className={className}>
+    <Link href="/" onClick={markWelcomeSeen} className={className} aria-label={label}>
       {children}
     </Link>
   );

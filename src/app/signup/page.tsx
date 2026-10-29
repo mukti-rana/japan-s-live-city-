@@ -4,6 +4,7 @@ import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import AuthField from "@/components/ui/AuthField";
 import AuthShell from "@/components/auth/AuthShell";
+import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signUpAction } from "@/lib/supabase/actions";
@@ -48,35 +49,27 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
         </Reveal>
       )}
 
-      <Reveal delay={0.12}>
-        <GlassCard className="p-5">
-          <form action={signUpAction} className="flex flex-col gap-3.5">
-            <AuthField
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-            <AuthField
-              label="Password"
-              name="password"
-              type="password"
-              placeholder="At least 6 characters"
-              autoComplete="new-password"
-            />
+      <form action={signUpAction} className="flex flex-col gap-3.5">
+        <AuthField
+          label="Email"
+          name="email"
+          type="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+        />
+        <AuthField
+          label="Password"
+          name="password"
+          type="password"
+          placeholder="At least 6 characters"
+          autoComplete="new-password"
+        />
 
-            <button
-              type="submit"
-              disabled={!isSupabaseConfigured}
-              className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <UserPlus size={15} />
-              Create free account
-            </button>
-          </form>
-        </GlassCard>
-      </Reveal>
+        <AuthSubmitButton disabled={!isSupabaseConfigured}>
+          <UserPlus size={16} />
+          Create free account
+        </AuthSubmitButton>
+      </form>
     </AuthShell>
   );
 }

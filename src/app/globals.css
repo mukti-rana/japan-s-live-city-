@@ -99,3 +99,60 @@ body {
 .leaflet-popup-close-button:hover {
   color: var(--foreground) !important;
 }
+
+/* ── Sign-in / create-account entrance ─────────────────────────────────────
+   The auth screens cover the whole viewport (see AuthShell), so the page
+   behind them must not scroll as well. */
+body:has([data-auth-shell]) {
+  overflow: hidden;
+}
+
+/* The top bar, sidebar and footer are covered by the auth screen; hide them
+   from the tab order and from screen readers too, not just visually. */
+body:has([data-auth-shell]) > header,
+body:has([data-auth-shell]) > footer,
+body:has([data-auth-shell]) > div > aside,
+body:has([data-auth-shell]) > div > button {
+  visibility: hidden;
+}
+
+@keyframes auth-drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(7%, 5%, 0) scale(1.14); }
+}
+
+@keyframes auth-drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+  50% { transform: translate3d(-6%, -4%, 0) scale(0.95); }
+}
+
+@keyframes auth-zoom {
+  from { transform: scale(1.04); }
+  to { transform: scale(1.13); }
+}
+
+@keyframes auth-sheen {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@keyframes auth-guest-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(77, 163, 255, 0.25), 0 0 20px -4px rgba(77, 163, 255, 0.3); }
+  50% { box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.35), 0 0 30px -2px rgba(168, 85, 247, 0.4); }
+}
+
+.auth-drift-a { animation: auth-drift-a 24s ease-in-out infinite; }
+.auth-drift-b { animation: auth-drift-b 30s ease-in-out infinite; }
+.auth-zoom { animation: auth-zoom 40s ease-in-out infinite alternate; }
+.auth-sheen { background-size: 220% 100%; animation: auth-sheen 14s ease-in-out infinite alternate; }
+.auth-guest-glow { animation: auth-guest-glow 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-drift-a,
+  .auth-drift-b,
+  .auth-zoom,
+  .auth-sheen,
+  .auth-guest-glow {
+    animation: none;
+  }
+}

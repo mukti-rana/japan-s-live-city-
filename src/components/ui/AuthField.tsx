@@ -17,14 +17,14 @@ export default function AuthField({
 }) {
   return (
     <label className="block">
-      <span className="text-xs font-medium text-muted">{label}</span>
+      <span className="text-xs font-medium text-foreground/80">{label}</span>
       <input
         name={name}
         type={type}
         placeholder={placeholder}
         required={required}
         autoComplete={autoComplete}
-        className="mt-1.5 w-full rounded-xl border border-glass-border bg-glass-bg px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none focus:border-azure/40"
+        className="mt-1.5 h-12 w-full rounded-xl border border-glass-border bg-glass-bg px-4 text-base text-foreground outline-none transition-colors placeholder:text-muted/80 hover:border-white/20 focus:border-azure/60 focus:bg-glass-bg-strong focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm"
       />
     </label>
   );
