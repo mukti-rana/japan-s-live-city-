@@ -8,7 +8,7 @@ import JapanMapWidget from "@/components/home/widgets/JapanMapWidget";
 import TrainListWidget from "@/components/home/widgets/TrainListWidget";
 import HeadlinesMini from "@/components/news/HeadlinesMini";
 import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
-import EventsListWidget from "@/components/home/widgets/EventsListWidget";
+import EventsNearYou from "@/components/events/EventsNearYou";
 import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
 import WeatherSunWidget from "@/components/home/widgets/WeatherSunWidget";
@@ -81,7 +81,7 @@ export default function Home() {
             <HeadlinesMini />
           </Cell>
           <Cell delay={0.28} className="md:col-span-2 xl:col-span-1">
-            <EventsListWidget limit={4} />
+            <EventsNearYou />
           </Cell>
         </div>
 
