@@ -264,7 +264,7 @@ const zh: Record<TranslationKey, string> = {
   "auth.continueGuest": "以访客身份继续",
   "news.cat.all": "最新新闻",
   "news.cat.breaking": "突发新闻",
-  "news.cat.japan": "日本全国",
+  "news.cat.japan": "日本全境",
   "news.cat.local": "身边新闻",
   "news.cat.osaka": "大阪新闻",
   "news.cat.kyoto": "京都新闻",

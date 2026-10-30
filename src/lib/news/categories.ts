@@ -82,10 +82,11 @@ export interface CategoryDef {
 const MAIN_PREFS = ["osaka", "kyoto", "tokyo"];
 
 export const CATEGORIES: CategoryDef[] = [
-  { id: "all", labelKey: "news.cat.all", match: () => true },
-  { id: "breaking", labelKey: "news.cat.breaking", match: (a) => a.breaking },
   { id: "japan", labelKey: "news.cat.japan", match: (a) => a.scope === "japan" },
   { id: "local", labelKey: "news.cat.local", match: (a) => a.scope === "japan" },
+  { id: "international", labelKey: "news.cat.international", match: (a) => a.scope === "international" },
+  { id: "all", labelKey: "news.cat.all", match: () => true },
+  { id: "breaking", labelKey: "news.cat.breaking", match: (a) => a.breaking },
   { id: "osaka", labelKey: "news.cat.osaka", match: (a) => a.scope === "japan" && a.places.includes("osaka") },
   { id: "kyoto", labelKey: "news.cat.kyoto", match: (a) => a.scope === "japan" && a.places.includes("kyoto") },
   { id: "tokyo", labelKey: "news.cat.tokyo", match: (a) => a.scope === "japan" && a.places.includes("tokyo") },
@@ -105,7 +106,6 @@ export const CATEGORIES: CategoryDef[] = [
   { id: "sports", labelKey: "news.cat.sports", match: (a) => a.topic === "sports" },
   { id: "entertainment", labelKey: "news.cat.entertainment", match: (a) => a.topic === "entertainment" },
   { id: "travel", labelKey: "news.cat.travel", match: (a) => a.topic === "travel" },
-  { id: "international", labelKey: "news.cat.international", match: (a) => a.scope === "international" },
   { id: "asia", labelKey: "news.cat.asia", match: (a) => a.scope === "international" && a.asia },
   { id: "world-politics", labelKey: "news.cat.world-politics", match: (a) => a.scope === "international" && a.topic === "politics" },
   { id: "science", labelKey: "news.cat.science", match: (a) => a.topic === "science" },

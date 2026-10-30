@@ -264,7 +264,7 @@ const hi: Record<TranslationKey, string> = {
   "auth.continueGuest": "अतिथि के रूप में जारी रखें",
   "news.cat.all": "ताज़ा खबरें",
   "news.cat.breaking": "ब्रेकिंग न्यूज़",
-  "news.cat.japan": "जापान राष्ट्रीय",
+  "news.cat.japan": "पूरा जापान",
   "news.cat.local": "आपके पास की खबरें",
   "news.cat.osaka": "ओसाका समाचार",
   "news.cat.kyoto": "क्योटो समाचार",

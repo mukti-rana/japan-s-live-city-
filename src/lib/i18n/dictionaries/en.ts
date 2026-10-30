@@ -262,7 +262,7 @@ const en = {
   "auth.continueGuest": "Continue as guest",
   "news.cat.all": "Latest News",
   "news.cat.breaking": "Breaking News",
-  "news.cat.japan": "Japan National",
+  "news.cat.japan": "All Japan",
   "news.cat.local": "Local News Near You",
   "news.cat.osaka": "Osaka News",
   "news.cat.kyoto": "Kyoto News",

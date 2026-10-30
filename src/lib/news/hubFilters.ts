@@ -14,7 +14,11 @@ export interface HubFilters {
   video: boolean;
 }
 
-export const DEFAULT_FILTERS: HubFilters = { cat: "all", q: "", src: "", lang: "", range: "", pref: "", video: false };
+// The News page opens on All Japan: stories from across the country, not the
+// visitor's own area (that is "Near You") and not world news.
+export const DEFAULT_CATEGORY: CategoryId = "japan";
+
+export const DEFAULT_FILTERS: HubFilters = { cat: DEFAULT_CATEGORY, q: "", src: "", lang: "", range: "", pref: "", video: false };
 
 const CATEGORY_IDS = new Set<string>(CATEGORIES.map((c) => c.id));
 
@@ -25,7 +29,7 @@ export function filtersFromParams(sp: Record<string, string | string[] | undefin
   };
   const cat = get("cat");
   return {
-    cat: CATEGORY_IDS.has(cat) ? (cat as CategoryId) : "all",
+    cat: CATEGORY_IDS.has(cat) ? (cat as CategoryId) : DEFAULT_CATEGORY,
     q: get("q").slice(0, 100),
     src: get("src"),
     lang: get("lang") === "en" || get("lang") === "ja" ? get("lang") : "",
@@ -54,7 +58,8 @@ export function gridParams(f: HubFilters, place: string | null, offset = 0): New
 
 export function pageQuery(f: HubFilters): string {
   return toQueryString({
-    cat: f.cat === "all" ? "" : f.cat,
+    // The default view keeps a clean address; every other view is spelled out.
+    cat: f.cat === DEFAULT_CATEGORY ? "" : f.cat,
     q: f.q,
     src: f.src,
     lang: f.lang,

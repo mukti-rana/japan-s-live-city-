@@ -8,7 +8,7 @@ import NewsModal from "@/components/news/NewsModal";
 import PlacePicker from "@/components/news/PlacePicker";
 import { CardSkeleton, FeaturedSkeleton } from "@/components/news/NewsSkeleton";
 import { CATEGORIES, type CategoryId } from "@/lib/news/categories";
-import { DEFAULT_FILTERS, gridParams, pageQuery, type HubFilters } from "@/lib/news/hubFilters";
+import { DEFAULT_CATEGORY, DEFAULT_FILTERS, gridParams, pageQuery, type HubFilters } from "@/lib/news/hubFilters";
 import { PREFECTURES } from "@/lib/news/places";
 import { SOURCE_OPTIONS } from "@/lib/news/sources";
 import { timeAgo, toQueryString, useNewsFeed, useNewsPlace, useResolvedImages, type NewsParams } from "@/lib/news/useNews";
@@ -183,7 +183,7 @@ export default function NewsHub({
   const sourceName = (id: string) => SOURCE_OPTIONS.find((s) => s.id === id)?.name ?? id;
 
   const chips: { key: string; label: string; clear: () => void }[] = [];
-  if (filters.cat !== "all") chips.push({ key: "cat", label: categoryLabel(filters.cat), clear: () => update({ cat: "all" }) });
+  if (filters.cat !== DEFAULT_CATEGORY) chips.push({ key: "cat", label: categoryLabel(filters.cat), clear: () => update({ cat: DEFAULT_CATEGORY }) });
   if (filters.pref) chips.push({ key: "pref", label: `${t("news.hub.location")}: ${prefLabel(filters.pref)}`, clear: () => update({ pref: "" }) });
   if (filters.src) chips.push({ key: "src", label: `${t("news.hub.source")}: ${sourceName(filters.src)}`, clear: () => update({ src: "" }) });
   if (filters.lang) chips.push({ key: "lang", label: `${t("news.hub.language")}: ${t(`news.lang.${filters.lang}` as TranslationKey)}`, clear: () => update({ lang: "" }) });

@@ -264,7 +264,7 @@ const ne: Record<TranslationKey, string> = {
   "auth.continueGuest": "अतिथिका रूपमा जारी राख्नुहोस्",
   "news.cat.all": "ताजा समाचार",
   "news.cat.breaking": "ब्रेकिङ न्यूज",
-  "news.cat.japan": "जापान राष्ट्रिय",
+  "news.cat.japan": "सम्पूर्ण जापान",
   "news.cat.local": "तपाईंको नजिकको समाचार",
   "news.cat.osaka": "ओसाका समाचार",
   "news.cat.kyoto": "क्योटो समाचार",

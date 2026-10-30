@@ -264,7 +264,7 @@ const ko: Record<TranslationKey, string> = {
   "auth.continueGuest": "게스트로 계속하기",
   "news.cat.all": "최신 뉴스",
   "news.cat.breaking": "속보",
-  "news.cat.japan": "일본 전국",
+  "news.cat.japan": "일본 전체",
   "news.cat.local": "내 주변 뉴스",
   "news.cat.osaka": "오사카 뉴스",
   "news.cat.kyoto": "교토 뉴스",
