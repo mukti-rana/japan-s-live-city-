@@ -6,6 +6,12 @@ import { AnimatePresence, motion } from "motion/react";
 import { Globe, Check } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { LANGUAGES } from "@/lib/i18n/languages";
+import { ICON_BUTTON } from "@/components/layout/usePopover";
+
+// Menu order and the English name shown beside each language.
+const MENU_ORDER = ["ja", "en", "ne", "hi", "zh", "ko"] as const;
+const ENGLISH_NAME: Record<string, string> = { ja: "Japanese", en: "English", ne: "Nepali", hi: "Hindi", zh: "Chinese", ko: "Korean" };
+const MENU_LANGUAGES = MENU_ORDER.map((code) => LANGUAGES.find((l) => l.code === code)!);
 
 export default function LanguageSwitcher({ variant }: { variant: "topbar" | "settings" }) {
   const { language, setLanguage, t } = useLanguage();
@@ -71,22 +77,13 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        aria-label={t("languageSwitcher.label")}
-        className="hidden h-9 items-center gap-1.5 rounded-full border border-glass-border bg-glass-bg px-3 text-xs font-medium text-muted transition-colors hover:text-foreground sm:flex"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`${t("languageSwitcher.label")}: ${current.label}`}
+        title={t("languageSwitcher.label")}
+        className={ICON_BUTTON}
       >
-        <Globe size={14} />
-        <span>
-          {current.flag} {current.code.toUpperCase()}
-        </span>
-      </button>
-
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label={t("languageSwitcher.label")}
-        className="flex h-9 w-9 items-center justify-center rounded-full text-muted transition-colors hover:text-foreground sm:hidden"
-      >
-        <Globe size={17} />
+        <Globe size={18} aria-hidden="true" />
       </button>
 
       <AnimatePresence>
@@ -96,14 +93,16 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 32 }}
-            className="absolute right-0 top-full z-50 mt-2 hidden w-56 rounded-2xl border border-glass-border bg-glass-bg-strong p-2 shadow-xl backdrop-blur-xl sm:block"
+            role="menu" className="absolute right-0 top-full z-50 mt-2 hidden w-60 rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] sm:block"
           >
-            {LANGUAGES.map((lang) => {
+            {MENU_LANGUAGES.map((lang) => {
               const active = lang.code === language;
               return (
                 <button
                   key={lang.code}
                   type="button"
+                  role="menuitemradio"
+                  aria-checked={active}
                   onClick={() => {
                     setLanguage(lang.code);
                     setOpen(false);
@@ -112,8 +111,8 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
                     active ? "bg-azure/10 text-foreground" : "text-muted hover:bg-glass-bg hover:text-foreground"
                   }`}
                 >
-                  <span className="text-base">{lang.flag}</span>
-                  <span className="min-w-0 flex-1 truncate text-left">{lang.label}</span>
+                  <span className="text-base" aria-hidden="true">{lang.flag}</span>
+                  <span className="min-w-0 flex-1 truncate text-left">{lang.label}{lang.code !== "en" && <span className="text-muted"> — {ENGLISH_NAME[lang.code]}</span>}</span>
                   {active && <Check size={14} className="shrink-0 text-azure" />}
                 </button>
               );
@@ -152,7 +151,7 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
                     {t("languageSwitcher.mobileTitle")}
                   </p>
                   <div className="flex flex-col gap-1">
-                    {LANGUAGES.map((lang) => {
+                    {MENU_LANGUAGES.map((lang) => {
                       const active = lang.code === language;
                       return (
                         <button
@@ -167,7 +166,7 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
                           }`}
                         >
                           <span className="text-lg">{lang.flag}</span>
-                          <span className="min-w-0 flex-1 truncate text-left">{lang.label}</span>
+                          <span className="min-w-0 flex-1 truncate text-left">{lang.label}{lang.code !== "en" && <span className="text-muted"> — {ENGLISH_NAME[lang.code]}</span>}</span>
                           {active && <Check size={16} className="shrink-0 text-azure" />}
                         </button>
                       );

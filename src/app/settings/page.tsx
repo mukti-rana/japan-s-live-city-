@@ -38,8 +38,8 @@ export default async function SettingsPage() {
       </Reveal>
 
       <Reveal delay={0.06}>
-        <GlassCard className="p-5">
-          <p className="text-sm font-semibold text-foreground">Language</p>
+        <GlassCard className="scroll-mt-20 p-5">
+          <p id="preferences" className="scroll-mt-20 text-sm font-semibold text-foreground">Language</p>
           <p className="mt-1 text-xs text-muted">
             Choose the language used across LIVE CITY.
             {user ? " It is saved to your account." : ""}
@@ -59,7 +59,7 @@ export default async function SettingsPage() {
       {isSupabaseConfigured && user && (
         <Reveal delay={0.1}>
           <GlassCard className="p-5">
-            <p className="text-sm font-semibold text-foreground">Saved</p>
+            <p id="saved" className="scroll-mt-20 text-sm font-semibold text-foreground">Saved</p>
             <p className="mb-3 mt-1 text-xs text-muted">Your favorite cities, places and train lines.</p>
             <SavedItems />
           </GlassCard>
