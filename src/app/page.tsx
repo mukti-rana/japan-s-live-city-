@@ -14,7 +14,6 @@ import TrendingWidget from "@/components/home/widgets/TrendingWidget";
 import WeatherSunWidget from "@/components/home/widgets/WeatherSunWidget";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import WelcomeGate from "@/components/auth/WelcomeGate";
-import EmergencyShortcut from "@/components/emergency/EmergencyShortcut";
 import YourDay from "@/components/calendar/YourDay";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
@@ -44,9 +43,6 @@ export default function Home() {
     <LiveLocationProvider>
       <WelcomeGate />
       <div className="mx-auto flex w-full max-w-[2400px] flex-col gap-6 lg:gap-8">
-        {/* Emergency numbers: always first, always available */}
-        <EmergencyShortcut />
-
         {/* Where you are, what time it is, the AI, and the weather — one connected unit */}
         <div className="flex flex-col gap-4">
           <Cell>

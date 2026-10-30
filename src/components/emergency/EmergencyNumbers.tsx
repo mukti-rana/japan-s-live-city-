@@ -1,105 +1,102 @@
 "use client";
 
-import { Anchor, Ambulance, Flame, PhoneCall, ShieldAlert } from "lucide-react";
-import { CALL_NOTES, DESKTOP_CALL_NOTE, EMERGENCY_NUMBERS, VERIFIED_ON, type EmergencyNumber } from "@/lib/emergency/content";
+import { Anchor, Ambulance, PhoneCall, ShieldAlert } from "lucide-react";
+import { CALL_NOTES, DESKTOP_CALL_NOTE, EMERGENCY_NUMBERS, QUICK_NUMBERS, VERIFIED_ON } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
-import { pick, pickJaEn, useInline, type Text } from "@/lib/i18n/inline";
+import { pickJaEn, useInline } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
-const NAMES: Record<EmergencyNumber["id"], Text> = {
-  police: { en: "Police", ja: "警察", ne: "प्रहरी", hi: "पुलिस", zh: "警察", ko: "경찰" },
-  fire: { en: "Fire", ja: "消防（火事・救助）", ne: "दमकल", hi: "दमकल", zh: "消防", ko: "소방" },
-  ambulance: { en: "Ambulance", ja: "救急", ne: "एम्बुलेन्स", hi: "एम्बुलेंस", zh: "救护车", ko: "구급차" },
-  coastguard: { en: "Coast Guard", ja: "海上保安庁", ne: "तटरक्षक", hi: "तटरक्षक", zh: "海上保安厅", ko: "해상보안청" },
-};
+const ICONS = { police: ShieldAlert, fire: Ambulance, coastguard: Anchor };
 
-const ICONS = { police: ShieldAlert, fire: Flame, ambulance: Ambulance, coastguard: Anchor };
-
-// The four numbers that matter most. This block is plain, bundled content: it
-// renders with the page, needs no login, no location and no network call, and
-// the buttons are ordinary tel: links — they only open the phone app, and the
-// page never claims a call was placed.
+// The three numbers that matter most. Plain, bundled content: it renders with
+// the page, needs no login, no location and no network call, and the buttons
+// are ordinary tel: links — they only open the phone app, and the page never
+// claims a call was placed. Red is kept for the Call button and the icon.
 export default function EmergencyNumbers({ id = "numbers" }: { id?: string }) {
   const { language } = useLanguage();
   const t = useInline(E);
   const notes = pickJaEn(CALL_NOTES, language);
 
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24 rounded-3xl border-2 border-red-500/60 bg-[#2b0b12] p-4 sm:p-6">
-      <h2 id={`${id}-title`} className="text-lg font-bold uppercase tracking-wide text-red-100 sm:text-xl">
-        {t("homeTitle")}
-      </h2>
-      <p className="mt-1 text-sm text-red-100/80">{t("free24")}</p>
+    <section id={id} aria-labelledby={`${id}-title`} className="scroll-mt-24">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h2 id={`${id}-title`} className="text-lg font-semibold text-foreground sm:text-xl">
+          {t("homeTitle")}
+        </h2>
+        <p className="text-xs text-muted">{t("free24")}</p>
+      </div>
 
-      {/* Small screens: all three numbers in one row, above everything else. */}
-      <ul className="mt-3 grid grid-cols-3 gap-2 sm:hidden">
-        {[
-          { n: "110", label: pick(NAMES.police, language) },
-          { n: "119", label: `${pick(NAMES.fire, language).split("（")[0]} / ${pick(NAMES.ambulance, language)}` },
-          { n: "118", label: pick(NAMES.coastguard, language) },
-        ].map((q) => (
-          <li key={q.n}>
-            <a
-              href={`tel:${q.n}`}
-              aria-label={`${t("call")} ${q.n} — ${q.label}`}
-              className="flex min-h-[4.5rem] flex-col items-center justify-center rounded-xl bg-red-600 px-1 text-white hover:bg-red-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white"
-            >
-              <span className="text-3xl font-extrabold tabular-nums leading-none">{q.n}</span>
-              <span className="mt-1 text-center text-[10px] font-medium leading-tight text-red-50">{q.label}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {EMERGENCY_NUMBERS.map((n) => {
-          const Icon = ICONS[n.id];
+      <ul className="mt-3 grid gap-3 md:grid-cols-3">
+        {QUICK_NUMBERS.map((q) => {
+          const Icon = ICONS[q.id];
+          const label = pickJaEn(q.label, language);
+          const details = EMERGENCY_NUMBERS.filter((n) => q.ids.includes(n.id));
           return (
-            <li key={n.id} className="flex flex-col gap-3 rounded-2xl bg-black/35 p-4 ring-1 ring-red-400/30">
-              <div className="flex items-center gap-2 text-red-100">
-                <Icon size={20} aria-hidden="true" />
-                <span className="text-base font-semibold">{pick(NAMES[n.id], language)}</span>
-              </div>
-              <a
-                href={`tel:${n.number}`}
-                aria-label={`${t("call")} ${n.number} — ${pick(NAMES[n.id], language)}`}
-                className="flex min-h-[4.5rem] items-center justify-center gap-3 rounded-xl bg-red-600 px-4 text-white transition-colors hover:bg-red-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-white active:bg-red-700"
-              >
-                <PhoneCall size={26} aria-hidden="true" />
-                <span className="text-4xl font-extrabold tabular-nums tracking-wide">{n.number}</span>
-              </a>
-              <p className="text-sm leading-snug text-red-50">{pickJaEn(n.use, language)}</p>
-              <p className="rounded-lg bg-black/40 px-3 py-2 text-sm text-red-50">
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-red-200/80">{t("say")}</span>
-                <span className="mt-0.5 block text-lg font-semibold">{n.say.ja}</span>
-                <span className="block text-xs text-red-100/80">
-                  {n.say.romaji} — {n.say.en}
+            <li key={q.id} className="flex flex-col gap-4 rounded-2xl border border-glass-border bg-glass-bg p-4 backdrop-blur-xl sm:p-5">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-500/15 text-red-300 ring-1 ring-red-400/25">
+                  <Icon size={21} aria-hidden="true" />
                 </span>
-              </p>
-              <p className="mt-auto text-[11px] text-red-100/60">
+                <div>
+                  <p className="text-base font-semibold text-foreground">{label}</p>
+                  <p className="text-xs text-muted">{pickJaEn(q.short, language)}</p>
+                </div>
+              </div>
+
+              <p className="text-5xl font-bold tabular-nums leading-none tracking-wide text-foreground">{q.number}</p>
+
+              <a
+                href={`tel:${q.number}`}
+                aria-label={`${t("call")} ${q.number} — ${label}`}
+                className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-600 px-4 text-base font-semibold text-white transition-colors hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white active:bg-red-700"
+              >
+                <PhoneCall size={18} aria-hidden="true" />
+                {t("call")} {q.number}
+              </a>
+
+              <ul className="flex flex-col gap-2">
+                {details.map((n) => (
+                  <li key={n.id} className="rounded-xl border border-glass-border bg-background/30 px-3 py-2.5 text-sm">
+                    <p className="leading-snug text-foreground/85">{pickJaEn(n.use, language)}</p>
+                    <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted">{t("say")}</p>
+                    <p className="text-base font-semibold text-foreground">{n.say.ja}</p>
+                    <p className="text-xs text-muted">
+                      {n.say.romaji} — {n.say.en}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-auto text-[11px] text-muted">
                 {t("source")}:{" "}
-                <a href={n.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-red-50">
-                  {n.source.name}
-                </a>
+                {details
+                  .filter((n, i, all) => all.findIndex((m) => m.source.url === n.source.url) === i)
+                  .map((n) => (
+                    <a key={n.source.url} href={n.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
+                      {n.source.name}
+                    </a>
+                  ))}
               </p>
             </li>
           );
         })}
       </ul>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-2">
-        <div>
-          <h3 className="text-sm font-semibold text-red-100">{t("languagesTitle")}</h3>
-          <ul className="mt-1.5 list-disc space-y-1 pl-5 text-sm leading-relaxed text-red-50/90">
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <div className="rounded-2xl border border-glass-border bg-glass-bg p-4 backdrop-blur-xl">
+          <h3 className="text-sm font-semibold text-foreground">{t("languagesTitle")}</h3>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed text-foreground/80">
             {notes.map((line) => (
               <li key={line}>{line}</li>
             ))}
           </ul>
         </div>
-        <p className="rounded-xl bg-black/30 p-3 text-sm leading-relaxed text-red-50/90">{pickJaEn(DESKTOP_CALL_NOTE, language)}</p>
+        <p className="rounded-2xl border border-glass-border bg-glass-bg p-4 text-sm leading-relaxed text-foreground/80 backdrop-blur-xl">
+          {pickJaEn(DESKTOP_CALL_NOTE, language)}
+        </p>
       </div>
 
-      <p className="mt-3 text-[11px] text-red-100/60">
+      <p className="mt-3 text-[11px] text-muted">
         {t("verified")} {VERIFIED_ON}. {t("disclaimer")}
       </p>
     </section>

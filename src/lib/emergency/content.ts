@@ -61,6 +61,76 @@ export const EMERGENCY_NUMBERS: EmergencyNumber[] = [
   },
 ];
 
+// The three numbers shown together wherever space is tight (the quick-access
+// panel and the top of the Emergency Center). 119 is one number for both fire
+// and ambulance, so they share a card.
+export const QUICK_NUMBERS: {
+  id: "police" | "fire" | "coastguard";
+  number: string;
+  ids: EmergencyNumber["id"][];
+  label: { en: string; ja: string };
+  short: { en: string; ja: string };
+}[] = [
+  {
+    id: "police",
+    number: "110",
+    ids: ["police"],
+    label: { en: "Police", ja: "警察" },
+    short: { en: "Crime, danger to you or someone else, or a traffic accident.", ja: "事件・事故、身の危険があるとき。" },
+  },
+  {
+    id: "fire",
+    number: "119",
+    ids: ["fire", "ambulance"],
+    label: { en: "Fire / Ambulance", ja: "消防・救急" },
+    short: { en: "Fire, a rescue, or a sudden serious illness or injury.", ja: "火事・救助、急な病気やけがのとき。" },
+  },
+  {
+    id: "coastguard",
+    number: "118",
+    ids: ["coastguard"],
+    label: { en: "Coast Guard", ja: "海上保安庁" },
+    short: { en: "Accidents or danger at sea, on the coast, or in the water.", ja: "海での事故や危険があるとき。" },
+  },
+];
+
+// JNTO's Japan Visitor Hotline: a multilingual support line for visitors. It
+// is not an emergency service. Number and scope as published by JNTO / Japan
+// Travel (japan.travel/en/plan/hotline/), checked 2026-10-30.
+export const VISITOR_HOTLINE = {
+  number: "050-3816-2787",
+  international: "+81-50-3816-2787",
+  tel: "05038162787",
+  source: { name: "Japan National Tourism Organization", url: "https://www.japan.travel/en/plan/hotline/" },
+  note: {
+    en: "A multilingual support line for visitors run by JNTO: English, Chinese and Korean, 24 hours a day, every day. It can help with illness or injury, disasters, and general travel trouble — for example finding a hospital or understanding what is happening. It is visitor support, not an emergency service: it cannot send an ambulance, police or fire crew.",
+    ja: "訪日旅行者向けの多言語サポート窓口（JNTO運営）。英語・中国語・韓国語に対応し、24時間・年中無休です。病気やけが、災害、旅行中のトラブル（病院探しや状況の確認など）の相談ができます。緊急通報サービスではないため、救急車・警察・消防の出動はできません。",
+  },
+  warning: {
+    en: "In danger, or if someone's life is at risk, call 110 or 119 first.",
+    ja: "身の危険や命に関わるときは、まず110番・119番へ。",
+  },
+};
+
+// What the operator will ask for. General guidance; always follow what the
+// operator tells you.
+export const CALL_CHECKLIST = {
+  en: [
+    "What happened — fire, someone is hurt or ill, a crime, an accident at sea.",
+    "Where you are — an address, the nearest station or a landmark. Look for a building name or sign.",
+    "Who needs help and how many — their condition, whether they are awake and breathing.",
+    "Your name and phone number, so they can call you back.",
+    "Stay on the line and follow the instructions. Do not hang up until the operator says so.",
+  ],
+  ja: [
+    "何があったか — 火事、けが・急病、事件、海での事故など。",
+    "どこにいるか — 住所、最寄り駅、目印になる建物や看板。",
+    "誰が・何人、どんな状態か — 意識や呼吸があるかどうか。",
+    "あなたの名前と電話番号（折り返しのため）。",
+    "電話を切らず、指示に従ってください。切るのは指示があってからです。",
+  ],
+};
+
 export const CALL_NOTES = {
   en: [
     "Calls to 110, 119 and 118 are free and answered 24 hours a day. No area code is needed.",

@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Search, Bell, MapPin, Siren } from "lucide-react";
+import { Search, Bell, MapPin, ShieldAlert } from "lucide-react";
+import EmergencyQuickPanel from "@/components/emergency/EmergencyQuickPanel";
 import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useAuth } from "@/lib/supabase/AuthContext";
@@ -15,6 +17,7 @@ export default function TopBarActions() {
   const city = useSessionCity();
   const email = user?.email ?? null;
   const e = useInline(E);
+  const [sosOpen, setSosOpen] = useState(false);
 
   return (
     <div className="ml-auto flex items-center gap-2">
@@ -40,15 +43,18 @@ export default function TopBarActions() {
         </span>
       )}
 
-      {/* Always one tap from any page: the Emergency Center. */}
-      <Link
-        href="/emergency"
+      {/* One click from any page: the quick-access panel (110 / 119 / 118). */}
+      <button
+        type="button"
+        onClick={() => setSosOpen(true)}
+        aria-haspopup="dialog"
         aria-label={e("title")}
-        className="flex min-h-9 items-center gap-1.5 rounded-full bg-red-600 px-3 text-xs font-extrabold tracking-wide text-white hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        className="flex h-9 items-center gap-1.5 rounded-full border border-red-400/40 bg-red-600/90 px-3 text-xs font-bold tracking-wide text-white transition-colors hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 active:bg-red-700"
       >
-        <Siren size={14} aria-hidden="true" />
+        <ShieldAlert size={14} aria-hidden="true" />
         {e("sos")}
-      </Link>
+      </button>
+      {sosOpen && <EmergencyQuickPanel onClose={() => setSosOpen(false)} />}
 
       <LanguageSwitcher variant="topbar" />
 
