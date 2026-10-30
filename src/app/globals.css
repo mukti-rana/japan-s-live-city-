@@ -186,3 +186,49 @@ body:has([data-auth-shell]) > div > button {
     display: none !important;
   }
 }
+
+/* Home weather card: restrained atmosphere + tab fade. Motion is slow and
+   subtle, and switched off entirely for visitors who ask for less motion. */
+@keyframes wx-drift {
+  0%, 100% { transform: translate3d(-3%, 0, 0); }
+  50% { transform: translate3d(5%, 0, 0); }
+}
+
+@keyframes wx-rain {
+  from { transform: translate3d(-14px, -30px, 0); opacity: 0; }
+  15% { opacity: 0.7; }
+  to { transform: translate3d(14px, 260px, 0); opacity: 0; }
+}
+
+@keyframes wx-snow {
+  from { transform: translate3d(0, -20px, 0); opacity: 0; }
+  15% { opacity: 0.85; }
+  50% { transform: translate3d(10px, 120px, 0); }
+  to { transform: translate3d(-6px, 250px, 0); opacity: 0; }
+}
+
+@keyframes wx-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.95; }
+}
+
+@keyframes wx-fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wx-drift { animation: wx-drift 26s ease-in-out infinite; }
+.wx-rain { animation: wx-rain 1.7s linear infinite; }
+.wx-snow { animation: wx-snow 7s linear infinite; }
+.wx-twinkle { animation: wx-twinkle 4s ease-in-out infinite; }
+.wx-fade { animation: wx-fade 0.28s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wx-drift,
+  .wx-rain,
+  .wx-snow,
+  .wx-twinkle,
+  .wx-fade {
+    animation: none;
+  }
+}

@@ -70,6 +70,8 @@ export interface WeatherSnapshot {
   feelsLikeC: number;
   humidity: number;
   windKmh: number;
+  // Metres → km from the same Open-Meteo response; null when the provider omits it.
+  visibilityKm: number | null;
   condition: string;
   icon: WeatherIconKind;
   sunrise: string;
@@ -86,7 +88,7 @@ export interface WeatherSnapshot {
 const WEEKDAY_FORMAT = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Asia/Tokyo" });
 
 export async function getWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,uv_index_max&forecast_days=7&timezone=Asia%2FTokyo`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,visibility&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,uv_index_max&forecast_days=7&timezone=Asia%2FTokyo`;
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) {
@@ -101,6 +103,7 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
       apparent_temperature: number;
       weather_code: number;
       wind_speed_10m: number;
+      visibility?: number | null;
     };
     hourly: {
       time: string[];
@@ -160,6 +163,10 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
     feelsLikeC: Math.round(data.current.apparent_temperature),
     humidity: data.current.relative_humidity_2m,
     windKmh: Math.round(data.current.wind_speed_10m),
+    visibilityKm:
+      typeof data.current.visibility === "number" && Number.isFinite(data.current.visibility)
+        ? Math.round(data.current.visibility / 100) / 10
+        : null,
     condition: WEATHER_LABELS[data.current.weather_code] ?? "Unknown",
     icon: iconKindFor(data.current.weather_code),
     sunrise: time(data.daily.sunrise[0]),
