@@ -109,6 +109,7 @@ body:has([data-auth-shell]) {
 
 /* The top bar, sidebar and footer are covered by the auth screen; hide them
    from the tab order and from screen readers too, not just visually. */
+body:has([data-auth-shell]) > [data-site-header],
 body:has([data-auth-shell]) > header,
 body:has([data-auth-shell]) > footer,
 body:has([data-auth-shell]) > div > aside,
@@ -231,4 +232,9 @@ body:has([data-auth-shell]) > div > button {
   .wx-fade {
     animation: none;
   }
+}
+
+/* Current height of the pinned header (it shrinks while scrolling). */
+:root {
+  --header-h: 3.5rem;
 }
