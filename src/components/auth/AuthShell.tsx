@@ -14,6 +14,14 @@ const COPY = {
     otherHref: "/signup",
     otherLabel: "Create account",
   },
+  // The first-visit welcome on the home page: the same entrance, with the
+  // choice between signing in, creating an account and exploring as a guest.
+  welcome: {
+    title: "Welcome",
+    subtitle: "Sign in to save your favorites, or explore freely as a guest.",
+    otherHref: "/signup",
+    otherLabel: "Create account",
+  },
   signup: {
     title: "Create your account",
     subtitle: "Free, and it takes a minute.",
@@ -33,7 +41,7 @@ export default function AuthShell({
   mode,
   children,
 }: {
-  mode: "login" | "signup";
+  mode: "login" | "signup" | "welcome";
   children: ReactNode;
 }) {
   const copy = COPY[mode];

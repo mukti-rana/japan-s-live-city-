@@ -16,7 +16,7 @@ export default function GuestLink({
   children: ReactNode;
 }) {
   return (
-    <Link href="/" onClick={markWelcomeSeen} className={className} aria-label={label}>
+    <Link href="/" onClick={markWelcomeSeen} className={className} aria-label={label} data-guest-link>
       {children}
     </Link>
   );
