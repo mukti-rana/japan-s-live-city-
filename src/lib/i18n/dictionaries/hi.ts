@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const hi: Record<TranslationKey, string> = {
   "nav.home": "होम",
   "nav.map": "जापान मानचित्र",
+  "map.subtitle": "जापान देखने के लिए खींचें और ज़ूम करें। मौसम, कार्यक्रम और आधिकारिक अलर्ट जोड़ें।",
   "nav.explore": "एक्सप्लोर",
   "nav.trains": "ट्रेनें",
   "nav.weather": "मौसम",

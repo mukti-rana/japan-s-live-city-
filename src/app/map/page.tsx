@@ -1,44 +1,29 @@
 import type { Metadata } from "next";
-import Reveal from "@/components/ui/Reveal";
 import MapLoader from "@/components/map/MapLoader";
-import { CITIES } from "@/lib/data/cities";
-import { getWeather, type WeatherSnapshot } from "@/lib/services/weather";
+import T from "@/components/i18n/T";
 
 export const metadata: Metadata = {
   title: "Japan Map — Live City Japan",
-  description: "Interactive map of Japan with live weather for major cities.",
+  description:
+    "Interactive map of Japan: live weather for major cities, events with known locations and official JMA alerts. Search cities and prefectures, switch between a dark map and satellite imagery.",
 };
 
-export default async function MapPage() {
-  const cities = await Promise.all(
-    CITIES.map(async (city) => ({
-      ...city,
-      weather: await getWeather(city.lat, city.lon).catch<WeatherSnapshot | null>(() => null),
-    })),
-  );
-
+// Everything on the map is loaded in the browser, layer by layer, from the
+// site's own cached endpoints — the page itself stays static.
+export default function MapPage() {
   return (
-    <div className="flex flex-col gap-5">
-      <Reveal>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Live
-          </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Japan Map
-          </h1>
-          <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Pan and zoom to explore Japan. Pins show live weather for major
-            cities.
-          </p>
-        </div>
-      </Reveal>
-
-      <Reveal delay={0.08}>
-        <div className="h-[70vh] min-h-[420px] overflow-hidden rounded-2xl border border-glass-border">
-          <MapLoader cities={cities} />
-        </div>
-      </Reveal>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          <T k="nav.map" />
+        </h1>
+        <p className="text-xs text-muted">
+          <T k="map.subtitle" />
+        </p>
+      </div>
+      <div className="h-[calc(100dvh-8.75rem)] min-h-[520px] overflow-hidden rounded-2xl border border-glass-border bg-[#0a1024] shadow-[0_0_60px_-30px_rgba(77,163,255,0.5)]">
+        <MapLoader />
+      </div>
     </div>
   );
 }

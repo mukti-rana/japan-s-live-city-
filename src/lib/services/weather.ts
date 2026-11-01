@@ -1,7 +1,7 @@
 // Real live weather from Open-Meteo — free, no API key required.
 // Cached for 10 minutes via Next.js fetch revalidation.
 
-const WEATHER_LABELS: Record<number, string> = {
+export const WEATHER_LABELS: Record<number, string> = {
   0: "Clear sky",
   1: "Mostly clear",
   2: "Partly cloudy",
@@ -35,7 +35,7 @@ export type WeatherIconKind =
   | "snow"
   | "storm";
 
-function iconKindFor(code: number): WeatherIconKind {
+export function iconKindFor(code: number): WeatherIconKind {
   if (code === 0) return "clear";
   if (code === 1 || code === 2) return "partly";
   if (code === 3) return "cloud";
@@ -179,4 +179,48 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
     forecast,
     hourly,
   };
+}
+
+// ── Many cities in one request (for the map) ─────────────────────────────
+
+export interface MapWeatherPoint {
+  tempC: number;
+  feelsLikeC: number;
+  condition: string;
+  icon: WeatherIconKind;
+  rainChance: number | null;
+  updatedAt: string;
+}
+
+// Open-Meteo answers several places in a single call, so the map's weather
+// layer costs one request (cached 10 minutes), however many cities it shows.
+// A place the provider leaves out simply has no entry — nothing is guessed.
+export async function getMapWeather(points: { slug: string; lat: number; lon: number }[]): Promise<Record<string, MapWeatherPoint>> {
+  const lat = points.map((p) => p.lat).join(",");
+  const lon = points.map((p) => p.lon).join(",");
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weather_code&daily=precipitation_probability_max&forecast_days=1&timezone=Asia%2FTokyo`;
+  const res = await fetch(url, { next: { revalidate: 600 } });
+  if (!res.ok) throw new Error(`Open-Meteo responded with ${res.status}`);
+
+  interface One {
+    current?: { time: string; temperature_2m: number; apparent_temperature: number; weather_code: number };
+    daily?: { precipitation_probability_max?: (number | null)[] };
+  }
+  const json = (await res.json()) as One | One[];
+  const list = Array.isArray(json) ? json : [json];
+  const out: Record<string, MapWeatherPoint> = {};
+  points.forEach((p, i) => {
+    const r = list[i];
+    if (!r?.current || typeof r.current.temperature_2m !== "number") return;
+    const rain = r.daily?.precipitation_probability_max?.[0];
+    out[p.slug] = {
+      tempC: Math.round(r.current.temperature_2m),
+      feelsLikeC: Math.round(r.current.apparent_temperature),
+      condition: WEATHER_LABELS[r.current.weather_code] ?? "Unknown",
+      icon: iconKindFor(r.current.weather_code),
+      rainChance: typeof rain === "number" ? rain : null,
+      updatedAt: r.current.time,
+    };
+  });
+  return out;
 }

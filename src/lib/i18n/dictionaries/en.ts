@@ -1,6 +1,7 @@
 const en = {
   "nav.home": "Home",
   "nav.map": "Japan Map",
+  "map.subtitle": "Pan and zoom to explore Japan. Add weather, events and official alerts as layers.",
   "nav.explore": "Explore",
   "nav.trains": "Trains",
   "nav.weather": "Weather",

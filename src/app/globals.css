@@ -238,3 +238,75 @@ body:has([data-auth-shell]) > div > button {
 :root {
   --header-h: 3.5rem;
 }
+
+/* ── Interactive map markers ─────────────────────────────────────────────
+   Small, quiet markers: a dot with a label, a weather pill, event counters
+   and the visitor's own position. Motion is slow and switched off for
+   visitors who ask for less. */
+.lc-city, .lc-wx, .lc-ev, .lc-me { position: relative; }
+.lc-city { width: 12px; height: 12px; cursor: pointer; }
+.lc-city__dot {
+  position: absolute; inset: 1px; border-radius: 9999px;
+  background: #7dd3fc; border: 2px solid #0b0e1a;
+  box-shadow: 0 0 10px 2px rgba(77, 163, 255, 0.55);
+}
+.lc-city__ring {
+  position: absolute; inset: -5px; border-radius: 9999px;
+  border: 1px solid rgba(125, 211, 252, 0.55); opacity: 0;
+}
+.lc-city--sel .lc-city__dot { background: #c4b5fd; box-shadow: 0 0 14px 4px rgba(167, 139, 250, 0.7); }
+.lc-city--sel .lc-city__ring { opacity: 1; border-color: rgba(196, 181, 253, 0.8); animation: lc-pulse 2.6s ease-out infinite; }
+.lc-city--live .lc-city__ring { opacity: 1; animation: lc-pulse 3.2s ease-out infinite; }
+.lc-city__label {
+  position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap; font-size: 11px; font-weight: 600; letter-spacing: 0.01em;
+  color: #e8edff; text-shadow: 0 1px 3px rgba(5, 8, 20, 0.95), 0 0 6px rgba(5, 8, 20, 0.9);
+  pointer-events: none;
+}
+.lc-city--nolabel .lc-city__label { display: none; }
+.lc-city__alert {
+  position: absolute; right: -7px; top: -7px; width: 9px; height: 9px;
+  border-radius: 9999px; border: 2px solid #0b0e1a;
+}
+.lc-wx {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+}
+.lc-wx__pill {
+  display: flex; align-items: center; gap: 4px; padding: 3px 8px 3px 6px;
+  border-radius: 9999px; background: rgba(11, 16, 38, 0.92);
+  border: 1.5px solid var(--c); color: #f4f6ff; font-size: 12px; font-weight: 700;
+  box-shadow: 0 0 12px -2px var(--c); font-variant-numeric: tabular-nums;
+}
+.lc-wx__pill svg { color: var(--c); }
+.lc-wx__name {
+  font-size: 10px; font-weight: 600; color: #cfd6f6;
+  text-shadow: 0 1px 3px rgba(5, 8, 20, 0.95), 0 0 6px rgba(5, 8, 20, 0.9);
+}
+.lc-wx--dot .lc-wx__pill { padding: 0; width: 12px; height: 12px; background: var(--c); border: 2px solid #0b0e1a; }
+.lc-wx--dot .lc-wx__pill > *, .lc-wx--dot .lc-wx__name { display: none; }
+.lc-wx--sel .lc-wx__pill { box-shadow: 0 0 0 3px rgba(196, 181, 253, 0.55), 0 0 16px 0 var(--c); }
+.lc-wx .lc-city__alert { right: -4px; top: -4px; }
+.lc-ev {
+  width: 24px; height: 24px; margin: -12px 0 0 -12px; display: flex; align-items: center; justify-content: center;
+  border-radius: 9999px; background: rgba(139, 92, 246, 0.92); border: 2px solid #0b0e1a;
+  color: #fff; font-size: 11px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 0 12px 1px rgba(167, 139, 250, 0.6);
+}
+.lc-ev--sel { box-shadow: 0 0 0 3px rgba(196, 181, 253, 0.6), 0 0 14px 2px rgba(167, 139, 250, 0.8); }
+.lc-me { width: 16px; height: 16px; margin: -8px 0 0 -8px; }
+.lc-me__dot { position: absolute; inset: 2px; border-radius: 9999px; background: #4da3ff; border: 2px solid #fff; box-shadow: 0 0 10px 2px rgba(77, 163, 255, 0.8); }
+.lc-me__ring { position: absolute; inset: -6px; border-radius: 9999px; border: 1px solid rgba(77, 163, 255, 0.7); animation: lc-pulse 2.8s ease-out infinite; }
+
+@keyframes lc-pulse {
+  0% { transform: scale(0.7); opacity: 0.9; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lc-city--sel .lc-city__ring, .lc-city--live .lc-city__ring, .lc-me__ring { animation: none; }
+}
+
+/* The map keeps its own soft vignette so the sea never looks flat. */
+.lc-map .leaflet-container { background: #0a1024; font-family: inherit; }
+/* Tints Esri's neutral grey into the site's midnight navy (dark map only). */
+.lc-map--dark .leaflet-tile-pane { filter: sepia(1) hue-rotate(188deg) saturate(1.5) brightness(0.92) contrast(1.05); }

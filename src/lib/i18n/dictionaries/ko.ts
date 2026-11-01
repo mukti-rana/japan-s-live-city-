@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const ko: Record<TranslationKey, string> = {
   "nav.home": "홈",
   "nav.map": "일본 지도",
+  "map.subtitle": "드래그하고 확대해 일본을 둘러보세요. 날씨, 행사, 공식 경보를 겹쳐 볼 수 있습니다.",
   "nav.explore": "탐험",
   "nav.trains": "전철",
   "nav.weather": "날씨",

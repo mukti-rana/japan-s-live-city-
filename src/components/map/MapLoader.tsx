@@ -1,17 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { CityWithWeather } from "@/components/map/JapanMap";
 
-const JapanMap = dynamic(() => import("@/components/map/JapanMap"), {
+const FullMap = dynamic(() => import("@/components/map/FullMap"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-[#0a1024] text-sm text-muted">
+    <div className="flex h-full w-full items-center justify-center bg-[#0a1024] text-sm text-muted" role="status">
       Loading map…
     </div>
   ),
 });
 
-export default function MapLoader({ cities }: { cities: CityWithWeather[] }) {
-  return <JapanMap cities={cities} />;
+export default function MapLoader() {
+  return <FullMap />;
 }

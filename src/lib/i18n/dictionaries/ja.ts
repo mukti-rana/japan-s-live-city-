@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const ja: Record<TranslationKey, string> = {
   "nav.home": "ホーム",
   "nav.map": "日本地図",
+  "map.subtitle": "ドラッグ・ズームで日本を探索。天気・イベント・公式警報をレイヤーで重ねられます。",
   "nav.explore": "探索",
   "nav.trains": "電車",
   "nav.weather": "天気",

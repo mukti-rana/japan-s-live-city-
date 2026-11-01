@@ -1,27 +1,27 @@
-import JapanMapView from "@/components/home/widgets/JapanMapView";
-import { MAP_CITIES } from "@/lib/data/mapCities";
-import { HERO_CITIES } from "@/lib/data/heroCities";
-import { getWeather } from "@/lib/services/weather";
+import JapanMapView, { type HomeMapCity } from "@/components/home/widgets/JapanMapView";
+import { MAP_CITY_BY_SLUG } from "@/lib/map/cities";
+import { getMapWeather } from "@/lib/services/weather";
 
-// Real temperatures for each city on the map, from the same cached
-// Open-Meteo service the Weather page uses (fixed coordinates, so the
-// results are shared and cached for 10 minutes rather than fetched per
-// visitor). A city whose lookup fails simply shows no temperature — never
-// a made-up one — and the "Live" badge only appears if at least one real
-// temperature loaded.
+// The cities on the Home preview: a handful of readings, not a crowd.
+const HOME_SLUGS = ["sapporo", "sendai", "tokyo", "nagoya", "osaka", "fukuoka"] as const;
+
+// Real temperatures from the same cached Open-Meteo request the full map
+// uses — one call for all six cities, shared across visitors for 10 minutes.
+// If it fails, the cities still show, just without a temperature; nothing is
+// made up, and the Live badge only appears when real readings arrived.
 export default async function JapanMapWidget() {
-  const cities = await Promise.all(
-    MAP_CITIES.map(async (city) => {
-      const coords = HERO_CITIES.find((c) => c.slug === city.slug);
-      if (!coords) return { ...city, tempC: null };
-      try {
-        const weather = await getWeather(coords.lat, coords.lon);
-        return { ...city, tempC: weather.tempC };
-      } catch {
-        return { ...city, tempC: null };
-      }
-    }),
-  );
+  const cities = HOME_SLUGS.map((slug) => MAP_CITY_BY_SLUG.get(slug)!);
+  const weather = await getMapWeather(cities).catch(() => ({}) as Awaited<ReturnType<typeof getMapWeather>>);
 
-  return <JapanMapView cities={cities} />;
+  const data: HomeMapCity[] = cities.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    nameJa: c.nameJa,
+    prefectureId: c.prefectureId,
+    lat: c.lat,
+    lon: c.lon,
+    tempC: weather[c.slug]?.tempC ?? null,
+    updatedAt: weather[c.slug]?.updatedAt ?? null,
+  }));
+  return <JapanMapView cities={data} />;
 }

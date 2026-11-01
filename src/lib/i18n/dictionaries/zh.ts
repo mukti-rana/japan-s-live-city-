@@ -3,6 +3,7 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 const zh: Record<TranslationKey, string> = {
   "nav.home": "首页",
   "nav.map": "日本地图",
+  "map.subtitle": "拖动和缩放以探索日本。可叠加天气、活动和官方警报。",
   "nav.explore": "探索",
   "nav.trains": "电车",
   "nav.weather": "天气",
