@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { TrainFront, ChevronDown } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import Tabs from "@/components/ui/Tabs";
@@ -30,7 +29,6 @@ export default function TrainListWidget() {
   // Lines with a problem first (the sort is stable, so each group keeps its order).
   const ordered = [...filtered].sort((a, b) => Number(a.status === "normal") - Number(b.status === "normal"));
   const lines = ordered.slice(0, HOME_LINE_CAP);
-  const hiddenCount = ordered.length - lines.length;
 
   function categoryLabel(tabValue: string) {
     if (tabValue === ALL_LINES) return t("tabs.allLines");
@@ -75,12 +73,6 @@ export default function TrainListWidget() {
           );
         })}
       </ul>
-
-      {hiddenCount > 0 && (
-        <Link href="/trains" className="-mt-1 text-center text-[11px] font-medium text-azure hover:underline">
-          {t("widget.viewAll")} (+{hiddenCount})
-        </Link>
-      )}
 
       <div className="flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-3 py-2.5">
         <TrainFront size={15} className="text-azure" />

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import Tabs from "@/components/ui/Tabs";
 import Thumb from "@/components/ui/Thumb";
@@ -102,13 +101,6 @@ export default function ExploreJapanGrid({ places }: { places: EnrichedPlace[] }
           ))}
         </div>
       )}
-
-      <Link
-        href="/explore"
-        className="text-center text-[11px] font-medium text-azure hover:underline"
-      >
-        <T k="explore.exploreAll" /> →
-      </Link>
     </div>
   );
 }

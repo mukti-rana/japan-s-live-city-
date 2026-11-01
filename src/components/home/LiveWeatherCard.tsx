@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import Link from "next/link";
-import { ChevronRight, CloudSun, Droplets, Eye, MapPin, RefreshCw, Sun as SunIcon, Sunrise, Sunset, Thermometer, Wind } from "lucide-react";
+import { CloudSun, Droplets, Eye, MapPin, RefreshCw, Sun as SunIcon, Sunrise, Sunset, Thermometer, Wind } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
+import ViewAllButton from "@/components/ui/ViewAllButton";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import DailyForecastList from "@/components/weather/DailyForecastList";
 import WeatherAtmosphere from "@/components/home/weather/WeatherAtmosphere";
@@ -339,13 +339,7 @@ export default function LiveWeatherCard() {
         </div>
         <div className="flex items-center gap-2.5">
           <CityPicker selected={prefecture ? selected : "auto"} onChange={choose} text={text} />
-          <Link
-            href="/weather"
-            className="flex min-h-8 items-center gap-0.5 whitespace-nowrap rounded-full px-1.5 text-xs font-medium text-muted transition-colors hover:text-azure focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-          >
-            {text("viewForecast")}
-            <ChevronRight size={14} aria-hidden="true" />
-          </Link>
+          <ViewAllButton href="/weather" label={text("viewForecast")} />
         </div>
       </div>
 

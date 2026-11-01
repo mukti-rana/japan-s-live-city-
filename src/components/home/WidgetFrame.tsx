@@ -1,9 +1,8 @@
 import { type LucideIcon } from "lucide-react";
 import { type ReactNode } from "react";
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
 import GlassCard from "@/components/ui/GlassCard";
 import T from "@/components/i18n/T";
+import ViewAllButton from "@/components/ui/ViewAllButton";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
 const ACCENTS = {
@@ -36,10 +35,10 @@ export default function WidgetFrame({
 }) {
   return (
     <GlassCard className={`flex flex-col gap-3.5 p-4 ${className}`}>
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="flex min-w-0 items-center gap-2">
           <div
-            className={`flex h-7 w-7 items-center justify-center rounded-lg ${ACCENTS[accent]}`}
+            className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${ACCENTS[accent]}`}
           >
             <Icon size={15} />
           </div>
@@ -48,31 +47,19 @@ export default function WidgetFrame({
           </p>
         </div>
 
-        {action}
+        {/* Everything on the right stays together, with View All last. */}
+        <div className="ml-auto flex items-center gap-2">
+          {action}
 
-        {live && (
-          <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
-            <T k="widget.live" />
-          </span>
-        )}
+          {live && (
+            <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
+              <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
+              <T k="widget.live" />
+            </span>
+          )}
 
-        {viewAll && viewAllHref && (
-          <Link
-            href={viewAllHref}
-            className="flex items-center gap-0.5 text-[11px] font-medium text-muted transition-colors hover:text-azure"
-          >
-            <T k="widget.viewAll" />
-            <ChevronRight size={12} />
-          </Link>
-        )}
-
-        {viewAll && !viewAllHref && (
-          <span className="flex items-center gap-0.5 text-[11px] font-medium text-muted/50">
-            <T k="widget.viewAll" />
-            <ChevronRight size={12} />
-          </span>
-        )}
+          {viewAll && viewAllHref && <ViewAllButton href={viewAllHref} />}
+        </div>
       </div>
 
       {children}

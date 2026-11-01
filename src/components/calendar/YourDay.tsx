@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowRight, BellRing, CalendarCheck, CloudSun, Sparkles } from "lucide-react";
+import { BellRing, CalendarCheck, CloudSun, Sparkles } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import { addDays } from "@/lib/calendar/dates";
 import { allOccurrences } from "@/lib/calendar/recurrence";
@@ -79,13 +78,9 @@ export default function YourDay() {
   const empty = schedule.length === 0 && tasks.length === 0;
 
   return (
-    <WidgetFrame icon={CalendarCheck} labelKey="nav.calendar" accent="azure">
+    <WidgetFrame icon={CalendarCheck} labelKey="nav.calendar" accent="azure" viewAll viewAllHref="/calendar">
       <div className="-mt-1 flex items-baseline justify-between gap-2">
         <h2 className="text-lg font-bold text-foreground">{t("yourDay")}</h2>
-        <Link href="/calendar" className="inline-flex items-center gap-1 text-[11px] font-medium text-muted hover:text-azure focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          {t("open")}
-          <ArrowRight size={12} aria-hidden="true" />
-        </Link>
       </div>
 
       {parts.length > 0 && <p className="rounded-xl bg-azure/10 p-2.5 text-sm text-foreground/90">{parts.join(" ")}</p>}

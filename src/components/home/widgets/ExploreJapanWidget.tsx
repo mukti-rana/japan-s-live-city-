@@ -7,7 +7,7 @@ export default async function ExploreJapanWidget() {
   const places = await getPopularPlaces();
 
   return (
-    <WidgetFrame icon={Compass} labelKey="widget.exploreJapan" accent="gold">
+    <WidgetFrame icon={Compass} labelKey="widget.exploreJapan" accent="gold" viewAll viewAllHref="/explore">
       <ExploreJapanGrid places={places} />
     </WidgetFrame>
   );

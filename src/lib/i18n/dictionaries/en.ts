@@ -88,7 +88,7 @@ const en = {
   "hero.changeCity": "Change city",
   "hero.selected": "Selected",
 
-  "widget.viewAll": "View all",
+  "widget.viewAll": "View All",
   "widget.live": "Live",
   "widget.japanMap": "Japan Map",
   "widget.openFullMap": "Open full map",

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, CalendarDays } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import EventCard from "@/components/events/EventCard";
 import EventModal from "@/components/events/EventModal";
 import PlacePicker from "@/components/news/PlacePicker";
@@ -30,7 +29,7 @@ export default function EventsNearYou() {
   const failed = placeInfo.place ? nearby.failed : fallback.failed;
 
   return (
-    <WidgetFrame icon={CalendarDays} labelKey="events.home.title" accent="sakura">
+    <WidgetFrame icon={CalendarDays} labelKey="events.home.title" accent="sakura" viewAll viewAllHref={placeInfo.place && !needsFallback ? "/events?near=1" : "/events"}>
       <PlacePicker current={placeInfo} compact />
       {nearbyEmpty && placeInfo.place && <p className="text-xs text-muted">{t("events.home.empty")}</p>}
 
@@ -51,14 +50,6 @@ export default function EventsNearYou() {
           ))}
         </ul>
       )}
-
-      <Link
-        href={placeInfo.place && !needsFallback ? "/events?near=1" : "/events"}
-        className="mt-auto flex items-center gap-1 text-[11px] font-medium text-muted transition-colors hover:text-azure focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-      >
-        {t("events.home.viewAll")}
-        <ArrowRight size={12} aria-hidden="true" />
-      </Link>
 
       <EventModal event={openEvent} onClose={() => setOpenEvent(null)} />
     </WidgetFrame>

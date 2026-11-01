@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
+import ViewAllButton from "@/components/ui/ViewAllButton";
+import { MapPin } from "lucide-react";
 import NewsCard from "@/components/news/NewsCard";
 import NewsModal from "@/components/news/NewsModal";
 import PlacePicker from "@/components/news/PlacePicker";
@@ -49,13 +49,7 @@ export default function LatestNewsNearYou() {
             <p className="text-xs text-muted">{t("news.home.subtitle")}</p>
           </div>
         </div>
-        <Link
-          href="/news?cat=local"
-          className="flex items-center gap-1 text-[11px] font-medium text-muted transition-colors hover:text-azure focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-        >
-          {t("news.home.viewAll")}
-          <ArrowRight size={12} aria-hidden="true" />
-        </Link>
+        <ViewAllButton href="/news?cat=local" label={t("news.home.viewAll")} />
       </div>
 
       {(placeInfo.place || (!placeInfo.locating && !placeInfo.place)) && <PlacePicker current={placeInfo} compact />}

@@ -39,7 +39,7 @@ export default function WeatherSunWidget() {
 
   if (!weather) {
     return (
-      <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold">
+      <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold" viewAll viewAllHref="/weather">
         <p className="py-4 text-center text-xs text-muted">{t("widget.unavailableRightNow")}</p>
       </WidgetFrame>
     );
@@ -49,7 +49,7 @@ export default function WeatherSunWidget() {
   const hours = weather.hourly.slice(0, 4);
 
   return (
-    <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold">
+    <WidgetFrame icon={Sun} labelKey="widget.weatherSun" accent="gold" viewAll viewAllHref="/weather">
       <p className="-mt-1 text-center text-xs text-muted">{cityName}</p>
 
       <div className="flex items-center gap-3">
