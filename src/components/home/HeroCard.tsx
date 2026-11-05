@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { MapPin } from "lucide-react";
+import { LocateFixed, MapPin } from "lucide-react";
 import LiveClock from "@/components/home/LiveClock";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
 import HeroAIBox from "@/components/home/HeroAIBox";
@@ -21,7 +21,7 @@ export default function HeroCard() {
   const tr = useTranslate();
   const name = (en: string | undefined) => (en ? (lookup(en, language) ?? en) : en);
   useAmbientLighting();
-  const { status, location, weather: liveWeather } = useLiveLocation();
+  const { status, location, weather: liveWeather, requestLocation } = useLiveLocation();
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
 
@@ -131,6 +131,21 @@ export default function HeroCard() {
                     </button>
                   ))}
                 </div>
+                {status === "prompt" && (
+                  <div className="mt-3 max-w-md">
+                    <button
+                      type="button"
+                      onClick={requestLocation}
+                      className="flex min-h-10 items-center gap-2 rounded-full bg-gradient-to-r from-azure to-neon-purple px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+                    >
+                      <LocateFixed size={16} aria-hidden="true" />
+                      {tr("Use my location")}
+                    </button>
+                    <p className="mt-1.5 text-[11px] leading-relaxed text-foreground/60">
+                      {tr("Your browser will ask for permission. Your position is only used to find the weather and places near you.")}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 

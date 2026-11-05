@@ -9,7 +9,7 @@ import TrainListWidget from "@/components/home/widgets/TrainListWidget";
 import HeadlinesMini from "@/components/news/HeadlinesMini";
 import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
 import EventsNearYou from "@/components/events/EventsNearYou";
-import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
+import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
 import EmergencyPreview from "@/components/emergency/EmergencyPreview";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
@@ -91,23 +91,21 @@ export default function Home() {
           </Cell>
         </div>
 
-        {/* Discover, and the everyday tools */}
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[2fr_1fr] lg:gap-5">
-          <Cell delay={0.32}>
-            <ExploreJapanWidget />
-          </Cell>
-          <Cell delay={0.36}>
-            <QuickAccessWidget />
-          </Cell>
-        </div>
+        {/* Discover: personalised places and things to do around the visitor */}
+        <Cell delay={0.32}>
+          <NearbyDiscovery />
+        </Cell>
 
-        {/* Trending, and the Emergency & Safety Center preview */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5">
-          <Cell delay={0.4}>
+        {/* Trending, the everyday tools, and the Emergency & Safety Center preview */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr] lg:gap-5">
+          <Cell delay={0.36}>
             <TrendingWidget />
           </Cell>
-          <Cell delay={0.44}>
+          <Cell delay={0.4}>
             <EmergencyPreview />
+          </Cell>
+          <Cell delay={0.44} className="md:col-span-2 xl:col-span-1">
+            <QuickAccessWidget />
           </Cell>
         </div>
       </div>
