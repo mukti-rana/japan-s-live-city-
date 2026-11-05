@@ -1,10 +1,10 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { AlertTriangle, CalendarDays, CloudSun, Crosshair, LocateFixed, Minus, Moon, Plus, Satellite, TrainFront, type LucideIcon } from "lucide-react";
+import { AlertTriangle, CalendarDays, CloudSun, Compass, Crosshair, LocateFixed, Minus, Moon, Plus, Satellite, TrainFront, type LucideIcon } from "lucide-react";
 import { useInline, type Table } from "@/lib/i18n/inline";
 
-export type LayerKey = "weather" | "trains" | "events" | "alerts";
+export type LayerKey = "weather" | "trains" | "events" | "alerts" | "places";
 export type BaseKey = "dark" | "satellite";
 
 const TEXT = {
@@ -14,6 +14,7 @@ const TEXT = {
   trains: { en: "Trains", ja: "電車" },
   events: { en: "Events", ja: "イベント" },
   alerts: { en: "Disaster alerts", ja: "災害警報" },
+  places: { en: "Places to explore", ja: "観光スポット" },
   locate: { en: "My location", ja: "現在地" },
   zoomIn: { en: "Zoom in", ja: "拡大" },
   zoomOut: { en: "Zoom out", ja: "縮小" },
@@ -110,6 +111,7 @@ export default function MapControls({
           <Tool label={text("trains")} icon={TrainFront} active={layers.trains} onClick={() => onLayer("trains")} />
           <Tool label={text("events")} icon={CalendarDays} active={layers.events} tone="violet" onClick={() => onLayer("events")} />
           <Tool label={text("alerts")} icon={AlertTriangle} active={layers.alerts} tone="amber" onClick={() => onLayer("alerts")} />
+          <Tool label={text("places")} icon={Compass} active={layers.places} tone="violet" onClick={() => onLayer("places")} />
         </Group>
       </div>
 

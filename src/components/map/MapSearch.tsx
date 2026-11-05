@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Building2, Landmark, MapPin, Search, X } from "lucide-react";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useInline, type Table } from "@/lib/i18n/inline";
@@ -24,12 +24,12 @@ export interface SearchEntry {
 }
 
 const TEXT = {
-  placeholder: { en: "City or prefecture…", ja: "都市・都道府県を検索" },
+  placeholder: { en: "City, prefecture or attraction…", ja: "都市・都道府県・名所を検索" },
   clear: { en: "Clear search", ja: "検索をクリア" },
   none: { en: "No match. Try a city or prefecture name.", ja: "該当なし。都市名・都道府県名でお試しください。" },
   city: { en: "City", ja: "都市" },
   prefecture: { en: "Prefecture", ja: "都道府県" },
-  note: { en: "Stations, attractions and street addresses aren't searchable yet.", ja: "駅・観光地・住所の検索は未対応です。" },
+  note: { en: "Stations and street addresses aren't searchable yet.", ja: "駅・住所の検索は未対応です。" },
 } satisfies Table;
 
 // Everything the map can find: the major cities, the other cities the site
@@ -57,7 +57,7 @@ function buildIndex(): SearchEntry[] {
 
 const INDEX = buildIndex();
 
-export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => void }) {
+export default function MapSearch({ onPick, onPickPlace }: { onPick: (entry: SearchEntry) => void; onPickPlace?: (id: string) => void }) {
   const { language } = useLanguage();
   const text = useInline(TEXT);
   const [query, setQuery] = useState("");
@@ -67,6 +67,25 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
   const ref = useRef<HTMLDivElement>(null);
 
   const q = query.trim().toLowerCase();
+  // Destinations from the Explore catalogue, matched by name.
+  const [places, setPlaces] = useState<{ id: string; label: string; sub: string }[]>([]);
+  const searchPlaces = Boolean(onPickPlace);
+  useEffect(() => {
+    if (!searchPlaces || q.length < 2) return;
+    const controller = new AbortController();
+    const id = setTimeout(() => {
+      fetch(`/api/explore/suggest?q=${encodeURIComponent(q)}&lang=${language}`, { signal: controller.signal })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { suggestions: { type: string; id?: string; label: string; sub: string }[] } | null) =>
+          setPlaces((d?.suggestions ?? []).filter((x) => x.type === "place" && x.id).slice(0, 5).map((x) => ({ id: x.id as string, label: x.label, sub: x.sub }))),
+        )
+        .catch(() => {});
+    }, 250);
+    return () => {
+      clearTimeout(id);
+      controller.abort();
+    };
+  }, [q, language, searchPlaces]);
   const results = useMemo(() => {
     if (!q) return [];
     const scored: { e: SearchEntry; score: number }[] = [];
@@ -82,6 +101,18 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
     return scored.sort((a, b) => b.score - a.score).slice(0, 7).map((s) => s.e);
   }, [q]);
 
+  const placeRows = q.length >= 2 ? places : [];
+  const total = results.length + placeRows.length;
+
+  function pickAt(i: number) {
+    if (i < results.length) pick(results[i]);
+    else if (onPickPlace && placeRows[i - results.length]) {
+      setOpen(false);
+      setQuery(placeRows[i - results.length].label);
+      onPickPlace(placeRows[i - results.length].id);
+    }
+  }
+
   function pick(e: SearchEntry | undefined) {
     if (!e) return;
     setOpen(false);
@@ -93,13 +124,13 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
     if (ev.key === "ArrowDown") {
       ev.preventDefault();
       setOpen(true);
-      setActive((i) => (results.length ? (i + 1) % results.length : 0));
+      setActive((i) => (total ? (i + 1) % total : 0));
     } else if (ev.key === "ArrowUp") {
       ev.preventDefault();
-      setActive((i) => (results.length ? (i - 1 + results.length) % results.length : 0));
+      setActive((i) => (total ? (i - 1 + total) % total : 0));
     } else if (ev.key === "Enter") {
       ev.preventDefault();
-      pick(results[active] ?? results[0]);
+      pickAt(active < total ? active : 0);
     } else if (ev.key === "Escape") {
       setOpen(false);
     }
@@ -114,7 +145,7 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
         aria-expanded={open && q.length > 0}
         aria-controls={listId}
         aria-autocomplete="list"
-        aria-activedescendant={open && results.length ? `${listId}-${active}` : undefined}
+        aria-activedescendant={open && total ? `${listId}-${active}` : undefined}
         aria-label={text("placeholder")}
         autoComplete="off"
         value={query}
@@ -148,7 +179,7 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
       {open && q && (
         <div className="absolute inset-x-0 top-full z-20 mt-2 overflow-hidden rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.8)]">
           <ul id={listId} role="listbox">
-            {results.length === 0 && <li className="px-3 py-3 text-xs text-muted">{text("none")}</li>}
+            {total === 0 && <li className="px-3 py-3 text-xs text-muted">{text("none")}</li>}
             {results.map((e, i) => (
               <li key={e.id} id={`${listId}-${i}`} role="option" aria-selected={i === active}>
                 <button
@@ -167,6 +198,24 @@ export default function MapSearch({ onPick }: { onPick: (entry: SearchEntry) => 
                 </button>
               </li>
             ))}
+            {placeRows.map((p, j) => {
+              const i = results.length + j;
+              return (
+                <li key={p.id} id={`${listId}-${i}`} role="option" aria-selected={i === active}>
+                  <button
+                    type="button"
+                    onMouseDown={(ev) => ev.preventDefault()}
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => pickAt(i)}
+                    className={`flex min-h-10 w-full items-center gap-2.5 rounded-xl px-3 text-left text-sm transition-colors ${i === active ? "bg-glass-bg-strong text-foreground" : "text-foreground/85"}`}
+                  >
+                    <Landmark size={15} className="shrink-0 text-[#c4b5fd]" aria-hidden="true" />
+                    <span className="min-w-0 flex-1 truncate">{p.label}</span>
+                    <span className="shrink-0 truncate text-xs text-muted">{p.sub}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
           <p className="border-t border-glass-border px-3 pb-1.5 pt-2 text-[11px] text-muted">{text("note")}</p>
         </div>

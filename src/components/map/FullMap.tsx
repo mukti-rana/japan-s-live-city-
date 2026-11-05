@@ -9,12 +9,15 @@ import Link from "next/link";
 import MapControls, { type BaseKey, type LayerKey } from "@/components/map/MapControls";
 import MapPanel, { type AlertsPayload, type EventGroup, type Selection } from "@/components/map/MapPanel";
 import MapSearch, { type SearchEntry } from "@/components/map/MapSearch";
-import { cityIcon, eventIcon, meIcon, SEVERITY_COLOR, weatherIcon } from "@/components/map/markerIcons";
+import { cityIcon, clusterIcon, eventIcon, meIcon, placeIcon, SEVERITY_COLOR, weatherIcon } from "@/components/map/markerIcons";
 import { useLazyJson } from "@/components/map/useMapData";
 import { useInline, type Table } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES, MAP_CITY_BY_SLUG, TEMP_BANDS, tempColor } from "@/lib/map/cities";
 import type { EventView, EventsResult } from "@/lib/events/query";
+import { CATEGORIES as PLACE_CATEGORIES, pickLabel } from "@/lib/explore/categories";
+import { placeName } from "@/lib/explore/display";
+import type { Destination, ExploreResult } from "@/lib/explore/types";
 import type { MapWeatherPoint } from "@/lib/services/weather";
 
 // Leaflet + Esri's public tile servers (the provider this map already used).
@@ -73,6 +76,8 @@ const TEXT = {
   locUnavailable: { en: "Your location couldn't be determined.", ja: "現在地を取得できませんでした。" },
   locOutside: { en: "You appear to be outside Japan, so the map stays on Japan.", ja: "日本国外にいるようです。地図は日本のままです。" },
   locFound: { en: "Centred on your location. It stays in your browser.", ja: "現在地に移動しました。位置情報はブラウザ内にのみ保持されます。" },
+  placesTitle: { en: "Places to explore", ja: "観光スポット" },
+  placesShowing: { en: "Most well-known places in view:", ja: "表示範囲の知名度上位：" },
   retry: { en: "Try again", ja: "再試行" },
   loading: { en: "Loading…", ja: "読み込み中…" },
 } satisfies Table;
@@ -96,13 +101,24 @@ export default function FullMap() {
   const text = useInline(TEXT);
   const [map, setMap] = useState<L.Map | null>(null);
   const [base, setBase] = useState<BaseKey>("dark");
-  const [layers, setLayers] = useState<Record<LayerKey, boolean>>({ weather: false, trains: false, events: false, alerts: false });
+  const [layers, setLayers] = useState<Record<LayerKey, boolean>>(() => ({
+    weather: false,
+    trains: false,
+    events: false,
+    alerts: false,
+    // The Explore page links here with ?layer=places.
+    places: typeof window !== "undefined" && new URLSearchParams(window.location.search).get("layer") === "places",
+  }));
   const [selection, setSelection] = useState<Selection | null>(null);
   const [showEnded, setShowEnded] = useState(false);
   const [moveTick, setMoveTick] = useState(0);
   const [me, setMe] = useState<{ lat: number; lon: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [placeCats, setPlaceCats] = useState<string[]>([]);
+  const [placesLoaded, setPlacesLoaded] = useState<{ key: string; items: Destination[]; total: number } | null>(null);
+  const [selectedDest, setSelectedDest] = useState<Destination | null>(null);
+  const [tripPlaces, setTripPlaces] = useState<Destination[]>([]);
 
   // Weather for every city is one cached request, made once; the layer toggle
   // only changes how it is drawn.
@@ -179,6 +195,81 @@ export default function FullMap() {
     return () => document.removeEventListener("keydown", onKey);
   }, []);
 
+
+  // Destinations are loaded for the part of the map in view (most well-known
+  // first), a few hundred at a time, and drawn as clusters when crowded.
+  const placesKey = useMemo(() => {
+    void moveTick;
+    if (!map || !layers.places) return null;
+    const b = map.getBounds().pad(0.1);
+    const r = (n: number) => Math.round(n * 20) / 20;
+    return `bbox=${r(b.getSouth())},${r(b.getWest())},${r(b.getNorth())},${r(b.getEast())}&cats=${placeCats.join(",")}`;
+  }, [map, layers.places, moveTick, placeCats]);
+
+  useEffect(() => {
+    if (!placesKey) return;
+    const controller = new AbortController();
+    const id = setTimeout(() => {
+      fetch(`/api/explore?${placesKey}&limit=300&sort=popular`, { signal: controller.signal })
+        .then((r) => (r.ok ? (r.json() as Promise<ExploreResult>) : Promise.reject(new Error("failed"))))
+        .then((d) => setPlacesLoaded({ key: placesKey, items: d.items, total: d.total }))
+        .catch(() => {});
+    }, 350);
+    return () => {
+      clearTimeout(id);
+      controller.abort();
+    };
+  }, [placesKey]);
+
+  // Links into the map: ?layer=places, ?place=<id>, ?trip=<ids>.
+  useEffect(() => {
+    if (!map) return;
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get("trip") ?? params.get("place");
+    if (!wanted) return;
+    const ids = wanted.split(",").filter((i) => /^Q\d+$/.test(i)).slice(0, 20);
+    if (ids.length === 0) return;
+    fetch(`/api/explore/places?ids=${ids.join(",")}`)
+      .then((r) => (r.ok ? (r.json() as Promise<ExploreResult>) : null))
+      .then((d) => {
+        if (!d || d.items.length === 0) return;
+        if (params.get("trip")) {
+          setTripPlaces(d.items);
+          map.fitBounds(L.latLngBounds(d.items.map((p) => [p.lat, p.lon] as [number, number])), { padding: [60, 60], maxZoom: 12 });
+        } else {
+          const p = d.items[0];
+          setSelectedDest(p);
+          setSelection({ type: "dest", id: p.id });
+          map.setView([p.lat, p.lon], 12);
+        }
+      })
+      .catch(() => {});
+  }, [map]);
+
+  // Crowded destinations are merged into numbered clusters (about 56 px grid).
+  const placeMarkers = useMemo(() => {
+    void moveTick;
+    if (!map || !layers.places || !placesLoaded) return [];
+    const cell = 56;
+    const buckets = new Map<string, { items: Destination[]; x: number; y: number }>();
+    for (const d of placesLoaded.items) {
+      const pt = map.latLngToContainerPoint([d.lat, d.lon]);
+      const key = `${Math.floor(pt.x / cell)}:${Math.floor(pt.y / cell)}`;
+      const b = buckets.get(key) ?? { items: [], x: 0, y: 0 };
+      b.items.push(d);
+      b.x += d.lat;
+      b.y += d.lon;
+      buckets.set(key, b);
+    }
+    return [...buckets.entries()].map(([key, b]) => ({ key, items: b.items, lat: b.x / b.items.length, lon: b.y / b.items.length }));
+  }, [map, moveTick, layers.places, placesLoaded]);
+
+  function pickDest(d: Destination) {
+    setSelectedDest(d);
+    setSelection({ type: "dest", id: d.id });
+    flyTo(d.lat, d.lon, Math.max(map?.getZoom() ?? 0, 12));
+  }
+
   function flyTo(lat: number, lon: number, zoom: number) {
     if (!map) return;
     // On wide screens the info card sits on the left, so shift the target right of it.
@@ -243,7 +334,7 @@ export default function FullMap() {
   // Selected pieces for the panel.
   const selectedCity = selection?.type === "city" ? MAP_CITY_BY_SLUG.get(selection.slug) ?? null : null;
   const selectedGroup = selection?.type === "events" ? groups.find((g) => g.key === selection.key) ?? null : null;
-  const hasPanel = Boolean(selection && (selection.type !== "events" || selectedGroup));
+  const hasPanel = Boolean(selection && (selection.type === "events" ? selectedGroup : selection.type === "dest" ? selectedDest : true));
   const wxPoints = weather.data?.cities ?? {};
 
   return (
@@ -304,12 +395,51 @@ export default function FullMap() {
           />
         ))}
 
+        {placeMarkers.map((m) =>
+          m.items.length > 1 ? (
+            <Marker
+              key={`c-${m.key}`}
+              position={[m.lat, m.lon]}
+              icon={clusterIcon(m.items.length)}
+              title={`${m.items.length}`}
+              zIndexOffset={300}
+              eventHandlers={{
+                click: (e) => {
+                  L.DomEvent.stopPropagation(e);
+                  map?.fitBounds(L.latLngBounds(m.items.map((d) => [d.lat, d.lon] as [number, number])), { padding: [80, 80], maxZoom: 14 });
+                },
+              }}
+            />
+          ) : (
+            <Marker
+              key={m.items[0].id}
+              position={[m.items[0].lat, m.items[0].lon]}
+              icon={placeIcon(selection?.type === "dest" && selection.id === m.items[0].id)}
+              title={placeName(m.items[0], language)}
+              zIndexOffset={400}
+              eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); pickDest(m.items[0]); } }}
+            />
+          ),
+        )}
+
+        {tripPlaces.map((p, i) => (
+          <Marker key={`trip-${p.id}`} position={[p.lat, p.lon]} icon={placeIcon(selection?.type === "dest" && selection.id === p.id, i + 1)} title={`${i + 1}. ${placeName(p, language)}`} zIndexOffset={700} eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); pickDest(p); } }} />
+        ))}
+
         {me && <Marker position={[me.lat, me.lon]} icon={meIcon()} interactive={false} keyboard={false} zIndexOffset={900} />}
       </MapContainer>
 
       {/* Search */}
       <div className="absolute left-3 top-3 z-[1000] w-[min(22.5rem,calc(100%-5.5rem))]">
-        <MapSearch onPick={pickSearch} />
+        <MapSearch
+          onPick={pickSearch}
+          onPickPlace={(id) => {
+            fetch(`/api/explore/places?ids=${id}`)
+              .then((r) => (r.ok ? (r.json() as Promise<ExploreResult>) : null))
+              .then((d) => d?.items[0] && pickDest(d.items[0]))
+              .catch(() => {});
+          }}
+        />
       </div>
 
       <MapControls
@@ -332,6 +462,8 @@ export default function FullMap() {
           selection={selection}
           city={selectedCity}
           group={selectedGroup}
+          dest={selection.type === "dest" ? selectedDest : null}
+          onPickDest={pickDest}
           weather={selectedCity ? wxPoints[selectedCity.slug] ?? null : null}
           weatherLoading={weather.loading}
           alerts={alerts.data}
@@ -418,6 +550,30 @@ export default function FullMap() {
             {(evA.failed || evB.failed) && <p className="mt-1.5 text-[11px] text-gold">{text("eventsDown")}</p>}
             {!evA.loading && !evA.failed && groups.length === 0 && <p className="mt-1.5 text-[11px] text-muted">{text("eventsNone")}</p>}
             {(evA.loading || evB.loading) && <p className="mt-1.5 text-[11px] text-muted">{text("loading")}</p>}
+          </div>
+        )}
+        {layers.places && (
+          <div className="pointer-events-auto w-full rounded-xl border border-glass-border bg-panel/95 px-3 py-2 shadow-lg backdrop-blur-xl">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted">{text("placesTitle")}</p>
+            <div className="mt-1.5 flex max-h-24 flex-wrap gap-1 overflow-y-auto">
+              {PLACE_CATEGORIES.filter((c) => c.id !== "attraction").map((c) => {
+                const on = placeCats.includes(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setPlaceCats((cur) => (on ? cur.filter((x) => x !== c.id) : [...cur, c.id]))}
+                    className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${on ? "border-neon-purple/60 bg-neon-purple/25 text-[#c4b5fd]" : "border-glass-border text-foreground/75 hover:border-white/25"}`}
+                  >
+                    {pickLabel(c.label, language)}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-1.5 text-[11px] leading-snug text-muted">
+              {placesLoaded ? `${text("placesShowing")} ${Math.min(placesLoaded.items.length, placesLoaded.total)} / ${placesLoaded.total}` : text("loading")}
+            </p>
           </div>
         )}
         {layers.trains && (

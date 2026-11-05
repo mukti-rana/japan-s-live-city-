@@ -61,3 +61,24 @@ export function meIcon() {
     iconAnchor: [0, 0],
   });
 }
+
+// A destination from the Explore catalogue.
+export function placeIcon(selected: boolean, number?: number) {
+  return L.divIcon({
+    className: "",
+    html: `<div class="lc-place ${selected ? "lc-place--sel" : ""}">${number ?? ""}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
+}
+
+// Several destinations close together on screen, drawn as one counter.
+export function clusterIcon(count: number) {
+  const size = count < 10 ? 30 : count < 50 ? 36 : 44;
+  return L.divIcon({
+    className: "",
+    html: `<div class="lc-cluster" style="width:${size}px;height:${size}px;margin:${-size / 2}px 0 0 ${-size / 2}px">${count}</div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 0],
+  });
+}

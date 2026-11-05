@@ -2,10 +2,15 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { AlertTriangle, CalendarDays, ChevronDown, ChevronUp, CloudSun, ExternalLink, MapPin, Newspaper, TrainFront, X } from "lucide-react";
+import { AlertTriangle, CalendarDays, ChevronDown, Compass, ChevronUp, CloudSun, ExternalLink, MapPin, Newspaper, TrainFront, X } from "lucide-react";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import { useLazyJson } from "@/components/map/useMapData";
 import { SEVERITY_COLOR } from "@/components/map/markerIcons";
+import PlaceImage from "@/components/explore/PlaceImage";
+import { CATEGORY_BY_ID, pickLabel } from "@/lib/explore/categories";
+import { placeAbout, placeName, prefectureLabel } from "@/lib/explore/display";
+import type { Destination, ExploreResult } from "@/lib/explore/types";
+import { useTrip } from "@/lib/explore/useTrip";
 import type { MapCity } from "@/lib/map/cities";
 import { tempColor } from "@/lib/map/cities";
 import type { OfficialAlert } from "@/lib/emergency/disaster";
@@ -51,12 +56,18 @@ const TEXT = {
   openInEvents: { en: "Open in Events", ja: "イベントページで開く" },
   typical: { en: "Usual dates — not confirmed", ja: "例年の日程（未確認）" },
   retry: { en: "Try again", ja: "再試行" },
+  destDetails: { en: "View details", ja: "詳細を見る" },
+  addTrip: { en: "Add to trip", ja: "旅程に追加" },
+  inTrip: { en: "In trip", ja: "旅程に追加済み" },
+  findNearby: { en: "Find nearby", ja: "近くを探す" },
+  nearbyNone: { en: "No other places within 12 km in the catalogue yet.", ja: "12km圏内に他の登録スポットはまだありません。" },
 } satisfies Table;
 
 export type Selection =
   | { type: "city"; slug: string }
   | { type: "place"; id: string; name: string; nameJa?: string; sub: string; lat: number; lon: number; prefectureId?: string }
-  | { type: "events"; key: string };
+  | { type: "events"; key: string }
+  | { type: "dest"; id: string };
 
 export interface EventGroup {
   key: string;
@@ -323,12 +334,66 @@ function EventDetails({ group, today }: { group: EventGroup; today: string }) {
   );
 }
 
+function DestDetails({ dest, onPick }: { dest: Destination; onPick: (d: Destination) => void }) {
+  const { language } = useLanguage();
+  const text = useInline(TEXT);
+  const trip = useTrip();
+  const [showNearby, setShowNearby] = useState(false);
+  const nearby = useLazyJson<ExploreResult>(showNearby ? `/api/explore?lat=${dest.lat}&lon=${dest.lon}&radius=12&sort=recommended&limit=7` : null);
+  const about = placeAbout(dest, language);
+  const category = CATEGORY_BY_ID.get(dest.category);
+  const inTrip = trip.has(dest.id);
+  const others = (nearby.data?.items ?? []).filter((d) => d.id !== dest.id).slice(0, 6);
+  return (
+    <div className="flex flex-col gap-3">
+      <PlaceImage image={dest.image} category={dest.category} alt="" className="aspect-[16/9] w-full rounded-xl" />
+      <p className="text-xs text-muted">
+        {category ? pickLabel(category.label, language) : ""} · {[dest.city, prefectureLabel(dest.prefectureId, language)].filter(Boolean).join(", ")}
+      </p>
+      {about && <p className={`line-clamp-5 text-sm leading-relaxed text-foreground/85 ${about.language === "ja" ? "font-jp" : ""}`}>{about.text}</p>}
+      <div className="flex flex-wrap gap-2">
+        <Link href={`/explore/${dest.id}`} className="rounded-full bg-azure/15 px-3 py-1.5 text-xs font-semibold text-azure hover:bg-azure/25">
+          {text("destDetails")} →
+        </Link>
+        <button type="button" onClick={() => trip.toggle(dest.id)} aria-pressed={inTrip} className="rounded-full border border-glass-border px-3 py-1.5 text-xs font-medium text-foreground/85 hover:border-azure/40">
+          {inTrip ? text("inTrip") : text("addTrip")}
+        </button>
+        <button type="button" onClick={() => setShowNearby((v) => !v)} aria-expanded={showNearby} className="rounded-full border border-glass-border px-3 py-1.5 text-xs font-medium text-foreground/85 hover:border-azure/40">
+          {text("findNearby")}
+        </button>
+      </div>
+      {showNearby && (
+        <div className="border-t border-glass-border pt-3">
+          {nearby.loading ? (
+            <p className="text-sm text-muted">…</p>
+          ) : others.length === 0 ? (
+            <p className="text-sm text-muted">{text("nearbyNone")}</p>
+          ) : (
+            <ul className="flex flex-col gap-1.5">
+              {others.map((d) => (
+                <li key={d.id}>
+                  <button type="button" onClick={() => onPick(d)} className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left text-sm text-foreground/90 hover:bg-glass-bg-strong">
+                    <span className="truncate">{placeName(d, language)}</span>
+                    {d.distanceKm !== null && <span className="shrink-0 text-xs text-muted">{d.distanceKm} km</span>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // The floating information card. On a phone it is a bottom sheet that can be
 // folded down to its title so the map stays visible.
 export default function MapPanel({
   selection,
   city,
   group,
+  dest,
+  onPickDest,
   weather,
   weatherLoading,
   alerts,
@@ -340,6 +405,8 @@ export default function MapPanel({
   selection: Selection;
   city: MapCity | null;
   group: EventGroup | null;
+  dest: Destination | null;
+  onPickDest: (d: Destination) => void;
   weather: MapWeatherPoint | null;
   weatherLoading: boolean;
   alerts: AlertsPayload | null;
@@ -362,6 +429,10 @@ export default function MapPanel({
   } else if (selection.type === "place") {
     title = language === "ja" && selection.nameJa ? selection.nameJa : selection.name;
     subtitle = selection.sub;
+  } else if (selection.type === "dest" && dest) {
+    title = placeName(dest, language);
+    subtitle = dest.names.ja && dest.names.ja !== title ? dest.names.ja : "";
+    icon = <Compass size={16} aria-hidden="true" />;
   } else if (group) {
     title = `${group.events.length} ${language === "ja" ? "件のイベント" : group.events.length === 1 ? "event" : "events"}`;
     subtitle = group.events[0]?.city ?? "";
@@ -403,6 +474,7 @@ export default function MapPanel({
         )}
         {selection.type === "place" && <PlaceDetails sel={selection} />}
         {selection.type === "events" && group && <EventDetails group={group} today={today} />}
+        {selection.type === "dest" && dest && <DestDetails dest={dest} onPick={onPickDest} />}
       </div>
     </aside>
   );
