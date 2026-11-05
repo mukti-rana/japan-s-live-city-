@@ -115,8 +115,8 @@ export default function EmergencyPreview() {
                 aria-label={`${x("calls")}: ${q.number} — ${pickJaEn(q.label, language)}`}
                 className="flex min-h-[4.25rem] flex-col items-center justify-center gap-0.5 rounded-xl border border-red-400/30 bg-red-500/10 px-1 text-center transition-colors hover:border-red-300/60 hover:bg-red-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300"
               >
-                <span className="flex items-center gap-1.5 text-xl font-bold tabular-nums leading-none text-foreground">
-                  <PhoneCall size={13} className="text-red-300" aria-hidden="true" />
+                <span className="flex items-center gap-1.5 text-2xl font-extrabold tabular-nums leading-none text-red-500 [text-shadow:0_0_14px_rgba(239,68,68,0.45)]">
+                  <PhoneCall size={14} className="text-red-500" aria-hidden="true" />
                   {q.number}
                 </span>
                 <span className="text-[10px] font-medium leading-tight text-foreground/80">{pickJaEn(q.label, language)}</span>
