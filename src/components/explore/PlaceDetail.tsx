@@ -10,7 +10,8 @@ import { placeAbout, placeName, placeNameJa, prefectureLabel } from "@/lib/explo
 import type { Destination } from "@/lib/explore/types";
 import { useTrip } from "@/lib/explore/useTrip";
 import { osmEmbed } from "@/lib/events/useEvents";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { Gallery, GettingThere } from "@/components/explore/PlaceExtras";
+import { useInline, useTranslate, type Table } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const T = {
@@ -67,6 +68,7 @@ function Fact({ icon, label, children }: { icon: React.ReactNode; label: string;
 export default function PlaceDetail({ place, nearby, checkedOn }: { place: Destination; nearby: Destination[]; checkedOn: string }) {
   const { language } = useLanguage();
   const t = useInline(T);
+  const tr = useTranslate();
   const trip = useTrip();
   const name = placeName(place, language);
   const ja = placeNameJa(place, language);
@@ -197,10 +199,13 @@ export default function PlaceDetail({ place, nearby, checkedOn }: { place: Desti
             </Fact>
           </div>
           <Fact icon={<Navigation size={16} aria-hidden="true" />} label={t("transport")}>
-            <span className="text-muted">{t("transportNone")}</span>{" "}
-            <a href={directions} target="_blank" rel="noopener noreferrer" className="text-azure hover:underline">
-              {t("directions")}
-            </a>
+            <GettingThere place={place} />
+          </Fact>
+          <Fact icon={<MapPin size={16} aria-hidden="true" />} label={tr("Address")}>
+            <span className="text-foreground/90">{[place.city, prefectureLabel(place.prefectureId, language)].filter(Boolean).join(", ")}</span>
+            <span className="mt-0.5 block text-[11px] text-muted">
+              {place.lat.toFixed(4)}, {place.lon.toFixed(4)} · {tr("A street address isn't in our data; the map pin is exact.")}
+            </span>
           </Fact>
           <Fact icon={<ExternalLink size={16} aria-hidden="true" />} label={t("officialSite")}>
             {place.website ? (
@@ -213,6 +218,8 @@ export default function PlaceDetail({ place, nearby, checkedOn }: { place: Desti
           </Fact>
         </section>
       </div>
+
+      <Gallery id={place.id} name={name} />
 
       <section aria-labelledby="loc" className="overflow-hidden rounded-2xl border border-glass-border">
         <div className="flex flex-wrap items-center justify-between gap-2 bg-glass-bg px-4 py-3">

@@ -19,6 +19,10 @@ export interface ExploreLocation {
   accuracyKm: number | null;
   label: string;
   prefectureId: string | null;
+  // For a picked place: a city, or a whole prefecture (centred on its middle).
+  kind?: "city" | "prefecture";
+  // When it was set, so the more recent of the two wins as "the" location.
+  at?: number;
 }
 
 const MANUAL_KEY = "livecity:exploreLocation";
@@ -47,16 +51,13 @@ function snapshot(): string {
   return `${read(window.sessionStorage, GPS_KEY)}\n${read(window.localStorage, MANUAL_KEY)}`;
 }
 
-function parse(raw: string): ExploreLocation | null {
-  const [gps, manual] = raw.split("\n");
-  for (const text of [gps, manual]) {
-    if (!text) continue;
-    try {
-      const v = JSON.parse(text) as ExploreLocation;
-      if (Number.isFinite(v.lat) && Number.isFinite(v.lon) && (v.mode === "gps" || v.mode === "manual")) return v;
-    } catch {
-      /* ignore a corrupt entry */
-    }
+function parseOne(text: string | undefined, mode: "gps" | "manual"): ExploreLocation | null {
+  if (!text) return null;
+  try {
+    const v = JSON.parse(text) as ExploreLocation;
+    if (Number.isFinite(v.lat) && Number.isFinite(v.lon) && v.mode === mode) return v;
+  } catch {
+    /* ignore a corrupt entry */
   }
   return null;
 }
@@ -80,7 +81,15 @@ export type LocateStatus = "idle" | "locating" | "denied" | "unavailable" | "out
 
 export function useExploreLocation() {
   const raw = useSyncExternalStore(subscribe, snapshot, () => "");
-  const location = useMemo(() => parse(raw), [raw]);
+  // The device position and the picked place are kept apart so a page can
+  // offer both ("Near Me" vs "Choose City"); `location` is whichever was set last.
+  const { gps, manual, location } = useMemo(() => {
+    const [g, m] = raw.split("\n");
+    const gps = parseOne(g, "gps");
+    const manual = parseOne(m, "manual");
+    const location = gps && manual ? ((gps.at ?? 0) >= (manual.at ?? 0) ? gps : manual) : (gps ?? manual);
+    return { gps, manual, location };
+  }, [raw]);
   const [status, setStatus] = useState<LocateStatus>("idle");
 
   const save = useCallback((storage: Storage, key: string, value: ExploreLocation | null) => {
@@ -127,6 +136,7 @@ export function useExploreLocation() {
           accuracyKm: Math.round((accuracy / 1000) * 10) / 10,
           label: name ?? prefName ?? "your area",
           prefectureId,
+          at: Date.now(),
         });
         setStatus("idle");
       },
@@ -141,15 +151,14 @@ export function useExploreLocation() {
       let loc: ExploreLocation | null = null;
       if (kind === "city") {
         const c = MAP_CITIES.find((x) => x.slug === id);
-        if (c) loc = { mode: "manual", lat: c.lat, lon: c.lon, accuracyKm: null, label: c.name, prefectureId: c.prefectureId };
+        if (c) loc = { mode: "manual", lat: c.lat, lon: c.lon, accuracyKm: null, label: c.name, prefectureId: c.prefectureId, kind: "city", at: Date.now() };
       } else {
         const p = PREFECTURES.find((x) => x.id === id);
         const centre = PREFECTURE_CENTER[id];
-        if (p && centre) loc = { mode: "manual", lat: centre[0], lon: centre[1], accuracyKm: null, label: p.en, prefectureId: p.id };
+        if (p && centre) loc = { mode: "manual", lat: centre[0], lon: centre[1], accuracyKm: null, label: p.en, prefectureId: p.id, kind: "prefecture", at: Date.now() };
       }
       if (!loc) return;
       save(window.localStorage, MANUAL_KEY, loc);
-      save(window.sessionStorage, GPS_KEY, null);
       setStatus("idle");
     },
     [save],
@@ -161,5 +170,5 @@ export function useExploreLocation() {
     setStatus("idle");
   }, [save]);
 
-  return { location, status, useMyLocation, choosePlace, clear };
+  return { location, gps, manual, status, useMyLocation, choosePlace, clear };
 }

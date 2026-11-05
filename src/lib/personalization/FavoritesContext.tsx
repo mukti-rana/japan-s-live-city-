@@ -2,7 +2,6 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/lib/supabase/AuthContext";
-import { useAccountPrompt } from "@/components/auth/AccountPromptProvider";
 import { createClient } from "@/lib/supabase/client";
 
 export type FavoriteKind = "city" | "place" | "line";
@@ -33,82 +32,89 @@ const FavoritesContext = createContext<FavoritesValue>({
   toggle: () => {},
 });
 
-// Three modes, decided by the account setup:
-//  - Signed in: favorites live in the user's own database rows (protected
-//    by row-level security) and follow them across devices.
-//  - Guest, accounts available: nothing is stored; saving gently offers a
-//    free account instead ("Explore first. Personalize later.").
-//  - Accounts not configured: saved on this device only, so local
-//    development keeps working.
+// Saved on this device for guests (and whenever accounts aren't configured);
+// in the user's own database rows when signed in, so they follow them across
+// devices. Anything a guest saved is moved into the account on sign-in.
+function readLocal(): Record<FavoriteKind, string[]> {
+  const next: Record<FavoriteKind, string[]> = { city: [], place: [], line: [] };
+  for (const kind of KINDS) {
+    try {
+      const raw = window.localStorage.getItem(LOCAL_KEYS[kind]);
+      const parsed: unknown = raw ? JSON.parse(raw) : [];
+      if (Array.isArray(parsed)) next[kind] = parsed.filter((v): v is string => typeof v === "string");
+    } catch {
+      // Storage unavailable — start empty for this session.
+    }
+  }
+  return next;
+}
+
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const { user, loading, configured } = useAuth();
-  const { requestAccount } = useAccountPrompt();
   const [items, setItems] = useState<Record<FavoriteKind, string[]>>(EMPTY);
   const [ready, setReady] = useState(false);
   const userId = user?.id ?? null;
+  const local = !configured || !userId;
 
   useEffect(() => {
     if (loading) return;
 
-    if (!configured) {
-      const next: Record<FavoriteKind, string[]> = { city: [], place: [], line: [] };
-      for (const kind of KINDS) {
-        try {
-          const raw = window.localStorage.getItem(LOCAL_KEYS[kind]);
-          const parsed: unknown = raw ? JSON.parse(raw) : [];
-          if (Array.isArray(parsed)) next[kind] = parsed.filter((v): v is string => typeof v === "string");
-        } catch {
-          // Storage unavailable — start empty for this session.
-        }
-      }
+    if (local) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setItems(next);
-      setReady(true);
-      return;
-    }
-
-    if (!userId) {
-      setItems(EMPTY);
+      setItems(readLocal());
       setReady(true);
       return;
     }
 
     let active = true;
-    createClient()
-      .from("favorites")
+    const db = createClient();
+    db.from("favorites")
       .select("kind,key")
-      .then(({ data, error }) => {
+      .then(async ({ data, error }) => {
         if (!active) return;
         const next: Record<FavoriteKind, string[]> = { city: [], place: [], line: [] };
         if (!error) {
           for (const row of (data ?? []) as { kind: string; key: string }[]) {
             if ((KINDS as string[]).includes(row.kind)) next[row.kind as FavoriteKind].push(row.key);
           }
+          // Move what this browser saved as a guest into the account.
+          const guest = readLocal();
+          const rows = KINDS.flatMap((kind) => guest[kind].filter((key) => !next[kind].includes(key)).map((key) => ({ kind, key })));
+          if (rows.length > 0) {
+            const { error: insertError } = await db.from("favorites").insert(rows);
+            if (!insertError) {
+              for (const r of rows) next[r.kind].push(r.key);
+              for (const kind of KINDS) {
+                try {
+                  window.localStorage.removeItem(LOCAL_KEYS[kind]);
+                } catch {
+                  /* ignore */
+                }
+              }
+            }
+          }
         }
+        if (!active) return;
         setItems(next);
         setReady(true);
       });
     return () => {
       active = false;
     };
-  }, [loading, configured, userId]);
+  }, [loading, local, userId]);
 
   const isFavorite = useCallback((kind: FavoriteKind, key: string) => items[kind].includes(key), [items]);
 
   const toggle = useCallback(
     (kind: FavoriteKind, key: string) => {
       if (loading) return;
-      if (configured && !userId) {
-        requestAccount();
-        return;
-      }
 
       const previous = items[kind];
       const has = previous.includes(key);
       const next = has ? previous.filter((k) => k !== key) : [...previous, key];
       setItems((prev) => ({ ...prev, [kind]: next }));
 
-      if (!configured) {
+      if (local) {
         try {
           window.localStorage.setItem(LOCAL_KEYS[kind], JSON.stringify(next));
         } catch {
@@ -125,7 +131,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         if (error) setItems((prev) => ({ ...prev, [kind]: previous }));
       });
     },
-    [items, loading, configured, userId, requestAccount],
+    [items, loading, local],
   );
 
   return (
