@@ -1,46 +1,57 @@
 "use client";
 
 import { useState } from "react";
-import { ImageOff } from "lucide-react";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import CategoryVisual, { type VisualSize, type VisualTopic } from "@/components/news/CategoryVisual";
 
-// A publisher's own picture for a story, or an honest placeholder. Images are
-// loaded straight from the publisher (lazily, without sending our page address
-// as a referrer). If one has expired or is blocked, the placeholder shows —
-// never some other photo standing in for the story.
+// Pictures that have already failed to load. Shared across the page, so the
+// same broken address is never requested a second time (the same story often
+// appears in several sections).
+const BAD_URLS = new Set<string>();
+
+export const isKnownBadImage = (src: string | null) => Boolean(src && BAD_URLS.has(src));
+
+// Anything smaller than this is a tracking pixel or an icon, not a story photo.
+const MIN_SIDE = 40;
+
+// A publisher's own picture for a story. When there isn't one — no address, a
+// picture that fails to load, or a placeholder-sized image — it shows an
+// editorial illustration for the story's category instead, clearly labelled as
+// an illustration. It never substitutes some other photograph, and never shows
+// a broken-image icon or an "unavailable" box.
 export default function NewsImage({
   src,
+  topic = "general",
+  size = "card",
   className = "",
   priority = false,
-  compact = false,
   pending = false,
+  onFailed,
 }: {
   src: string | null;
+  topic?: VisualTopic;
+  size?: Exclude<VisualSize, "backdrop">;
   className?: string;
   priority?: boolean;
-  // Small thumbnails show the icon only, without the words.
-  compact?: boolean;
   // The publisher's picture is still being looked up.
   pending?: boolean;
+  // Called once when the picture turns out to be unusable.
+  onFailed?: () => void;
 }) {
-  const { t } = useLanguage();
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   if (!src && pending) {
     return <div aria-hidden="true" className={`bg-glass-bg-strong motion-safe:animate-pulse ${className}`} />;
   }
 
-  if (!src || failedSrc === src) {
-    return (
-      <div
-        role="img"
-        aria-label={t("news.card.imageUnavailable")}
-        className={`flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-glass-bg-strong to-panel text-muted ${className}`}
-      >
-        <ImageOff size={compact ? 16 : 22} aria-hidden="true" />
-        {!compact && <span className="text-[11px]">{t("news.card.imageUnavailable")}</span>}
-      </div>
-    );
+  if (!src || failedSrc === src || BAD_URLS.has(src)) {
+    return <CategoryVisual topic={topic} size={size} className={className} />;
+  }
+
+  function fail() {
+    if (!src) return;
+    BAD_URLS.add(src);
+    setFailedSrc(src);
+    onFailed?.();
   }
 
   return (
@@ -51,7 +62,11 @@ export default function NewsImage({
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       referrerPolicy="no-referrer"
-      onError={() => setFailedSrc(src)}
+      onLoad={(e) => {
+        const img = e.currentTarget;
+        if (img.naturalWidth < MIN_SIDE || img.naturalHeight < MIN_SIDE) fail();
+      }}
+      onError={fail}
       className={`bg-glass-bg-strong object-cover ${className}`}
     />
   );

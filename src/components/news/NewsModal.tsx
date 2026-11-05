@@ -100,8 +100,8 @@ export default function NewsModal({ item, onClose }: { item: NewsItem | null; on
               />
             ) : (
               <div>
-                <div className="aspect-video w-full overflow-hidden rounded-xl">
-                  <NewsImage src={item.imageUrl} priority className="h-full w-full" />
+                <div className={`w-full overflow-hidden rounded-xl ${item.imageUrl ? "aspect-video" : "h-28 sm:h-32"}`}>
+                  <NewsImage src={item.imageUrl} topic={item.scope === "international" ? "international" : item.topic} size={item.imageUrl ? "hero" : "card"} priority className="h-full w-full" />
                 </div>
                 {item.imageUrl && (
                   <p className="mt-1.5 text-[11px] text-muted">

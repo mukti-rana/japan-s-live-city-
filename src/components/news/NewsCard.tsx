@@ -1,13 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { ExternalLink, MapPin, Play } from "lucide-react";
-import NewsImage from "@/components/news/NewsImage";
+import CategoryVisual, { useVisualLabel, type VisualTopic } from "@/components/news/CategoryVisual";
+import NewsImage, { isKnownBadImage } from "@/components/news/NewsImage";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import { placeLabel, timeAgo } from "@/lib/news/useNews";
 import type { NewsItem } from "@/lib/news/query";
 
 export type CardVariant = "featured" | "card" | "compact";
+
+// Which illustration a story gets when it has no picture of its own.
+export function visualTopic(item: NewsItem): VisualTopic {
+  return item.scope === "international" ? "international" : item.topic;
+}
 
 const LEVEL_KEY: Record<number, TranslationKey> = {
   3: "news.level.city",
@@ -78,7 +85,11 @@ export default function NewsCard({
   const jp = item.language === "ja" ? "font-jp" : "";
   const label = item.video ? `${t("news.card.play")}: ${item.title}` : item.title;
 
-  const media = (aspect: string, large = false) => (
+  const topic = visualTopic(item);
+  const visualLabel = useVisualLabel()(topic);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  const media = (aspect: string, large = false, size: "thumb" | "card" | "hero" = "card") => (
     <button
       type="button"
       onClick={() => onOpen(item)}
@@ -87,8 +98,11 @@ export default function NewsCard({
     >
       <NewsImage
         src={item.imageUrl}
+        topic={topic}
+        size={size}
         pending={item.imagePending}
         priority={priority}
+        onFailed={() => setImageFailed(true)}
         className="h-full w-full transition-transform duration-500 group-hover/media:scale-[1.03] motion-reduce:transition-none"
       />
       {item.video && <PlayBadge large={large} />}
@@ -115,7 +129,7 @@ export default function NewsCard({
   if (variant === "compact") {
     return (
       <article className="flex gap-3">
-        <div className="w-24 shrink-0 sm:w-28">{media("aspect-[4/3]")}</div>
+        <div className="w-24 shrink-0 sm:w-28">{media("aspect-[4/3]", false, "thumb")}</div>
         <div className="min-w-0 flex-1">
           <Meta item={item} showLevel={showLevel} />
           <h3 className={`mt-1 line-clamp-3 text-[13px] font-medium leading-snug text-foreground ${jp}`}>
@@ -129,36 +143,57 @@ export default function NewsCard({
   }
 
   if (variant === "featured") {
+    // A real picture gets the large image layout. Without one (none supplied,
+    // or it failed to load) the story leads with its text over an editorial
+    // illustration, so there is never a big empty picture box.
+    const hasPicture = (Boolean(item.imageUrl) && !imageFailed && !isKnownBadImage(item.imageUrl)) || Boolean(item.imagePending);
+    const copy = (
+      <>
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-sakura">{t("news.hub.topStory")}</span>
+        <Meta item={item} showLevel={showLevel} />
+        <h2 className={`font-semibold leading-snug tracking-tight text-foreground ${hasPicture ? "text-xl sm:text-2xl" : "text-2xl sm:text-3xl"} ${jp}`}>
+          <button type="button" onClick={() => onOpen(item)} className="text-left hover:text-azure focus-visible:outline-none focus-visible:underline">
+            {item.title}
+          </button>
+        </h2>
+        {item.summary && <p className={`text-sm leading-relaxed text-foreground/80 ${hasPicture ? "line-clamp-4" : "line-clamp-6 sm:text-base"} ${jp}`}>{item.summary}</p>}
+        <div className="mt-1 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={() => onOpen(item)}
+            className="rounded-full bg-azure/15 px-3.5 py-1.5 text-xs font-semibold text-azure transition-colors hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+          >
+            {item.video ? t("news.card.play") : t("news.card.details")}
+          </button>
+          {readFull}
+        </div>
+      </>
+    );
+
+    if (!hasPicture) {
+      return (
+        <article className="relative isolate overflow-hidden rounded-2xl border border-glass-border">
+          <CategoryVisual topic={topic} size="backdrop" className="absolute inset-0 -z-10" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0b0e1a]/70 via-[#0b0e1a]/30 to-transparent" aria-hidden="true" />
+          <div className="flex min-w-0 flex-col gap-3 p-5 sm:p-8 lg:max-w-[46rem] lg:p-10">{copy}</div>
+          <span className="absolute bottom-3 right-4 hidden items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-foreground/55 sm:flex">
+            {visualLabel}
+          </span>
+        </article>
+      );
+    }
+
     return (
       <article className="grid gap-4 overflow-hidden rounded-2xl border border-glass-border bg-glass-bg p-3 sm:p-4 lg:grid-cols-[1.35fr_1fr] lg:gap-6">
-        {media("aspect-[16/9]", true)}
-        <div className="flex min-w-0 flex-col justify-center gap-2.5 lg:py-2">
-          <span className="text-[11px] font-semibold uppercase tracking-widest text-sakura">{t("news.hub.topStory")}</span>
-          <Meta item={item} showLevel={showLevel} />
-          <h2 className={`text-xl font-semibold leading-snug tracking-tight text-foreground sm:text-2xl ${jp}`}>
-            <button type="button" onClick={() => onOpen(item)} className="text-left hover:text-azure focus-visible:outline-none focus-visible:underline">
-              {item.title}
-            </button>
-          </h2>
-          {item.summary && <p className={`line-clamp-4 text-sm leading-relaxed text-foreground/75 ${jp}`}>{item.summary}</p>}
-          <div className="mt-1 flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              onClick={() => onOpen(item)}
-              className="rounded-full bg-azure/15 px-3.5 py-1.5 text-xs font-semibold text-azure transition-colors hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-            >
-              {item.video ? t("news.card.play") : t("news.card.details")}
-            </button>
-            {readFull}
-          </div>
-        </div>
+        {media("aspect-[16/9]", true, "hero")}
+        <div className="flex min-w-0 flex-col justify-center gap-2.5 lg:py-2">{copy}</div>
       </article>
     );
   }
 
   return (
     <article className="flex flex-col gap-3 rounded-2xl border border-glass-border bg-glass-bg p-3 transition-colors hover:border-azure/30">
-      {media("aspect-[16/9]")}
+      {media("aspect-[16/9]", false, "card")}
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <Meta item={item} showLevel={showLevel} />
         <h3 className={`line-clamp-3 text-[15px] font-semibold leading-snug text-foreground ${jp}`}>

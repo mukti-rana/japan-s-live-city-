@@ -120,8 +120,11 @@ export default function NewsHub({
   }, [pages]);
   const items = useResolvedImages(rawItems);
 
-  // The newest story that has a picture leads the page.
-  const featured = items.slice(0, 6).find((i) => i.imageUrl) ?? null;
+  // The newest story that has a picture leads the page. If none of the first
+  // few has one (and none is still waiting for its picture), the newest story
+  // leads anyway, in the text-first layout.
+  const topSix = items.slice(0, 6);
+  const featured = topSix.find((i) => i.imageUrl) ?? (topSix.some((i) => i.imagePending) ? null : items[0] ?? null);
   const rest = featured ? items.filter((i) => i.id !== featured.id) : items;
 
   const videoParams: NewsParams | null =

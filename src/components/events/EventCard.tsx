@@ -165,6 +165,7 @@ export default function EventCard({
       {event.image ? (
         <NewsImage
           src={event.image.url}
+          topic="event"
           priority={priority}
           className={`h-full w-full transition-transform duration-500 group-hover/media:scale-[1.03] motion-reduce:transition-none ${ended ? "opacity-60 grayscale" : ""}`}
         />

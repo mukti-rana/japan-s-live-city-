@@ -103,7 +103,7 @@ export default function EventModal({ event, onClose }: { event: EventView | null
           {event.image && (
             <div className="p-3 pb-0 sm:p-4 sm:pb-0">
               <div className="aspect-video w-full overflow-hidden rounded-xl">
-                <NewsImage src={event.image.url} priority className="h-full w-full" />
+                <NewsImage src={event.image.url} topic="event" size="hero" priority className="h-full w-full" />
               </div>
               <p className="mt-1.5 text-[11px] text-muted">
                 {t("events.detail.imageCredit")}:{" "}
