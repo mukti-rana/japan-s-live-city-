@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslate } from "@/lib/i18n/inline";
 import { type LucideIcon } from "lucide-react";
 
 const ACCENTS = {
@@ -16,12 +19,15 @@ export default function CardHeader({
   label: string;
   accent?: keyof typeof ACCENTS;
 }) {
+  const tr = useTranslate();
+  const [head, ...tail] = label.split(" — ");
+  const text = [tr(head), ...tail].join(" — ");
   return (
     <div className="flex items-center gap-2">
       <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${ACCENTS[accent]}`}>
         <Icon size={13} />
       </div>
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-foreground/90">{label}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-foreground/90">{text}</p>
     </div>
   );
 }

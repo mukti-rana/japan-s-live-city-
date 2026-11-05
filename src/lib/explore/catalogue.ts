@@ -6,6 +6,7 @@ import { PREFECTURES } from "@/lib/news/places";
 import { CATEGORY_BY_ID, type CategoryId, type Season } from "@/lib/explore/categories";
 import { REGION_OF_PREFECTURE } from "@/lib/explore/regions";
 import type { CatalogueMeta, Destination, ExploreQuery, ExploreResult } from "@/lib/explore/types";
+import { localize } from "@/lib/i18n/translate";
 
 // The catalogue is generated from open data by `npm run catalogue:build` (see
 // scripts/build-catalogue.mjs) and read here. It is loaded once per server
@@ -172,7 +173,7 @@ export function suggest(q: string, language: LanguageCode): Suggestion[] {
   const out: Suggestion[] = [];
   for (const p of PREFECTURES) {
     if (norm(p.en).startsWith(needle) || p.ja.startsWith(q.trim())) {
-      out.push({ type: "prefecture", label: language === "ja" ? p.ja : p.en, sub: language === "ja" ? p.en : p.ja, value: p.id, prefectureId: p.id });
+      out.push({ type: "prefecture", label: localize(p.en, p.ja, language), sub: language === "ja" ? p.en : p.ja, value: p.id, prefectureId: p.id });
     }
   }
   const cityCount = new Map<string, { n: number; pref: string }>();

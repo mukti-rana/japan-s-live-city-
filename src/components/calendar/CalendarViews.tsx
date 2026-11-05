@@ -1,5 +1,7 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { Check } from "lucide-react";
 import { addDays, minutesOfDay, monthGrid, weekDays } from "@/lib/calendar/dates";
 import { C, CATEGORY_COLOR } from "@/lib/calendar/strings";
@@ -36,7 +38,7 @@ interface ViewProps {
 const dayEntries = (entries: Entry[], day: string) => entries.filter((e) => e.date <= day && e.endDate >= day);
 
 function fmtDay(date: string, language: string, opts: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat(language, { timeZone: "UTC", ...opts }).format(new Date(`${date}T00:00:00Z`));
+  return dateFormatter(language as LanguageCode, { timeZone: "UTC", ...opts }).format(new Date(`${date}T00:00:00Z`));
 }
 
 const ORDER = { holiday: 0, personal: 1, task: 2, event: 3, estimated: 4 } as const;

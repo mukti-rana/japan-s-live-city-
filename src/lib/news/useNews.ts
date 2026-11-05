@@ -1,5 +1,6 @@
 "use client";
 
+import { dateFormatter, relativeTime } from "@/lib/i18n/datetime";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { getPrefecture, resolvePlace } from "@/lib/news/places";
@@ -64,7 +65,7 @@ export function useNewsPlace(): NewsPlace {
 export function placeLabel(prefectureId: string, language: LanguageCode): string {
   const pref = getPrefecture(prefectureId);
   if (!pref) return prefectureId;
-  return language === "ja" ? pref.ja : pref.en;
+  return localize(pref.en, pref.ja, language);
 }
 
 // "2 hours ago", in the reader's language, from the story's real timestamp.
@@ -72,7 +73,7 @@ export function timeAgo(iso: string, language: LanguageCode): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "";
   const seconds = Math.round((then - Date.now()) / 1000);
-  const rtf = new Intl.RelativeTimeFormat(language, { numeric: "auto" });
+  const rtf = { format: (v: number, u: Intl.RelativeTimeFormatUnit) => relativeTime(language, v, u) };
   const steps: [Intl.RelativeTimeFormatUnit, number][] = [
     ["minute", 60],
     ["hour", 3600],
@@ -92,12 +93,13 @@ export function timeAgo(iso: string, language: LanguageCode): string {
 export function fullDate(iso: string, language: LanguageCode): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(date);
+  return dateFormatter(language as LanguageCode, { dateStyle: "medium", timeStyle: "short" }).format(date);
 }
 
 // ── Fetching ──────────────────────────────────────────────────────────────
 
 import { toQueryString, type NewsParams } from "@/lib/news/queryString";
+import { localize } from "@/lib/i18n/translate";
 
 export { toQueryString };
 export type { NewsParams };

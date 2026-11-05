@@ -9,7 +9,7 @@ import { QUICK_NUMBERS } from "@/lib/emergency/content";
 import type { AlertsResult, OfficialAlert } from "@/lib/emergency/disaster";
 import { haversineKm, PREFECTURE_CENTER } from "@/lib/events/geo";
 import type { Facility, FacilityType, Shelter } from "@/lib/emergency/nearby";
-import { pickJaEn, useInline, type Table } from "@/lib/i18n/inline";
+import { pickJaEn, useInline, type Table, localizeAlert } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES } from "@/lib/map/cities";
 import { resolvePlace } from "@/lib/news/places";
@@ -148,7 +148,7 @@ export default function EmergencyPreview() {
                 <span className={`mt-1 h-2 w-2 shrink-0 rounded-full ${SEV_DOT[a.severity] ?? "bg-sky-300"}`} aria-hidden="true" />
                 <span className="min-w-0">
                   <a href={a.url} target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-azure">
-                    {language === "ja" ? a.titleJa : a.title}
+                    {localizeAlert(a, language)}
                   </a>
                   <span className="block text-[11px] text-muted">
                     {a.area ? `${a.area} · ` : ""}

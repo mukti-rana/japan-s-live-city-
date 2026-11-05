@@ -16,7 +16,7 @@ import { tempColor } from "@/lib/map/cities";
 import type { OfficialAlert } from "@/lib/emergency/disaster";
 import type { EventView, EventsResult } from "@/lib/events/query";
 import { formatRange } from "@/lib/events/useEvents";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { useInline, type Table, localize, localizeAlert, translate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { NewsResult } from "@/lib/news/query";
 import { timeAgo } from "@/lib/news/useNews";
@@ -97,6 +97,7 @@ function Block({ icon, title, children }: { icon: ReactNode; title: string; chil
 }
 
 function Weather({ point, loading, text }: { point: MapWeatherPoint | null; loading: boolean; text: (k: keyof typeof TEXT) => string }) {
+  const { language } = useLanguage();
   if (!point) {
     return <p className="text-sm text-muted">{loading ? text("wxLoading") : text("wxUnavailable")}</p>;
   }
@@ -113,7 +114,7 @@ function Weather({ point, loading, text }: { point: MapWeatherPoint | null; load
           {point.tempC}
           <span className="align-top text-lg font-medium text-foreground/60">°C</span>
         </p>
-        <p className="mt-1 text-sm font-medium text-foreground">{point.condition}</p>
+        <p className="mt-1 text-sm font-medium text-foreground">{translate(point.condition, language)}</p>
         <p className="text-xs text-muted">
           {text("feels")} {point.feelsLikeC}°{point.rainChance !== null ? ` · ${text("rain")}: ${point.rainChance}%` : ""}
         </p>
@@ -130,7 +131,7 @@ function AlertList({ alerts, text }: { alerts: OfficialAlert[]; text: (k: keyof 
         <li key={a.id} className="rounded-xl border border-glass-border bg-glass-bg p-2.5 text-sm">
           <p className="flex items-start gap-2 font-medium text-foreground">
             <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full" style={{ background: SEVERITY_COLOR[a.severity] }} aria-hidden="true" />
-            <span>{language === "ja" ? a.titleJa : a.title}</span>
+            <span>{localizeAlert(a, language)}</span>
           </p>
           <p className="mt-0.5 pl-4 text-xs text-muted">
             {a.area} · {a.issuer}
@@ -423,7 +424,7 @@ export default function MapPanel({
   let subtitle = "";
   let icon = <MapPin size={16} aria-hidden="true" />;
   if (selection.type === "city" && city) {
-    title = language === "ja" ? city.nameJa : city.name;
+    title = localize(city.name, city.nameJa, language);
     subtitle = language === "ja" ? city.name : city.nameJa;
     icon = <CloudSun size={16} aria-hidden="true" />;
   } else if (selection.type === "place") {

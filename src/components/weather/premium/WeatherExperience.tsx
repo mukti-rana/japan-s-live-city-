@@ -24,6 +24,8 @@ import {
   type TempBand,
 } from "@/lib/weather/insights";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
+import { known, translate } from "@/lib/i18n/inline";
+import { weekdayLabel } from "@/lib/weather/time";
 
 const BAND_KEY: Record<TempBand, TranslationKey> = {
   cold: "weather.v2.band.cold",
@@ -89,7 +91,7 @@ export default function WeatherExperience({
   cityLabel: string;
   isLocationMode: boolean;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   // Starts at the forecast's own timestamp so the server and the first browser
   // render produce identical markup (and search engines see the full content),
   // then switches to the live clock once mounted.
@@ -124,7 +126,7 @@ export default function WeatherExperience({
       ? "bg-gradient-to-br from-[#7b5cff]/30 via-[#ff6fa0]/20 to-[#ffb36b]/15"
       : "";
 
-  const cityDisplay = city ? `${city.name} · ${city.nameJa}` : cityLabel;
+  const cityDisplay = city ? (language === "ja" ? city.nameJa : `${known(city.name, language)} · ${city.nameJa}`) : known(cityLabel, language);
 
   const segments = segmentAverages(snapshot.hourly.slice(0, 24));
   const journeyPoints: HourlyPoint[] = [0, 6, 12, 18].map((i) => snapshot.hourly[i]).filter(Boolean) as HourlyPoint[];
@@ -192,7 +194,7 @@ export default function WeatherExperience({
             </p>
             <p className="mt-3 flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-foreground/90">
               <WeatherIcon icon={snapshot.icon} size={18} />
-              {snapshot.condition}
+              {translate(snapshot.condition, language)}
             </p>
             <p className="mt-1 text-xs text-foreground/65">
               <T k="hero.feelsLike" /> {snapshot.feelsLikeC}°C · <T k={phaseKey(hour)} />
@@ -390,7 +392,7 @@ export default function WeatherExperience({
               highlight
             />
             {snapshot.forecast.map((d) => (
-              <DayRow key={d.date} label={d.weekday} icon={d.icon} high={d.high} low={d.low} rain={d.precipProbability} />
+              <DayRow key={d.date} label={weekdayLabel(d.date, language)} icon={d.icon} high={d.high} low={d.low} rain={d.precipProbability} />
             ))}
           </div>
         </GlassCard>
@@ -467,6 +469,7 @@ function DayRow({
 }
 
 function TemperatureLine({ points }: { points: HourlyPoint[] }) {
+  const { language } = useLanguage();
   const temps = points.map((p) => p.tempC);
   const min = Math.min(...temps) - 1;
   const max = Math.max(...temps) + 1;
@@ -480,7 +483,7 @@ function TemperatureLine({ points }: { points: HourlyPoint[] }) {
   const path = coords.map((c, i) => `${i === 0 ? "M" : "L"}${c.x.toFixed(1)} ${c.y.toFixed(1)}`).join(" ");
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full" role="img" aria-label="Temperature over the next hours">
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full" role="img" aria-label={translate("Temperature over the next hours", language)}>
       <path d={path} fill="none" stroke="#4DA3FF" strokeWidth="2" strokeLinecap="round" />
       {coords.map((c, i) => (
         <g key={i}>
@@ -498,6 +501,7 @@ function TemperatureLine({ points }: { points: HourlyPoint[] }) {
 }
 
 function SunArc({ progress }: { progress: number | null }) {
+  const { language } = useLanguage();
   const W = 260;
   const H = 110;
   const cx = W / 2;
@@ -507,14 +511,14 @@ function SunArc({ progress }: { progress: number | null }) {
   const dotX = cx + r * Math.cos(angle);
   const dotY = cy - r * Math.sin(angle);
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full" role="img" aria-label="Sun position">
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-28 w-full" role="img" aria-label={translate("Sun position", language)}>
       <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="currentColor" className="text-glass-border" strokeWidth="1.5" strokeDasharray="4 4" />
       <line x1={cx - r - 10} y1={cy} x2={cx + r + 10} y2={cy} stroke="currentColor" className="text-glass-border" strokeWidth="1" />
       {progress !== null ? (
         <circle cx={dotX} cy={dotY} r="8" fill="#F2C572" className="drop-shadow-[0_0_8px_rgba(242,197,114,0.8)]" />
       ) : (
         <text x={cx} y={cy - 8} textAnchor="middle" fontSize="11" className="fill-muted">
-          night
+          {translate("night", language)}
         </text>
       )}
     </svg>
@@ -522,6 +526,7 @@ function SunArc({ progress }: { progress: number | null }) {
 }
 
 function CityChips({ activeSlug }: { activeSlug: string | undefined }) {
+  const { language } = useLanguage();
   return (
     <div className="flex flex-wrap gap-1.5">
       {WEATHER_CITIES.map((c) => (
@@ -534,7 +539,7 @@ function CityChips({ activeSlug }: { activeSlug: string | undefined }) {
               : "border-glass-border bg-glass-bg text-muted hover:text-foreground"
           }`}
         >
-          {c.name.replace(/ \(.*\)/, "")}
+          {known(c.name.replace(/ \(.*\)/, ""), language)}
         </Link>
       ))}
     </div>

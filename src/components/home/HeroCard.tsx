@@ -13,9 +13,13 @@ import { isNightNow, currentSeasonJST } from "@/lib/weather/time";
 import { useAmbientLighting } from "@/lib/theme/ambientLighting";
 import { HERO_CITIES, DEFAULT_HERO_ATMOSPHERE, findHeroCity, type HeroCityInfo } from "@/lib/data/heroCities";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import { lookup } from "@/lib/i18n/translate";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export default function HeroCard() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const tr = useTranslate();
+  const name = (en: string | undefined) => (en ? (lookup(en, language) ?? en) : en);
   useAmbientLighting();
   const { status, location, weather: liveWeather } = useLiveLocation();
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
@@ -88,7 +92,7 @@ export default function HeroCard() {
             >
               <Image
                 src={img.src}
-                alt={`${matchedCity?.name ?? "Japan"} — popular place`}
+                alt={`${name(matchedCity?.name) ?? name("Japan")} — ${tr("Popular place")}`}
                 fill
                 priority={i === 0}
                 sizes="(min-width: 1024px) 60vw, 100vw"
@@ -123,7 +127,7 @@ export default function HeroCard() {
                       onClick={() => pickCity(city)}
                       className="rounded-full border border-glass-border bg-glass-bg px-2.5 py-1 text-xs text-foreground/80 transition-colors hover:border-sakura/40 hover:text-foreground"
                     >
-                      {city.name}
+                      {name(city.name)}
                     </button>
                   ))}
                 </div>
@@ -135,7 +139,7 @@ export default function HeroCard() {
                 <div className="mt-1 flex items-center gap-1.5">
                   <MapPin size={20} className="text-sakura" />
                   <span className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                    {displayName}
+                    {name(displayName)}
                   </span>
                   {isLive && (
                     <span className="flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-medium text-mint">
@@ -152,7 +156,7 @@ export default function HeroCard() {
                 </div>
                 {showCityContext ? (
                   <p className="ml-7 text-sm text-foreground/60">
-                    {location?.name}
+                    {name(location?.name)}
                     {matchedCity?.nameJa && <span className="font-jp"> · {matchedCity.nameJa}</span>}
                   </p>
                 ) : (

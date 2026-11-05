@@ -11,7 +11,7 @@ import MapPanel, { type AlertsPayload, type EventGroup, type Selection } from "@
 import MapSearch, { type SearchEntry } from "@/components/map/MapSearch";
 import { cityIcon, clusterIcon, eventIcon, meIcon, placeIcon, SEVERITY_COLOR, weatherIcon } from "@/components/map/markerIcons";
 import { useLazyJson } from "@/components/map/useMapData";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { useInline, type Table, localize, localizeAlert } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES, MAP_CITY_BY_SLUG, TEMP_BANDS, tempColor } from "@/lib/map/cities";
 import type { EventView, EventsResult } from "@/lib/events/query";
@@ -369,14 +369,14 @@ export default function FullMap() {
           const alertColor = alertLevel(c.prefectureId);
           const icon =
             layers.weather && point
-              ? weatherIcon({ name: language === "ja" ? c.nameJa : c.name, tempC: point.tempC, color: tempColor(point.tempC), icon: point.icon, selected, compact: state === "dot" && !selected, alertColor })
-              : cityIcon({ name: language === "ja" ? c.nameJa : c.name, selected, label: state === "full" || selected, alertColor });
+              ? weatherIcon({ name: localize(c.name, c.nameJa, language), tempC: point.tempC, color: tempColor(point.tempC), icon: point.icon, selected, compact: state === "dot" && !selected, alertColor })
+              : cityIcon({ name: localize(c.name, c.nameJa, language), selected, label: state === "full" || selected, alertColor });
           return (
             <Marker
               key={c.slug}
               position={[c.lat, c.lon]}
               icon={icon}
-              title={language === "ja" ? c.nameJa : c.name}
+              title={localize(c.name, c.nameJa, language)}
               alt={c.name}
               zIndexOffset={selected ? 1000 : 100 - c.rank}
               eventHandlers={{ click: (e) => { L.DomEvent.stopPropagation(e); selectCity(c.slug); } }}
@@ -524,7 +524,7 @@ export default function FullMap() {
                   <li key={a.id} className="text-[11px] leading-snug text-foreground/85">
                     <span className="mr-1.5 inline-block h-2 w-2 rounded-full align-middle" style={{ background: SEVERITY_COLOR[a.severity] }} />
                     <a href={a.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      {language === "ja" ? a.titleJa : a.title} — {a.area}
+                      {localizeAlert(a, language)} — {a.area}
                     </a>
                   </li>
                 ))}

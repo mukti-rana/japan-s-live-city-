@@ -6,7 +6,7 @@ export default function AlwaysAliveCard() {
     <div className="relative h-full min-h-[240px] overflow-hidden p-5">
       <Image
         src="/images/sakura-pagoda.jpg"
-        alt="Illuminated pagoda surrounded by cherry blossoms at night"
+        alt=""
         fill
         sizes="(min-width: 1280px) 20vw, 100vw"
         className="object-cover"

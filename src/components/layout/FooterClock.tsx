@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { dateFormatter } from "@/lib/i18n/datetime";
 
 export default function FooterClock({ timeZone }: { timeZone: string }) {
+  const { language } = useLanguage();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -17,7 +20,7 @@ export default function FooterClock({ timeZone }: { timeZone: string }) {
     second: "2-digit",
   }).format(now);
 
-  const date = new Intl.DateTimeFormat("en-US", {
+  const date = dateFormatter(language, {
     timeZone,
     month: "short",
     day: "numeric",

@@ -1,6 +1,7 @@
 import { Flame, ExternalLink } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import CardHeader from "@/components/ai/cards/CardHeader";
+import Tx from "@/components/i18n/Tx";
 import type { TrendingCardData } from "@/lib/ai/types";
 
 export default function TrendingCard({ data }: { data: TrendingCardData }) {
@@ -20,7 +21,7 @@ export default function TrendingCard({ data }: { data: TrendingCardData }) {
               rel="noopener noreferrer"
               className="flex shrink-0 items-center gap-1 text-[10px] text-muted hover:text-azure"
             >
-              {topic.viewsLabel}
+              <Tx en={topic.viewsLabel} />
               <ExternalLink size={10} />
             </a>
           </li>

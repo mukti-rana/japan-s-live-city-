@@ -1,5 +1,7 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Copy, Download, ExternalLink, Pencil, Plus, Search, Settings as SettingsIcon, Sparkles, Trash2, Upload } from "lucide-react";
 import { AgendaView, Chip, DayView, MonthView, WeekView, type Entry } from "@/components/calendar/CalendarViews";
@@ -18,7 +20,7 @@ import type { CalItem } from "@/lib/calendar/types";
 import { useForecast, useHolidays, useLayerEvents } from "@/lib/calendar/useExternal";
 import type { EventView } from "@/lib/events/query";
 import { jstDate } from "@/lib/events/time";
-import { pickJaEn, useInline } from "@/lib/i18n/inline";
+import { pickJaEn, useInline, translate, known } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { resolvePlace } from "@/lib/news/places";
 import { useNewsPlace } from "@/lib/news/useNews";
@@ -28,7 +30,7 @@ type View = "month" | "week" | "day" | "agenda";
 const btn = "min-h-10 rounded-xl border border-glass-border px-3.5 text-sm font-semibold text-foreground hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
 
 function fmt(date: string, language: string, opts: Intl.DateTimeFormatOptions) {
-  return new Intl.DateTimeFormat(language, { timeZone: "UTC", ...opts }).format(new Date(`${date}T00:00:00Z`));
+  return dateFormatter(language as LanguageCode, { timeZone: "UTC", ...opts }).format(new Date(`${date}T00:00:00Z`));
 }
 
 export default function CalendarApp({ initialQuick = "" }: { initialQuick?: string }) {
@@ -82,7 +84,7 @@ export default function CalendarApp({ initialQuick = "" }: { initialQuick?: stri
     }
     if (layers.holidays) {
       for (const [date, h] of holidays.map) {
-        if (date >= from && date <= to) out.push({ key: `hol-${date}`, source: "holiday", title: language === "ja" ? h.name : (h.nameEn ?? h.name), date, endDate: date, startTime: null, endTime: null, allDay: true });
+        if (date >= from && date <= to) out.push({ key: `hol-${date}`, source: "holiday", title: language === "ja" ? h.name : h.nameEn ? known(h.nameEn, language) : h.name, date, endDate: date, startTime: null, endTime: null, allDay: true });
       }
     }
     for (const e of layerEvents.events) {
@@ -243,7 +245,7 @@ export default function CalendarApp({ initialQuick = "" }: { initialQuick?: stri
           <span className="sr-only">{t("pickDate")}</span>
           <input type="date" value={anchor} onChange={(e) => e.target.value && setAnchor(e.target.value)} className="h-10 rounded-xl border border-glass-border bg-panel px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure" />
         </label>
-        <div role="tablist" aria-label="View" className="flex rounded-xl border border-glass-border bg-glass-bg p-1">
+        <div role="tablist" aria-label={translate("View", language)} className="flex rounded-xl border border-glass-border bg-glass-bg p-1">
           {(["day", "week", "month", "agenda"] as View[]).map((v) => (
             <button key={v} type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)} className={`min-h-9 rounded-lg px-3.5 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${view === v ? "bg-azure/20 text-azure" : "text-muted hover:text-foreground"}`}>
               {t(v)}
@@ -550,7 +552,7 @@ function DayPanel({ day, entries, forecast, layerEvents, personal, onClose, onNe
       </div>
       {w && (
         <p className="mt-1.5 text-sm text-foreground/85">
-          {t("weather")}: {w.condition}, {w.low}–{w.high}°C · {w.precipProbability}% {t("chanceOfRain")} <span className="text-[11px] text-muted">({t("forecastOnly")})</span>
+          {t("weather")}: {translate(w.condition, language)}, {w.low}–{w.high}°C · {w.precipProbability}% {t("chanceOfRain")} <span className="text-[11px] text-muted">({t("forecastOnly")})</span>
         </p>
       )}
       <div className="mt-2 flex flex-col gap-1">

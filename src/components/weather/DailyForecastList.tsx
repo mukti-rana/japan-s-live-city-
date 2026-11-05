@@ -1,6 +1,10 @@
+"use client";
+
 import { Droplets } from "lucide-react";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import T from "@/components/i18n/T";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { weekdayLabel } from "@/lib/weather/time";
 import type { ForecastDay, WeatherIconKind } from "@/lib/services/weather";
 
 interface TodaySummary {
@@ -17,6 +21,7 @@ export default function DailyForecastList({
   today: TodaySummary;
   days: ForecastDay[];
 }) {
+  const { language } = useLanguage();
   const allLows = [today.low, ...days.map((d) => d.low)];
   const allHighs = [today.high, ...days.map((d) => d.high)];
   const rangeLow = Math.min(...allLows);
@@ -34,7 +39,7 @@ export default function DailyForecastList({
     },
     ...days.map((d) => ({
       key: d.date,
-      label: d.weekday,
+      label: weekdayLabel(d.date, language),
       icon: d.icon,
       low: d.low,
       high: d.high,

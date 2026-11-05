@@ -3,7 +3,7 @@
 import { ExternalLink, Headset, PhoneCall } from "lucide-react";
 import { VISITOR_HOTLINE } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
-import { pickJaEn, useInline, type Table } from "@/lib/i18n/inline";
+import { known, pickJaEn, useInline, type Table } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const TEXT = {
@@ -61,7 +61,7 @@ export default function VisitorSupport() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-foreground"
             >
-              {VISITOR_HOTLINE.source.name}
+              {known(VISITOR_HOTLINE.source.name, language)}
               <ExternalLink size={10} aria-hidden="true" />
             </a>
           </p>

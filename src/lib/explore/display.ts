@@ -1,6 +1,7 @@
 import type { LanguageCode } from "@/lib/i18n/languages";
 import { PREFECTURES } from "@/lib/news/places";
 import type { Destination } from "@/lib/explore/types";
+import { localize } from "@/lib/i18n/translate";
 
 // A place's name in the reader's language; falls back to English, then
 // Japanese. These are proper nouns taken from the open data — never a code.
@@ -27,7 +28,7 @@ export function placeAbout(d: Pick<Destination, "abouts">, language: LanguageCod
 
 export function prefectureLabel(id: string, language: LanguageCode): string {
   const p = PREFECTURES.find((x) => x.id === id);
-  return p ? (language === "ja" ? p.ja : p.en) : id;
+  return p ? (localize(p.en, p.ja, language)) : id;
 }
 
 export function formatDistance(km: number): string {

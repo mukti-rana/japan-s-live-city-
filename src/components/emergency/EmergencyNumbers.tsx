@@ -3,8 +3,9 @@
 import { Anchor, Ambulance, Headset, PhoneCall, ShieldAlert } from "lucide-react";
 import { CALL_NOTES, DESKTOP_CALL_NOTE, EMERGENCY_NUMBERS, QUICK_NUMBERS, VERIFIED_ON, VISITOR_HOTLINE } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
-import { pickJaEn, useInline } from "@/lib/i18n/inline";
+import { known, pickJaEn, useInline, translate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import Tx from "@/components/i18n/Tx";
 
 const ICONS = { police: ShieldAlert, fire: Ambulance, coastguard: Anchor };
 
@@ -61,7 +62,7 @@ export default function EmergencyNumbers({ id = "numbers" }: { id?: string }) {
                     <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted">{t("say")}</p>
                     <p className="text-base font-semibold text-foreground">{n.say.ja}</p>
                     <p className="text-xs text-muted">
-                      {n.say.romaji} — {n.say.en}
+                      {n.say.romaji} — {translate(n.say.en, language)}
                     </p>
                   </li>
                 ))}
@@ -73,7 +74,7 @@ export default function EmergencyNumbers({ id = "numbers" }: { id?: string }) {
                   .filter((n, i, all) => all.findIndex((m) => m.source.url === n.source.url) === i)
                   .map((n) => (
                     <a key={n.source.url} href={n.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
-                      {n.source.name}
+                      {known(n.source.name, language)}
                     </a>
                   ))}
               </p>
@@ -89,12 +90,10 @@ export default function EmergencyNumbers({ id = "numbers" }: { id?: string }) {
         </span>
         <div className="min-w-0 flex-1 basis-64">
           <p className="text-sm font-semibold text-foreground">
-            Japan Visitor Hotline <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold text-gold">{language === "ja" ? "緊急通報ではありません" : "Not an emergency number"}</span>
+            <Tx en="Japan Visitor Hotline" /> <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold text-gold">{translate("Not an emergency number", language)}</span>
           </p>
           <p className="mt-0.5 text-xs leading-relaxed text-muted">
-            {language === "ja"
-              ? "訪日外国人向けの多言語サポート（英語・中国語・韓国語、24時間）。命に関わるときは110・119へ。"
-              : "Multilingual help for visitors (English, Chinese, Korean; 24 hours). If life is at risk, call 110 or 119 first."}
+            {translate("Multilingual help for visitors (English, Chinese, Korean; 24 hours). If life is at risk, call 110 or 119 first.", language)}
           </p>
         </div>
         <p className="text-2xl font-bold tabular-nums tracking-wide text-foreground">{VISITOR_HOTLINE.number}</p>

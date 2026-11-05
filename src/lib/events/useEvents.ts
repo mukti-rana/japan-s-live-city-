@@ -1,10 +1,12 @@
 "use client";
 
+import { dateFormatter, relativeTime } from "@/lib/i18n/datetime";
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { LanguageCode } from "@/lib/i18n/languages";
 import type { EventView, EventsResult } from "@/lib/events/query";
 import { toQueryString, type NewsParams } from "@/lib/news/queryString";
 import { getPrefecture } from "@/lib/news/places";
+import { localize } from "@/lib/i18n/translate";
 
 // ── Saved events (this device only) ──────────────────────────────────────
 // Saved events are just a list of ids in this browser. They are not tied to an
@@ -72,7 +74,7 @@ function asDate(day: string): Date {
 }
 
 export function formatDay(day: string, language: LanguageCode, withYear = false): string {
-  return new Intl.DateTimeFormat(language, { timeZone: JST, month: "short", day: "numeric", weekday: "short", ...(withYear ? { year: "numeric" } : {}) }).format(asDate(day));
+  return dateFormatter(language as LanguageCode, { timeZone: JST, month: "short", day: "numeric", weekday: "short", ...(withYear ? { year: "numeric" } : {}) }).format(asDate(day));
 }
 
 export function formatRange(range: { start: string; end: string }, language: LanguageCode, today: string): string {
@@ -85,18 +87,18 @@ export function formatUpdated(iso: string | null | undefined, language: Language
   if (!iso) return null;
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return null;
-  return new Intl.DateTimeFormat(language, { timeZone: JST, dateStyle: "medium" }).format(date);
+  return dateFormatter(language as LanguageCode, { timeZone: JST, dateStyle: "medium" }).format(date);
 }
 
 // "today", "tomorrow", "in 3 days" — in the reader's language.
 export function startsIn(days: number, language: LanguageCode): string {
-  return new Intl.RelativeTimeFormat(language, { numeric: "auto" }).format(days, "day");
+  return relativeTime(language, days, "day");
 }
 
 export function prefectureName(id: string | null, language: LanguageCode): string | null {
   if (!id) return null;
   const pref = getPrefecture(id);
-  return pref ? (language === "ja" ? pref.ja : pref.en) : null;
+  return pref ? (localize(pref.en, pref.ja, language)) : null;
 }
 
 // ── Maps (links only — no map key or tracking script is needed) ──────────

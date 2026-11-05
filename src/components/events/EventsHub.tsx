@@ -23,6 +23,7 @@ import {
   type EventFilters,
 } from "@/lib/events/hubFilters";
 import { formatUpdated, useSavedEvents } from "@/lib/events/useEvents";
+import { known, localize, translate } from "@/lib/i18n/inline";
 
 interface Loaded {
   key: string;
@@ -163,11 +164,11 @@ export default function EventsHub({
 
   const prefLabel = (id: string) => {
     const p = PREFECTURES.find((x) => x.id === id);
-    return p ? (language === "ja" ? p.ja : p.en) : id;
+    return p ? (localize(p.en, p.ja, language)) : id;
   };
 
   const chips: { key: string; label: string; clear: () => void }[] = [];
-  if (filters.near) chips.push({ key: "near", label: `${t("events.when.near")}${placeInfo.place ? `: ${placeInfo.place}` : ""}`, clear: () => update({ near: false, radius: 0 }) });
+  if (filters.near) chips.push({ key: "near", label: `${t("events.when.near")}${placeInfo.place ? `: ${known(placeInfo.place, language)}` : ""}`, clear: () => update({ near: false, radius: 0 }) });
   if (filters.when !== "all") chips.push({ key: "when", label: t(`events.when.${filters.when}` as TranslationKey), clear: () => update({ when: "all" }) });
   if (filters.date) chips.push({ key: "date", label: filters.date, clear: () => update({ date: "" }) });
   if (filters.kind) chips.push({ key: "kind", label: t(`events.kind.${filters.kind}` as TranslationKey), clear: () => update({ kind: "" }) });
@@ -262,7 +263,7 @@ export default function EventsHub({
       <div className="flex flex-col gap-3">
         <div
           role="group"
-          aria-label="When"
+          aria-label={translate("When", language)}
           className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {WHEN_IDS.map((w) => (
@@ -274,7 +275,7 @@ export default function EventsHub({
 
         <div
           role="group"
-          aria-label="Categories"
+          aria-label={translate("Categories", language)}
           className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {KIND_CHIPS.map((k) => (
@@ -303,7 +304,7 @@ export default function EventsHub({
               <option value="">{t("events.anyPrefecture")}</option>
               {PREFECTURES.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {language === "ja" ? p.ja : p.en}
+                  {localize(p.en, p.ja, language)}
                 </option>
               ))}
             </select>
@@ -442,7 +443,7 @@ export default function EventsHub({
             <ul className="mt-2 grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
               {sources.map((s) => (
                 <li key={s.id} className="rounded-lg border border-glass-border px-3 py-2">
-                  <span className="font-medium text-foreground">{s.name}</span>
+                  <span className="font-medium text-foreground">{known(s.name, language)}</span>
                   <span className="mt-0.5 block text-[11px] text-muted">
                     {s.ok ? (
                       <>

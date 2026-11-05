@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/ui/Reveal";
 import SalaryCalculator from "@/components/salary/SalaryCalculator";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Salary Calculator — Live City Japan",
@@ -14,13 +15,13 @@ export default function SalaryCalculatorPage() {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Money
+            <Tx en="Money" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Salary Calculator
+            <Tx en="Salary Calculator" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Estimate your income in Japan from hourly or monthly pay.
+            <Tx en="Estimate your income in Japan from hourly or monthly pay." />
           </p>
         </div>
       </Reveal>

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "catalogue:build": "node scripts/build-catalogue.mjs"
+    "catalogue:build": "node scripts/build-catalogue.mjs",
+    "i18n:check": "node scripts/i18n-audit.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.125.0",

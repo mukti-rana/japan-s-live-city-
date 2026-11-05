@@ -1,8 +1,13 @@
+"use client";
+
 import { MapPin, Sunrise, Sunset } from "lucide-react";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import FavoriteButton from "@/components/personalization/FavoriteButton";
 import type { CityInfo } from "@/lib/data/cities";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import Tx from "@/components/i18n/Tx";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { known, useTranslate } from "@/lib/i18n/inline";
 
 export default function CityWeatherHero({
   city,
@@ -11,6 +16,8 @@ export default function CityWeatherHero({
   city: CityInfo;
   weather: WeatherSnapshot | null;
 }) {
+  const { language } = useLanguage();
+  const tr = useTranslate();
   const updatedLabel = weather ? weather.updatedAt.slice(11, 16) : null;
 
   return (
@@ -18,25 +25,27 @@ export default function CityWeatherHero({
       <div>
         <div className="flex items-center gap-1.5 text-sm text-gold">
           <MapPin size={15} />
-          {city.region}, Japan
+          {known(city.region, language)}, {tr("Japan")}
         </div>
         <div className="mt-1 flex items-baseline gap-2">
           <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {city.name}
+            {language === "ja" ? city.nameJa : known(city.name, language)}
           </h1>
-          <span className="font-jp text-lg text-foreground/60">
-            {city.nameJa}
-          </span>
+          {language !== "ja" && (
+            <span className="font-jp text-lg text-foreground/60">
+              {city.nameJa}
+            </span>
+          )}
           <FavoriteButton kind="city" itemKey={city.slug} className="ml-1 self-center" />
         </div>
 
         {weather ? (
           <p className="mt-3 text-xs text-muted">
-            Live weather · updated {updatedLabel} JST · source: Open-Meteo
+            {tr("Live weather · updated {time} JST · source: Open-Meteo").replace("{time}", updatedLabel ?? "")}
           </p>
         ) : (
           <p className="mt-3 text-xs text-sakura">
-            Live weather is temporarily unavailable.
+            <Tx en="Live weather is temporarily unavailable." />
           </p>
         )}
       </div>
@@ -52,12 +61,12 @@ export default function CityWeatherHero({
                 {weather.tempC}°C
               </p>
               <p className="mt-1 text-sm text-muted">
-                {weather.condition} · feels like {weather.feelsLikeC}°C
+                {tr(weather.condition)} · {tr("feels like")} {weather.feelsLikeC}°C
               </p>
             </div>
             <div className="ml-auto text-right text-xs text-muted">
-              <p>H {weather.todayHigh}°</p>
-              <p>L {weather.todayLow}°</p>
+              <p>{tr("High")} {weather.todayHigh}°</p>
+              <p>{tr("Low")} {weather.todayLow}°</p>
             </div>
           </div>
 
@@ -90,11 +99,12 @@ function StatChip({
   value: string;
   icon?: React.ReactNode;
 }) {
+  const tr = useTranslate();
   return (
     <div className="rounded-xl border border-glass-border bg-glass-bg px-2 py-2.5">
       <p className="flex items-center justify-center gap-1 text-[10px] text-muted">
         {icon}
-        {label}
+        {tr(label)}
       </p>
       <p className="mt-0.5 text-sm font-medium tabular-nums text-foreground">
         {value}

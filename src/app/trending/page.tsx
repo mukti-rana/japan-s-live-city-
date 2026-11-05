@@ -3,6 +3,7 @@ import { Flame, ExternalLink } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import { getTrendingTopics, type TrendingTopic } from "@/lib/services/trending";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Trending — Live City Japan",
@@ -17,14 +18,13 @@ export default async function TrendingPage() {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Live
+            <Tx en="Live" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Trending Now
+            <Tx en="Trending Now" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            The most-viewed topics on Japanese Wikipedia over the past 24
-            hours — a real signal for what Japan is curious about right now.
+            <Tx en="The most-viewed topics on Japanese Wikipedia over the past 24 hours — a real signal for what Japan is curious about right now." />
           </p>
         </div>
       </Reveal>
@@ -36,14 +36,13 @@ export default async function TrendingPage() {
               <Flame size={17} />
             </div>
             <p className="text-sm font-semibold text-foreground">
-              Top articles in Japan
+              <Tx en="Top articles in Japan" />
             </p>
           </div>
 
           {!topics ? (
             <p className="mt-3 text-sm text-sakura">
-              Trending topics couldn&apos;t be loaded right now. Please try
-              again shortly.
+              <Tx en="Trending topics couldn't be loaded right now. Please try again shortly." />
             </p>
           ) : (
             <ol className="flex flex-col">
@@ -64,7 +63,7 @@ export default async function TrendingPage() {
                     <p className="font-jp truncate text-sm font-medium text-foreground group-hover:text-azure">
                       {topic.title}
                     </p>
-                    <p className="text-xs text-muted">{topic.viewsLabel}</p>
+                    <p className="text-xs text-muted"><Tx en={topic.viewsLabel} /></p>
                   </a>
                   <ExternalLink size={13} className="shrink-0 text-muted" />
                 </li>
@@ -73,8 +72,7 @@ export default async function TrendingPage() {
           )}
 
           <p className="mt-4 text-[11px] text-muted">
-            Source: Wikimedia pageview stats (ja.wikipedia.org). Updated
-            hourly. Links open the article on Wikipedia.
+            <Tx en="Source: Wikimedia pageview stats (ja.wikipedia.org). Updated hourly. Links open the article on Wikipedia." />
           </p>
         </GlassCard>
       </Reveal>

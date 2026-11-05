@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { Sparkles, Loader2, Paperclip, X } from "lucide-react";
 import { LANGUAGES, type LanguageCode } from "@/lib/ai/languages";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export interface AttachedImage {
   previewUrl: string;
@@ -33,6 +34,7 @@ export default function ChatInputBar({
   onAttach: (file: File) => void;
   onRemoveImage: () => void;
 }) {
+  const tr = useTranslate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -46,7 +48,7 @@ export default function ChatInputBar({
     <div className="flex flex-col gap-2 rounded-2xl border border-glass-border bg-glass-bg p-3">
       {image && (
         <div className="relative w-fit">
-          <img src={image.previewUrl} alt="Attached" className="h-16 w-16 rounded-lg object-cover" />
+          <img src={image.previewUrl} alt={tr("Attached")} className="h-16 w-16 rounded-lg object-cover" />
           <button
             type="button"
             onClick={onRemoveImage}
@@ -62,7 +64,7 @@ export default function ChatInputBar({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         disabled={disabled}
-        placeholder="Ask LIVE CITY AI anything about Japan…"
+        placeholder={tr("Ask LIVE CITY AI anything about Japan…")}
         rows={2}
         className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted outline-none disabled:opacity-50"
       />
@@ -87,7 +89,7 @@ export default function ChatInputBar({
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled}
             className="flex h-7 w-7 items-center justify-center rounded-lg border border-glass-border text-muted transition-colors hover:text-azure disabled:opacity-50"
-            title="Attach an image"
+            title={tr("Attach an image")}
           >
             <Paperclip size={13} />
           </button>
@@ -112,7 +114,7 @@ export default function ChatInputBar({
           className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-sakura to-gold px-4 py-2 text-xs font-semibold text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
         >
           {loading ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-          {loading ? "Thinking…" : "Ask"}
+          {loading ? tr("Thinking…") : tr("Ask")}
         </button>
       </div>
     </div>

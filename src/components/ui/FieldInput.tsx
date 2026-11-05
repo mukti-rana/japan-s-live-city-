@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslate } from "@/lib/i18n/inline";
+
 export default function FieldInput({
   label,
   suffix,
@@ -11,9 +15,10 @@ export default function FieldInput({
   onChange: (value: string) => void;
   min?: number;
 }) {
+  const tr = useTranslate();
   return (
     <label className="block">
-      <span className="text-xs font-medium text-muted">{label}</span>
+      <span className="text-xs font-medium text-muted">{tr(label)}</span>
       <div className="mt-1.5 flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-3.5 py-2.5 focus-within:border-azure/40">
         <input
           type="number"
@@ -24,7 +29,7 @@ export default function FieldInput({
           className="w-full bg-transparent text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
         {suffix && (
-          <span className="shrink-0 text-xs text-muted">{suffix}</span>
+          <span className="shrink-0 text-xs text-muted">{tr(suffix)}</span>
         )}
       </div>
     </label>

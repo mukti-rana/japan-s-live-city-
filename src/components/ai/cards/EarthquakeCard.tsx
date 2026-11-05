@@ -1,15 +1,20 @@
+"use client";
+
 import { TriangleAlert } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import CardHeader from "@/components/ai/cards/CardHeader";
 import type { EarthquakeCardData } from "@/lib/ai/types";
+import Tx from "@/components/i18n/Tx";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export default function EarthquakeCard({ data }: { data: EarthquakeCardData }) {
+  const tr = useTranslate();
   return (
     <GlassCard className="flex w-full max-w-sm flex-col gap-3 p-4">
       <CardHeader icon={TriangleAlert} label="Recent Earthquakes" accent="sakura" />
 
       {data.events.length === 0 ? (
-        <p className="text-xs text-muted">No recent significant earthquakes reported.</p>
+        <p className="text-xs text-muted"><Tx en="No recent significant earthquakes reported." /></p>
       ) : (
         <ul className="flex flex-col gap-2">
           {data.events.slice(0, 5).map((eq) => (
@@ -19,7 +24,7 @@ export default function EarthquakeCard({ data }: { data: EarthquakeCardData }) {
                 <span className="text-sakura">M{eq.magnitude}</span>
               </div>
               <p className="mt-0.5 text-[10px] text-muted">
-                Depth {eq.depthKm}km · Max intensity {eq.maxIntensity} · Tsunami: {eq.tsunami}
+                {tr("Depth")} {eq.depthKm} km · {tr("Max intensity")} {eq.maxIntensity} · {tr("Tsunami")}: {tr(eq.tsunami)}
               </p>
             </li>
           ))}

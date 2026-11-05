@@ -6,6 +6,7 @@ import Tabs from "@/components/ui/Tabs";
 import Thumb from "@/components/ui/Thumb";
 import T from "@/components/i18n/T";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { known } from "@/lib/i18n/inline";
 import { PLACE_CATEGORY_META, PLACE_CATEGORY_ORDER } from "@/lib/data/placeCategories";
 import type { PlaceCity } from "@/lib/data/places";
 import type { EnrichedPlace } from "@/lib/services/places";
@@ -27,7 +28,7 @@ const CITY_TABS: PlaceCity[] = [
 ];
 
 export default function ExploreJapanGrid({ places }: { places: EnrichedPlace[] }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [city, setCity] = useState<string>(ALL_JAPAN);
   const [category, setCategory] = useState<string>(ALL_CATEGORIES);
 
@@ -90,13 +91,13 @@ export default function ExploreJapanGrid({ places }: { places: EnrichedPlace[] }
                 gradient={place.gradient}
                 icon={PLACE_CATEGORY_META[place.category].icon}
                 src={place.image}
-                alt={place.name}
+                alt={known(place.name, language)}
                 className="h-20 w-full"
               />
               <p className="mt-1.5 truncate text-[11px] font-medium text-foreground group-hover:text-azure">
-                {place.name}
+                {known(place.name, language)}
               </p>
-              <p className="truncate text-[9px] text-muted">{place.description ?? place.city}</p>
+              <p className="truncate text-[9px] text-muted">{language === "en" ? (place.description ?? place.city) : known(place.city, language)}</p>
             </a>
           ))}
         </div>

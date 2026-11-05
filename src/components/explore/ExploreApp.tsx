@@ -14,11 +14,12 @@ import type { Suggestion } from "@/lib/explore/catalogue";
 import type { CatalogueMeta, Destination, ExploreResult } from "@/lib/explore/types";
 import { useExploreLocation } from "@/lib/explore/useExploreLocation";
 import { useTrip } from "@/lib/explore/useTrip";
-import { useInline } from "@/lib/i18n/inline";
+import { useInline, localize, translate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES } from "@/lib/map/cities";
 import { PREFECTURES } from "@/lib/news/places";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import Tx from "@/components/i18n/Tx";
 
 type Scope = "near" | "pref" | "all";
 
@@ -110,7 +111,7 @@ function LocationBar({ loc, scope, setScope }: { loc: ReturnType<typeof useExplo
               }}
               className="rounded-full border border-glass-border bg-glass-bg px-3 py-1.5 text-xs text-foreground/85 transition-colors hover:border-gold/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
             >
-              {language === "ja" ? c.nameJa : c.name}
+              {localize(c.name, c.nameJa, language)}
             </button>
           ))}
           <select
@@ -126,7 +127,7 @@ function LocationBar({ loc, scope, setScope }: { loc: ReturnType<typeof useExplo
             <option value="">{x("prefecture")}…</option>
             {PREFECTURES.map((p) => (
               <option key={p.id} value={p.id}>
-                {language === "ja" ? p.ja : p.en}
+                {localize(p.en, p.ja, language)}
               </option>
             ))}
           </select>
@@ -369,7 +370,7 @@ function Browse({ scope, loc }: { scope: Scope; loc: ReturnType<typeof useExplor
             <option value="">{x("anyRegion")}</option>
             {REGIONS.map((r) => (
               <option key={r.id} value={r.id}>
-                {language === "ja" ? r.ja : r.en}
+                {localize(r.en, r.ja, language)}
               </option>
             ))}
           </select>
@@ -380,7 +381,7 @@ function Browse({ scope, loc }: { scope: Scope; loc: ReturnType<typeof useExplor
             <option value="">{x("anyPref")}</option>
             {PREFECTURES.filter((p) => prefsInRegion.includes(p.id)).map((p) => (
               <option key={p.id} value={p.id}>
-                {language === "ja" ? p.ja : p.en}
+                {localize(p.en, p.ja, language)}
               </option>
             ))}
           </select>
@@ -548,7 +549,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         <div className="flex items-center gap-2">
           <Link href="/map?layer=places" className="flex min-h-10 items-center gap-1.5 rounded-full border border-glass-border px-4 text-sm font-medium text-foreground/90 hover:border-azure/40">
             <Compass size={15} aria-hidden="true" />
-            Map
+            <Tx en="Map" />
           </Link>
           <Link href="/explore/trip" className="flex min-h-10 items-center gap-1.5 rounded-full border border-neon-purple/40 bg-neon-purple/10 px-4 text-sm font-medium text-[#c4b5fd] hover:bg-neon-purple/20">
             <ListChecks size={15} aria-hidden="true" />
@@ -584,7 +585,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
               <h2 className="text-lg font-semibold text-foreground">{x("today")}</h2>
               <p className="text-xs text-foreground/80">
                 {x(REASON_KEY[(today.reason as keyof typeof REASON_KEY) in REASON_KEY ? (today.reason as keyof typeof REASON_KEY) : "default"])}
-                {wx.data ? ` · ${wx.data.tempC}°C ${wx.data.condition}` : ""} {x("todayNote")}
+                {wx.data ? ` · ${wx.data.tempC}°C ${translate(wx.data.condition, language)}` : ""} {x("todayNote")}
               </p>
             </div>
           </div>

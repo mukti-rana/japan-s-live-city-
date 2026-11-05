@@ -6,6 +6,8 @@ import GlassCard from "@/components/ui/GlassCard";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import { CITIES } from "@/lib/data/cities";
 import { getWeather, type WeatherSnapshot } from "@/lib/services/weather";
+import Tx from "@/components/i18n/Tx";
+import Name from "@/components/i18n/Name";
 
 export const metadata: Metadata = {
   title: "Cities — Live City Japan",
@@ -25,13 +27,13 @@ export default async function CitiesPage() {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Cities
+            <Tx en="Cities" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Live City Directory
+            <Tx en="Live City Directory" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Live weather and train status for cities across Japan.
+            <Tx en="Live weather and train status for cities across Japan." />
           </p>
         </div>
       </Reveal>
@@ -44,12 +46,12 @@ export default async function CitiesPage() {
                 <GlassCard className="p-5">
                   <div className="flex items-center gap-1.5 text-xs text-gold">
                     <MapPin size={13} />
-                    {city.region}
+                    <Name en={city.region} />
                   </div>
                   <div className="mt-1 flex items-center justify-between">
                     <div>
                       <h2 className="text-xl font-semibold text-foreground">
-                        {city.name}
+                        <Name en={city.name} />
                       </h2>
                       <p className="font-jp text-sm text-muted">{city.nameJa}</p>
                     </div>
@@ -64,13 +66,13 @@ export default async function CitiesPage() {
                           {weather.tempC}°C
                         </p>
                         <p className="mt-0.5 text-xs text-muted">
-                          {weather.condition}
+                          <Tx en={weather.condition} />
                         </p>
                       </div>
                     </div>
                   ) : (
                     <p className="mt-4 text-xs text-sakura">
-                      Live weather unavailable
+                      <Tx en="Live weather unavailable" />
                     </p>
                   )}
                 </GlassCard>

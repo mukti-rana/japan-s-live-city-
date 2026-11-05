@@ -6,6 +6,7 @@ import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 import { filtersFromParams, gridParams } from "@/lib/news/hubFilters";
 import { queryFromParams, queryNews, type NewsResult } from "@/lib/news/query";
 import { toQueryString } from "@/lib/news/queryString";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Japan Live News — Live City Japan",
@@ -28,7 +29,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/news">) {
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5">
         <Reveal>
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-sakura">🇯🇵 Live</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-sakura"><Tx en="🇯🇵 Live" /></p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
               <T k="news.pageTitle" />
             </h1>

@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import { motion } from "motion/react";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export default function SegmentedToggle<T extends string>({
   options,
@@ -13,6 +14,7 @@ export default function SegmentedToggle<T extends string>({
   onChange: (value: T) => void;
 }) {
   const groupId = useId();
+  const tr = useTranslate();
 
   return (
     <div className="grid grid-cols-2 gap-1 rounded-xl border border-glass-border bg-glass-bg p-1">
@@ -34,7 +36,7 @@ export default function SegmentedToggle<T extends string>({
               className="absolute inset-0 rounded-lg bg-gradient-to-r from-sakura to-gold"
             />
           )}
-          <span className="relative">{option.label}</span>
+          <span className="relative">{tr(option.label)}</span>
         </button>
       ))}
     </div>

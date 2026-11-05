@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import Tx from "@/components/i18n/Tx";
 
 // Signs out in the browser (rather than through a server action) so the
 // top bar and saved items react immediately instead of waiting for a reload.
@@ -22,7 +23,7 @@ export default function SignOutButton() {
       className="flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-sakura/30"
     >
       <LogOut size={15} />
-      Sign out
+      <Tx en="Sign out" />
     </button>
   );
 }

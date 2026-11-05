@@ -6,6 +6,7 @@ import Logo from "@/components/ui/Logo";
 import GuestLink from "@/components/auth/GuestLink";
 import AuthPreview from "@/components/auth/AuthPreview";
 import Reveal from "@/components/ui/Reveal";
+import Tx from "@/components/i18n/Tx";
 
 const COPY = {
   login: {
@@ -93,14 +94,13 @@ export default function AuthShell({
 
             <Reveal delay={0.08} className="max-w-xl lg:mb-auto lg:mt-auto">
               <h1 className="auth-sheen bg-gradient-to-r from-sakura via-neon-purple to-azure bg-clip-text pb-1 text-5xl font-bold tracking-tight text-transparent sm:text-6xl lg:text-7xl">
-                JAPAN, LIVE.
+                <Tx en="JAPAN, LIVE." />
               </h1>
               <p className="mt-3 text-lg font-medium text-foreground sm:text-xl">
-                Your Japan. Your cities. Your adventures.
+                <Tx en="Your Japan. Your cities. Your adventures." />
               </p>
               <p className="mt-3 hidden max-w-md text-sm leading-relaxed text-foreground/85 sm:block sm:text-base">
-                Discover Japan through live weather, train updates, interactive maps, local events, Japanese culture,
-                and hidden destinations.
+                <Tx en="Discover Japan through live weather, train updates, interactive maps, local events, Japanese culture, and hidden destinations." />
               </p>
             </Reveal>
           </header>
@@ -118,9 +118,11 @@ export default function AuthShell({
                 />
 
                 <h2 id="auth-title" className="text-xl font-semibold tracking-tight text-foreground">
-                  {copy.title}
+                  <Tx en={copy.title} />
                 </h2>
-                <p className="mt-1 text-sm text-muted">{copy.subtitle}</p>
+                <p className="mt-1 text-sm text-muted">
+                  <Tx en={copy.subtitle} />
+                </p>
 
                 <div className="mt-5 flex flex-col gap-4">{children}</div>
 
@@ -129,14 +131,14 @@ export default function AuthShell({
                     <GuestLink label="Explore Japan as Guest" className="auth-guest-glow group flex h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-azure/60 bg-gradient-to-r from-azure/10 to-neon-purple/15 text-sm font-semibold text-foreground transition-all hover:border-neon-purple/70 hover:from-azure/20 hover:to-neon-purple/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985]">
                       <Compass size={17} className="text-azure transition-transform duration-500 group-hover:rotate-45" />
                       <span>
-                        Explore Japan as Guest{" "}
+                        <Tx en="Explore Japan as Guest" />{" "}
                         <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-1">
                           →
                         </span>
                       </span>
                     </GuestLink>
                     <p className="mt-2 text-center text-xs text-foreground/70">
-                      No account required. Start exploring Japan.
+                      <Tx en="No account required. Start exploring Japan." />
                     </p>
                   </div>
 
@@ -144,14 +146,13 @@ export default function AuthShell({
                     href={copy.otherHref}
                     className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-glass-border bg-glass-bg text-sm font-medium text-foreground/90 transition-colors hover:border-white/25 hover:bg-glass-bg-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985]"
                   >
-                    {copy.otherLabel}
+                    <Tx en={copy.otherLabel} />
                     <ArrowRight size={14} className="text-muted" />
                   </Link>
                 </div>
 
                 <p className="mt-5 text-center text-xs leading-relaxed text-muted">
-                  Explore freely. Create an account whenever you&apos;re ready to save your favorite places and
-                  personalize your experience.
+                  <Tx en="Explore freely. Create an account whenever you're ready to save your favorite places and personalize your experience." />
                 </p>
               </section>
             </Reveal>

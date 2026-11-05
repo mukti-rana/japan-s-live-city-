@@ -1,5 +1,7 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { useEffect, useMemo, useState } from "react";
 import { BellRing, CalendarCheck, CloudSun, Sparkles } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
@@ -10,7 +12,7 @@ import { useCalendar } from "@/lib/calendar/store";
 import { C } from "@/lib/calendar/strings";
 import { useEventsToday, useForecast, useHolidays } from "@/lib/calendar/useExternal";
 import { jstDate } from "@/lib/events/time";
-import { useInline } from "@/lib/i18n/inline";
+import { useInline, translate, known } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { resolvePlace } from "@/lib/news/places";
 import { useNewsPlace } from "@/lib/news/useNews";
@@ -67,11 +69,11 @@ export default function YourDay() {
   // Only today's own forecast — never another day's standing in for it.
   const w = forecast.byDate.get(today);
   const rainy = w && w.precipProbability >= 50;
-  const hhmm = (ms: number) => new Intl.DateTimeFormat(language, { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit", hour12: false }).format(ms);
+  const hhmm = (ms: number) => dateFormatter(language as LanguageCode, { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit", hour12: false }).format(ms);
 
   // A one-line summary built only from facts we actually have.
   const parts: string[] = [];
-  if (holiday) parts.push(language === "ja" ? `今日は${holiday.name}です。` : `Today is a public holiday: ${holiday.nameEn ?? holiday.name}.`);
+  if (holiday) parts.push(language === "ja" ? `今日は${holiday.name}です。` : translate("Today is a public holiday: {name}.", language).replace("{name}", holiday.nameEn ? known(holiday.nameEn, language) : holiday.name));
   if (schedule.length) parts.push(language === "ja" ? `予定は${schedule.length}件。最初は${schedule[0].item.startTime ? `${schedule[0].item.startTime}の` : ""}「${schedule[0].item.title}」です。` : `${schedule.length} event${schedule.length === 1 ? "" : "s"} today${schedule[0].item.startTime ? `, first at ${schedule[0].item.startTime}` : ""}.`);
   if (tasks.length) parts.push(language === "ja" ? `未完了のタスクが${tasks.length}件あります。` : `${tasks.length} open task${tasks.length === 1 ? "" : "s"}${tasks.some((x) => x.overdue) ? " (some overdue)" : ""}.`);
   if (rainy) parts.push(language === "ja" ? `降水確率は${w.precipProbability}%です（予報）。` : `Rain is forecast (${w.precipProbability}%).`);
@@ -88,7 +90,7 @@ export default function YourDay() {
       {w && (
         <p className="flex items-center gap-2 text-sm text-foreground/85">
           <CloudSun size={15} className="text-azure" aria-hidden="true" />
-          {w.condition}, {w.low}–{w.high}°C · {w.precipProbability}% {t("chanceOfRain")}
+          {translate(w.condition, language)}, {w.low}–{w.high}°C · {w.precipProbability}% {t("chanceOfRain")}
         </p>
       )}
 
@@ -121,7 +123,7 @@ export default function YourDay() {
                 ))}
                 {soon.map((o) => (
                   <li key={o.key} className="truncate text-sm text-foreground/75">
-                    {new Intl.DateTimeFormat(language, { timeZone: "UTC", month: "short", day: "numeric" }).format(new Date(`${o.date}T00:00:00Z`))} · {o.item.title}
+                    {dateFormatter(language as LanguageCode, { timeZone: "UTC", month: "short", day: "numeric" }).format(new Date(`${o.date}T00:00:00Z`))} · {o.item.title}
                   </li>
                 ))}
               </ul>

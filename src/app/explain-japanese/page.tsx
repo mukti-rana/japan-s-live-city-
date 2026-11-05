@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/ui/Reveal";
 import ExplainJapaneseForm from "@/components/explain-japanese/ExplainJapaneseForm";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Explain Japanese — Live City Japan",
@@ -15,14 +16,13 @@ export default function ExplainJapanesePage() {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            LIVE CITY AI
+            <Tx en="LIVE CITY AI" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Explain Japanese
+            <Tx en="Explain Japanese" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Paste any Japanese text — a sign, a message, a menu — and get a clear translation
-            and explanation in your selected language.
+            <Tx en="Paste any Japanese text — a sign, a message, a menu — and get a clear translation and explanation in your selected language." />
           </p>
         </div>
       </Reveal>

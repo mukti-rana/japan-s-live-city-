@@ -5,10 +5,16 @@ import { ExternalLink, Video } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import { CITIES, type CitySlug } from "@/lib/data/cities";
 import { CITY_CAMS } from "@/lib/data/cityCams";
+import { useTranslate } from "@/lib/i18n/inline";
+
+// "SHIBUYA, TOKYO" → "Shibuya, Tokyo", the form the translation memory keeps.
+const titleCase = (s: string) => s.toLowerCase().replace(/(^|[\s,])([a-z])/g, (_, a: string, b: string) => a + b.toUpperCase());
 
 export default function LiveCityCamCard() {
   const [citySlug, setCitySlug] = useState<CitySlug>("tokyo");
   const cam = CITY_CAMS[citySlug];
+  const tr = useTranslate();
+  const location = tr(titleCase(cam.location)).toUpperCase();
 
   return (
     <WidgetFrame icon={Video} labelKey="citycam.title" accent="mint" live>
@@ -24,7 +30,7 @@ export default function LiveCityCamCard() {
                 : "text-muted hover:text-foreground"
             }`}
           >
-            {city.name}
+            {tr(city.name)}
           </button>
         ))}
       </div>
@@ -33,14 +39,14 @@ export default function LiveCityCamCard() {
         <iframe
           key={cam.videoId}
           src={`https://www.youtube.com/embed/${cam.videoId}?autoplay=1&mute=1&rel=0&playsinline=1`}
-          title={`${cam.location} — live`}
+          title={`${location} — ${tr("Live")}`}
           className="absolute inset-0 h-full w-full"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
         />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#0b0e1a]/85 to-transparent p-3">
-          <p className="font-mono text-[10px] text-foreground/80">{cam.location}</p>
+          <p className="font-mono text-[10px] text-foreground/80">{location}</p>
           <a
             href={cam.watchUrl}
             target="_blank"

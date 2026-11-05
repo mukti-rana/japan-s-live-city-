@@ -10,6 +10,7 @@ import T from "@/components/i18n/T";
 import TrainLineCard from "@/components/trains/TrainLineCard";
 import TrainStatusLegend from "@/components/trains/TrainStatusLegend";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { known } from "@/lib/i18n/inline";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { useFavorites } from "@/lib/personalization/FavoritesContext";
 import { TRAIN_LINES, TRAIN_CITY_META, TRAIN_CITIES, findTrainCity, type TrainCity, type TrainLineInfo } from "@/lib/data/trainLines";
@@ -25,7 +26,7 @@ function lineKey(city: TrainCity, name: string) {
 }
 
 export default function TrainAssistant() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const { status: locationStatus, location } = useLiveLocation();
   const { items, ready: hydrated, isFavorite, toggle: toggleFavorite } = useFavorites();
@@ -54,7 +55,7 @@ export default function TrainAssistant() {
 
   const cityTabs = [ALL_JAPAN, ...TRAIN_CITIES];
   function cityLabel(tab: string) {
-    return tab === ALL_JAPAN ? t("trains.allJapan") : TRAIN_CITY_META[tab as TrainCity].name;
+    return tab === ALL_JAPAN ? t("trains.allJapan") : known(TRAIN_CITY_META[tab as TrainCity].name, language);
   }
   function railwayLabel(tab: string) {
     if (tab === ALL_LINES) return t("tabs.allLines");
@@ -251,7 +252,7 @@ export default function TrainAssistant() {
             <div key={city}>
               <div className="mb-2 flex items-center justify-between gap-2">
                 <p className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                  {TRAIN_CITY_META[city].name}
+                  {known(TRAIN_CITY_META[city].name, language)}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
                   {TRAIN_STATUS_ORDER.filter((s) => cityCounts[s] > 0).map((s) => (

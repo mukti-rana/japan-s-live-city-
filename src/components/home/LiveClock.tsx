@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { dateFormatter } from "@/lib/i18n/datetime";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
 function greetingKeyFor(hour: number): TranslationKey {
@@ -18,7 +19,7 @@ export default function LiveClock({
   timeZone: string;
   children?: ReactNode;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export default function LiveClock({
     .map((p) => p.value)
     .join("");
 
-  const date = new Intl.DateTimeFormat("en-US", {
+  const date = dateFormatter(language, {
     timeZone,
     month: "long",
     day: "numeric",
@@ -48,8 +49,9 @@ export default function LiveClock({
     weekday: "short",
   }).format(now);
 
+  // English reads "Thu, November 5, 2026"; the others already come in their own order.
   const [weekday, ...rest] = date.split(", ");
-  const dateLabel = `${rest.join(", ")} (${weekday})`;
+  const dateLabel = language === "en" ? `${rest.join(", ")} (${weekday})` : date;
 
   return (
     <div>

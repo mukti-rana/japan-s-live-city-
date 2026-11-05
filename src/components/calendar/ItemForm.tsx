@@ -1,5 +1,7 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, Navigation, X } from "lucide-react";
 import { addDays, weekday } from "@/lib/calendar/dates";
@@ -8,12 +10,12 @@ import { C, CATEGORY_LABEL } from "@/lib/calendar/strings";
 import { useForecast } from "@/lib/calendar/useExternal";
 import { CATEGORIES, NO_REPEAT, type CalItem, type Freq } from "@/lib/calendar/types";
 import { jstDate } from "@/lib/events/time";
-import { pickJaEn, useInline } from "@/lib/i18n/inline";
+import { pickJaEn, useInline, localize, translate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { PREFECTURES } from "@/lib/news/places";
 
 const REMINDER_CHOICES = [0, 10, 30, 60, 180, 1440, 2880];
-const WEEKDAY_NAMES = (language: string) => Array.from({ length: 7 }, (_, i) => new Intl.DateTimeFormat(language, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 7 + i))));
+const WEEKDAY_NAMES = (language: string) => Array.from({ length: 7 }, (_, i) => dateFormatter(language as LanguageCode, { weekday: "short", timeZone: "UTC" }).format(new Date(Date.UTC(2024, 0, 7 + i))));
 
 const field =
   "min-h-11 w-full rounded-xl border border-white/20 bg-background px-3 text-base text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
@@ -103,7 +105,7 @@ export default function ItemForm({
   const day = item.date ? forecast.byDate.get(item.date) : undefined;
   const leave = leaveBy(item, item.date ?? jstDate());
   const mapsRoute = item.departure?.origin && item.location ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(item.departure.origin)}&destination=${encodeURIComponent(item.location)}&travelmode=transit` : null;
-  const fmtTime = (d: Date) => new Intl.DateTimeFormat(language, { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+  const fmtTime = (d: Date) => dateFormatter(language as LanguageCode, { timeZone: "Asia/Tokyo", hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
 
   return (
     <div className="fixed inset-0 z-[85] flex items-end justify-center bg-background/80 p-0 backdrop-blur-sm sm:items-center sm:p-6" onMouseDown={(e) => e.target === e.currentTarget && onCancel()}>
@@ -135,7 +137,7 @@ export default function ItemForm({
               </ul>
             )}
 
-            <div role="tablist" aria-label="Type" className="grid grid-cols-2 gap-1 rounded-xl border border-glass-border bg-glass-bg p-1">
+            <div role="tablist" aria-label={translate("Type", language)} className="grid grid-cols-2 gap-1 rounded-xl border border-glass-border bg-glass-bg p-1">
               {(["event", "task"] as const).map((k) => (
                 <button key={k} type="button" role="tab" aria-selected={item.kind === k} onClick={() => set({ kind: k, allDay: k === "task" ? false : item.allDay })} className={`min-h-10 rounded-lg text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${item.kind === k ? "bg-azure/20 text-azure" : "text-muted hover:text-foreground"}`}>
                   {k === "event" ? t("eventTab") : t("taskTab")}
@@ -288,7 +290,7 @@ export default function ItemForm({
                     <option value="">{t("noWeather")}</option>
                     {PREFECTURES.map((p) => (
                       <option key={p.id} value={p.id}>
-                        {language === "ja" ? p.ja : p.en}
+                        {localize(p.en, p.ja, language)}
                       </option>
                     ))}
                   </select>
@@ -299,7 +301,7 @@ export default function ItemForm({
                 </label>
                 {item.prefectureId && item.date && (
                   <p className="text-sm text-foreground/85" aria-live="polite">
-                    {forecast.loading ? "…" : day ? `${day.condition}, ${day.low}–${day.high}°C · ${day.precipProbability}% ${t("chanceOfRain")}. ${t("forecastOnly")}` : forecast.failed ? "—" : `${t("weather")}: 7-day forecast only.`}
+                    {forecast.loading ? "…" : day ? `${translate(day.condition, language)}, ${day.low}–${day.high}°C · ${day.precipProbability}% ${t("chanceOfRain")}. ${t("forecastOnly")}` : forecast.failed ? "—" : `${t("weather")}: 7-day forecast only.`}
                   </p>
                 )}
                 {item.outdoor && day && day.precipProbability >= 50 && (

@@ -9,7 +9,7 @@ import { CATEGORY_BY_ID, pickLabel } from "@/lib/explore/categories";
 import { formatDistance, placeAbout, placeName, placeNameJa, prefectureLabel } from "@/lib/explore/display";
 import type { Destination } from "@/lib/explore/types";
 import { useTrip } from "@/lib/explore/useTrip";
-import { useInline } from "@/lib/i18n/inline";
+import { useInline, useTranslate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 // One destination. The photograph is the place's own (credited); the badges
@@ -24,6 +24,7 @@ export default function DestinationCard({
   approximateDistance?: boolean;
   compact?: boolean;
 }) {
+  const tr = useTranslate();
   const { language } = useLanguage();
   const x = useInline(X);
   const trip = useTrip();
@@ -109,7 +110,7 @@ export default function DestinationCard({
             {inTrip ? x("inTrip") : x("addTrip")}
           </button>
           {place.website && (
-            <a href={place.website} target="_blank" rel="noopener noreferrer" aria-label="Official website" className="ml-auto text-muted hover:text-azure">
+            <a href={place.website} target="_blank" rel="noopener noreferrer" aria-label={tr("Official website")} className="ml-auto text-muted hover:text-azure">
               <ExternalLink size={14} aria-hidden="true" />
             </a>
           )}

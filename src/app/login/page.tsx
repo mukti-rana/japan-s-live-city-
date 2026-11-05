@@ -9,6 +9,7 @@ import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signInAction } from "@/lib/supabase/actions";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Sign in — Live City Japan",
@@ -59,13 +60,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             href="/forgot-password"
             className="text-xs text-muted transition-colors hover:text-azure focus-visible:text-azure focus-visible:outline-none focus-visible:underline"
           >
-            Forgot password?
+            <Tx en="Forgot password?" />
           </Link>
         </div>
 
         <AuthSubmitButton disabled={!isSupabaseConfigured}>
           <LogIn size={16} />
-          Sign in
+          <Tx en="Sign in" />
         </AuthSubmitButton>
       </form>
     </AuthShell>

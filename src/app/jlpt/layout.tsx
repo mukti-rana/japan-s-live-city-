@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/ui/Reveal";
 import LevelTabs from "@/components/quiz/LevelTabs";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "JLPT Practice — Live City Japan",
@@ -14,14 +15,13 @@ export default function JlptLayout({ children }: LayoutProps<"/jlpt">) {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Student
+            <Tx en="Student" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            JLPT Practice
+            <Tx en="JLPT Practice" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Quick multiple-choice questions from N5 to N1. Demo question set —
-            more are on the way.
+            <Tx en="Quick multiple-choice questions from N5 to N1. Demo question set — more are on the way." />
           </p>
         </div>
       </Reveal>

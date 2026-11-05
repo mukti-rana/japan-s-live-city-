@@ -9,6 +9,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { resolvePlace } from "@/lib/news/places";
 import { useNewsPlace } from "@/lib/news/useNews";
+import { localize, useTranslate } from "@/lib/i18n/inline";
 
 export interface HomeMapCity {
   slug: string;
@@ -40,6 +41,7 @@ const LABEL_SIDE: Record<string, "l" | "r"> = {
 // map lives at /map.
 export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
   const { t, language } = useLanguage();
+  const tr = useTranslate();
   const { location } = useLiveLocation();
   const picked = useNewsPlace();
 
@@ -110,7 +112,7 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
                     className={`absolute top-0 flex -translate-y-1/2 items-center gap-1 whitespace-nowrap leading-none ${side === "r" ? "left-3" : "right-3 flex-row-reverse"}`}
                   >
                     <span className={`text-[11px] font-semibold [text-shadow:0_1px_3px_#050814,0_0_6px_#050814] ${isActive ? "text-[#c4b5fd]" : "text-foreground/90"}`}>
-                      {language === "ja" ? city.nameJa : city.name}
+                      {localize(city.name, city.nameJa, language)}
                     </span>
                     {city.tempC !== null && (
                       <span
@@ -130,10 +132,10 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
         {active && (
           <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border border-neon-purple/40 bg-[#0b1026]/80 px-2.5 py-1 text-[10px] font-medium text-[#c4b5fd] backdrop-blur-sm">
             <span className="h-1.5 w-1.5 rounded-full bg-[#c4b5fd]" aria-hidden="true" />
-            {language === "ja" ? "あなたの都市" : "Your city"}
+            {tr("Your city")}
           </span>
         )}
-        {hasReadings && <span className="absolute bottom-3 left-3 text-[10px] text-muted">{language === "ja" ? "現在の気温 · Open-Meteo" : "Current temperature · Open-Meteo"}</span>}
+        {hasReadings && <span className="absolute bottom-3 left-3 text-[10px] text-muted">{tr("Current temperature")} · Open-Meteo</span>}
 
         <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full border border-glass-border bg-glass-bg-strong px-2.5 py-1 text-[10px] font-medium text-azure backdrop-blur-sm transition-colors group-hover:border-azure/50">
           {t("widget.openFullMap")}

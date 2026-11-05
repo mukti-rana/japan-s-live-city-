@@ -5,6 +5,7 @@ import { Sparkles } from "lucide-react";
 import CardRenderer from "@/components/ai/cards";
 import ToolActivityPill from "@/components/ai/ToolActivityPill";
 import type { UIMessage } from "@/components/ai/uiTypes";
+import Tx from "@/components/i18n/Tx";
 
 export default function MessageList({ messages }: { messages: UIMessage[] }) {
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -17,7 +18,7 @@ export default function MessageList({ messages }: { messages: UIMessage[] }) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-muted">
         <Sparkles size={22} className="text-sakura" />
-        <p className="text-sm">Ask LIVE CITY AI anything about Japan — weather, trains, festivals, places, news, or plan a trip.</p>
+        <p className="text-sm"><Tx en="Ask LIVE CITY AI anything about Japan — weather, trains, festivals, places, news, or plan a trip." /></p>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useFavorites, type FavoriteKind } from "@/lib/personalization/FavoritesContext";
 import { getCity } from "@/lib/data/cities";
 import { TRAIN_CITY_META, type TrainCity } from "@/lib/data/trainLines";
+import Tx from "@/components/i18n/Tx";
 
 const SECTIONS: { kind: FavoriteKind; title: string }[] = [
   { kind: "city", title: "Cities" },
@@ -30,8 +31,7 @@ export default function SavedItems() {
   if (total === 0) {
     return (
       <p className="text-xs leading-relaxed text-muted">
-        Nothing saved yet. Tap the heart on a city or place, or the star on a train line, and it will
-        show up here.
+        <Tx en="Nothing saved yet. Tap the heart on a city or place, or the star on a train line, and it will show up here." />
       </p>
     );
   }

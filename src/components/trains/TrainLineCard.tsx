@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronDown, Star, MapPin, Compass } from "lucide-react";
 import T from "@/components/i18n/T";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { translate } from "@/lib/i18n/inline";
 import { TRAIN_STATUS_META } from "@/lib/data/trainStatus";
 import type { TrainLineInfo } from "@/lib/data/trainLines";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
@@ -29,7 +30,7 @@ export default function TrainLineCard({
   followed: boolean;
   onToggleFollow: () => void;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const meta = TRAIN_STATUS_META[line.status];
   const StatusIcon = meta.icon;
   const hasDetails = Boolean(line.reason || line.affectedArea || line.direction);
@@ -50,7 +51,7 @@ export default function TrainLineCard({
           <p className={`mt-0.5 flex items-center gap-1 text-xs font-medium ${meta.textClass}`}>
             <StatusIcon size={12} />
             <T k={meta.labelKey} />
-            {line.delayMinutes ? ` · ${line.delayMinutes} min` : ""}
+            {line.delayMinutes ? ` · ${line.delayMinutes} ${translate("min", language)}` : ""}
           </p>
           {line.affectedArea && !expanded && (
             <p className="mt-0.5 truncate text-[11px] text-muted">{line.affectedArea}</p>

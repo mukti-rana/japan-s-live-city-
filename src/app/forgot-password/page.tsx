@@ -7,6 +7,7 @@ import AuthField from "@/components/ui/AuthField";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { requestPasswordResetAction } from "@/lib/supabase/actions";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Forgot Password — Live City Japan",
@@ -24,13 +25,13 @@ export default async function ForgotPasswordPage({
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Account
+            <Tx en="Account" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-            Forgot Password
+            <Tx en="Forgot Password" />
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            We&apos;ll email you a link to reset it.
+            <Tx en="We'll email you a link to reset it." />
           </p>
         </div>
       </Reveal>
@@ -46,8 +47,7 @@ export default async function ForgotPasswordPage({
           <GlassCard className="flex items-start gap-2.5 border-mint/25 bg-mint/5 p-4">
             <MailCheck size={16} className="mt-0.5 shrink-0 text-mint" />
             <p className="text-xs leading-relaxed text-muted">
-              If an account exists for that email, a reset link is on its
-              way.
+              <Tx en="If an account exists for that email, a reset link is on its way." />
             </p>
           </GlassCard>
         </Reveal>
@@ -70,13 +70,13 @@ export default async function ForgotPasswordPage({
               className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send size={15} />
-              Send Reset Link
+              <Tx en="Send Reset Link" />
             </button>
           </form>
 
           <p className="mt-4 text-center text-xs text-muted">
             <Link href="/login" className="text-azure hover:underline">
-              Back to log in
+              <Tx en="Back to log in" />
             </Link>
           </p>
         </GlassCard>

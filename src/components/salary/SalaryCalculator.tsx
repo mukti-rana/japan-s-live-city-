@@ -6,6 +6,8 @@ import GlassCard from "@/components/ui/GlassCard";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import FieldInput from "@/components/ui/FieldInput";
 import { calculateSalary, type PayType } from "@/lib/calc/salary";
+import Tx from "@/components/i18n/Tx";
+import { useTranslate } from "@/lib/i18n/inline";
 
 const yen = new Intl.NumberFormat("ja-JP", {
   style: "currency",
@@ -14,6 +16,7 @@ const yen = new Intl.NumberFormat("ja-JP", {
 });
 
 export default function SalaryCalculator() {
+  const tr = useTranslate();
   const [payType, setPayType] = useState<PayType>("hourly");
   const [hourlyWage, setHourlyWage] = useState("1200");
   const [monthlySalary, setMonthlySalary] = useState("250000");
@@ -47,7 +50,7 @@ export default function SalaryCalculator() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sakura/15 text-sakura">
             <Calculator size={17} />
           </div>
-          <p className="text-sm font-semibold text-foreground">Your pay details</p>
+          <p className="text-sm font-semibold text-foreground"><Tx en="Your pay details" /></p>
         </div>
 
         <SegmentedToggle
@@ -90,8 +93,7 @@ export default function SalaryCalculator() {
         />
 
         <p className="text-[11px] leading-relaxed text-muted">
-          Overtime is estimated at a 1.25× premium, Japan&apos;s statutory
-          minimum. Actual rates vary by employer and time of day/week.
+          <Tx en="Overtime is estimated at a 1.25× premium, Japan's statutory minimum. Actual rates vary by employer and time of day/week." />
         </p>
       </GlassCard>
 
@@ -100,7 +102,7 @@ export default function SalaryCalculator() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gold/15 text-gold">
             <Wallet size={17} />
           </div>
-          <p className="text-sm font-semibold text-foreground">Estimated income</p>
+          <p className="text-sm font-semibold text-foreground"><Tx en="Estimated income" /></p>
         </div>
 
         <div className="flex flex-col gap-2.5">
@@ -113,7 +115,7 @@ export default function SalaryCalculator() {
                   : "border-glass-border bg-glass-bg"
               }`}
             >
-              <span className="text-xs text-muted">{stat.label}</span>
+              <span className="text-xs text-muted">{tr(stat.label)}</span>
               <span
                 className={`tabular-nums font-semibold ${
                   stat.accent ? "text-lg text-foreground" : "text-sm text-foreground/90"
@@ -128,9 +130,7 @@ export default function SalaryCalculator() {
         <div className="mt-1 flex gap-2 rounded-xl border border-gold/25 bg-gold/5 p-3">
           <TriangleAlert size={15} className="mt-0.5 shrink-0 text-gold" />
           <p className="text-[11px] leading-relaxed text-muted">
-            These are rough estimates only — not tax or legal advice. Income
-            tax, resident tax, and social insurance deductions are not
-            included yet.
+            <Tx en="These are rough estimates only — not tax or legal advice. Income tax, resident tax, and social insurance deductions are not included yet." />
           </p>
         </div>
       </GlassCard>

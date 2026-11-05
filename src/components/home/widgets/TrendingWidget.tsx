@@ -1,6 +1,7 @@
 import { Flame, ExternalLink } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import T from "@/components/i18n/T";
+import Tx from "@/components/i18n/Tx";
 import { getTrendingTopics, type TrendingTopic } from "@/lib/services/trending";
 
 export default async function TrendingWidget() {
@@ -37,7 +38,7 @@ export default async function TrendingWidget() {
                 <p className="font-jp truncate text-xs font-medium text-foreground group-hover:text-azure">
                   {topic.title}
                 </p>
-                <p className="text-[10px] text-muted">{topic.viewsLabel}</p>
+                <p className="text-[10px] text-muted"><Tx en={topic.viewsLabel} /></p>
               </a>
               <ExternalLink size={11} className="shrink-0 text-muted" />
             </li>

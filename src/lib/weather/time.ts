@@ -1,3 +1,5 @@
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 // Real sunrise/sunset (both "HH:mm" JST, as returned by getWeather) compared
 // against the current JST clock — shared by every surface that renders an
 // animated day/night weather scene, so they all agree on "is it night".
@@ -63,4 +65,10 @@ export function currentSeasonJST(): Season {
   if (month >= 6 && month <= 8) return "summer";
   if (month >= 9 && month <= 11) return "autumn";
   return "winter";
+}
+
+// A short weekday name ("Sat", "土", "शनि") for a forecast date, in the
+// reader's language. Dates are JST calendar days (YYYY-MM-DD).
+export function weekdayLabel(date: string, language: string): string {
+  return dateFormatter(language as LanguageCode, { weekday: "short", timeZone: "Asia/Tokyo" }).format(new Date(`${date}T12:00:00+09:00`));
 }

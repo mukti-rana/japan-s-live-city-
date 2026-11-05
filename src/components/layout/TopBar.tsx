@@ -4,6 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
 import TopBarActions from "@/components/layout/TopBarActions";
+import Tx from "@/components/i18n/Tx";
 
 // The header stays pinned while the page scrolls. Past a short distance it
 // eases down to a compact height (and a smaller logo), and returns to full
@@ -55,7 +56,7 @@ export default function TopBar() {
           </span>
           <div className="hidden whitespace-nowrap sm:block">
             <p className="text-sm font-bold leading-none tracking-tight text-foreground transition-[font-size] duration-300 group-data-[compact=true]:text-[13px]">LIVE CITY</p>
-            <p className="mt-1 text-[9px] font-medium leading-none tracking-[0.18em] text-muted">JAPAN — REAL TIME</p>
+            <p className="mt-1 text-[9px] font-medium leading-none tracking-[0.18em] text-muted"><Tx en="JAPAN — REAL TIME" /></p>
           </div>
         </Link>
 

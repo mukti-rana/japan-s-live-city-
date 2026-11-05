@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslate } from "@/lib/i18n/inline";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { TrainFront, TriangleAlert } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import CardHeader from "@/components/ai/cards/CardHeader";
@@ -9,13 +13,15 @@ function isTrainStatus(value: string): value is TrainStatus {
 }
 
 export default function TrainCard({ data }: { data: TrainCardData }) {
+  const tr = useTranslate();
+  const { t } = useLanguage();
   return (
     <GlassCard className="flex w-full max-w-sm flex-col gap-3 p-4">
-      <CardHeader icon={TrainFront} label={`Train Lines — ${data.city}`} accent="azure" />
+      <CardHeader icon={TrainFront} label={`${tr("Train Lines")} — ${tr(data.city)}`} accent="azure" />
 
       <div className="flex items-start gap-2 rounded-lg border border-gold/25 bg-gold/5 p-2">
         <TriangleAlert size={13} className="mt-0.5 shrink-0 text-gold" />
-        <p className="text-[10px] leading-relaxed text-muted">{data.disclaimer}</p>
+        <p className="text-[10px] leading-relaxed text-muted">{tr(data.disclaimer)}</p>
       </div>
 
       <ul className="flex flex-col gap-1.5">
@@ -28,8 +34,8 @@ export default function TrainCard({ data }: { data: TrainCardData }) {
                 {line.name}
               </span>
               <span className={meta?.textClass ?? "text-muted"}>
-                {line.status}
-                {line.delayMinutes ? ` (${line.delayMinutes} min)` : ""}
+                {meta ? t(meta.labelKey) : tr(line.status)}
+                {line.delayMinutes ? ` (${line.delayMinutes} ${tr("min")})` : ""}
               </span>
             </li>
           );

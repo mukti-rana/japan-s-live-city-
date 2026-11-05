@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Check, X, RotateCcw, GraduationCap } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import type { JlptLevel, JlptQuestion } from "@/lib/quiz/jlptQuestions";
+import Tx from "@/components/i18n/Tx";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export default function QuizCard({
   level,
@@ -12,6 +14,7 @@ export default function QuizCard({
   level: JlptLevel;
   questions: JlptQuestion[];
 }) {
+  const tr = useTranslate();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
@@ -54,12 +57,12 @@ export default function QuizCard({
         </div>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-muted">
-            {level.toUpperCase()} results
+            {level.toUpperCase()} <Tx en="results" />
           </p>
           <p className="mt-1 text-3xl font-semibold tabular-nums text-foreground">
             {correctCount} / {questions.length}
           </p>
-          <p className="mt-1 text-sm text-muted">{pct}% correct</p>
+          <p className="mt-1 text-sm text-muted">{pct}% <Tx en="correct" /></p>
         </div>
         <button
           type="button"
@@ -67,7 +70,7 @@ export default function QuizCard({
           className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background"
         >
           <RotateCcw size={15} />
-          Try again
+          <Tx en="Try again" />
         </button>
       </GlassCard>
     );
@@ -78,10 +81,10 @@ export default function QuizCard({
       <div>
         <div className="flex items-center justify-between text-xs text-muted">
           <span>
-            Question {index + 1} of {questions.length}
+            {tr("Question {n} of {total}").replace("{n}", String(index + 1)).replace("{total}", String(questions.length))}
           </span>
           <span className="font-medium text-foreground/80">
-            {correctCount} correct
+            {correctCount} <Tx en="correct" />
           </span>
         </div>
         <div className="mt-2 flex gap-1.5">

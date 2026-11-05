@@ -3,7 +3,7 @@
 import { ChevronDown, ExternalLink, PhoneCall } from "lucide-react";
 import { OTHER_NUMBERS, SCENARIOS, type Urgency } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
-import { pickJaEn, useInline } from "@/lib/i18n/inline";
+import { known, pickJaEn, useInline } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 const URGENCY_STYLE: Record<Urgency, string> = {
@@ -93,7 +93,7 @@ export default function EmergencyGuidance() {
               <p className="mt-auto text-[11px] text-muted">
                 {t("source")}:{" "}
                 <a href={n.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
-                  {n.source.name}
+                  {known(n.source.name, language)}
                 </a>
               </p>
             </li>

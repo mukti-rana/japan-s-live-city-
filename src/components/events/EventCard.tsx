@@ -1,9 +1,12 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { CalendarDays, Clock, ExternalLink, Flame, Heart, Landmark, MapPin, Music, Navigation, Palette, PartyPopper, Trophy, Users, Utensils, type LucideIcon } from "lucide-react";
 import AddToCalendarButton from "@/components/calendar/AddToCalendarButton";
 import NewsImage from "@/components/news/NewsImage";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { known } from "@/lib/i18n/inline";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import { jstDate } from "@/lib/events/time";
 import type { EventView } from "@/lib/events/query";
@@ -30,8 +33,8 @@ function EventTile({ event, className = "" }: { event: EventView; className?: st
   const { language } = useLanguage();
   const { icon: Icon, gradient } = KIND_STYLE[event.kind];
   const date = new Date(`${event.current.start}T00:00:00+09:00`);
-  const month = new Intl.DateTimeFormat(language, { timeZone: "Asia/Tokyo", month: "short" }).format(date);
-  const day = new Intl.DateTimeFormat(language, { timeZone: "Asia/Tokyo", day: "numeric" }).format(date);
+  const month = dateFormatter(language as LanguageCode, { timeZone: "Asia/Tokyo", month: "short" }).format(date);
+  const day = dateFormatter(language as LanguageCode, { timeZone: "Asia/Tokyo", day: "numeric" }).format(date);
   return (
     <div className={`relative flex items-center justify-center bg-gradient-to-br ${gradient} ${className}`} aria-hidden="true">
       <Icon size={72} className="absolute -bottom-3 -right-3 text-white/[0.07]" />
@@ -150,7 +153,7 @@ export default function EventCard({
   onOpen: (event: EventView) => void;
   priority?: boolean;
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const jp = /[぀-ヿ一-鿿]/.test(event.title) ? "font-jp" : "";
   const map = mapUrl(event);
   const ended = event.phase === "ended" || event.status === "cancelled";
@@ -232,7 +235,7 @@ export default function EventCard({
             </button>
           </h2>
           {event.description && <p className="line-clamp-4 text-sm leading-relaxed text-foreground/75">{event.description}</p>}
-          <p className="text-[11px] text-muted">{event.source.name}</p>
+          <p className="text-[11px] text-muted">{known(event.source.name, language)}</p>
           {actions}
         </div>
       </article>
@@ -253,11 +256,11 @@ export default function EventCard({
         <p className="flex items-center gap-1 text-[11px] text-muted">
           {event.url ? (
             <a href={event.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-azure hover:underline">
-              {event.organizer ?? event.source.name}
+              {event.organizer ?? known(event.source.name, language)}
               <ExternalLink size={10} aria-hidden="true" />
             </a>
           ) : (
-            (event.organizer ?? event.source.name)
+            (event.organizer ?? known(event.source.name, language))
           )}
         </p>
         <div className="mt-auto pt-1">{actions}</div>

@@ -23,6 +23,7 @@ import {
 import { CITIES } from "@/lib/data/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
+import Tx from "@/components/i18n/Tx";
 
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
 const SIDEBAR_COLLAPSED_KEY = "livecity:sidebarCollapsed";
@@ -178,9 +179,9 @@ export default function Sidebar() {
           </svg>
           <div className="absolute bottom-5 left-4 right-4">
             <p className="text-sm font-semibold leading-snug text-foreground/90">
-              Live the
+              <Tx en="Live the" />
               <br />
-              real Japan
+              <Tx en="real Japan" />
             </p>
             <span className="mt-1 inline-block text-xs text-sakura">🌸</span>
           </div>

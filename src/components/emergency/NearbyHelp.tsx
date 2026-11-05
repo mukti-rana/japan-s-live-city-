@@ -7,9 +7,11 @@ import { OFFICIAL_LINKS } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
 import type { Facility, FacilityType, Hazard, Shelter } from "@/lib/emergency/nearby";
 import { haversineKm, PREFECTURE_CENTER } from "@/lib/events/geo";
-import { useInline } from "@/lib/i18n/inline";
+import { translate, useInline } from "@/lib/i18n/inline";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { resolvePlace } from "@/lib/news/places";
 import { useNewsPlace } from "@/lib/news/useNews";
+import Tx from "@/components/i18n/Tx";
 
 type Tab = "shelters" | "medical" | "pharmacy" | "police" | "fire" | "aed";
 const TABS: { id: Tab; key: "tabShelters" | "tabMedical" | "tabPharmacy" | "tabPolice" | "tabFire" | "tabAed"; types: FacilityType[] }[] = [
@@ -68,6 +70,7 @@ const directionsUrl = (lat: number, lon: number) => `https://www.google.com/maps
 
 export default function NearbyHelp() {
   const t = useInline(E);
+  const { language } = useLanguage();
   const placeInfo = useNewsPlace();
   const [tab, setTab] = useState<Tab>("shelters");
   const [exact, setExact] = useState<{ lat: number; lon: number } | null>(null);
@@ -225,7 +228,7 @@ export default function NearbyHelp() {
                       </a>
                       {it.kind === "facility" && it.facility.website && (
                         <a href={it.facility.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-azure hover:underline">
-                          Website <ExternalLink size={12} aria-hidden="true" />
+                          <Tx en="Website" /> <ExternalLink size={12} aria-hidden="true" />
                         </a>
                       )}
                     </div>
@@ -243,7 +246,7 @@ export default function NearbyHelp() {
         <p className="mt-3 text-[12px] leading-relaxed text-muted">
           {tab === "shelters" ? t("shelterNote") : t("osmNote")}{" "}
           <span className="text-muted">
-            {t("source")}: {tab === "shelters" ? "Geospatial Information Authority of Japan (designated emergency evacuation sites)" : "OpenStreetMap contributors (ODbL)"}
+            {t("source")}: {tab === "shelters" ? translate("Geospatial Information Authority of Japan (designated emergency evacuation sites)", language) : "OpenStreetMap contributors (ODbL)"}
           </span>
         </p>
 
@@ -253,7 +256,7 @@ export default function NearbyHelp() {
             {directories.map((d) => (
               <li key={d.url}>
                 <a href={d.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-azure hover:underline">
-                  {d.label}
+                  {translate(d.label, language)}
                   <ExternalLink size={12} aria-hidden="true" />
                 </a>
               </li>

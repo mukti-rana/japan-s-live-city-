@@ -5,6 +5,7 @@ import { MapPin } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { PREFECTURES } from "@/lib/news/places";
 import { chooseNewsPlace, type NewsPlace } from "@/lib/news/useNews";
+import { known, localize, translate } from "@/lib/i18n/inline";
 
 const POPULAR = ["Tokyo", "Osaka", "Kyoto", "Nagoya", "Kobe", "Fukuoka", "Sapporo", "Hiroshima", "Sendai", "Nara"];
 
@@ -19,7 +20,7 @@ export default function PlacePicker({ current, compact = false }: { current: New
     return (
       <div className="flex flex-wrap items-center gap-2 text-xs text-muted">
         <MapPin size={14} className="text-gold" aria-hidden="true" />
-        <span className="font-semibold text-foreground">{current.place}</span>
+        <span className="font-semibold text-foreground">{known(current.place, language)}</span>
         <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-medium text-gold">
           {current.source === "selected" ? t("news.place.selected") : t("news.place.fromLocation")}
         </span>
@@ -53,7 +54,7 @@ export default function PlacePicker({ current, compact = false }: { current: New
             onClick={() => choose(name)}
             className="rounded-full border border-glass-border bg-glass-bg px-3 py-1.5 text-xs text-foreground/85 transition-colors hover:border-gold/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
           >
-            {name}
+            {translate(name, language)}
           </button>
         ))}
         <select
@@ -65,7 +66,7 @@ export default function PlacePicker({ current, compact = false }: { current: New
           <option value="">{t("news.place.more")}</option>
           {PREFECTURES.map((p) => (
             <option key={p.id} value={p.en}>
-              {language === "ja" ? p.ja : p.en}
+              {localize(p.en, p.ja, language)}
             </option>
           ))}
         </select>

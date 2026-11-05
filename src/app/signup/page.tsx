@@ -8,6 +8,7 @@ import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signUpAction } from "@/lib/supabase/actions";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Create account — Live City Japan",
@@ -31,8 +32,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
           <GlassCard className="flex items-start gap-2.5 border-mint/25 bg-mint/5 p-4">
             <MailCheck size={16} className="mt-0.5 shrink-0 text-mint" />
             <p className="text-xs leading-relaxed text-muted">
-              Check your email for a confirmation link to finish creating
-              your account.
+              <Tx en="Check your email for a confirmation link to finish creating your account." />
             </p>
           </GlassCard>
         </Reveal>
@@ -67,7 +67,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
 
         <AuthSubmitButton disabled={!isSupabaseConfigured}>
           <UserPlus size={16} />
-          Create free account
+          <Tx en="Create free account" />
         </AuthSubmitButton>
       </form>
     </AuthShell>

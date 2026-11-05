@@ -6,9 +6,11 @@ import AddToCalendarButton from "@/components/calendar/AddToCalendarButton";
 import NewsImage from "@/components/news/NewsImage";
 import { EventFacts } from "@/components/events/EventCard";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { known } from "@/lib/i18n/inline";
 import type { EventView } from "@/lib/events/query";
 import { jstDate } from "@/lib/events/time";
 import { directionsUrl, formatRange, formatUpdated, mapUrl, osmEmbed, prefectureName, useSavedEvents } from "@/lib/events/useEvents";
+import Tx from "@/components/i18n/Tx";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
 
@@ -147,7 +149,7 @@ export default function EventModal({ event, onClose }: { event: EventView | null
               {(event.startTime || event.endTime) && (
                 <p className="text-sm text-foreground/85">
                   {event.startTime}
-                  {event.endTime ? ` – ${event.endTime}` : ""} <span className="text-[11px] text-muted">(JST)</span>
+                  {event.endTime ? ` – ${event.endTime}` : ""} <span className="text-[11px] text-muted"><Tx en="(JST)" /></span>
                 </p>
               )}
               {event.dateNote && (
@@ -199,7 +201,7 @@ export default function EventModal({ event, onClose }: { event: EventView | null
             <Section id="ev-fresh" title={t("events.detail.freshness")}>
               <ul className="flex flex-col gap-0.5 text-xs text-foreground/75">
                 <li>
-                  {event.source.name} ·{" "}
+                  {known(event.source.name, language)} ·{" "}
                   <a href={event.source.url} target="_blank" rel="noopener noreferrer" className="text-azure hover:underline">
                     {t("events.sources.title")}
                   </a>

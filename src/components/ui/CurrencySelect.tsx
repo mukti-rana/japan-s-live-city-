@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslate } from "@/lib/i18n/inline";
 import { CURRENCY_LABELS, type CurrencyCode } from "@/lib/services/currency";
 
 export default function CurrencySelect({
@@ -11,9 +14,10 @@ export default function CurrencySelect({
   onChange: (value: CurrencyCode) => void;
   options: CurrencyCode[];
 }) {
+  const tr = useTranslate();
   return (
     <label className="block">
-      <span className="text-xs font-medium text-muted">{label}</span>
+      <span className="text-xs font-medium text-muted">{tr(label)}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as CurrencyCode)}
@@ -21,7 +25,7 @@ export default function CurrencySelect({
       >
         {options.map((code) => (
           <option key={code} value={code} className="bg-panel text-foreground">
-            {code} — {CURRENCY_LABELS[code]}
+            {code} — {tr(CURRENCY_LABELS[code])}
           </option>
         ))}
       </select>

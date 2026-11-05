@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Building2, Landmark, MapPin, Search, X } from "lucide-react";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { useInline, type Table, localize } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES } from "@/lib/map/cities";
 import { PREFECTURES, resolvePlace } from "@/lib/news/places";
@@ -116,7 +116,7 @@ export default function MapSearch({ onPick, onPickPlace }: { onPick: (entry: Sea
   function pick(e: SearchEntry | undefined) {
     if (!e) return;
     setOpen(false);
-    setQuery(language === "ja" ? e.nameJa : e.name);
+    setQuery(localize(e.name, e.nameJa, language));
     onPick(e);
   }
 
@@ -191,7 +191,7 @@ export default function MapSearch({ onPick, onPickPlace }: { onPick: (entry: Sea
                 >
                   {e.mapCitySlug ? <Landmark size={15} className="shrink-0 text-azure" aria-hidden="true" /> : e.kind === "prefecture" ? <Building2 size={15} className="shrink-0 text-muted" aria-hidden="true" /> : <MapPin size={15} className="shrink-0 text-muted" aria-hidden="true" />}
                   <span className="min-w-0 flex-1 truncate">
-                    {language === "ja" ? e.nameJa : e.name}
+                    {localize(e.name, e.nameJa, language)}
                     <span className="ml-2 text-xs text-muted">{language === "ja" ? e.name : e.nameJa}</span>
                   </span>
                   <span className="shrink-0 text-xs text-muted">{e.kind === "prefecture" ? text("prefecture") : e.sub || text("city")}</span>

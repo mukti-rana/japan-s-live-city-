@@ -5,6 +5,8 @@ import { Home, Receipt, TriangleAlert } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import FieldInput from "@/components/ui/FieldInput";
 import { calculateMoveInCost } from "@/lib/calc/rent";
+import Tx from "@/components/i18n/Tx";
+import { useTranslate } from "@/lib/i18n/inline";
 
 const yen = new Intl.NumberFormat("ja-JP", {
   style: "currency",
@@ -13,6 +15,7 @@ const yen = new Intl.NumberFormat("ja-JP", {
 });
 
 export default function RentCalculator() {
+  const tr = useTranslate();
   const [monthlyRent, setMonthlyRent] = useState("85000");
   const [depositMonths, setDepositMonths] = useState("1");
   const [keyMoneyMonths, setKeyMoneyMonths] = useState("1");
@@ -51,7 +54,7 @@ export default function RentCalculator() {
             <Home size={17} />
           </div>
           <p className="text-sm font-semibold text-foreground">
-            Apartment details
+            <Tx en="Apartment details" />
           </p>
         </div>
 
@@ -105,8 +108,7 @@ export default function RentCalculator() {
         </div>
 
         <p className="text-[11px] leading-relaxed text-muted">
-          Defaults reflect common Tokyo-area norms — every landlord and
-          agency sets its own terms, so treat this as a starting estimate.
+          <Tx en="Defaults reflect common Tokyo-area norms — every landlord and agency sets its own terms, so treat this as a starting estimate." />
         </p>
       </GlassCard>
 
@@ -116,7 +118,7 @@ export default function RentCalculator() {
             <Receipt size={17} />
           </div>
           <p className="text-sm font-semibold text-foreground">
-            Estimated move-in cost
+            <Tx en="Estimated move-in cost" />
           </p>
         </div>
 
@@ -127,7 +129,7 @@ export default function RentCalculator() {
               className="flex items-center justify-between rounded-lg px-2 py-1.5"
             >
               <span className="text-xs text-muted">
-                {item.label} <span className="text-glass-border">·</span>{" "}
+                {tr(item.label)} <span className="text-glass-border">·</span>{" "}
                 <span className="font-jp">{item.labelJa}</span>
               </span>
               <span className="text-xs font-medium tabular-nums text-foreground">
@@ -139,9 +141,9 @@ export default function RentCalculator() {
 
         <div className="flex items-center justify-between rounded-xl border border-sakura/25 bg-sakura/5 px-4 py-3.5">
           <div>
-            <p className="text-xs text-muted">Total move-in cost</p>
+            <p className="text-xs text-muted"><Tx en="Total move-in cost" /></p>
             <p className="text-[11px] text-muted">
-              ≈ {result.totalInMonthsRent.toFixed(1)}× monthly rent
+              {tr(`≈ ${result.totalInMonthsRent.toFixed(1)}× monthly rent`)}
             </p>
           </div>
           <span className="text-xl font-semibold tabular-nums text-foreground">
@@ -152,9 +154,7 @@ export default function RentCalculator() {
         <div className="flex gap-2 rounded-xl border border-gold/25 bg-gold/5 p-3">
           <TriangleAlert size={15} className="mt-0.5 shrink-0 text-gold" />
           <p className="text-[11px] leading-relaxed text-muted">
-            An estimate only, not a quote. Actual costs vary by property,
-            city, and agency — some charge less (or more), and a few
-            no-key-money listings skip 礼金 entirely.
+            <Tx en="An estimate only, not a quote. Actual costs vary by property, city, and agency — some charge less (or more), and a few no-key-money listings skip 礼金 entirely." />
           </p>
         </div>
       </GlassCard>

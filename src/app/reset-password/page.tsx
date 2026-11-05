@@ -6,6 +6,7 @@ import AuthField from "@/components/ui/AuthField";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { updatePasswordAction } from "@/lib/supabase/actions";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Reset Password — Live City Japan",
@@ -23,13 +24,13 @@ export default async function ResetPasswordPage({
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Account
+            <Tx en="Account" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-            Reset Password
+            <Tx en="Reset Password" />
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            Choose a new password for your account.
+            <Tx en="Choose a new password for your account." />
           </p>
         </div>
       </Reveal>
@@ -68,7 +69,7 @@ export default async function ResetPasswordPage({
               className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
             >
               <KeyRound size={15} />
-              Update Password
+              <Tx en="Update Password" />
             </button>
           </form>
         </GlassCard>

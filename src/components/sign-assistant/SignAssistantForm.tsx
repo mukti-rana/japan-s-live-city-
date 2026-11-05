@@ -7,8 +7,10 @@ import { useOneShotAssistant } from "@/lib/ai/useOneShotAssistant";
 import { useImageAttach } from "@/lib/ai/useImageAttach";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import AiOffNotice from "@/components/ai/AiOffNotice";
+import { useTranslate } from "@/lib/i18n/inline";
 
 export default function SignAssistantForm({ configured }: { configured: boolean }) {
+  const tr = useTranslate();
   const { language, t } = useLanguage();
   const [caption, setCaption] = useState("");
   const { image, attach, clear, error: attachError } = useImageAttach();
@@ -34,7 +36,7 @@ export default function SignAssistantForm({ configured }: { configured: boolean 
         {image ? (
           <div className="relative w-fit">
             {/* eslint-disable-next-line @next/next/no-img-element -- client-side attached photo, not a static asset */}
-            <img src={image.previewUrl} alt="Attached sign" className="max-h-64 rounded-xl object-contain" />
+            <img src={image.previewUrl} alt={tr("Attached sign")} className="max-h-64 rounded-xl object-contain" />
             <button
               type="button"
               onClick={clear}
@@ -94,7 +96,7 @@ export default function SignAssistantForm({ configured }: { configured: boolean 
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           disabled={!configured}
-          placeholder="Optional: add a question about this image…"
+          placeholder={tr("Optional: add a question about this image…")}
           rows={2}
           className="w-full resize-none rounded-xl border border-glass-border bg-glass-bg px-3.5 py-2.5 text-sm text-foreground placeholder:text-muted outline-none focus:border-sakura/40 disabled:opacity-50"
         />

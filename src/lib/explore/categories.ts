@@ -1,4 +1,5 @@
 import type { LanguageCode } from "@/lib/i18n/languages";
+import { translate } from "@/lib/i18n/translate";
 
 // What kinds of place the catalogue holds, and what can honestly be said about
 // each *kind* of place. Nothing here is a fact about a single destination:
@@ -90,7 +91,7 @@ export const SEASONS: { id: Season; label: Labels }[] = [
 ];
 
 export function pickLabel(labels: Labels, language: LanguageCode): string {
-  return labels[language] ?? labels.en;
+  return labels[language] ?? translate(labels.en, language);
 }
 
 // Meteorological seasons in Japan, from the month (1–12).

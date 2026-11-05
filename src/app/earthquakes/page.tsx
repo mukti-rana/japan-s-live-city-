@@ -3,6 +3,8 @@ import { Activity, Waves } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import GlassCard from "@/components/ui/GlassCard";
 import { getRecentEarthquakes, type EarthquakeEvent } from "@/lib/services/earthquake";
+import JstTime from "@/components/i18n/JstTime";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Earthquakes — Live City Japan",
@@ -15,19 +17,6 @@ function severity(maxIntensity: string): "mint" | "gold" | "sakura" {
   return "mint";
 }
 
-function formatTime(raw: string) {
-  const iso = raw.replace(/\//g, "-").replace(" ", "T") + "+09:00";
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) return raw;
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Tokyo",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 export default async function EarthquakesPage() {
   const earthquakes = await getRecentEarthquakes(10).catch<EarthquakeEvent[] | null>(() => null);
 
@@ -36,14 +25,13 @@ export default async function EarthquakesPage() {
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
-            Live
+            <Tx en="Live" />
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Earthquakes
+            <Tx en="Earthquakes" />
           </h1>
           <p className="mt-1.5 max-w-xl text-sm text-muted">
-            Recent seismic activity across Japan, relayed from the JMA
-            (Japan Meteorological Agency) via P2P Quake — no invented data.
+            <Tx en="Recent seismic activity across Japan, relayed from the JMA (Japan Meteorological Agency) via P2P Quake — no invented data." />
           </p>
         </div>
       </Reveal>
@@ -52,12 +40,11 @@ export default async function EarthquakesPage() {
         <GlassCard className="p-5">
           {!earthquakes ? (
             <p className="text-sm text-sakura">
-              Live earthquake data couldn&apos;t be loaded right now. Please
-              try again shortly.
+              <Tx en="Live earthquake data couldn't be loaded right now. Please try again shortly." />
             </p>
           ) : earthquakes.length === 0 ? (
             <p className="text-sm text-muted">
-              No recent significant earthquakes.
+              <Tx en="No recent significant earthquakes." />
             </p>
           ) : (
             <ul className="flex flex-col">
@@ -77,7 +64,7 @@ export default async function EarthquakesPage() {
                             : "bg-mint/15 text-mint"
                       }`}
                     >
-                      <span className="text-[9px] leading-none">Shindo</span>
+                      <span className="text-[9px] leading-none"><Tx en="Shindo" /></span>
                       <span className="text-sm font-bold leading-tight">
                         {quake.maxIntensity}
                       </span>
@@ -92,16 +79,16 @@ export default async function EarthquakesPage() {
                           <Activity size={11} />
                           M{quake.magnitude.toFixed(1)}
                         </span>
-                        <span>Depth {quake.depthKm}km</span>
+                        <span><Tx en="Depth" /> {quake.depthKm} km</span>
                         <span className="flex items-center gap-1">
                           <Waves size={11} />
-                          {quake.tsunami}
+                          <Tx en={quake.tsunami} />
                         </span>
                       </p>
                     </div>
 
                     <span className="shrink-0 text-xs text-muted">
-                      {formatTime(quake.time)}
+                      <JstTime raw={quake.time} />
                     </span>
                   </li>
                 );
@@ -110,7 +97,7 @@ export default async function EarthquakesPage() {
           )}
 
           <p className="mt-4 text-[11px] text-muted">
-            Source: P2P Quake (relaying JMA data). Updated every few minutes.
+            <Tx en="Source: P2P Quake (relaying JMA data). Updated every few minutes." />
           </p>
         </GlassCard>
       </Reveal>

@@ -1,12 +1,14 @@
 "use client";
 
+import { dateFormatter } from "@/lib/i18n/datetime";
+import type { LanguageCode } from "@/lib/i18n/languages";
 import { useEffect, useState } from "react";
 import { ExternalLink, ShieldCheck, TriangleAlert } from "lucide-react";
 import PlacePicker from "@/components/news/PlacePicker";
 import { OFFICIAL_LINKS } from "@/lib/emergency/content";
 import type { AlertsResult, OfficialAlert, Severity } from "@/lib/emergency/disaster";
 import { E } from "@/lib/emergency/strings";
-import { useInline } from "@/lib/i18n/inline";
+import { known, useInline, localizeAlert, translate, translateWithNumber } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { resolvePlace } from "@/lib/news/places";
 import { useNewsPlace } from "@/lib/news/useNews";
@@ -21,7 +23,7 @@ const SEV_STYLE: Record<Severity, string> = {
 function when(iso: string, language: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(language, { timeZone: "Asia/Tokyo", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(d) + " JST";
+  return dateFormatter(language as LanguageCode, { timeZone: "Asia/Tokyo", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(d) + " JST";
 }
 
 interface Loaded {
@@ -95,16 +97,16 @@ export default function OfficialAlerts() {
                   <li key={a.id} className="rounded-xl border border-white/20 bg-black/25 p-3.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide ${SEV_STYLE[a.severity]}`}>{a.kind === "earthquake" ? t("sevQuake") : sev(a.severity)}</span>
-                      <p className="text-base font-semibold text-foreground">{language === "ja" ? a.titleJa : a.title}</p>
+                      <p className="text-base font-semibold text-foreground">{localizeAlert(a, language)}</p>
                     </div>
                     {a.area && (
                       <p className="mt-1 text-sm text-foreground/85">
-                        <span className="text-muted">{t("alertsArea")}:</span> {a.area}
+                        <span className="text-muted">{t("alertsArea")}:</span> {translate(a.area, language)}
                       </p>
                     )}
-                    {a.detail && <p className="mt-0.5 text-xs text-muted">{a.detail}</p>}
+                    {a.detail && <p className="mt-0.5 text-xs text-muted">{translate(a.detail, language)}</p>}
                     <p className="mt-1 text-xs text-muted">
-                      {t("alertsIssuedBy")}: {a.issuer} · {t("alertsIssued")}: {when(a.issuedAt, language)}
+                      {t("alertsIssuedBy")}: {known(a.issuer, language)} · {t("alertsIssued")}: {when(a.issuedAt, language)}
                     </p>
                     <a href={a.url} target="_blank" rel="noopener noreferrer" className="mt-1.5 inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-azure hover:underline">
                       {t("alertsLink")}
@@ -117,7 +119,7 @@ export default function OfficialAlerts() {
 
             {data.notes.map((n) => (
               <p key={n} className="mt-3 rounded-lg border border-amber-400/40 bg-amber-400/10 p-3 text-xs leading-relaxed text-amber-100">
-                {n}
+                {translateWithNumber(n, language)}
               </p>
             ))}
             {data.sources.filter((s) => !s.ok).map((s) => (
@@ -146,7 +148,7 @@ export default function OfficialAlerts() {
           ].map(([label, url]) => (
             <li key={url}>
               <a href={url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-azure hover:underline">
-                {label}
+                {translate(label, language)}
                 <ExternalLink size={12} aria-hidden="true" />
               </a>
             </li>

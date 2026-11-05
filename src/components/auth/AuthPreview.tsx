@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, CloudSun, Globe2, TrainFront, type LucideIcon } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import { useTranslate } from "@/lib/i18n/inline";
 
 const PREVIEW_CITY = CITIES.find((c) => c.slug === "tokyo")!;
 
@@ -20,6 +21,7 @@ interface PreviewItem {
 // reading arrives from the same Open-Meteo-backed route the home page uses —
 // trains and events here are descriptions, never invented figures.
 export default function AuthPreview() {
+  const tr = useTranslate();
   const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function AuthPreview() {
     {
       icon: CloudSun,
       title: "Weather",
-      text: weather ? `${PREVIEW_CITY.name} ${weather.tempC}°C · ${weather.condition}` : "Current conditions & forecasts",
+      text: weather ? `${tr(PREVIEW_CITY.name)} ${weather.tempC}°C · ${tr(weather.condition)}` : "Current conditions & forecasts",
       tint: "bg-azure/15 text-azure",
       live: Boolean(weather),
     },
@@ -64,7 +66,7 @@ export default function AuthPreview() {
   ];
 
   return (
-    <ul className="grid grid-cols-2 gap-2.5 sm:gap-3" aria-label="What's inside LIVE CITY">
+    <ul className="grid grid-cols-2 gap-2.5 sm:gap-3" aria-label={tr("What's inside LIVE CITY")}>
       {items.map(({ icon: Icon, title, text, tint, live }) => (
         <li
           key={title}
@@ -75,15 +77,15 @@ export default function AuthPreview() {
           </span>
           <span className="min-w-0">
             <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-              {title}
+              {tr(title)}
               {live && (
                 <span
                   className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]"
-                  title="Live reading"
+                  title={tr("Live reading")}
                 />
               )}
             </span>
-            <span className="mt-0.5 block text-[11px] leading-snug text-foreground/65">{text}</span>
+            <span className="mt-0.5 block text-[11px] leading-snug text-foreground/65">{tr(text)}</span>
           </span>
         </li>
       ))}

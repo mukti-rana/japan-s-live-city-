@@ -1,9 +1,14 @@
+"use client";
+
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { dateFormatter } from "@/lib/i18n/datetime";
 import { Newspaper } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import CardHeader from "@/components/ai/cards/CardHeader";
 import type { NewsCardData } from "@/lib/ai/types";
 
 export default function NewsCard({ data }: { data: NewsCardData }) {
+  const { language } = useLanguage();
   return (
     <GlassCard className="flex w-full max-w-sm flex-col gap-2 p-4">
       <CardHeader icon={Newspaper} label="Latest News" accent="azure" />
@@ -19,7 +24,7 @@ export default function NewsCard({ data }: { data: NewsCardData }) {
               {item.title}
             </a>
             <p className="mt-0.5 text-[10px] text-muted">
-              {item.source} · {new Date(item.publishedAt).toLocaleDateString()}
+              {item.source} · {dateFormatter(language, { dateStyle: "medium" }).format(new Date(item.publishedAt))}
             </p>
           </li>
         ))}

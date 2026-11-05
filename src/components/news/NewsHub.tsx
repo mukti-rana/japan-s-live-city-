@@ -15,6 +15,7 @@ import { timeAgo, toQueryString, useNewsFeed, useNewsPlace, useResolvedImages, t
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { NewsItem, NewsResult } from "@/lib/news/query";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
+import { localize, translate } from "@/lib/i18n/inline";
 
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
@@ -181,7 +182,7 @@ export default function NewsHub({
   const categoryLabel = (id: CategoryId) => t(CATEGORIES.find((c) => c.id === id)!.labelKey);
   const prefLabel = (id: string) => {
     const p = PREFECTURES.find((x) => x.id === id);
-    return p ? (language === "ja" ? p.ja : p.en) : id;
+    return p ? (localize(p.en, p.ja, language)) : id;
   };
   const sourceName = (id: string) => SOURCE_OPTIONS.find((s) => s.id === id)?.name ?? id;
 
@@ -220,7 +221,7 @@ export default function NewsHub({
             <option value="">{t("news.hub.anyLocation")}</option>
             {PREFECTURES.map((p) => (
               <option key={p.id} value={p.id}>
-                {language === "ja" ? p.ja : p.en}
+                {localize(p.en, p.ja, language)}
               </option>
             ))}
           </Select>
@@ -248,7 +249,7 @@ export default function NewsHub({
         {/* Categories */}
         <div
           role="group"
-          aria-label="Categories"
+          aria-label={translate("Categories", language)}
           className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {CATEGORIES.map((c) => {

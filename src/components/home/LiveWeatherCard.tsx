@@ -9,7 +9,7 @@ import DailyForecastList from "@/components/weather/DailyForecastList";
 import WeatherAtmosphere from "@/components/home/weather/WeatherAtmosphere";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { useInline, type Table, localize, translate } from "@/lib/i18n/inline";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { CITIES } from "@/lib/data/cities";
 import { PREFECTURES } from "@/lib/news/places";
@@ -243,7 +243,7 @@ function CityPicker({
         </option>
         {PREFECTURES.filter((p) => PREFECTURE_CENTER[p.id]).map((p) => (
           <option key={p.id} value={p.id} className="bg-panel">
-            {language === "ja" ? p.ja : p.en}
+            {localize(p.en, p.ja, language)}
           </option>
         ))}
       </select>
@@ -288,13 +288,13 @@ export default function LiveWeatherCard() {
   let cityName: string;
   let country: string;
   if (prefecture) {
-    cityName = language === "ja" ? prefecture.ja : prefecture.en;
+    cityName = localize(prefecture.en, prefecture.ja, language);
     country = text("japan");
   } else if (useOwnLocation) {
-    cityName = location?.name ?? (language === "ja" ? DEFAULT_CITY.nameJa : DEFAULT_CITY.name);
+    cityName = location?.name ?? (localize(DEFAULT_CITY.name, DEFAULT_CITY.nameJa, language));
     country = location?.countryName ?? text("japan");
   } else {
-    cityName = language === "ja" ? DEFAULT_CITY.nameJa : DEFAULT_CITY.name;
+    cityName = localize(DEFAULT_CITY.name, DEFAULT_CITY.nameJa, language);
     country = text("japan");
   }
   const showingFallback = !prefecture && !useOwnLocation && !loading && status !== "idle" && status !== "locating";
@@ -431,7 +431,7 @@ export default function LiveWeatherCard() {
                     {weather.tempC}
                     <span className="align-top text-3xl font-medium text-foreground/70 sm:text-4xl">°C</span>
                   </p>
-                  <p className="mt-2 text-base font-medium text-foreground">{weather.condition}</p>
+                  <p className="mt-2 text-base font-medium text-foreground">{translate(weather.condition, language)}</p>
                   <p className="mt-0.5 text-xs text-foreground/70">
                     {text("feelsLike")} {weather.feelsLikeC}° · {text("high")} {weather.todayHigh}° · {text("low")} {weather.todayLow}°
                   </p>

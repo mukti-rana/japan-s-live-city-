@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, Landmark, MapPin, Newspaper, Search, X, type LucideIcon } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useInline, type Table } from "@/lib/i18n/inline";
+import { useInline, type Table, localize } from "@/lib/i18n/inline";
 import { ICON_BUTTON, useDismiss } from "@/components/layout/usePopover";
 
 const TEXT = {
@@ -29,17 +29,17 @@ interface Suggestion {
 
 // Destinations people look for first. Labels come from the site's own
 // navigation translations; the English name always matches too.
-const PAGES: { href: string; key: string; en: string; ja: string }[] = [
-  { href: "/map", key: "nav.map", en: "map", ja: "地図" },
-  { href: "/trains", key: "nav.trains", en: "trains stations", ja: "電車 駅 鉄道" },
-  { href: "/weather", key: "nav.weather", en: "weather forecast", ja: "天気" },
-  { href: "/news", key: "nav.news", en: "news", ja: "ニュース" },
-  { href: "/events", key: "nav.events", en: "events festivals", ja: "イベント 祭り" },
-  { href: "/calendar", key: "nav.calendar", en: "calendar", ja: "カレンダー" },
-  { href: "/emergency", key: "nav.emergency", en: "emergency sos", ja: "緊急" },
-  { href: "/explore", key: "nav.explore", en: "explore places", ja: "観光" },
-  { href: "/trending", key: "nav.trending", en: "trending", ja: "トレンド" },
-  { href: "/cities", key: "nav.cities", en: "cities", ja: "都市" },
+const PAGES: { href: string; key: string; kw: string; kwJa: string }[] = [
+  { href: "/map", key: "nav.map", kw: "map", kwJa: "地図" },
+  { href: "/trains", key: "nav.trains", kw: "trains stations", kwJa: "電車 駅 鉄道" },
+  { href: "/weather", key: "nav.weather", kw: "weather forecast", kwJa: "天気" },
+  { href: "/news", key: "nav.news", kw: "news", kwJa: "ニュース" },
+  { href: "/events", key: "nav.events", kw: "events festivals", kwJa: "イベント 祭り" },
+  { href: "/calendar", key: "nav.calendar", kw: "calendar", kwJa: "カレンダー" },
+  { href: "/emergency", key: "nav.emergency", kw: "emergency sos", kwJa: "緊急" },
+  { href: "/explore", key: "nav.explore", kw: "explore places", kwJa: "観光" },
+  { href: "/trending", key: "nav.trending", kw: "trending", kwJa: "トレンド" },
+  { href: "/cities", key: "nav.cities", kw: "cities", kwJa: "都市" },
 ];
 
 // The header's search. Typing offers: a news search, an events search (both
@@ -78,13 +78,13 @@ export default function HeaderSearch() {
     }
     const pages = PAGES.filter((p) => {
       if (!needle) return true;
-      return `${t(p.key as never)} ${p.en} ${p.ja}`.toLowerCase().includes(needle);
+      return `${t(p.key as never)} ${p.kw} ${p.kwJa}`.toLowerCase().includes(needle);
     }).slice(0, q ? 4 : 6);
     for (const p of pages) out.push({ id: p.href, label: t(p.key as never), href: p.href, icon: Landmark, group: "page" });
     if (q) {
       for (const c of CITIES) {
         if (`${c.name} ${c.nameJa}`.toLowerCase().includes(needle)) {
-          out.push({ id: `city-${c.slug}`, label: language === "ja" ? c.nameJa : c.name, hint: c.region, href: `/${c.slug}`, icon: MapPin, group: "city" });
+          out.push({ id: `city-${c.slug}`, label: localize(c.name, c.nameJa, language), hint: c.region, href: `/${c.slug}`, icon: MapPin, group: "city" });
         }
       }
     }

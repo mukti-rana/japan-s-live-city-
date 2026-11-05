@@ -5,6 +5,7 @@ import WeatherExperience from "@/components/weather/premium/WeatherExperience";
 import { getWeatherCity, WEATHER_CITIES } from "@/lib/data/weatherCities";
 import { getWeather, type WeatherSnapshot } from "@/lib/services/weather";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
+import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Weather — Live City Japan",
@@ -32,9 +33,9 @@ export default async function WeatherPage({ searchParams }: PageProps<"/weather"
       <div className="flex flex-col gap-5">
         <Reveal>
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-sakura">Live</p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Weather</h1>
-            <p className="mt-1.5 max-w-xl text-sm text-muted">A live window into what Japan feels like right now.</p>
+            <p className="text-xs font-medium uppercase tracking-widest text-sakura"><Tx en="Live" /></p>
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl"><Tx en="Weather" /></h1>
+            <p className="mt-1.5 max-w-xl text-sm text-muted"><Tx en="A live window into what Japan feels like right now." /></p>
           </div>
         </Reveal>
 
@@ -43,18 +44,18 @@ export default async function WeatherPage({ searchParams }: PageProps<"/weather"
             selectedSnapshot ? (
               <WeatherExperience snapshot={selectedSnapshot} city={selected} cityLabel={selected.name} isLocationMode={false} />
             ) : (
-              <p className="text-sm text-muted">Weather data unavailable for this city right now.</p>
+              <p className="text-sm text-muted"><Tx en="Weather data unavailable for this city right now." /></p>
             )
           ) : tokyoSnapshot ? (
             <LiveWeatherPanel fallback={tokyoSnapshot} />
           ) : (
-            <p className="text-sm text-muted">Weather data unavailable right now.</p>
+            <p className="text-sm text-muted"><Tx en="Weather data unavailable right now." /></p>
           )}
         </Reveal>
 
         <Reveal delay={0.06}>
           <p className="text-[11px] text-muted">
-            Forecasts from Open-Meteo · {WEATHER_CITIES.length} cities
+            <Tx en={`Forecasts from Open-Meteo · ${WEATHER_CITIES.length} cities`} />
           </p>
         </Reveal>
       </div>
