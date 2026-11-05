@@ -1,7 +1,7 @@
 "use client";
 
-import { Anchor, Ambulance, PhoneCall, ShieldAlert } from "lucide-react";
-import { CALL_NOTES, DESKTOP_CALL_NOTE, EMERGENCY_NUMBERS, QUICK_NUMBERS, VERIFIED_ON } from "@/lib/emergency/content";
+import { Anchor, Ambulance, Headset, PhoneCall, ShieldAlert } from "lucide-react";
+import { CALL_NOTES, DESKTOP_CALL_NOTE, EMERGENCY_NUMBERS, QUICK_NUMBERS, VERIFIED_ON, VISITOR_HOTLINE } from "@/lib/emergency/content";
 import { E } from "@/lib/emergency/strings";
 import { pickJaEn, useInline } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -81,6 +81,32 @@ export default function EmergencyNumbers({ id = "numbers" }: { id?: string }) {
           );
         })}
       </ul>
+
+      {/* Visitor support: not an emergency number, so it sits apart from the three above. */}
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-3 rounded-2xl border border-glass-border bg-glass-bg p-4 backdrop-blur-xl">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-azure/15 text-azure">
+          <Headset size={21} aria-hidden="true" />
+        </span>
+        <div className="min-w-0 flex-1 basis-64">
+          <p className="text-sm font-semibold text-foreground">
+            Japan Visitor Hotline <span className="ml-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold text-gold">{language === "ja" ? "緊急通報ではありません" : "Not an emergency number"}</span>
+          </p>
+          <p className="mt-0.5 text-xs leading-relaxed text-muted">
+            {language === "ja"
+              ? "訪日外国人向けの多言語サポート（英語・中国語・韓国語、24時間）。命に関わるときは110・119へ。"
+              : "Multilingual help for visitors (English, Chinese, Korean; 24 hours). If life is at risk, call 110 or 119 first."}
+          </p>
+        </div>
+        <p className="text-2xl font-bold tabular-nums tracking-wide text-foreground">{VISITOR_HOTLINE.number}</p>
+        <a
+          href={`tel:${VISITOR_HOTLINE.tel}`}
+          aria-label={`${t("call")} ${VISITOR_HOTLINE.number}`}
+          className="flex min-h-11 items-center gap-2 rounded-xl border border-azure/40 bg-azure/15 px-4 text-sm font-semibold text-azure transition-colors hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+        >
+          <PhoneCall size={16} aria-hidden="true" />
+          {t("call")}
+        </a>
+      </div>
 
       <div className="mt-3 grid gap-3 lg:grid-cols-2">
         <div className="rounded-2xl border border-glass-border bg-glass-bg p-4 backdrop-blur-xl">

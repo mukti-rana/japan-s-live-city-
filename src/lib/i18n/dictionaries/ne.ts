@@ -93,6 +93,7 @@ const ne: Record<TranslationKey, string> = {
   "widget.viewAll": "सबै हेर्नुहोस्",
   "widget.live": "लाइभ",
   "widget.japanMap": "जापान नक्सा",
+  "widget.emergencySafety": "आपतकालीन र सुरक्षा केन्द्र",
   "widget.openFullMap": "पूर्ण नक्सा खोल्नुहोस्",
   "widget.exploreJapan": "जापान अन्वेषण",
   "widget.trainStatus": "रेल स्थिति",

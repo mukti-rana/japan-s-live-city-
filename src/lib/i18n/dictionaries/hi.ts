@@ -93,6 +93,7 @@ const hi: Record<TranslationKey, string> = {
   "widget.viewAll": "सभी देखें",
   "widget.live": "लाइव",
   "widget.japanMap": "जापान मानचित्र",
+  "widget.emergencySafety": "आपातकालीन और सुरक्षा केंद्र",
   "widget.openFullMap": "पूरा मानचित्र खोलें",
   "widget.exploreJapan": "जापान एक्सप्लोर करें",
   "widget.trainStatus": "ट्रेन स्थिति",

@@ -93,6 +93,7 @@ const ko: Record<TranslationKey, string> = {
   "widget.viewAll": "전체 보기",
   "widget.live": "실시간",
   "widget.japanMap": "일본 지도",
+  "widget.emergencySafety": "긴급·안전 센터",
   "widget.openFullMap": "전체 지도 열기",
   "widget.exploreJapan": "일본 탐험",
   "widget.trainStatus": "전철 상황",

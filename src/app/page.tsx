@@ -11,7 +11,7 @@ import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
 import EventsNearYou from "@/components/events/EventsNearYou";
 import ExploreJapanWidget from "@/components/home/widgets/ExploreJapanWidget";
 import TrendingWidget from "@/components/home/widgets/TrendingWidget";
-import WeatherSunWidget from "@/components/home/widgets/WeatherSunWidget";
+import EmergencyPreview from "@/components/emergency/EmergencyPreview";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import WelcomeGate from "@/components/auth/WelcomeGate";
 import YourDay from "@/components/calendar/YourDay";
@@ -101,13 +101,13 @@ export default function Home() {
           </Cell>
         </div>
 
-        {/* Secondary information */}
+        {/* Trending, and the Emergency & Safety Center preview */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5">
           <Cell delay={0.4}>
             <TrendingWidget />
           </Cell>
           <Cell delay={0.44}>
-            <WeatherSunWidget />
+            <EmergencyPreview />
           </Cell>
         </div>
       </div>

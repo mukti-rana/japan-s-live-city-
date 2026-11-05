@@ -28,6 +28,7 @@ export const E = {
 
   phrasesTitle: { en: "Phrases to show or say", ja: "見せる・伝えるフレーズ", ne: "देखाउने वा भन्ने वाक्य", hi: "दिखाने या बोलने के वाक्य", zh: "可出示或说出的短语", ko: "보여 주거나 말할 문구" },
   phrasesIntro: { en: "Show the large text to someone nearby, or read the pronunciation guide aloud.", ja: "近くの人に大きな文字を見せるか、読み方を声に出してください。" },
+  reading: { en: "Reading in hiragana", ja: "ひらがなの読み", ne: "हिरागानामा पढाइ", hi: "हिरागाना में पढ़ाई", zh: "平假名读音", ko: "히라가나 읽기" },
   showLarge: { en: "Show large", ja: "大きく表示", ne: "ठूलो देखाउनुहोस्", hi: "बड़ा दिखाएँ", zh: "放大显示", ko: "크게 보기" },
   close: { en: "Close", ja: "閉じる", ne: "बन्द", hi: "बंद करें", zh: "关闭", ko: "닫기" },
   sayItLike: { en: "Say it like", ja: "読み方（英語話者向け）", ne: "यसरी भन्नुहोस्", hi: "ऐसे बोलें", zh: "发音参考", ko: "이렇게 읽어요" },

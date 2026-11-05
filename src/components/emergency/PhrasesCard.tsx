@@ -68,7 +68,11 @@ export default function PhrasesCard() {
         {PHRASES.map((p) => (
           <li key={p.id} className="flex flex-col gap-1.5 rounded-xl border border-white/15 bg-black/20 p-3.5">
             <p className="font-jp text-2xl font-bold leading-snug text-foreground">{jaText(p)}</p>
-            <p className="text-sm text-foreground/85">{p.romaji}</p>
+            <p className="font-jp text-sm text-foreground/85">
+              <span className="sr-only">{t("reading")}: </span>
+              {p.kana}
+            </p>
+            <p className="text-sm text-foreground/70">{p.romaji}</p>
             <p className="text-xs text-muted">
               {t("sayItLike")}: <span className="font-medium text-foreground/80">{p.say}</span>
             </p>
@@ -91,6 +95,7 @@ export default function PhrasesCard() {
             <X size={24} aria-hidden="true" />
           </button>
           <p className="font-jp text-5xl font-extrabold leading-tight sm:text-7xl">{jaText(large)}</p>
+          <p className="font-jp text-xl text-neutral-600 sm:text-2xl">{large.kana}</p>
           <p className="text-2xl font-semibold text-neutral-700 sm:text-3xl">{trText(large)}</p>
         </div>
       )}

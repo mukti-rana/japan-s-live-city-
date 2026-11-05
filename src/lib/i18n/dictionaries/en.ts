@@ -91,6 +91,7 @@ const en = {
   "widget.viewAll": "View All",
   "widget.live": "Live",
   "widget.japanMap": "Japan Map",
+  "widget.emergencySafety": "Emergency & Safety Center",
   "widget.openFullMap": "Open full map",
   "widget.exploreJapan": "Explore Japan",
   "widget.trainStatus": "Train Status",

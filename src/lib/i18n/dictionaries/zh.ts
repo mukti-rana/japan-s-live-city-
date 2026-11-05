@@ -93,6 +93,7 @@ const zh: Record<TranslationKey, string> = {
   "widget.viewAll": "查看全部",
   "widget.live": "实时",
   "widget.japanMap": "日本地图",
+  "widget.emergencySafety": "紧急与安全中心",
   "widget.openFullMap": "打开完整地图",
   "widget.exploreJapan": "探索日本",
   "widget.trainStatus": "电车状态",

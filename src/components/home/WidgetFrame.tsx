@@ -10,6 +10,7 @@ const ACCENTS = {
   gold: "bg-gold/15 text-gold",
   azure: "bg-azure/15 text-azure",
   mint: "bg-mint/15 text-mint",
+  red: "bg-red-500/15 text-red-300",
 };
 
 export default function WidgetFrame({

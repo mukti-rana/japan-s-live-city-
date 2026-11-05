@@ -437,6 +437,8 @@ export type LangCode = "en" | "ja" | "ne" | "hi" | "zh" | "ko";
 export interface Phrase {
   id: string;
   ja: string;
+  // The same phrase in hiragana, so it can be read without knowing kanji.
+  kana: string;
   romaji: string;
   // Respelled so an English speaker can say it out loud.
   say: string;
@@ -446,16 +448,17 @@ export interface Phrase {
 }
 
 export const PHRASES: Phrase[] = [
-  { id: "ambulance", ja: "救急車を呼んでください。", romaji: "Kyūkyūsha o yonde kudasai.", say: "kyoo-kyoo-shah oh yohn-deh koo-dah-sigh", tr: { en: "Please call an ambulance.", ne: "कृपया एम्बुलेन्स बोलाउनुहोस्।", hi: "कृपया एम्बुलेंस बुलाइए।", zh: "请叫救护车。", ko: "구급차를 불러 주세요." } },
-  { id: "fire", ja: "火事です！", romaji: "Kaji desu!", say: "kah-jee dess", tr: { en: "There is a fire!", ne: "आगलागी भएको छ!", hi: "आग लगी है!", zh: "着火了！", ko: "불이 났어요!" } },
-  { id: "police", ja: "警察を呼んでください。", romaji: "Keisatsu o yonde kudasai.", say: "kay-sah-tsoo oh yohn-deh koo-dah-sigh", tr: { en: "Please call the police.", ne: "कृपया प्रहरी बोलाउनुहोस्।", hi: "कृपया पुलिस को बुलाइए।", zh: "请报警。", ko: "경찰을 불러 주세요." } },
-  { id: "help", ja: "助けてください。", romaji: "Tasukete kudasai.", say: "tah-soo-keh-teh koo-dah-sigh", tr: { en: "I need help.", ne: "मलाई मद्दत चाहिन्छ।", hi: "मुझे मदद चाहिए।", zh: "我需要帮助。", ko: "도움이 필요해요." } },
-  { id: "location", ja: "場所は＿＿＿です。", romaji: "Basho wa ___ desu.", say: "bah-shoh wah ___ dess", fillIn: true, tr: { en: "My location is ___.", ne: "मेरो स्थान ___ हो।", hi: "मेरा स्थान ___ है।", zh: "我的位置是___。", ko: "제 위치는 ___입니다." } },
-  { id: "earthquake", ja: "地震です！", romaji: "Jishin desu!", say: "jee-sheen dess", tr: { en: "Earthquake!", ne: "भूकम्प!", hi: "भूकंप!", zh: "地震了！", ko: "지진이에요!" } },
-  { id: "sick", ja: "気分が悪いです。", romaji: "Kibun ga warui desu.", say: "kee-bohn gah wah-roo-ee dess", tr: { en: "I feel sick.", ne: "मलाई बिरामी महसुस भइरहेको छ।", hi: "मेरी तबीयत ठीक नहीं है।", zh: "我不舒服。", ko: "몸이 안 좋아요." } },
-  { id: "english", ja: "英語を話せる人はいますか？", romaji: "Eigo o hanaseru hito wa imasu ka?", say: "eh-goh oh hah-nah-seh-roo hee-toh wah ee-mah-soo kah", tr: { en: "Is there someone who speaks English?", ne: "के यहाँ अंग्रेजी बोल्ने कोही हुनुहुन्छ?", hi: "क्या यहाँ कोई अंग्रेज़ी बोलता है?", zh: "有会说英语的人吗？", ko: "영어를 하는 분 계신가요?" } },
-  { id: "shelter", ja: "避難所はどこですか？", romaji: "Hinanjo wa doko desu ka?", say: "hee-nahn-joh wah doh-koh dess kah", tr: { en: "Where is the evacuation shelter?", ne: "आपतकालीन आश्रयस्थल कहाँ छ?", hi: "आश्रय स्थल कहाँ है?", zh: "避难所在哪里？", ko: "대피소가 어디예요?" } },
-  { id: "hospital", ja: "病院はどこですか？", romaji: "Byōin wa doko desu ka?", say: "byoh-een wah doh-koh dess kah", tr: { en: "Where is the hospital?", ne: "अस्पताल कहाँ छ?", hi: "अस्पताल कहाँ है?", zh: "医院在哪里？", ko: "병원이 어디예요?" } },
+  { id: "ambulance", ja: "救急車を呼んでください。", kana: "きゅうきゅうしゃをよんでください。", romaji: "Kyūkyūsha o yonde kudasai.", say: "kyoo-kyoo-shah oh yohn-deh koo-dah-sigh", tr: { en: "Please call an ambulance.", ne: "कृपया एम्बुलेन्स बोलाउनुहोस्।", hi: "कृपया एम्बुलेंस बुलाइए।", zh: "请叫救护车。", ko: "구급차를 불러 주세요." } },
+  { id: "fire", ja: "火事です！", kana: "かじです！", romaji: "Kaji desu!", say: "kah-jee dess", tr: { en: "There is a fire!", ne: "आगलागी भएको छ!", hi: "आग लगी है!", zh: "着火了！", ko: "불이 났어요!" } },
+  { id: "police", ja: "警察を呼んでください。", kana: "けいさつをよんでください。", romaji: "Keisatsu o yonde kudasai.", say: "kay-sah-tsoo oh yohn-deh koo-dah-sigh", tr: { en: "Please call the police.", ne: "कृपया प्रहरी बोलाउनुहोस्।", hi: "कृपया पुलिस को बुलाइए।", zh: "请报警。", ko: "경찰을 불러 주세요." } },
+  { id: "help", ja: "助けてください。", kana: "たすけてください。", romaji: "Tasukete kudasai.", say: "tah-soo-keh-teh koo-dah-sigh", tr: { en: "I need help.", ne: "मलाई मद्दत चाहिन्छ।", hi: "मुझे मदद चाहिए।", zh: "我需要帮助。", ko: "도움이 필요해요." } },
+  { id: "where", ja: "ここはどこですか？", kana: "ここはどこですか？", romaji: "Koko wa doko desu ka?", say: "koh-koh wah doh-koh dess kah", tr: { en: "Where am I?", ne: "म यहाँ कहाँ छु?", hi: "मैं कहाँ हूँ?", zh: "这里是哪里？", ko: "여기가 어디예요?" } },
+  { id: "location", ja: "場所は＿＿＿です。", kana: "ばしょは＿＿＿です。", romaji: "Basho wa ___ desu.", say: "bah-shoh wah ___ dess", fillIn: true, tr: { en: "My location is ___.", ne: "मेरो स्थान ___ हो।", hi: "मेरा स्थान ___ है।", zh: "我的位置是___。", ko: "제 위치는 ___입니다." } },
+  { id: "earthquake", ja: "地震です！", kana: "じしんです！", romaji: "Jishin desu!", say: "jee-sheen dess", tr: { en: "Earthquake!", ne: "भूकम्प!", hi: "भूकंप!", zh: "地震了！", ko: "지진이에요!" } },
+  { id: "sick", ja: "気分が悪いです。", kana: "きぶんがわるいです。", romaji: "Kibun ga warui desu.", say: "kee-bohn gah wah-roo-ee dess", tr: { en: "I feel sick.", ne: "मलाई बिरामी महसुस भइरहेको छ।", hi: "मेरी तबीयत ठीक नहीं है।", zh: "我不舒服。", ko: "몸이 안 좋아요." } },
+  { id: "english", ja: "英語を話せる人はいますか？", kana: "えいごをはなせるひとはいますか？", romaji: "Eigo o hanaseru hito wa imasu ka?", say: "eh-goh oh hah-nah-seh-roo hee-toh wah ee-mah-soo kah", tr: { en: "Is there someone who speaks English?", ne: "के यहाँ अंग्रेजी बोल्ने कोही हुनुहुन्छ?", hi: "क्या यहाँ कोई अंग्रेज़ी बोलता है?", zh: "有会说英语的人吗？", ko: "영어를 하는 분 계신가요?" } },
+  { id: "shelter", ja: "避難所はどこですか？", kana: "ひなんじょはどこですか？", romaji: "Hinanjo wa doko desu ka?", say: "hee-nahn-joh wah doh-koh dess kah", tr: { en: "Where is the evacuation shelter?", ne: "आपतकालीन आश्रयस्थल कहाँ छ?", hi: "आश्रय स्थल कहाँ है?", zh: "避难所在哪里？", ko: "대피소가 어디예요?" } },
+  { id: "hospital", ja: "病院はどこですか？", kana: "びょういんはどこですか？", romaji: "Byōin wa doko desu ka?", say: "byoh-een wah doh-koh dess kah", tr: { en: "Where is the hospital?", ne: "अस्पताल कहाँ छ?", hi: "अस्पताल कहाँ है?", zh: "医院在哪里？", ko: "병원이 어디예요?" } },
 ];
 
 // ── Official links ────────────────────────────────────────────────────────
