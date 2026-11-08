@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import HeroCard from "@/components/home/HeroCard";
-import AlwaysAliveCard from "@/components/home/AlwaysAliveCard";
+import JapanNowCard from "@/components/home/JapanNowCard";
 import LiveWeatherCard from "@/components/home/LiveWeatherCard";
 import LiveCityCamCard from "@/components/home/LiveCityCamCard";
 import Reveal from "@/components/ui/Reveal";
@@ -49,7 +49,7 @@ export default function Home() {
             <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-glass-border bg-panel xl:grid-cols-[3fr_1fr]">
               <HeroCard />
               <div className="hidden border-l border-glass-border xl:block">
-                <AlwaysAliveCard />
+                <JapanNowCard />
               </div>
             </div>
           </Cell>

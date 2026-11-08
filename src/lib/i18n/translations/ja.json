@@ -708,5 +708,14 @@
   "Not in the previous day's top 1,000 articles": "前日の上位1,000記事には入っていませんでした",
   "{n} page views": "{n}ページビュー",
   "Measured: {date} (UTC day)": "集計日：{date}（UTC）",
-  "Retrieved {ago}": "取得：{ago}"
+  "Retrieved {ago}": "取得：{ago}",
+  "Micro-season": "七十二候",
+  "Next: {name} in about {n} days": "次は{name}（あと約{n}日）",
+  "Latest earthquake": "最新の地震",
+  "Weather in {city}": "{city}の天気",
+  "The yen today": "今日の円相場",
+  "Most viewed in Japan": "日本で最も閲覧された記事",
+  "Reported {time} JST": "{time} JST 発表",
+  "European Central Bank via Frankfurter · rates for {date}": "欧州中央銀行（Frankfurter経由）・{date}のレート",
+  "Japan right now": "今の日本"
 }

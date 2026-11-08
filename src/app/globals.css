@@ -389,3 +389,12 @@ html[data-atm-paused="true"] .atm-anim { animation-play-state: paused !important
 @keyframes trend-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .trend-in { animation: trend-in 0.5s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .trend-in { animation: none !important; } }
+
+/* Home "Japan right now" card: the photo drifts very slowly and each fact
+   fades in. Both stop for visitors who ask for less motion. */
+@keyframes jn-drift { from { transform: scale(1.04) translate3d(0, 0, 0); } to { transform: scale(1.14) translate3d(-2%, -1.5%, 0); } }
+@keyframes jn-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.jn-drift { animation: jn-drift 34s ease-in-out infinite alternate; will-change: transform; }
+.jn-fade { animation: jn-fade 0.6s ease-out both; }
+html[data-atm-paused="true"] .jn-drift { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .jn-drift, .jn-fade { animation: none !important; } }
