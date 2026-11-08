@@ -131,7 +131,7 @@ function SeasonParticles({ season }: { season: MicroSeason["season"] }) {
 // "Japan right now": the card on the Home page's top row. The headline is
 // today's micro-season of the traditional calendar (a different poem about
 // nature every five days); underneath, real facts rotate — the latest
-// earthquake, the weather, the yen and the most-viewed article — each with its
+// earthquake, the weather and the most-viewed article — each with its
 // source and time. A fact that can't be fetched is left out, never made up.
 export default function JapanNowCard() {
   const tr = useTranslate();
