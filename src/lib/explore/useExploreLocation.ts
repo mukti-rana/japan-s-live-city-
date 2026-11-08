@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { haversineKm, PREFECTURE_CENTER } from "@/lib/events/geo";
 import { MAP_CITIES } from "@/lib/map/cities";
 import { PREFECTURES, resolvePlace } from "@/lib/news/places";
@@ -169,6 +169,25 @@ export function useExploreLocation() {
     save(window.localStorage, MANUAL_KEY, null);
     setStatus("idle");
   }, [save]);
+
+  // If the visitor already allowed location for this site, use it straight
+  // away — the browser shows no prompt in that case, so nothing is asked
+  // unexpectedly. Otherwise they press "Use my location" once.
+  const hasGps = Boolean(gps);
+  const locateNow = useMyLocation;
+  useEffect(() => {
+    if (hasGps || typeof navigator === "undefined" || !navigator.permissions?.query) return;
+    let cancelled = false;
+    navigator.permissions
+      .query({ name: "geolocation" as PermissionName })
+      .then((r) => {
+        if (!cancelled && r.state === "granted") locateNow();
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [hasGps, locateNow]);
 
   return { location, gps, manual, status, useMyLocation, choosePlace, clear };
 }
