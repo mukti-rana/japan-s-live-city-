@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { CloudSun, Droplets, Eye, MapPin, RefreshCw, Sun as SunIcon, Sunrise, Sunset, Thermometer, Wind } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { CloudSun, Droplets, Eye, MapPin, RefreshCw, Sun as SunIcon, Sunrise, Wind } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
 import ViewAllButton from "@/components/ui/ViewAllButton";
 import WeatherIcon from "@/components/ui/WeatherIcon";
-import DailyForecastList from "@/components/weather/DailyForecastList";
+import WeatherAdvisor from "@/components/home/weather/WeatherAdvisor";
 import WeatherAtmosphere from "@/components/home/weather/WeatherAtmosphere";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -23,14 +23,7 @@ const REFRESH_MS = 10 * 60 * 1000;
 // reading is no longer presented as live.
 const FRESH_MINUTES = 45;
 
-type TabId = "now" | "today" | "7days";
-
 const TEXT = {
-  tabNow: { en: "Now", ja: "現在" },
-  tabToday: { en: "Today", ja: "今日" },
-  tab7: { en: "7-Day Forecast", ja: "7日間" },
-  tab7Short: { en: "7-Day", ja: "7日間" },
-  tabs: { en: "Forecast view", ja: "予報の表示" },
   viewForecast: { en: "View forecast", ja: "予報を見る" },
   city: { en: "City", ja: "都市" },
   myLocation: { en: "My location", ja: "現在地" },
@@ -45,7 +38,6 @@ const TEXT = {
   sunset: { en: "Sunset", ja: "日の入り" },
   high: { en: "High", ja: "最高" },
   low: { en: "Low", ja: "最低" },
-  next24: { en: "Next 24 hours", ja: "今後24時間" },
   now: { en: "Now", ja: "今" },
   japan: { en: "Japan", ja: "日本" },
   live: { en: "Live", ja: "ライブ" },
@@ -184,41 +176,6 @@ function Unit({ children }: { children: ReactNode }) {
   return <span className="text-xs font-medium text-muted">{children}</span>;
 }
 
-function HourlyStrip({ hours, text }: { hours: WeatherSnapshot["hourly"]; text: (k: keyof typeof TEXT) => string }) {
-  return (
-    <div>
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{text("next24")}</p>
-      <ul
-        className="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-2 [scrollbar-color:var(--glass-border)_transparent] [scrollbar-width:thin]"
-        aria-label={text("next24")}
-      >
-        {hours.map((hour, i) => (
-          <li
-            key={hour.time}
-            className={`flex w-[68px] shrink-0 snap-start flex-col items-center gap-1.5 rounded-xl border px-2 py-2.5 text-center transition-colors duration-200 hover:border-azure/30 ${
-              i === 0 ? "border-azure/40 bg-azure/10" : "border-glass-border bg-glass-bg"
-            }`}
-          >
-            <span className={`text-[11px] ${i === 0 ? "font-semibold text-azure" : "text-muted"}`}>
-              {i === 0 ? text("now") : hour.hourLabel}
-            </span>
-            <WeatherIcon icon={hour.icon} size={20} className="text-foreground/90" aria-hidden="true" />
-            <span className="text-sm font-semibold tabular-nums text-foreground">{hour.tempC}°</span>
-            <span className={`flex h-3 items-center gap-0.5 text-[10px] tabular-nums ${hour.precipProbability > 0 ? "text-azure" : "text-transparent"}`}>
-              {hour.precipProbability > 0 && (
-                <>
-                  <Droplets size={9} aria-hidden="true" />
-                  {hour.precipProbability}%
-                </>
-              )}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function CityPicker({
   selected,
   onChange,
@@ -258,9 +215,7 @@ export default function LiveWeatherCard() {
   const text = useInline(TEXT);
   const { status, location, weather: liveWeather } = useLiveLocation();
   const [selected, choose] = useWeatherCity();
-  const [tab, setTab] = useState<TabId>("now");
   const [gaveUpWaiting, setGaveUpWaiting] = useState(false);
-  const tabRefs = useRef<Record<TabId, HTMLButtonElement | null>>({ now: null, today: null, "7days": null });
   const now = useMinuteClock();
 
   // A location prompt left unanswered shouldn't leave the card empty: after a
@@ -303,24 +258,6 @@ export default function LiveWeatherCard() {
   const isFresh = age !== null && age >= -5 && age <= FRESH_MINUTES;
   const night = weather ? isNightNow(weather.sunrise, weather.sunset) : false;
 
-  const tabs: { id: TabId; label: string }[] = [
-    { id: "now", label: text("tabNow") },
-    { id: "today", label: text("tabToday") },
-    { id: "7days", label: text("tab7") },
-  ];
-
-  function onTabKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    let next = index;
-    if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
-    else if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = tabs.length - 1;
-    else return;
-    event.preventDefault();
-    setTab(tabs[next].id);
-    tabRefs.current[tabs[next].id]?.focus();
-  }
-
   return (
     <GlassCard className="flex flex-col gap-4 p-4 sm:p-5">
       {/* Header */}
@@ -339,49 +276,7 @@ export default function LiveWeatherCard() {
         </div>
         <div className="flex items-center gap-2.5">
           <CityPicker selected={prefecture ? selected : "auto"} onChange={choose} text={text} />
-          <ViewAllButton href="/weather" label={text("viewForecast")} />
         </div>
-      </div>
-
-      {/* Segmented control */}
-      <div
-        role="tablist"
-        aria-label={text("tabs")}
-        className="grid grid-cols-3 gap-1 rounded-xl border border-glass-border bg-glass-bg p-1 sm:inline-grid sm:w-fit sm:min-w-[24rem]"
-      >
-        {tabs.map((item, index) => {
-          const active = tab === item.id;
-          return (
-            <button
-              key={item.id}
-              ref={(el) => {
-                tabRefs.current[item.id] = el;
-              }}
-              id={`wx-tab-${item.id}`}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              aria-controls="wx-panel"
-              tabIndex={active ? 0 : -1}
-              onClick={() => setTab(item.id)}
-              onKeyDown={(e) => onTabKey(e, index)}
-              className={`min-h-9 truncate rounded-lg px-3 text-xs font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-                active
-                  ? "bg-gradient-to-r from-azure/25 to-neon-purple/25 text-foreground shadow-[inset_0_0_0_1px_rgba(77,163,255,0.35)]"
-                  : "text-muted hover:text-foreground"
-              }`}
-            >
-              {item.id === "7days" ? (
-                <>
-                  <span className="sm:hidden">{text("tab7Short")}</span>
-                  <span className="hidden sm:inline">{item.label}</span>
-                </>
-              ) : (
-                item.label
-              )}
-            </button>
-          );
-        })}
       </div>
 
       {/* Body */}
@@ -410,7 +305,7 @@ export default function LiveWeatherCard() {
         </div>
       ) : (
         <>
-          <div id="wx-panel" role="tabpanel" aria-labelledby={`wx-tab-${tab}`} className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {/* Left: place, temperature, condition */}
             <section className="relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
               <WeatherAtmosphere icon={weather.icon} isNight={night} />
@@ -439,10 +334,9 @@ export default function LiveWeatherCard() {
               </div>
             </section>
 
-            {/* Right: the metrics for the chosen view */}
-            <div key={tab} className="wx-fade min-w-0 md:min-h-[20rem]">
-              {tab === "now" && (
-                <div className="grid h-full auto-rows-fr grid-cols-2 gap-3">
+            {/* Right: the metrics */}
+            <div className="min-w-0">
+              <div className="grid h-full auto-rows-fr grid-cols-2 gap-3">
                   <Tile
                     icon={<Droplets size={17} aria-hidden="true" />}
                     label={text("humidity")}
@@ -505,70 +399,10 @@ export default function LiveWeatherCard() {
                     className={weather.visibilityKm === null ? "col-span-2" : ""}
                   />
                 </div>
-              )}
-
-              {tab === "today" && (
-                <div className="grid h-full auto-rows-fr grid-cols-2 gap-3">
-                  <Tile
-                    icon={<SunIcon size={17} aria-hidden="true" />}
-                    label={text("high")}
-                    value={
-                      <>
-                        {weather.todayHigh}
-                        <Unit>°C</Unit>
-                      </>
-                    }
-                  />
-                  <Tile
-                    icon={<Thermometer size={17} aria-hidden="true" />}
-                    label={text("low")}
-                    value={
-                      <>
-                        {weather.todayLow}
-                        <Unit>°C</Unit>
-                      </>
-                    }
-                  />
-                  <Tile
-                    icon={<Droplets size={17} aria-hidden="true" />}
-                    label={text("rain")}
-                    value={
-                      <>
-                        {weather.todayPrecipProbability}
-                        <Unit>%</Unit>
-                      </>
-                    }
-                    bar={weather.todayPrecipProbability}
-                  />
-                  <Tile
-                    icon={<SunIcon size={17} aria-hidden="true" />}
-                    label={text("uv")}
-                    value={weather.todayUvIndex}
-                    note={text(uvKey(weather.todayUvIndex))}
-                    bar={(weather.todayUvIndex / 11) * 100}
-                  />
-                  <Tile icon={<Sunrise size={17} aria-hidden="true" />} label={text("sunrise")} value={weather.sunrise} />
-                  <Tile icon={<Sunset size={17} aria-hidden="true" />} label={text("sunset")} value={weather.sunset} />
-                </div>
-              )}
-
-              {tab === "7days" && (
-                <div className="flex h-full flex-col justify-center rounded-2xl border border-glass-border bg-glass-bg px-4 py-1.5">
-                  <DailyForecastList
-                    today={{
-                      high: weather.todayHigh,
-                      low: weather.todayLow,
-                      icon: weather.icon,
-                      precipProbability: weather.todayPrecipProbability,
-                    }}
-                    days={weather.forecast}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
-          <HourlyStrip hours={weather.hourly} text={text} />
+          <WeatherAdvisor weather={weather} isNight={night} uvLabel={text(uvKey(weather.todayUvIndex))} />
 
           {/* Freshness, stated plainly */}
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted" role="status">
@@ -583,6 +417,10 @@ export default function LiveWeatherCard() {
             )}
             {showingFallback && <span>{text("fallback")}</span>}
           </p>
+
+          <div className="flex justify-end">
+            <ViewAllButton href="/weather" label={text("viewForecast")} />
+          </div>
         </>
       )}
     </GlassCard>

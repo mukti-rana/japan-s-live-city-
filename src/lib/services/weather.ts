@@ -63,6 +63,8 @@ export interface HourlyPoint {
   tempC: number;
   icon: WeatherIconKind;
   precipProbability: number;
+  // Expected rain/snow in that hour, in millimetres (null if the provider omits it).
+  precipMm: number | null;
 }
 
 export interface WeatherSnapshot {
@@ -88,7 +90,7 @@ export interface WeatherSnapshot {
 const WEEKDAY_FORMAT = new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: "Asia/Tokyo" });
 
 export async function getWeather(lat: number, lon: number): Promise<WeatherSnapshot> {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,visibility&hourly=temperature_2m,weather_code,precipitation_probability&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,uv_index_max&forecast_days=7&timezone=Asia%2FTokyo`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,visibility&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,uv_index_max&forecast_days=7&timezone=Asia%2FTokyo`;
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) {
@@ -110,6 +112,7 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
       temperature_2m: number[];
       weather_code: number[];
       precipitation_probability: number[];
+      precipitation?: (number | null)[];
     };
     daily: {
       time: string[];
@@ -155,6 +158,7 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherSnaps
       tempC: i === 0 ? Math.round(data.current.temperature_2m) : Math.round(data.hourly.temperature_2m[idx]),
       icon: iconKindFor(data.hourly.weather_code[idx]),
       precipProbability: data.hourly.precipitation_probability[idx] ?? 0,
+      precipMm: typeof data.hourly.precipitation?.[idx] === "number" ? (data.hourly.precipitation[idx] as number) : null,
     };
   });
 
