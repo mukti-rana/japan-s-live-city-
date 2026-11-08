@@ -2,20 +2,23 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, RefreshCw, Search, ShieldAlert, X } from "lucide-react";
+import { AlertTriangle, RefreshCw, Search, ShieldAlert, SlidersHorizontal, X } from "lucide-react";
 import NewsCard from "@/components/news/NewsCard";
 import NewsModal from "@/components/news/NewsModal";
+import BreakingStrip from "@/components/news/BreakingStrip";
+import LocalSection from "@/components/news/LocalSection";
+import NewsFilters from "@/components/news/NewsFilters";
 import PlacePicker from "@/components/news/PlacePicker";
 import { CardSkeleton, FeaturedSkeleton } from "@/components/news/NewsSkeleton";
-import { CATEGORIES, type CategoryId } from "@/lib/news/categories";
-import { DEFAULT_CATEGORY, DEFAULT_FILTERS, gridParams, pageQuery, type HubFilters } from "@/lib/news/hubFilters";
+import { CATEGORIES } from "@/lib/news/categories";
+import { DEFAULT_FILTERS, activeFilterCount, gridParams, pageQuery, type HubFilters } from "@/lib/news/hubFilters";
 import { PREFECTURES } from "@/lib/news/places";
 import { SOURCE_OPTIONS } from "@/lib/news/sources";
 import { timeAgo, toQueryString, useNewsFeed, useNewsPlace, useResolvedImages, type NewsParams } from "@/lib/news/useNews";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { NewsItem, NewsResult } from "@/lib/news/query";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
-import { localize, translate } from "@/lib/i18n/inline";
+import { localize, useTranslate } from "@/lib/i18n/inline";
 
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
@@ -23,31 +26,6 @@ interface Loaded {
   key: string;
   pages: NewsResult[];
   failed?: boolean;
-}
-
-function Select({
-  label,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="flex min-w-0 flex-col gap-1 text-[11px] font-medium text-muted">
-      {label}
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-10 w-full rounded-xl border border-glass-border bg-panel px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-      >
-        {children}
-      </select>
-    </label>
-  );
 }
 
 export default function NewsHub({
@@ -58,7 +36,9 @@ export default function NewsHub({
   initialResult: NewsResult | null;
 }) {
   const { t, language } = useLanguage();
+  const tr = useTranslate();
   const placeInfo = useNewsPlace();
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<HubFilters>(initialFilters);
   const [qInput, setQInput] = useState(initialFilters.q);
   const [openItem, setOpenItem] = useState<NewsItem | null>(null);
@@ -73,7 +53,7 @@ export default function NewsHub({
   const loadedKeyRef = useRef<string | null>(initialKey);
 
   // Local news needs a place; every other category can load straight away.
-  const waitingForPlace = filters.cat === "local" && !placeInfo.place;
+  const waitingForPlace = filters.loc === "near" && !placeInfo.place;
   const baseParams = useMemo(() => gridParams(filters, placeInfo.place), [filters, placeInfo.place]);
   const baseKey = waitingForPlace ? null : toQueryString(baseParams);
 
@@ -179,32 +159,47 @@ export default function NewsHub({
     setFilters(DEFAULT_FILTERS);
   }
 
-  const categoryLabel = (id: CategoryId) => t(CATEGORIES.find((c) => c.id === id)!.labelKey);
+  const topicLabel = (id: string) => t(CATEGORIES.find((c) => c.id === id)!.labelKey);
   const prefLabel = (id: string) => {
     const p = PREFECTURES.find((x) => x.id === id);
-    return p ? (localize(p.en, p.ja, language)) : id;
+    return p ? localize(p.en, p.ja, language) : id;
   };
   const sourceName = (id: string) => SOURCE_OPTIONS.find((s) => s.id === id)?.name ?? id;
+  const rangeLabel = filters.range === "custom" ? [filters.from, filters.to].filter(Boolean).join(" → ") : filters.range === "today" ? tr("Today") : tr("This week");
 
   const chips: { key: string; label: string; clear: () => void }[] = [];
-  if (filters.cat !== DEFAULT_CATEGORY) chips.push({ key: "cat", label: categoryLabel(filters.cat), clear: () => update({ cat: DEFAULT_CATEGORY }) });
-  if (filters.pref) chips.push({ key: "pref", label: `${t("news.hub.location")}: ${prefLabel(filters.pref)}`, clear: () => update({ pref: "" }) });
+  if (filters.topic !== "all") chips.push({ key: "topic", label: topicLabel(filters.topic), clear: () => update({ topic: "all" }) });
+  if (filters.loc) chips.push({ key: "loc", label: `${t("news.hub.location")}: ${filters.loc === "near" ? (placeInfo.place ?? tr("Near Me")) : prefLabel(filters.loc)}`, clear: () => update({ loc: "" }) });
   if (filters.src) chips.push({ key: "src", label: `${t("news.hub.source")}: ${sourceName(filters.src)}`, clear: () => update({ src: "" }) });
   if (filters.lang) chips.push({ key: "lang", label: `${t("news.hub.language")}: ${t(`news.lang.${filters.lang}` as TranslationKey)}`, clear: () => update({ lang: "" }) });
-  if (filters.range) chips.push({ key: "range", label: t(`news.range.${filters.range}` as TranslationKey), clear: () => update({ range: "" }) });
+  if (filters.range) chips.push({ key: "range", label: rangeLabel, clear: () => update({ range: "", from: "", to: "" }) });
   if (filters.video) chips.push({ key: "video", label: t("news.hub.videoNews"), clear: () => update({ video: false }) });
   if (filters.q) chips.push({ key: "q", label: `“${filters.q}”`, clear: () => { setQInput(""); update({ q: "" }); } });
 
+  const active = activeFilterCount(filters);
   const fetchedAt = lastPage?.fetchedAt;
   const stale = lastPage ? lastPage.ageMs > STALE_AFTER_MS : false;
   const downSources = lastPage?.sources.filter((s) => !s.ok) ?? [];
-  const showHazardNote = filters.cat === "weather" || filters.cat === "earthquake";
+  const showHazardNote = filters.topic === "weather" || filters.topic === "earthquake";
+  // The local row and the breaking bar belong to the plain, unfiltered view.
+  const plainView = active === 0 && !filters.q;
+
+  // First page = "Latest news"; everything loaded after it = "Continue discovering".
+  const firstIds = new Set(pages[0]?.items.map((i) => i.id) ?? []);
+  const later = rest.filter((i) => !firstIds.has(i.id));
+  const first = rest.filter((i) => firstIds.has(i.id));
+
+  const scopes: { id: HubFilters["scope"]; label: string }[] = [
+    { id: "all", label: tr("All News") },
+    { id: "japan", label: tr("Japan") },
+    { id: "world", label: tr("World") },
+  ];
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Search + filters */}
-      <div className="flex flex-col gap-3">
-        <div className="relative">
+    <div className="flex flex-col gap-6">
+      {/* Search and the one Filters button */}
+      <div className="flex items-center gap-2.5">
+        <div className="relative min-w-0 flex-1">
           <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
           <input
             type="search"
@@ -215,77 +210,43 @@ export default function NewsHub({
             className="h-11 w-full rounded-xl border border-glass-border bg-glass-bg pl-10 pr-4 text-base text-foreground outline-none placeholder:text-muted focus:border-azure/50 focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm"
           />
         </div>
-
-        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-          <Select label={t("news.hub.location")} value={filters.pref} onChange={(v) => update({ pref: v })}>
-            <option value="">{t("news.hub.anyLocation")}</option>
-            {PREFECTURES.map((p) => (
-              <option key={p.id} value={p.id}>
-                {localize(p.en, p.ja, language)}
-              </option>
-            ))}
-          </Select>
-          <Select label={t("news.hub.source")} value={filters.src} onChange={(v) => update({ src: v })}>
-            <option value="">{t("news.hub.allSources")}</option>
-            {SOURCE_OPTIONS.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </Select>
-          <Select label={t("news.hub.language")} value={filters.lang} onChange={(v) => update({ lang: v })}>
-            <option value="">{t("news.hub.allLanguages")}</option>
-            <option value="en">{t("news.lang.en")}</option>
-            <option value="ja">{t("news.lang.ja")}</option>
-          </Select>
-          <Select label={t("news.hub.date")} value={filters.range} onChange={(v) => update({ range: v })}>
-            <option value="">{t("news.hub.anyTime")}</option>
-            <option value="24h">{t("news.range.24h")}</option>
-            <option value="7d">{t("news.range.7d")}</option>
-            <option value="30d">{t("news.range.30d")}</option>
-          </Select>
-        </div>
-
-        {/* Categories */}
-        <div
-          role="group"
-          aria-label={translate("Categories", language)}
-          className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
+        <button
+          type="button"
+          onClick={() => setFiltersOpen(true)}
+          aria-haspopup="dialog"
+          className="relative flex h-11 shrink-0 items-center gap-2 rounded-xl border border-azure/40 bg-azure/10 px-4 text-sm font-semibold text-azure transition-colors hover:bg-azure/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
         >
-          {CATEGORIES.map((c) => {
-            const active = filters.cat === c.id;
-            return (
-              <button
-                key={c.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => update({ cat: c.id })}
-                className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-                  active
-                    ? "border-azure/50 bg-azure/20 text-azure"
-                    : "border-glass-border bg-glass-bg text-foreground/75 hover:border-white/25 hover:text-foreground"
-                }`}
-              >
-                {t(c.labelKey)}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            aria-pressed={filters.video}
-            onClick={() => update({ video: !filters.video })}
-            className={`shrink-0 snap-start whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-              filters.video
-                ? "border-sakura/50 bg-sakura/20 text-sakura"
-                : "border-glass-border bg-glass-bg text-foreground/75 hover:border-white/25 hover:text-foreground"
-            }`}
-          >
-            ▶ {t("news.hub.videoNews")}
-          </button>
-        </div>
+          <SlidersHorizontal size={16} aria-hidden="true" />
+          {tr("Filters")}
+          {active > 0 && (
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-neon-purple px-1 text-[10px] font-bold text-white" aria-label={tr("{n} filters applied").replace("{n}", String(active))}>
+              {active}
+            </span>
+          )}
+        </button>
       </div>
 
-      {filters.cat === "local" && (
+      {chips.length > 0 && (
+        <div className="-mt-2 flex flex-wrap items-center gap-2" aria-live="polite">
+          {chips.map((chip) => (
+            <button key={chip.key} type="button" onClick={chip.clear} className="flex items-center gap-1 rounded-full bg-azure/15 px-2.5 py-1 text-[11px] font-medium text-azure hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              {chip.label}
+              <X size={11} aria-hidden="true" />
+              <span className="sr-only">{tr("Remove filter")}</span>
+            </button>
+          ))}
+          <button type="button" onClick={clearAll} className="text-[11px] font-medium text-muted underline-offset-2 hover:text-foreground hover:underline">
+            {tr("Reset filters")}
+          </button>
+        </div>
+      )}
+
+      {plainView && <BreakingStrip onOpen={setOpenItem} />}
+
+      {/* A — Latest near you */}
+      {plainView && <LocalSection placeInfo={placeInfo} onOpen={setOpenItem} onSeeAll={() => update({ loc: "near" })} />}
+
+      {filters.loc === "near" && (
         <div className="rounded-2xl border border-glass-border bg-glass-bg p-4">
           <PlacePicker current={placeInfo} />
         </div>
@@ -303,126 +264,152 @@ export default function NewsHub({
         </div>
       )}
 
-      {/* What's selected, and how many results */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-live="polite">
-        {chips.length > 0 && <span className="text-[11px] font-medium text-muted">{t("news.hub.showing")}:</span>}
-        {chips.map((chip) => (
-          <button
-            key={chip.key}
-            type="button"
-            onClick={chip.clear}
-            className="flex items-center gap-1 rounded-full bg-azure/15 px-2.5 py-1 text-[11px] font-medium text-azure hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-          >
-            {chip.label}
-            <X size={11} aria-hidden="true" />
-          </button>
-        ))}
-        {chips.length > 0 && (
-          <button type="button" onClick={clearAll} className="text-[11px] font-medium text-muted underline-offset-2 hover:text-foreground hover:underline">
-            {t("news.hub.clear")}
-          </button>
-        )}
-        {lastPage && !loading && (
-          <span className="ml-auto text-[11px] text-muted">
-            {lastPage.total} {t("news.hub.stories")}
-            {fetchedAt ? ` · ${t("news.hub.updated")} ${timeAgo(new Date(fetchedAt).toISOString(), language)}` : ""}
-            {stale ? ` · ${t("news.hub.stale")}` : ""}
-          </span>
-        )}
-      </div>
-
-      {/* Results */}
-      {waitingForPlace ? (
-        placeInfo.locating ? (
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </div>
-        ) : (
-          <p className="rounded-2xl border border-dashed border-glass-border p-6 text-center text-sm text-muted">{t("news.place.needed")}</p>
-        )
-      ) : loading ? (
-        <div className="flex flex-col gap-4" role="status" aria-label={t("news.hub.loadingMore")}>
-          <FeaturedSkeleton />
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {Array.from({ length: 6 }, (_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        </div>
-      ) : failed ? (
-        <div role="alert" className="flex flex-col items-center gap-3 rounded-2xl border border-sakura/25 bg-sakura/5 p-8 text-center">
-          <AlertTriangle className="text-sakura" size={26} aria-hidden="true" />
+      {/* B — Latest news */}
+      <section aria-label={tr("Latest news")} className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="font-semibold text-foreground">{t("news.hub.errorTitle")}</p>
-            <p className="mt-1 text-sm text-muted">{t("news.hub.errorHelp")}</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              loadedKeyRef.current = null;
-              setLoaded(null);
-              setAttempt((n) => n + 1);
-            }}
-            className="flex items-center gap-1.5 rounded-full bg-sakura/20 px-4 py-2 text-sm font-semibold text-sakura hover:bg-sakura/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sakura"
-          >
-            <RefreshCw size={14} aria-hidden="true" />
-            {t("news.hub.retry")}
-          </button>
-        </div>
-      ) : items.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-glass-border p-8 text-center">
-          <p className="font-semibold text-foreground">{t("news.hub.emptyTitle")}</p>
-          <p className="text-sm text-muted">{t("news.hub.emptyHelp")}</p>
-          {chips.length > 0 && (
-            <button type="button" onClick={clearAll} className="mt-2 rounded-full bg-azure/15 px-4 py-2 text-sm font-semibold text-azure hover:bg-azure/25">
-              {t("news.hub.clear")}
-            </button>
-          )}
-        </div>
-      ) : (
-        <>
-          {featured && <NewsCard item={featured} variant="featured" onOpen={setOpenItem} showLevel={filters.cat === "local"} priority />}
-
-          {videos.data && videos.data.items.length > 0 && (
-            <section aria-label={t("news.hub.videoNews")} className="flex flex-col gap-3">
-              <h2 className="text-sm font-semibold text-foreground">▶ {t("news.hub.videoNews")}</h2>
-              <ul className="-mx-3 flex snap-x scroll-pl-3 gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:px-0">
-                {videos.data.items.map((v) => (
-                  <li key={v.id} className="w-64 shrink-0 snap-start sm:w-72">
-                    <NewsCard item={v} variant="card" onOpen={setOpenItem} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {rest.map((item) => (
-              <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.cat === "local"} />
-            ))}
-          </div>
-
-          <div ref={sentinelRef} className="flex flex-col items-center gap-2 py-2">
-            {lastPage?.nextOffset ? (
-              <button
-                type="button"
-                onClick={() => void loadMore()}
-                disabled={loadingMore}
-                className="rounded-full border border-glass-border bg-glass-bg px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-azure/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure disabled:opacity-60"
-              >
-                {loadingMore ? t("news.hub.loadingMore") : t("news.hub.loadMore")}
-              </button>
-            ) : null}
-            {moreFailed && (
-              <p role="alert" className="text-xs text-sakura">
-                {t("news.hub.errorTitle")}
+            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">{filters.video ? t("news.hub.videoNews") : tr("Latest news")}</h2>
+            {lastPage && !loading && (
+              <p className="mt-0.5 text-[11px] text-muted" aria-live="polite">
+                {lastPage.total} {t("news.hub.stories")}
+                {fetchedAt ? ` · ${tr("Checked")} ${timeAgo(new Date(fetchedAt).toISOString(), language)}` : ""}
+                {stale ? ` · ${t("news.hub.stale")}` : ""}
               </p>
             )}
           </div>
-        </>
-      )}
+          <div role="group" aria-label={tr("Show")} className="inline-flex rounded-2xl border border-glass-border bg-glass-bg p-1">
+            {scopes.map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                aria-pressed={filters.scope === s.id}
+                onClick={() => update({ scope: s.id })}
+                className={`min-h-9 rounded-xl px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${filters.scope === s.id ? "bg-gradient-to-r from-azure/25 to-neon-purple/25 text-foreground shadow-[inset_0_0_0_1px_rgba(77,163,255,0.35)]" : "text-muted hover:text-foreground"}`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {waitingForPlace ? (
+          placeInfo.locating ? (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </div>
+          ) : (
+            <p className="rounded-2xl border border-dashed border-glass-border p-6 text-center text-sm text-muted">{t("news.place.needed")}</p>
+          )
+        ) : loading ? (
+          <div className="flex flex-col gap-4" role="status" aria-label={t("news.hub.loadingMore")}>
+            <FeaturedSkeleton />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 6 }, (_, i) => (
+                <CardSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        ) : failed ? (
+          <div role="alert" className="flex flex-col items-center gap-3 rounded-2xl border border-sakura/25 bg-sakura/5 p-8 text-center">
+            <AlertTriangle className="text-sakura" size={26} aria-hidden="true" />
+            <div>
+              <p className="font-semibold text-foreground">{t("news.hub.errorTitle")}</p>
+              <p className="mt-1 text-sm text-muted">{t("news.hub.errorHelp")}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                loadedKeyRef.current = null;
+                setLoaded(null);
+                setAttempt((n) => n + 1);
+              }}
+              className="flex items-center gap-1.5 rounded-full bg-sakura/20 px-4 py-2 text-sm font-semibold text-sakura hover:bg-sakura/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sakura"
+            >
+              <RefreshCw size={14} aria-hidden="true" />
+              {t("news.hub.retry")}
+            </button>
+          </div>
+        ) : items.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-glass-border p-8 text-center">
+            <p className="font-semibold text-foreground">{t("news.hub.emptyTitle")}</p>
+            <p className="text-sm text-muted">{t("news.hub.emptyHelp")}</p>
+            {chips.length > 0 && (
+              <button type="button" onClick={clearAll} className="mt-2 rounded-full bg-azure/15 px-4 py-2 text-sm font-semibold text-azure hover:bg-azure/25">
+                {tr("Reset filters")}
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {featured && <NewsCard item={featured} variant="featured" onOpen={setOpenItem} showLevel={filters.loc === "near"} priority />}
+
+            {videos.data && videos.data.items.length > 0 && (
+              <section aria-label={t("news.hub.videoNews")} className="flex flex-col gap-2.5">
+                <h3 className="text-sm font-semibold text-foreground">▶ {t("news.hub.videoNews")}</h3>
+                <ul className="-mx-3 flex snap-x scroll-pl-3 gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:px-0">
+                  {videos.data.items.map((v) => (
+                    <li key={v.id} className="w-60 shrink-0 snap-start sm:w-64">
+                      <NewsCard item={v} variant="card" onOpen={setOpenItem} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {first.map((item) => (
+                <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
+              ))}
+            </div>
+
+            {/* C — Continue discovering */}
+            {(later.length > 0 || lastPage?.nextOffset) && (
+              <div className="flex flex-col gap-4 border-t border-glass-border pt-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground sm:text-2xl">{tr("Continue discovering")}</h2>
+                  <p className="mt-0.5 text-xs text-muted">{tr("More stories from other prefectures, major cities and the world, newest first. Each story appears once.")}</p>
+                </div>
+                {later.length > 0 && (
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {later.map((item) => (
+                      <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
+                    ))}
+                  </div>
+                )}
+                {loadingMore && (
+                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-label={t("news.hub.loadingMore")}>
+                    <CardSkeleton />
+                    <CardSkeleton />
+                    <CardSkeleton />
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div ref={sentinelRef} className="flex flex-col items-center gap-2 py-2">
+              {lastPage?.nextOffset ? (
+                <button
+                  type="button"
+                  onClick={() => void loadMore()}
+                  disabled={loadingMore}
+                  className="rounded-full border border-glass-border bg-glass-bg px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-azure/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure disabled:opacity-60"
+                >
+                  {loadingMore ? t("news.hub.loadingMore") : t("news.hub.loadMore")}
+                </button>
+              ) : (
+                later.length > 0 && <p className="text-xs text-muted">{tr("You're all caught up.")}</p>
+              )}
+              {moreFailed && (
+                <p role="alert" className="text-xs text-sakura">
+                  {t("news.hub.errorTitle")}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+      </section>
 
       {downSources.length > 0 && (
         <p className="text-[11px] text-sakura">
@@ -432,6 +419,7 @@ export default function NewsHub({
 
       <p className="text-[11px] leading-relaxed text-muted">{t("news.hub.credit")}</p>
 
+      <NewsFilters open={filtersOpen} onClose={() => setFiltersOpen(false)} filters={filters} onChange={update} onReset={clearAll} placeInfo={placeInfo} />
       <NewsModal item={openItem} onClose={() => setOpenItem(null)} />
     </div>
   );

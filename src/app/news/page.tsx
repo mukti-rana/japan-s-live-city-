@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Reveal from "@/components/ui/Reveal";
-import T from "@/components/i18n/T";
 import NewsHub from "@/components/news/NewsHub";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 import { filtersFromParams, gridParams } from "@/lib/news/hubFilters";
@@ -20,7 +19,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/news">) {
   // The first page is fetched here so it arrives with the HTML. "Local" needs
   // the visitor's place, which only the browser knows, so it loads there.
   const initialResult: NewsResult | null =
-    filters.cat === "local"
+    filters.loc === "near"
       ? null
       : await queryNews(queryFromParams(new URLSearchParams(toQueryString(gridParams(filters, null))))).catch(() => null);
 
@@ -29,12 +28,12 @@ export default async function NewsPage({ searchParams }: PageProps<"/news">) {
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-5">
         <Reveal>
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-sakura"><Tx en="🇯🇵 Live" /></p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              <T k="news.pageTitle" />
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sakura"><Tx en="Live News" /></p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              <Tx en="Stay informed. Stay connected." />
             </h1>
             <p className="mt-1.5 max-w-xl text-sm text-muted">
-              <T k="news.pageSubtitle" />
+              <Tx en="The latest stories from your area, Japan and around the world." />
             </p>
           </div>
         </Reveal>

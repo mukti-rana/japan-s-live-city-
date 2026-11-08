@@ -5,6 +5,7 @@ import { ExternalLink, MapPin, Play } from "lucide-react";
 import CategoryVisual, { useVisualLabel, type VisualTopic } from "@/components/news/CategoryVisual";
 import NewsImage, { isKnownBadImage } from "@/components/news/NewsImage";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useTranslate } from "@/lib/i18n/inline";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import { placeLabel, timeAgo } from "@/lib/news/useNews";
 import type { NewsItem } from "@/lib/news/query";
@@ -43,8 +44,16 @@ function PlayBadge({ large }: { large?: boolean }) {
 
 export function Meta({ item, showLevel }: { item: NewsItem; showLevel?: boolean }) {
   const { language, t } = useLanguage();
+  const tr = useTranslate();
   const topic = useTopicLabel()(item.topic);
   const place = item.places[0] ? placeLabel(item.places[0], language) : null;
+  // "New" only for stories the publisher itself dated within the last 3 hours;
+  // anything older is shown by its real age, however recently we fetched it.
+  const [now] = useState(() => Date.now());
+  const isNew = now - new Date(item.publishedAt).getTime() < 3 * 3600_000;
+  // Headlines are shown as the publisher wrote them; say so when that is not
+  // the language the site is in.
+  const original = item.language !== language ? item.language : null;
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted">
       <span className="font-medium text-foreground/85">{item.sourceName}</span>
@@ -52,6 +61,8 @@ export function Meta({ item, showLevel }: { item: NewsItem; showLevel?: boolean 
       <time dateTime={item.publishedAt} title={new Date(item.publishedAt).toLocaleString(language)}>
         {timeAgo(item.publishedAt, language)}
       </time>
+      {isNew && <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-semibold uppercase text-mint">{tr("New")}</span>}
+      {original && <span className="rounded-full bg-glass-bg-strong px-2 py-0.5 text-[10px] font-medium text-foreground/70">{original === "ja" ? tr("Original: Japanese") : tr("Original: English")}</span>}
       {topic && <span className="rounded-full bg-azure/15 px-2 py-0.5 text-[10px] font-medium text-azure">{topic}</span>}
       {place && (
         <span className="flex items-center gap-0.5 rounded-full bg-sakura/15 px-2 py-0.5 text-[10px] font-medium text-sakura">

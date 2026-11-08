@@ -13,6 +13,13 @@ export interface NewsQuery {
   range?: string;
   // A place *name* ("Osaka", "Kobe"). Never coordinates.
   place?: string;
+  // Narrow whatever category is chosen to stories near `place` (Near Me).
+  local?: boolean;
+  // Japan or international stories, independent of the topic category.
+  scope?: "japan" | "international";
+  // A custom date range, as YYYY-MM-DD in Japan time (inclusive).
+  from?: string;
+  to?: string;
   // Prefecture id: only stories that name this prefecture, in any category.
   pref?: string;
   videoOnly?: boolean;
@@ -53,6 +60,14 @@ const RANGE_MS: Record<string, number> = {
 };
 
 const MAX_LIMIT = 30;
+const JST_OFFSET = "+09:00";
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+// Midnight at the start of today in Japan.
+function startOfTodayJst(): number {
+  const day = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tokyo" }).format(new Date());
+  return new Date(`${day}T00:00:00${JST_OFFSET}`).getTime();
+}
 
 function whereOf(a: Article): string | null {
   const id = a.places[0];
@@ -63,21 +78,28 @@ export async function queryNews(query: NewsQuery): Promise<NewsResult> {
   const snapshot = await getNewsSnapshot();
   const category = getCategory(query.cat ?? "all") ?? getCategory("all")!;
   const needle = query.q?.trim().toLowerCase();
-  const since = query.range && RANGE_MS[query.range] ? Date.now() - RANGE_MS[query.range] : 0;
-  const place = category.id === "local" ? resolvePlace(query.place) : null;
+  let since = query.range === "today" ? startOfTodayJst() : query.range && RANGE_MS[query.range] ? Date.now() - RANGE_MS[query.range] : 0;
+  let until = Infinity;
+  if (query.from && DAY.test(query.from)) since = Math.max(since, new Date(`${query.from}T00:00:00${JST_OFFSET}`).getTime());
+  if (query.to && DAY.test(query.to)) until = new Date(`${query.to}T23:59:59${JST_OFFSET}`).getTime();
+  const wantsPlace = category.id === "local" || Boolean(query.local);
+  const place = wantsPlace ? resolvePlace(query.place) : null;
 
   let items: NewsItem[] = [];
-  const needsPlace = category.id === "local" && !place;
+  const needsPlace = wantsPlace && !place;
 
   if (!needsPlace) {
     for (const article of snapshot.articles) {
       if (query.videoOnly && !article.video) continue;
       if (query.noVideo && article.video) continue;
       if (!category.match(article)) continue;
+      if (query.scope && article.scope !== query.scope) continue;
       if (query.pref && !article.places.includes(query.pref)) continue;
       if (query.src && article.sourceId !== query.src) continue;
       if (query.lang && (query.lang === "en" || query.lang === "ja") && article.language !== query.lang) continue;
-      if (since && new Date(article.publishedAt).getTime() < since) continue;
+      const published = new Date(article.publishedAt).getTime();
+      if (since && published < since) continue;
+      if (published > until) continue;
       if (needle && !`${article.title} ${article.summary ?? ""}`.toLowerCase().includes(needle)) continue;
 
       const item: NewsItem = { ...article, where: whereOf(article) };
@@ -137,6 +159,10 @@ export function queryFromParams(params: Record<string, string | string[] | undef
     lang: get("lang"),
     range: get("range"),
     place: get("place"),
+    local: get("local") === "1",
+    scope: get("scope") === "japan" || get("scope") === "international" ? (get("scope") as "japan" | "international") : undefined,
+    from: get("from"),
+    to: get("to"),
     pref: get("pref"),
     videoOnly: get("video") === "1",
     noVideo: get("video") === "0",
