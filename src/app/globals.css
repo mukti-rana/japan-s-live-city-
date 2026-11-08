@@ -386,3 +386,6 @@ html[data-atm-paused="true"] .atm-anim { animation-play-state: paused !important
 @keyframes atm-in { from { opacity: 0; } to { opacity: 1; } }
 .atm-in { animation: atm-in 1.4s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .atm-in { animation: none !important; } }
+@keyframes trend-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.trend-in { animation: trend-in 0.5s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .trend-in { animation: none !important; } }

@@ -18,17 +18,25 @@ export interface RadarTopic {
   names: Partial<Record<"en" | "zh" | "ko" | "hi" | "ne", string>>;
   description: string | null; // Wikipedia's one-line description (Japanese)
   summary: { ja: string | null; en: string | null };
-  image: { url: string; page: string } | null;
+  // The picture is Wikipedia's lead image for the article; width/height let
+  // the page frame it without cropping faces (see TrendImage).
+  image: { url: string; page: string; width: number; height: number } | null;
   category: TrendCategory | null;
   status: TrendStatus | null;
   views: number;
+  // The same article's figures for the day before, when it was in that day's
+  // top 1000 (otherwise null). Used only for real, stated comparisons.
+  previous: { views: number; rank: number } | null;
   url: string;
 }
 
 export interface TrendRadarData {
   items: RadarTopic[];
-  // The day the pageview counts are for (YYYY-MM-DD, UTC) and when we fetched.
+  // When the source measured: the UTC day the page views are counted over
+  // (YYYY-MM-DD). Distinct from `fetchedAt`, when LIVE CITY retrieved it.
   dataDate: string;
+  // The day before it, which the comparisons use (null if it wasn't available).
+  previousDate: string | null;
   fetchedAt: number;
   // True when this is the last good result kept after a failed refresh.
   stale: boolean;
@@ -36,7 +44,9 @@ export interface TrendRadarData {
 
 const UA = { "Api-User-Agent": "LiveCityJapan/1.0 (educational project; trend radar)" };
 const TTL_MS = 60 * 60 * 1000;
-const COUNT = 24;
+const COUNT = 40;
+// Wikipedia answers extract requests for at most 20 titles at a time.
+const CHUNK = 20;
 const LANGS = ["en", "zh", "ko", "hi", "ne"] as const;
 
 // ── Category rules over Wikipedia's own category names and description ────
@@ -78,7 +88,7 @@ type Page = {
   title: string;
   description?: string;
   extract?: string;
-  thumbnail?: { source: string };
+  thumbnail?: { source: string; width: number; height: number };
   categories?: { title: string }[];
   langlinks?: { lang: string; "*": string }[];
 };
@@ -120,6 +130,16 @@ async function latestAvailable(): Promise<{ date: Date; list: Awaited<ReturnType
   throw lastError;
 }
 
+// A query over many titles, split into chunks the API accepts, merged.
+async function wikiQueryAll(host: string, titles: string[], params: string): Promise<Map<string, Page>> {
+  const chunks: string[][] = [];
+  for (let i = 0; i < titles.length; i += CHUNK) chunks.push(titles.slice(i, i + CHUNK));
+  const maps = await Promise.all(chunks.map((c) => wikiQuery(host, c, params).catch(() => new Map<string, Page>())));
+  const out = new Map<string, Page>();
+  for (const m of maps) for (const [k, v] of m) out.set(k, v);
+  return out;
+}
+
 async function build(): Promise<TrendRadarData> {
   const { date: latest, list: todayList } = await latestAvailable();
   const previous = new Date(latest);
@@ -133,16 +153,16 @@ async function build(): Promise<TrendRadarData> {
   // The article details are optional: without them the topic still shows,
   // just without picture, explanation and category.
   const [ja, en, ...others] = await Promise.all([
-    wikiQuery("ja.wikipedia.org", titles, "prop=pageimages|description|extracts|categories&piprop=thumbnail&pithumbsize=900&exintro=1&explaintext=1&exsentences=2&exlimit=max&cllimit=max&clshow=!hidden").catch(() => new Map<string, Page>()),
-    wikiQuery("ja.wikipedia.org", titles, "prop=langlinks&lllang=en&lllimit=max").catch(() => new Map<string, Page>()),
-    ...LANGS.filter((l) => l !== "en").map((l) => wikiQuery("ja.wikipedia.org", titles, `prop=langlinks&lllang=${l}&lllimit=max`).catch(() => new Map<string, Page>())),
+    wikiQueryAll("ja.wikipedia.org", titles, "prop=pageimages|description|extracts|categories&piprop=thumbnail&pithumbsize=1000&exintro=1&explaintext=1&exsentences=2&exlimit=max&cllimit=max&clshow=!hidden"),
+    wikiQueryAll("ja.wikipedia.org", titles, "prop=langlinks&lllang=en&lllimit=max"),
+    ...LANGS.filter((l) => l !== "en").map((l) => wikiQueryAll("ja.wikipedia.org", titles, `prop=langlinks&lllang=${l}&lllimit=max`)),
   ]);
   const langMaps: Record<string, Map<string, Page>> = { en };
   LANGS.filter((l) => l !== "en").forEach((l, i) => (langMaps[l] = others[i]));
 
   // English introductions, for the topics that have an English article.
   const enTitles = titles.map((t) => en.get(t)?.langlinks?.[0]?.["*"]).filter((t): t is string => Boolean(t));
-  const enSummaries = enTitles.length ? await wikiQuery("en.wikipedia.org", enTitles, "prop=extracts&exintro=1&explaintext=1&exsentences=2&exlimit=max").catch(() => new Map<string, Page>()) : new Map<string, Page>();
+  const enSummaries = enTitles.length ? await wikiQueryAll("en.wikipedia.org", enTitles, "prop=extracts&exintro=1&explaintext=1&exsentences=2&exlimit=max") : new Map<string, Page>();
 
   const seen = new Set<string>();
   const items: RadarTopic[] = [];
@@ -171,16 +191,18 @@ async function build(): Promise<TrendRadarData> {
       names,
       description: page?.description ?? null,
       summary: { ja: page?.extract?.trim() || null, en: names.en ? (enSummaries.get(names.en)?.extract?.trim() ?? null) : null },
-      image: page?.thumbnail ? { url: page.thumbnail.source, page: `https://ja.wikipedia.org/wiki/${a.article}` } : null,
+      image: page?.thumbnail ? { url: page.thumbnail.source, page: `https://ja.wikipedia.org/wiki/${a.article}`, width: page.thumbnail.width, height: page.thumbnail.height } : null,
       category: categorize(page?.description ?? null, cats),
       status,
       views: a.views,
+      previous: prev ? { views: prev.views, rank: prev.rank } : null,
       url: `https://ja.wikipedia.org/wiki/${a.article}`,
     });
   });
 
   const dataDate = `${latest.getUTCFullYear()}-${String(latest.getUTCMonth() + 1).padStart(2, "0")}-${String(latest.getUTCDate()).padStart(2, "0")}`;
-  return { items, dataDate, fetchedAt: Date.now(), stale: false };
+  const ymd = (d: Date) => `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+  return { items, dataDate, previousDate: prevList ? ymd(previous) : null, fetchedAt: Date.now(), stale: false };
 }
 
 let cache: TrendRadarData | null = null;
@@ -210,4 +232,29 @@ export async function getTrendRadar(): Promise<TrendRadarData> {
       inflight = null;
     });
   return inflight;
+}
+
+export function findTopic(data: TrendRadarData, id: string): RadarTopic | undefined {
+  return data.items.find((t) => t.id === id);
+}
+
+// The article's own daily page views for the two weeks up to the measured
+// day, from Wikimedia's per-article endpoint. Real counts only; an empty
+// list when Wikimedia doesn't answer.
+export async function getTopicHistory(articleId: string, endDate: string): Promise<{ date: string; views: number }[]> {
+  const end = new Date(`${endDate}T00:00:00Z`);
+  const start = new Date(end);
+  start.setUTCDate(start.getUTCDate() - 13);
+  const f = (d: Date) => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
+  try {
+    const res = await fetch(
+      `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/ja.wikipedia/all-access/user/${encodeURIComponent(articleId)}/daily/${f(start)}/${f(end)}`,
+      { next: { revalidate: 3600 }, headers: UA, signal: AbortSignal.timeout(9000) },
+    );
+    if (!res.ok) return [];
+    const data = (await res.json()) as { items?: { timestamp: string; views: number }[] };
+    return (data.items ?? []).map((i) => ({ date: `${i.timestamp.slice(0, 4)}-${i.timestamp.slice(4, 6)}-${i.timestamp.slice(6, 8)}`, views: i.views }));
+  } catch {
+    return [];
+  }
 }
