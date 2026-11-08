@@ -717,5 +717,11 @@
   "Most viewed in Japan": "日本で最も閲覧された記事",
   "Reported {time} JST": "{time} JST 発表",
   "European Central Bank via Frankfurter · rates for {date}": "欧州中央銀行（Frankfurter経由）・{date}のレート",
-  "Japan right now": "今の日本"
+  "Japan right now": "今の日本",
+  "Felt in {place}: intensity {n}": "{place}で震度{n}を観測",
+  "{n} km from {place}": "{place}から約{n}km",
+  "None felt in {place} in the last 7 days.": "過去7日間に{place}で揺れを感じた地震はありません。",
+  "Earthquake near you": "あなたの近くの地震",
+  "Latest earthquake in Japan": "日本の最新の地震",
+  "Use my location to see earthquakes near you": "現在地を使って近くの地震を表示"
 }

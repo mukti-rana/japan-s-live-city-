@@ -11,11 +11,13 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useSessionCity } from "@/lib/geo/sessionCity";
 import { resolvePlace, PREFECTURES } from "@/lib/news/places";
+import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { useWeatherCity } from "@/lib/weather/useWeatherCity";
 import type { WeatherSnapshot } from "@/lib/services/weather";
+import type { EarthquakeEvent, NearbyQuake } from "@/lib/services/earthquake";
 
 interface Pulse {
-  quake: { id: string; location: string; magnitude: number; maxIntensity: string; depthKm: number; tsunami: string; time: string } | null;
+  quake: { mine: NearbyQuake | null; latest: EarthquakeEvent | null } | null;
   trend: { id: string; title: string; names: Partial<Record<string, string>>; views: number; dataDate: string } | null;
   fetchedAt: number;
 }
@@ -60,24 +62,60 @@ function useJstDay(): string {
   );
 }
 
-// The weather of the city chosen on the weather card, else the city the
-// browser located the visitor in this session, else Tokyo.
-function usePulseWeather(): { w: WeatherSnapshot; city: { en: string; ja: string } } | null {
+interface Place {
+  id: string | null;
+  en: string;
+  ja: string;
+  center: [number, number];
+  // Where the place came from: the device right now, a city the visitor
+  // picked, the city their browser located them in earlier, or nothing known.
+  source: "device" | "selected" | "session" | "none";
+  // Rounded position, only when the device shared it.
+  coords: { lat: number; lon: number } | null;
+}
+
+// Where the visitor is. First priority is their device's position right now
+// (read automatically only if they already allowed it for this site; the
+// browser asks nothing new), then the city picked on the weather card, then
+// the city located earlier this session.
+function usePlace(): Place {
+  const live = useLiveLocation();
   const [selected] = useWeatherCity();
   const sessionCity = useSessionCity();
-  const place = useMemo(() => {
-    const id = selected !== "auto" && PREFECTURE_CENTER[selected] ? selected : (resolvePlace(sessionCity)?.prefectureId ?? "tokyo");
-    const p = PREFECTURES.find((x) => x.id === id) ?? PREFECTURES.find((x) => x.id === "tokyo")!;
-    return { id: p.id, en: p.en, ja: p.ja, center: PREFECTURE_CENTER[p.id] ?? PREFECTURE_CENTER.tokyo };
-  }, [selected, sessionCity]);
-  const [state, setState] = useState<{ id: string; w: WeatherSnapshot } | null>(null);
+  return useMemo(() => {
+    const device = live.status === "ready" ? resolvePlace(live.location?.name)?.prefectureId : undefined;
+    let id: string | null = null;
+    let source: Place["source"] = "none";
+    if (device) {
+      id = device;
+      source = "device";
+    } else if (selected !== "auto" && PREFECTURE_CENTER[selected]) {
+      id = selected;
+      source = "selected";
+    } else {
+      const s = resolvePlace(sessionCity)?.prefectureId;
+      if (s) {
+        id = s;
+        source = "session";
+      }
+    }
+    const p = PREFECTURES.find((x) => x.id === (id ?? "tokyo")) ?? PREFECTURES.find((x) => x.id === "tokyo")!;
+    return { id, en: p.en, ja: p.ja, center: PREFECTURE_CENTER[p.id] ?? PREFECTURE_CENTER.tokyo, source, coords: source === "device" && live.coords ? { lat: live.coords.lat, lon: live.coords.lon } : null };
+  }, [live.status, live.location, live.coords, selected, sessionCity]);
+}
+
+// The weather of that place (Tokyo when no place is known).
+function usePulseWeather(place: Place): WeatherSnapshot | null {
+  const key = `${place.center[0].toFixed(2)},${place.center[1].toFixed(2)}`;
+  const [state, setState] = useState<{ key: string; w: WeatherSnapshot } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    const [lat, lon] = key.split(",");
     const load = () =>
-      fetch(`/api/weather/live?lat=${place.center[0].toFixed(2)}&lon=${place.center[1].toFixed(2)}`)
+      fetch(`/api/weather/live?lat=${lat}&lon=${lon}`)
         .then((r) => (r.ok ? (r.json() as Promise<WeatherSnapshot>) : Promise.reject(new Error("failed"))))
-        .then((w) => !cancelled && setState({ id: place.id, w }))
+        .then((w) => !cancelled && setState({ key, w }))
         .catch(() => {});
     load();
     const id = window.setInterval(() => document.visibilityState === "visible" && load(), 10 * 60_000);
@@ -85,19 +123,21 @@ function usePulseWeather(): { w: WeatherSnapshot; city: { en: string; ja: string
       cancelled = true;
       window.clearInterval(id);
     };
-  }, [place]);
+  }, [key]);
 
-  return state && state.id === place.id ? { w: state.w, city: { en: place.en, ja: place.ja } } : null;
+  return state && state.key === key ? state.w : null;
 }
 
-function usePulse(): Pulse | null {
-  const [pulse, setPulse] = useState<Pulse | null>(null);
+// The live facts. The earthquake is looked up for the visitor's place.
+function usePulse(place: Place): Pulse | null {
+  const [state, setState] = useState<{ key: string; pulse: Pulse } | null>(null);
+  const key = new URLSearchParams({ ...(place.id ? { pref: place.id } : {}), ...(place.coords ? { lat: place.coords.lat.toFixed(1), lon: place.coords.lon.toFixed(1) } : {}) }).toString();
   useEffect(() => {
     let cancelled = false;
     const load = () =>
-      fetch("/api/pulse")
+      fetch(`/api/pulse?${key}`)
         .then((r) => (r.ok ? (r.json() as Promise<Pulse>) : Promise.reject(new Error("failed"))))
-        .then((p) => !cancelled && setPulse(p))
+        .then((pulse) => !cancelled && setState({ key, pulse }))
         .catch(() => {});
     load();
     const id = window.setInterval(() => document.visibilityState === "visible" && load(), 5 * 60_000);
@@ -105,8 +145,8 @@ function usePulse(): Pulse | null {
       cancelled = true;
       window.clearInterval(id);
     };
-  }, []);
-  return pulse;
+  }, [key]);
+  return state && state.key === key ? state.pulse : null;
 }
 
 // A few drifting particles that match the micro-season (petals, light, leaves, snow).
@@ -138,8 +178,10 @@ export default function JapanNowCard() {
   const { language } = useLanguage();
   const reduced = useReducedMotion();
   const day = useJstDay();
-  const pulse = usePulse();
-  const weather = usePulseWeather();
+  const live = useLiveLocation();
+  const place = usePlace();
+  const pulse = usePulse(place);
+  const weather = usePulseWeather(place);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -151,14 +193,20 @@ export default function JapanNowCard() {
 
   const facts = useMemo<Fact[]>(() => {
     const out: Fact[] = [];
-    const q = pulse?.quake;
+    const placeName = place.id ? localize(place.en, place.ja, language) : null;
+    const q = pulse?.quake?.mine ?? pulse?.quake?.latest;
+    const mine = pulse?.quake?.mine ?? null;
     if (q) {
       const when = dateFormatter(language, { timeZone: "Asia/Tokyo", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(q.time.replace(/\//g, "-").replace(" ", "T") + "+09:00"));
+      let sub = `${q.location} · ${tr("Max intensity")} ${q.maxIntensity}`;
+      if (mine?.relation === "felt" && placeName) sub = `${q.location} · ${tr("Felt in {place}: intensity {n}").replace("{place}", placeName).replace("{n}", mine.feltScale ?? "—")}`;
+      else if (mine?.relation === "near" && placeName) sub = `${q.location} · ${tr("{n} km from {place}").replace("{n}", String(mine.distanceKm)).replace("{place}", placeName)}`;
+      else if (placeName && pulse?.quake && !mine) sub += ` · ${tr("None felt in {place} in the last 7 days.").replace("{place}", placeName)}`;
       out.push({
         key: "quake",
-        label: tr("Latest earthquake"),
+        label: mine ? tr("Earthquake near you") : tr("Latest earthquake in Japan"),
         value: `M${q.magnitude.toFixed(1)}`,
-        sub: `${q.location} · ${tr("Max intensity")} ${q.maxIntensity}`,
+        sub,
         source: `${tr("Source")}: JMA via P2P Quake · ${tr("Reported {time} JST").replace("{time}", when)}`,
         href: "/earthquakes",
         ring: Math.min(1, Math.max(0.2, q.magnitude / 8)),
@@ -167,9 +215,9 @@ export default function JapanNowCard() {
     if (weather) {
       out.push({
         key: "weather",
-        label: tr("Weather in {city}").replace("{city}", localize(weather.city.en, weather.city.ja, language)),
-        value: `${weather.w.tempC}°C`,
-        sub: `${translate(weather.w.condition, language)} · ${tr("feels like")} ${weather.w.feelsLikeC}°C`,
+        label: tr("Weather in {city}").replace("{city}", localize(place.en, place.ja, language)),
+        value: `${weather.tempC}°C`,
+        sub: `${translate(weather.condition, language)} · ${tr("feels like")} ${weather.feelsLikeC}°C`,
         source: `${tr("Source")}: Open-Meteo`,
         href: "/weather",
       });
@@ -187,7 +235,7 @@ export default function JapanNowCard() {
       });
     }
     return out;
-  }, [pulse, weather, language, tr]);
+  }, [pulse, weather, place, language, tr]);
 
   const count = facts.length;
   const at = count ? index % count : 0;
@@ -243,6 +291,11 @@ export default function JapanNowCard() {
                 <ArrowUpRight size={15} className="mt-1 shrink-0 text-foreground/50 transition-colors group-hover:text-azure" aria-hidden="true" />
               </Link>
               <p className="mt-1.5 text-[10px] leading-snug text-muted">{fact.source}</p>
+              {fact.key === "quake" && place.source !== "device" && live.status === "prompt" && (
+                <button type="button" onClick={live.requestLocation} className="mt-1.5 text-[10px] font-medium text-azure underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                  {tr("Use my location to see earthquakes near you")}
+                </button>
+              )}
             </div>
             {count > 1 && (
               <div className="mt-2.5 flex items-center gap-1.5" role="tablist" aria-label={tr("Japan right now")}>

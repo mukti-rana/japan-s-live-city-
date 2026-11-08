@@ -1394,5 +1394,11 @@
   "Most viewed in Japan": "जापानमा सबैभन्दा बढी हेरिएको",
   "Reported {time} JST": "{time} JST मा रिपोर्ट गरिएको",
   "European Central Bank via Frankfurter · rates for {date}": "युरोपेली केन्द्रीय बैंक (Frankfurter मार्फत) · {date} को दर",
-  "Japan right now": "अहिले जापान"
+  "Japan right now": "अहिले जापान",
+  "Felt in {place}: intensity {n}": "{place} मा तीव्रता {n} महसुस गरियो",
+  "{n} km from {place}": "{place} बाट {n} किमी",
+  "None felt in {place} in the last 7 days.": "पछिल्लो ७ दिनमा {place} मा कुनै भूकम्प महसुस भएन।",
+  "Earthquake near you": "तपाईंको नजिकको भूकम्प",
+  "Latest earthquake in Japan": "जापानको पछिल्लो भूकम्प",
+  "Use my location to see earthquakes near you": "नजिकका भूकम्प हेर्न मेरो स्थान प्रयोग गर्नुहोस्"
 }
