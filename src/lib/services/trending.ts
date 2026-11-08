@@ -61,7 +61,7 @@ export interface TrendingTopic {
   url: string;
 }
 
-function isDisplayable(article: string): boolean {
+export function isDisplayable(article: string): boolean {
   const lower = article.toLowerCase();
   if (EXCLUDED_PREFIXES.some((p) => lower.startsWith(p))) return false;
   if (EXCLUDED_EXACT.includes(article)) return false;
@@ -76,31 +76,27 @@ function formatViews(n: number): string {
 }
 
 export async function getTrendingTopics(limit = 10): Promise<TrendingTopic[]> {
-  // Wikimedia's pageview stats have a short processing delay, so "yesterday"
-  // (UTC) is the most recent day reliably available.
-  const date = new Date();
-  date.setUTCDate(date.getUTCDate() - 1);
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(date.getUTCDate()).padStart(2, "0");
-
-  const res = await fetch(
-    `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/ja.wikipedia/all-access/${year}/${month}/${day}`,
-    {
+  // Wikimedia's pageview stats arrive after a delay of up to a day or so, so
+  // use the newest of the last three (UTC) days that is available.
+  let articles: WikimediaArticle[] | null = null;
+  let lastStatus = 0;
+  for (let back = 1; back <= 3 && !articles; back++) {
+    const date = new Date();
+    date.setUTCDate(date.getUTCDate() - back);
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const res = await fetch(`https://wikimedia.org/api/rest_v1/metrics/pageviews/top/ja.wikipedia/all-access/${year}/${month}/${day}`, {
       next: { revalidate: 3600 },
       headers: { "Api-User-Agent": "LiveCityJapan/1.0 (educational project)" },
-    },
-  );
-
-  if (!res.ok) {
-    throw new Error(`Wikimedia API responded with ${res.status}`);
+    });
+    lastStatus = res.status;
+    if (res.ok) {
+      const data = (await res.json()) as { items: { articles: WikimediaArticle[] }[] };
+      articles = data.items[0]?.articles ?? [];
+    }
   }
-
-  const data = (await res.json()) as {
-    items: { articles: WikimediaArticle[] }[];
-  };
-
-  const articles = data.items[0]?.articles ?? [];
+  if (!articles) throw new Error(`Wikimedia API responded with ${lastStatus}`);
 
   return articles
     .filter((a) => isDisplayable(a.article))

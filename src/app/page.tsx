@@ -10,7 +10,7 @@ import HeadlinesMini from "@/components/news/HeadlinesMini";
 import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
 import EventsNearYou from "@/components/events/EventsNearYou";
 import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
-import TrendingWidget from "@/components/home/widgets/TrendingWidget";
+import TrendRadarSection from "@/components/home/TrendRadarSection";
 import EmergencyPreview from "@/components/emergency/EmergencyPreview";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
 import WelcomeGate from "@/components/auth/WelcomeGate";
@@ -96,15 +96,17 @@ export default function Home() {
           <NearbyDiscovery />
         </Cell>
 
-        {/* Trending, the everyday tools, and the Emergency & Safety Center preview */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr] lg:gap-5">
-          <Cell delay={0.36}>
-            <TrendingWidget />
-          </Cell>
+        {/* Japan Trend Radar: an animated window onto what Japan is reading about */}
+        <Cell delay={0.36}>
+          <TrendRadarSection />
+        </Cell>
+
+        {/* The Emergency & Safety Center preview and the everyday tools */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5">
           <Cell delay={0.4}>
             <EmergencyPreview />
           </Cell>
-          <Cell delay={0.44} className="md:col-span-2 xl:col-span-1">
+          <Cell delay={0.44}>
             <QuickAccessWidget />
           </Cell>
         </div>
