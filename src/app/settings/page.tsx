@@ -7,6 +7,7 @@ import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
 import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
 import SignOutButton from "@/components/auth/SignOutButton";
 import SavedItems from "@/components/personalization/SavedItems";
+import AtmosphereSettings from "@/components/atmosphere/AtmosphereSettings";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 import Tx from "@/components/i18n/Tx";
@@ -24,7 +25,7 @@ export default async function SettingsPage() {
     : null;
 
   return (
-    <div className="mx-auto flex w-full max-w-sm flex-col gap-4">
+    <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
       <Reveal>
         <div>
           <p className="text-xs font-medium uppercase tracking-widest text-sakura">
@@ -49,6 +50,15 @@ export default async function SettingsPage() {
           <div className="mt-3">
             <LanguageSwitcher variant="settings" />
           </div>
+        </GlassCard>
+      </Reveal>
+
+      <Reveal delay={0.07}>
+        <GlassCard className="scroll-mt-20 p-5">
+          <p id="appearance" className="scroll-mt-20 text-[11px] font-semibold uppercase tracking-widest text-muted"><Tx en="Appearance" /></p>
+          <p className="mt-1 text-sm font-semibold text-foreground"><Tx en="Background atmosphere" /></p>
+          <p className="mb-3 mt-1 text-xs text-muted"><Tx en="A living Japanese backdrop behind the pages — chosen by season and weather, or by you." /></p>
+          <AtmosphereSettings />
         </GlassCard>
       </Reveal>
 

@@ -324,3 +324,65 @@ body:has([data-auth-shell]) > div > button {
   background: rgba(99, 102, 241, 0.88); border: 2px solid rgba(196, 181, 253, 0.8); color: #fff;
   font-size: 12px; font-weight: 700; box-shadow: 0 0 14px 2px rgba(99, 102, 241, 0.55);
 }
+
+/* ── LIVE CITY ATMOSPHERE ────────────────────────────────────────────────
+   Cinematic backgrounds made of one illustrated SVG and a few light CSS
+   particles. Only transform and opacity animate; sizes are in container
+   units so the same scene works full-screen and as a small preview. They
+   stop when the tab is hidden and are switched off entirely for visitors who
+   ask for less motion (the still picture stays). */
+.atm-root { container-type: size; }
+@keyframes atm-fall {
+  0% { transform: translate3d(0, -8cqh, 0); opacity: 0; }
+  8% { opacity: 0.9; }
+  92% { opacity: 0.9; }
+  100% { transform: translate3d(var(--dx, 0px), 108cqh, 0); opacity: 0; }
+}
+@keyframes atm-sway {
+  0%, 100% { transform: translate3d(-14px, 0, 0) rotate(-35deg); }
+  50% { transform: translate3d(14px, 0, 0) rotate(40deg); }
+}
+@keyframes atm-rise {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  15% { opacity: 0.85; }
+  100% { transform: translate3d(var(--dx, 0px), -70cqh, 0); opacity: 0; }
+}
+@keyframes atm-rain {
+  from { transform: translate3d(-18px, -14cqh, 0); opacity: 0; }
+  12% { opacity: 0.7; }
+  to { transform: translate3d(18px, 104cqh, 0); opacity: 0; }
+}
+@keyframes atm-cloud {
+  0%, 100% { transform: translate3d(-6%, 0, 0); }
+  50% { transform: translate3d(8%, 0, 0); }
+}
+@keyframes atm-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+@keyframes atm-burst {
+  0%, 82%, 100% { transform: scale(0.15); opacity: 0; }
+  86% { opacity: 0.9; }
+  96% { transform: scale(1); opacity: 0; }
+}
+.atm-fall { animation: atm-fall linear infinite; will-change: transform, opacity; }
+.atm-sway { animation: atm-sway ease-in-out infinite; }
+.atm-rise { animation: atm-rise linear infinite; will-change: transform, opacity; }
+.atm-rain { animation: atm-rain linear infinite; }
+.atm-cloud { animation: atm-cloud ease-in-out infinite; }
+.atm-sun, .atm-neon, .atm-lantern, .atm-win, .atm-twinkle { animation: atm-pulse 5s ease-in-out infinite; }
+.atm-win { animation-duration: 6s; }
+.atm-lantern { animation-duration: 4s; }
+.atm-burst { animation: atm-burst 15s ease-out infinite; opacity: 0; transform-origin: center; }
+.atm-petal { background: radial-gradient(circle at 30% 30%, #ffe3ee, #ff9fc2); border-radius: 80% 0 80% 0; }
+.atm-leaf { background: linear-gradient(135deg, #f0702a, #c8321f); clip-path: polygon(50% 0, 62% 30%, 100% 28%, 72% 52%, 86% 90%, 50% 70%, 14% 90%, 28% 52%, 0 28%, 38% 30%); }
+.atm-flake { background: #fff; border-radius: 9999px; box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.6); }
+html[data-atm-paused="true"] .atm-anim *,
+html[data-atm-paused="true"] .atm-anim { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .atm-anim *, .atm-anim { animation: none !important; }
+  .atm-fall, .atm-rise, .atm-rain, .atm-burst { opacity: 0 !important; }
+}
+@keyframes atm-in { from { opacity: 0; } to { opacity: 1; } }
+.atm-in { animation: atm-in 1.4s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .atm-in { animation: none !important; } }

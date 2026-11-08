@@ -5,6 +5,9 @@ import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import LocalizedTitle from "@/components/i18n/LocalizedTitle";
+import { AtmosphereProvider } from "@/lib/atmosphere/AtmosphereContext";
+import AtmosphereBackground from "@/components/atmosphere/AtmosphereBackground";
+import AtmosphereSync from "@/components/atmosphere/AtmosphereSync";
 import { AuthProvider } from "@/lib/supabase/AuthContext";
 import { AccountPromptProvider } from "@/components/auth/AccountPromptProvider";
 import { FavoritesProvider } from "@/lib/personalization/FavoritesContext";
@@ -41,6 +44,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <AuthProvider>
             <AccountPromptProvider>
               <FavoritesProvider>
+                <AtmosphereProvider>
+                <AtmosphereBackground />
+                <AtmosphereSync />
                 <LocalizedTitle />
                 <PreferencesSync />
                 <ReminderHost />
@@ -52,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   </main>
                 </div>
                 <Footer />
+                </AtmosphereProvider>
               </FavoritesProvider>
             </AccountPromptProvider>
           </AuthProvider>
