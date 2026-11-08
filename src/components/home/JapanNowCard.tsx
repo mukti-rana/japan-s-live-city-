@@ -16,7 +16,6 @@ import type { WeatherSnapshot } from "@/lib/services/weather";
 
 interface Pulse {
   quake: { id: string; location: string; magnitude: number; maxIntensity: string; depthKm: number; tsunami: string; time: string } | null;
-  yen: { date: string; usd: number; eur: number } | null;
   trend: { id: string; title: string; names: Partial<Record<string, string>>; views: number; dataDate: string } | null;
   fetchedAt: number;
 }
@@ -173,16 +172,6 @@ export default function JapanNowCard() {
         sub: `${translate(weather.w.condition, language)} · ${tr("feels like")} ${weather.w.feelsLikeC}°C`,
         source: `${tr("Source")}: Open-Meteo`,
         href: "/weather",
-      });
-    }
-    if (pulse?.yen) {
-      out.push({
-        key: "yen",
-        label: tr("The yen today"),
-        value: `¥100 = $${(pulse.yen.usd * 100).toFixed(2)}`,
-        sub: `≈ €${(pulse.yen.eur * 100).toFixed(2)}`,
-        source: tr("European Central Bank via Frankfurter · rates for {date}").replace("{date}", pulse.yen.date),
-        href: "/yen-converter",
       });
     }
     if (pulse?.trend) {
