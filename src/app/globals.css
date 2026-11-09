@@ -410,6 +410,20 @@ html[data-atm-paused="true"] .jn-drift { animation-play-state: paused; }
    when the tab is hidden and for visitors who ask for less motion. */
 @keyframes sky-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 .sky-drift { animation: sky-drift linear infinite; will-change: transform; }
+/* Sakura branches on the sign-in page: the limb draws itself outward, the
+   blossoms open one by one, and the whole branch sways very slightly. They
+   live inside .atm-anim, so reduced motion shows the finished branch. */
+@keyframes sakura-grow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes sakura-pop {
+  0% { transform: scale(0) rotate(-50deg); opacity: 0; }
+  60% { transform: scale(1.18) rotate(6deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes sakura-sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.4deg); } }
+.sakura-grow { stroke-dasharray: 1; animation: sakura-grow 1.5s ease-out both; }
+.sakura-pop { transform-box: fill-box; transform-origin: center; animation: sakura-pop 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.sakura-sway { animation: sakura-sway 9s ease-in-out infinite; will-change: transform; }
+
 @keyframes auth-cloud { 0%, 100% { transform: translate3d(-6%, 0, 0); } 50% { transform: translate3d(10%, 0, 0); } }
 @keyframes auth-shimmer { 0%, 100% { opacity: 0.35; transform: translate3d(-1.5%, 0, 0); } 50% { opacity: 0.75; transform: translate3d(1.5%, 0, 0); } }
 .auth-cloud { animation: auth-cloud ease-in-out infinite; }

@@ -1,6 +1,7 @@
 "use client";
 
 import SkyClouds from "@/components/auth/SkyClouds";
+import SakuraBranches from "@/components/auth/SakuraBranches";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
@@ -99,6 +100,13 @@ export default function FujiBackdrop() {
 
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
         <SkyClouds />
+        {/* Blossoming sakura growing in from the corners: a big branch from the
+            top left (below the logo), a smaller one from the top right on
+            narrow screens (on wide ones the sign-in panel sits there), and a
+            soft out-of-focus one low on the left in front of the lake. */}
+        <SakuraBranches className="-left-3 top-14 w-[84vw] max-w-[700px] sm:w-[46vw]" seed={3} />
+        <SakuraBranches className="-right-3 top-14 w-[46vw] max-w-[380px] -scale-x-100 lg:hidden" seed={9} delay={0.5} />
+        <SakuraBranches className="-bottom-4 -left-4 w-[54vw] max-w-[460px] -scale-y-100 sm:w-[26vw]" seed={14} delay={1} blur={2.5} />
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
         {PETALS.map((p, i) => (
           <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
