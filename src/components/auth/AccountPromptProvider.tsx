@@ -70,7 +70,7 @@ export function AccountPromptProvider({ children }: { children: ReactNode }) {
                 <div className="flex flex-col gap-2">
                   <Link
                     ref={primaryRef}
-                    href="/signup"
+                    href="/signup?form=1"
                     onClick={close}
                     className="flex items-center justify-center rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background transition-opacity hover:opacity-90"
                   >
@@ -85,7 +85,7 @@ export function AccountPromptProvider({ children }: { children: ReactNode }) {
                   </button>
                 </div>
                 <p className="text-center text-xs text-muted">
-                  <Link href="/login" onClick={close} className="text-azure hover:underline">
+                  <Link href="/login?form=1" onClick={close} className="text-azure hover:underline">
                     {t("auth.signIn")}
                   </Link>
                 </p>

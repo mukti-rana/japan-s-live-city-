@@ -75,7 +75,7 @@ export default async function ForgotPasswordPage({
           </form>
 
           <p className="mt-4 text-center text-xs text-muted">
-            <Link href="/login" className="text-azure hover:underline">
+            <Link href="/login?form=1" className="text-azure hover:underline">
               <Tx en="Back to log in" />
             </Link>
           </p>

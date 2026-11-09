@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { LogIn, TriangleAlert } from "lucide-react";
-import Reveal from "@/components/ui/Reveal";
-import GlassCard from "@/components/ui/GlassCard";
-import AuthField from "@/components/ui/AuthField";
 import AuthShell from "@/components/auth/AuthShell";
-import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
-import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
+import { SignInForm, SignUpForm } from "@/components/auth/AuthForms";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { signInAction } from "@/lib/supabase/actions";
-import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Sign in — Live City Japan",
@@ -17,58 +9,20 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
+// Opens guest-first (the welcome screen). It opens straight on the sign-in
+// form when the visitor came to sign in on purpose (?form=1) or is returning
+// from a failed attempt (?error=…), so the message is never hidden.
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
-  const { error } = await searchParams;
-
+  const sp = await searchParams;
+  const error = first(sp.error);
+  const direct = Boolean(error || first(sp.form));
   return (
-    <AuthShell mode="login">
-      {!isSupabaseConfigured && (
-        <Reveal delay={0.08}>
-          <SupabaseNotConfigured />
-        </Reveal>
-      )}
-
-      {error && (
-        <Reveal delay={0.08}>
-          <GlassCard className="flex items-start gap-2.5 border-sakura/25 bg-sakura/5 p-4">
-            <TriangleAlert size={16} className="mt-0.5 shrink-0 text-sakura" />
-            <p className="text-xs leading-relaxed text-muted">
-              {Array.isArray(error) ? error[0] : error}
-            </p>
-          </GlassCard>
-        </Reveal>
-      )}
-
-      <form action={signInAction} className="flex flex-col gap-3.5">
-        <AuthField
-          label="Email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-        />
-        <AuthField
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="••••••••"
-          autoComplete="current-password"
-        />
-
-        <div className="flex justify-end">
-          <Link
-            href="/forgot-password"
-            className="text-xs text-muted transition-colors hover:text-azure focus-visible:text-azure focus-visible:outline-none focus-visible:underline"
-          >
-            <Tx en="Forgot password?" />
-          </Link>
-        </div>
-
-        <AuthSubmitButton disabled={!isSupabaseConfigured}>
-          <LogIn size={16} />
-          <Tx en="Sign in" />
-        </AuthSubmitButton>
-      </form>
-    </AuthShell>
+    <AuthShell
+      initialView={direct ? "signin" : "welcome"}
+      signIn={<SignInForm configured={isSupabaseConfigured} error={error} />}
+      signUp={<SignUpForm configured={isSupabaseConfigured} />}
+    />
   );
 }

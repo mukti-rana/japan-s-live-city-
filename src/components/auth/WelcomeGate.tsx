@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { LogIn } from "lucide-react";
 import AuthShell from "@/components/auth/AuthShell";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { SignInForm, SignUpForm } from "@/components/auth/AuthForms";
 import { useAuth } from "@/lib/supabase/AuthContext";
 import { markWelcomeSeen, useWelcomeState } from "@/lib/welcome";
 
@@ -17,7 +15,6 @@ import { markWelcomeSeen, useWelcomeState } from "@/lib/welcome";
 // it. Only shown when accounts are configured, so it never offers a sign-in
 // that can't work.
 export default function WelcomeGate() {
-  const { t } = useLanguage();
   const { user, loading, configured } = useAuth();
   const welcome = useWelcomeState();
   const reduceMotion = useReducedMotion();
@@ -47,16 +44,7 @@ export default function WelcomeGate() {
           aria-modal="true"
           aria-label="LIVE CITY JAPAN"
         >
-          <AuthShell mode="welcome">
-            <Link
-              href="/login"
-              onClick={markWelcomeSeen}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sakura to-neon-purple text-sm font-semibold text-background shadow-[0_10px_30px_-12px_rgba(255,107,157,0.6)] transition-all hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985]"
-            >
-              <LogIn size={16} />
-              {t("auth.signIn")}
-            </Link>
-          </AuthShell>
+          <AuthShell initialView="welcome" signIn={<SignInForm configured={configured} />} signUp={<SignUpForm configured={configured} />} />
         </motion.div>
       )}
     </AnimatePresence>

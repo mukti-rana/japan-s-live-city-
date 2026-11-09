@@ -723,5 +723,16 @@
   "None felt in {place} in the last 7 days.": "過去7日間に{place}で揺れを感じた地震はありません。",
   "Earthquake near you": "あなたの近くの地震",
   "Latest earthquake in Japan": "日本の最新の地震",
-  "Use my location to see earthquakes near you": "現在地を使って近くの地震を表示"
+  "Use my location to see earthquakes near you": "現在地を使って近くの地震を表示",
+  "{n} cities and thousands of places to explore": "{n}都市と数千のスポットを探索",
+  "{n} upcoming events from official calendars": "公式カレンダーの開催予定イベント{n}件",
+  "Back to welcome": "ウェルカム画面に戻る",
+  "Explore Japan right away, or sign in to save your favorites.": "すぐに日本を探索するか、ログインしてお気に入りを保存できます。",
+  "That email or password isn't right. Please check them and try again.": "メールアドレスまたはパスワードが違います。確認してもう一度お試しください。",
+  "Please confirm your email first — check your inbox for the link we sent.": "先にメールを確認してください。届いたリンクをご確認ください。",
+  "An account with this email already exists. Try signing in instead.": "このメールアドレスのアカウントは既に存在します。ログインをお試しください。",
+  "Choose a longer password — at least 6 characters.": "パスワードをもっと長くしてください（6文字以上）。",
+  "Too many attempts. Please wait a minute and try again.": "試行回数が多すぎます。1分ほど待ってからもう一度お試しください。",
+  "Please enter a valid email address.": "有効なメールアドレスを入力してください。",
+  "We couldn't sign you in. Please try again.": "ログインできませんでした。もう一度お試しください。"
 }

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, CloudSun, Globe2, TrainFront, type LucideIcon } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
+import { MAP_CITIES } from "@/lib/map/cities";
+import type { EventsResult } from "@/lib/events/query";
 import type { WeatherSnapshot } from "@/lib/services/weather";
 import { useTranslate } from "@/lib/i18n/inline";
 
@@ -23,6 +25,7 @@ interface PreviewItem {
 export default function AuthPreview() {
   const tr = useTranslate();
   const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
+  const [events, setEvents] = useState<EventsResult | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,6 +33,12 @@ export default function AuthPreview() {
       .then((r) => (r.ok ? (r.json() as Promise<WeatherSnapshot>) : null))
       .then((data) => {
         if (!cancelled && data) setWeather(data);
+      })
+      .catch(() => {});
+    fetch("/api/events?limit=1")
+      .then((r) => (r.ok ? (r.json() as Promise<EventsResult>) : null))
+      .then((data) => {
+        if (!cancelled && data) setEvents(data);
       })
       .catch(() => {});
     return () => {
@@ -54,14 +63,15 @@ export default function AuthPreview() {
     {
       icon: Globe2,
       title: "Japan Map",
-      text: "Cities & places to explore",
+      text: tr("{n} cities and thousands of places to explore").replace("{n}", String(MAP_CITIES.length)),
       tint: "bg-neon-cyan/15 text-neon-cyan",
     },
     {
       icon: CalendarDays,
       title: "Events",
-      text: "Festivals & cultural experiences",
+      text: events && events.confirmedTotal > 0 ? tr("{n} upcoming events from official calendars").replace("{n}", String(events.confirmedTotal)) : "Festivals & cultural experiences",
       tint: "bg-sakura/15 text-sakura",
+      live: Boolean(events && events.confirmedTotal > 0),
     },
   ];
 
@@ -70,10 +80,10 @@ export default function AuthPreview() {
       {items.map(({ icon: Icon, title, text, tint, live }) => (
         <li
           key={title}
-          className="flex items-start gap-3 rounded-2xl border border-white/10 bg-[#0b0e1a]/60 p-3 backdrop-blur-md sm:p-3.5"
+          className="group flex items-start gap-3 rounded-2xl border border-white/10 bg-[#0b0e1a]/55 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-[#0b0e1a]/70 motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:p-3.5"
         >
-          <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${tint}`}>
-            <Icon size={17} />
+          <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105 ${tint}`}>
+            <Icon size={18} />
           </span>
           <span className="min-w-0">
             <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
@@ -85,7 +95,7 @@ export default function AuthPreview() {
                 />
               )}
             </span>
-            <span className="mt-0.5 block text-[11px] leading-snug text-foreground/65">{tr(text)}</span>
+            <span className="mt-0.5 block text-[11px] leading-snug text-foreground/75">{tr(text)}</span>
           </span>
         </li>
       ))}

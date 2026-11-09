@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import { UserPlus, TriangleAlert, MailCheck } from "lucide-react";
-import Reveal from "@/components/ui/Reveal";
-import GlassCard from "@/components/ui/GlassCard";
-import AuthField from "@/components/ui/AuthField";
 import AuthShell from "@/components/auth/AuthShell";
-import AuthSubmitButton from "@/components/auth/AuthSubmitButton";
-import SupabaseNotConfigured from "@/components/auth/SupabaseNotConfigured";
+import { SignInForm, SignUpForm } from "@/components/auth/AuthForms";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { signUpAction } from "@/lib/supabase/actions";
-import Tx from "@/components/i18n/Tx";
 
 export const metadata: Metadata = {
   title: "Create account — Live City Japan",
@@ -16,60 +9,20 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
+
+// Opens guest-first; goes straight to the create-account form for ?form=1, a
+// failed attempt (?error=…) or the "check your email" confirmation.
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
-  const { error, check_email } = await searchParams;
-
+  const sp = await searchParams;
+  const error = first(sp.error);
+  const checkEmail = Boolean(first(sp.check_email));
+  const direct = Boolean(error || checkEmail || first(sp.form));
   return (
-    <AuthShell mode="signup">
-      {!isSupabaseConfigured && (
-        <Reveal delay={0.08}>
-          <SupabaseNotConfigured />
-        </Reveal>
-      )}
-
-      {check_email && (
-        <Reveal delay={0.08}>
-          <GlassCard className="flex items-start gap-2.5 border-mint/25 bg-mint/5 p-4">
-            <MailCheck size={16} className="mt-0.5 shrink-0 text-mint" />
-            <p className="text-xs leading-relaxed text-muted">
-              <Tx en="Check your email for a confirmation link to finish creating your account." />
-            </p>
-          </GlassCard>
-        </Reveal>
-      )}
-
-      {error && (
-        <Reveal delay={0.08}>
-          <GlassCard className="flex items-start gap-2.5 border-sakura/25 bg-sakura/5 p-4">
-            <TriangleAlert size={16} className="mt-0.5 shrink-0 text-sakura" />
-            <p className="text-xs leading-relaxed text-muted">
-              {Array.isArray(error) ? error[0] : error}
-            </p>
-          </GlassCard>
-        </Reveal>
-      )}
-
-      <form action={signUpAction} className="flex flex-col gap-3.5">
-        <AuthField
-          label="Email"
-          name="email"
-          type="email"
-          placeholder="you@example.com"
-          autoComplete="email"
-        />
-        <AuthField
-          label="Password"
-          name="password"
-          type="password"
-          placeholder="At least 6 characters"
-          autoComplete="new-password"
-        />
-
-        <AuthSubmitButton disabled={!isSupabaseConfigured}>
-          <UserPlus size={16} />
-          <Tx en="Create free account" />
-        </AuthSubmitButton>
-      </form>
-    </AuthShell>
+    <AuthShell
+      initialView={direct ? "signup" : "welcome"}
+      signIn={<SignInForm configured={isSupabaseConfigured} />}
+      signUp={<SignUpForm configured={isSupabaseConfigured} error={error} checkEmail={checkEmail} />}
+    />
   );
 }

@@ -108,13 +108,13 @@ export default async function SettingsPage() {
             </p>
             <div className="flex w-full flex-col gap-2">
               <Link
-                href="/signup"
+                href="/signup?form=1"
                 className="flex items-center justify-center rounded-xl bg-gradient-to-r from-sakura to-gold px-5 py-2.5 text-sm font-semibold text-background"
               >
                 <Tx en="Create account" />
               </Link>
               <Link
-                href="/login"
+                href="/login?form=1"
                 className="flex items-center justify-center rounded-xl border border-glass-border bg-glass-bg px-5 py-2.5 text-sm font-medium text-foreground/90 hover:text-foreground"
               >
                 <Tx en="Sign in" />

@@ -1371,5 +1371,16 @@
   "None felt in {place} in the last 7 days.": "최근 7일간 {place}에서 느껴진 지진은 없습니다.",
   "Earthquake near you": "내 주변 지진",
   "Latest earthquake in Japan": "일본의 최근 지진",
-  "Use my location to see earthquakes near you": "내 위치로 주변 지진 보기"
+  "Use my location to see earthquakes near you": "내 위치로 주변 지진 보기",
+  "{n} cities and thousands of places to explore": "{n}개 도시와 수천 곳의 장소 탐색",
+  "{n} upcoming events from official calendars": "공식 달력의 예정 행사 {n}건",
+  "Back to welcome": "환영 화면으로 돌아가기",
+  "Explore Japan right away, or sign in to save your favorites.": "바로 일본을 둘러보거나, 로그인해 즐겨찾기를 저장하세요.",
+  "That email or password isn't right. Please check them and try again.": "이메일 또는 비밀번호가 올바르지 않습니다. 확인 후 다시 시도해 주세요.",
+  "Please confirm your email first — check your inbox for the link we sent.": "먼저 이메일을 인증해 주세요. 받은편지함의 링크를 확인하세요.",
+  "An account with this email already exists. Try signing in instead.": "이 이메일로 이미 계정이 있습니다. 로그인해 보세요.",
+  "Choose a longer password — at least 6 characters.": "더 긴 비밀번호를 선택하세요. 최소 6자입니다.",
+  "Too many attempts. Please wait a minute and try again.": "시도 횟수가 너무 많습니다. 1분 후에 다시 시도해 주세요.",
+  "Please enter a valid email address.": "올바른 이메일 주소를 입력해 주세요.",
+  "We couldn't sign you in. Please try again.": "로그인하지 못했습니다. 다시 시도해 주세요."
 }

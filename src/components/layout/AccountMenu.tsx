@@ -104,11 +104,11 @@ export default function AccountMenu() {
                 <p className="text-sm font-medium text-foreground">{text("guest")}</p>
                 <p className="mt-0.5 text-xs leading-snug text-muted">{text("guestNote")}</p>
               </div>
-              <Link href="/login" role="menuitem" onClick={close} className={ITEM}>
+              <Link href="/login?form=1" role="menuitem" onClick={close} className={ITEM}>
                 <LogIn size={16} className="shrink-0 text-azure" aria-hidden="true" />
                 {t("auth.signIn")}
               </Link>
-              <Link href="/signup" role="menuitem" onClick={close} className={ITEM}>
+              <Link href="/signup?form=1" role="menuitem" onClick={close} className={ITEM}>
                 <UserPlus size={16} className="shrink-0 text-azure" aria-hidden="true" />
                 {t("auth.createAccount")}
               </Link>

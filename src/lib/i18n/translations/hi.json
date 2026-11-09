@@ -1400,5 +1400,16 @@
   "None felt in {place} in the last 7 days.": "पिछले 7 दिनों में {place} में कोई भूकंप महसूस नहीं हुआ।",
   "Earthquake near you": "आपके पास का भूकंप",
   "Latest earthquake in Japan": "जापान का नवीनतम भूकंप",
-  "Use my location to see earthquakes near you": "पास के भूकंप देखने के लिए मेरी लोकेशन का उपयोग करें"
+  "Use my location to see earthquakes near you": "पास के भूकंप देखने के लिए मेरी लोकेशन का उपयोग करें",
+  "{n} cities and thousands of places to explore": "{n} शहर और हज़ारों जगहें देखने के लिए",
+  "{n} upcoming events from official calendars": "आधिकारिक कैलेंडर के {n} आगामी कार्यक्रम",
+  "Back to welcome": "स्वागत स्क्रीन पर वापस जाएँ",
+  "Explore Japan right away, or sign in to save your favorites.": "तुरंत जापान को एक्सप्लोर करें, या पसंदीदा सहेजने के लिए साइन इन करें।",
+  "That email or password isn't right. Please check them and try again.": "ईमेल या पासवर्ड सही नहीं है। कृपया जाँचकर फिर कोशिश करें।",
+  "Please confirm your email first — check your inbox for the link we sent.": "कृपया पहले अपना ईमेल कन्फ़र्म करें — हमारे भेजे लिंक के लिए इनबॉक्स देखें।",
+  "An account with this email already exists. Try signing in instead.": "इस ईमेल का खाता पहले से मौजूद है। इसके बजाय साइन इन करें।",
+  "Choose a longer password — at least 6 characters.": "लंबा पासवर्ड चुनें — कम से कम 6 अक्षर।",
+  "Too many attempts. Please wait a minute and try again.": "बहुत ज़्यादा प्रयास हुए। कृपया एक मिनट रुककर फिर कोशिश करें।",
+  "Please enter a valid email address.": "कृपया मान्य ईमेल पता दर्ज करें।",
+  "We couldn't sign you in. Please try again.": "हम आपको साइन इन नहीं कर सके। कृपया फिर कोशिश करें।"
 }
