@@ -64,8 +64,8 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
           </div>
         </header>
 
-        <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-2 sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/20 bg-gradient-to-b from-white/[0.10] to-panel/45 p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.55),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-2xl backdrop-saturate-150 sm:p-8">
+        <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
+          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/20 bg-gradient-to-b from-white/[0.07] to-panel/25 p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.55),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-md backdrop-saturate-150 [text-shadow:0_1px_10px_rgba(8,10,28,0.55)] sm:p-8">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
