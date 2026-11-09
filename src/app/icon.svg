@@ -1,26 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2a2f6e"/>
-      <stop offset="1" stop-color="#0b0e1a"/>
+      <stop offset="0" stop-color="#5f4fc0"/>
+      <stop offset="0.5" stop-color="#ff82b6"/>
+      <stop offset="1" stop-color="#ffcf92"/>
     </linearGradient>
     <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff6b9d"/>
-      <stop offset="1" stop-color="#f2c572"/>
+      <stop offset="0" stop-color="#fff6cf"/>
+      <stop offset="1" stop-color="#ffd37e"/>
     </linearGradient>
-    <linearGradient id="fuji" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#6c7fd8"/>
-      <stop offset="1" stop-color="#2b3a86"/>
-    </linearGradient>
-    <clipPath id="round"><circle cx="32" cy="32" r="30"/></clipPath>
+    <clipPath id="round"><circle cx="32" cy="32" r="29.5"/></clipPath>
+    <g id="blossom">
+      <g fill="#fff0f6" stroke="#d94b86" stroke-width="0.7" stroke-linejoin="round">
+        <circle cx="0" cy="-2.1" r="1.7"/>
+        <circle cx="2" cy="-0.65" r="1.7"/>
+        <circle cx="1.25" cy="1.7" r="1.7"/>
+        <circle cx="-1.25" cy="1.7" r="1.7"/>
+        <circle cx="-2" cy="-0.65" r="1.7"/>
+      </g>
+      <circle r="0.9" fill="#ff5c9a"/>
+    </g>
   </defs>
-  <circle cx="32" cy="32" r="31" fill="url(#sky)"/>
+
+  <circle cx="32" cy="32" r="31" fill="#1d1a4d"/>
   <g clip-path="url(#round)">
-    <circle cx="46" cy="21" r="8" fill="url(#sun)"/>
-    <path d="M2 50 L24 22 Q32 12 40 22 L62 50 Z" fill="url(#fuji)"/>
-    <path d="M24 22 Q32 12 40 22 L36.5 26 L32 22.5 L27.5 26 Z" fill="#f4f1ff"/>
-    <rect x="0" y="48" width="64" height="16" fill="#12183a"/>
-    <path d="M10 54 q5.5 -3 11 0 t11 0 t11 0 t11 0" fill="none" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/>
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <!-- sun -->
+    <circle cx="20" cy="25" r="11" fill="url(#sun)" stroke="#fff" stroke-opacity="0.55" stroke-width="1.5"/>
+    <!-- anime streak clouds -->
+    <rect x="30" y="14" width="26" height="2.6" rx="1.3" fill="#fff" fill-opacity="0.7"/>
+    <rect x="36" y="19" width="22" height="2.2" rx="1.1" fill="#fff" fill-opacity="0.5"/>
+    <rect x="4" y="41" width="22" height="2.2" rx="1.1" fill="#fff" fill-opacity="0.45"/>
+    <!-- Fuji: lit face, shadow face, snow -->
+    <path d="M12 52 L30 20 Q35 11 40 20 L60 52 Z" fill="#8c92f0" stroke="#1d1a4d" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M35 14.2 Q38 15 40 20 L60 52 L40 52 L33 33 Z" fill="#5560c8"/>
+    <path d="M30 20 Q35 11 40 20 L37.8 22.4 L35.4 19.6 L33 23 L31.6 21.4 Z" fill="#fff" stroke="#1d1a4d" stroke-width="1.4" stroke-linejoin="round"/>
+    <!-- ground -->
+    <path d="M0 50 Q16 46 32 50 T64 49 L64 64 L0 64 Z" fill="#3a2a78" stroke="#1d1a4d" stroke-width="1.5"/>
+    <!-- torii gate -->
+    <g stroke="#1d1a4d" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+      <rect x="21.5" y="38" width="3.6" height="19" fill="#e8344f"/>
+      <rect x="38.9" y="38" width="3.6" height="19" fill="#e8344f"/>
+      <rect x="23" y="43.5" width="18" height="3" fill="#e8344f"/>
+      <path d="M16 37.5 Q32 41 48 37.5 L47 34.2 Q32 37.4 17 34.2 Z" fill="#ff4d66"/>
+    </g>
+    <!-- sakura + sparkle -->
+    <use href="#blossom" transform="translate(11 11) rotate(15)"/>
+    <use href="#blossom" transform="translate(53 33) rotate(-10) scale(0.85)"/>
+    <use href="#blossom" transform="translate(9 56) rotate(30) scale(0.75)"/>
+    <path d="M49 8 L50.2 11.8 L54 13 L50.2 14.2 L49 18 L47.8 14.2 L44 13 L47.8 11.8 Z" fill="#fff"/>
   </g>
-  <circle cx="32" cy="32" r="30.2" fill="none" stroke="#ff6b9d" stroke-width="1.8"/>
+  <circle cx="32" cy="32" r="30.4" fill="none" stroke="#fff" stroke-width="1.8"/>
+  <circle cx="32" cy="32" r="31.4" fill="none" stroke="#1d1a4d" stroke-width="1.2"/>
 </svg>
