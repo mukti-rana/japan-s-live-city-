@@ -34,7 +34,7 @@ export function SignInForm({ configured, error }: { configured: boolean; error?:
         <AuthField compact label="Email" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
         <AuthField compact label="Password" name="password" type="password" placeholder="••••••••" autoComplete="current-password" />
         <div className="flex justify-end">
-          <Link href="/forgot-password" className="rounded text-xs text-foreground/75 underline-offset-2 transition-colors hover:text-lilac hover:underline focus-visible:text-lilac focus-visible:outline-none focus-visible:underline">
+          <Link href="/forgot-password" className="rounded text-xs font-medium text-foreground underline-offset-2 transition-colors hover:text-lilac hover:underline focus-visible:text-lilac focus-visible:outline-none focus-visible:underline">
             {tr("Forgot password?")}
           </Link>
         </div>

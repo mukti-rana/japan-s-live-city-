@@ -65,7 +65,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[6px] backdrop-saturate-150 [text-shadow:0_1px_10px_rgba(8,10,28,0.55)] sm:p-8">
+          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[4px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
@@ -80,7 +80,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                       <h1 id="auth-title" ref={titleRef} tabIndex={-1} className={heading}>
                         {tr("Welcome")}
                       </h1>
-                      <p className="mt-2 text-sm text-foreground/85">{tr("Your journey through Japan starts here.")}</p>
+                      <p className="mt-2 text-sm text-foreground">{tr("Your journey through Japan starts here.")}</p>
                     </div>
 
                     <div className="mt-6">
@@ -96,18 +96,18 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                           </span>
                         </span>
                       </GuestLink>
-                      <p className="mt-2 text-center text-xs text-foreground/90">{tr("No account required. Start exploring Japan.")}</p>
+                      <p className="mt-2 text-center text-xs text-foreground">{tr("No account required. Start exploring Japan.")}</p>
                     </div>
 
                     <div role="separator" className="my-5 flex items-center gap-3">
                       <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
-                      <span className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground/90">{tr("Or sign in to your account")}</span>
+                      <span className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground">{tr("Or sign in to your account")}</span>
                       <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
                     </div>
 
                     <div className="flex flex-col gap-3">{signIn}</div>
 
-                    <p className="mt-5 text-center text-sm text-foreground/85">
+                    <p className="mt-5 text-center text-sm text-foreground">
                       {tr("Don't have an account?")}{" "}
                       <button type="button" onClick={() => setView("signup")} className={textLink}>
                         {tr("Create account")}
@@ -116,18 +116,18 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                   </>
                 ) : (
                   <>
-                    <button type="button" onClick={() => setView("signin")} className={`mb-4 flex items-center gap-1.5 text-xs font-medium text-foreground/80 transition-colors hover:text-foreground ${ring} rounded-lg`}>
+                    <button type="button" onClick={() => setView("signin")} className={`mb-4 flex items-center gap-1.5 text-xs font-medium text-foreground transition-colors hover:text-foreground ${ring} rounded-lg`}>
                       <ArrowLeft size={14} aria-hidden="true" />
                       {tr("Back to sign in")}
                     </button>
                     <h1 id="auth-title" ref={titleRef} tabIndex={-1} className={heading}>
                       {tr("Create your account")}
                     </h1>
-                    <p className="mt-2 text-sm text-foreground/85">{tr("Free, and it takes a minute.")}</p>
+                    <p className="mt-2 text-sm text-foreground">{tr("Free, and it takes a minute.")}</p>
 
                     <div className="mt-6 flex flex-col gap-3">{signUp}</div>
 
-                    <p className="mt-5 text-center text-sm text-foreground/85">
+                    <p className="mt-5 text-center text-sm text-foreground">
                       {tr("Already have an account?")}{" "}
                       <button type="button" onClick={() => setView("signin")} className={textLink}>
                         {tr("Sign in")}
