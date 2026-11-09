@@ -86,7 +86,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                     <div className="mt-6">
                       <GuestLink
                         label="Explore Japan as Guest"
-                        className={`auth-guest-glow group relative isolate flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-lilac to-sakura text-base font-semibold text-background shadow-[0_12px_34px_-12px_rgba(196,181,253,0.7)] transition-all hover:brightness-110 active:scale-[0.985] ${ring}`}
+                        className={`auth-guest-glow group relative isolate flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-lilac to-sakura text-base font-normal text-background [text-shadow:none] shadow-[0_12px_34px_-12px_rgba(196,181,253,0.7)] transition-all hover:brightness-110 active:scale-[0.985] ${ring}`}
                       >
                         <Compass size={18} className="transition-transform duration-500 group-hover:rotate-45" aria-hidden="true" />
                         <span>
