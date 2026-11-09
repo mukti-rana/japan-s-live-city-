@@ -81,7 +81,6 @@ export default function FujiBackdrop() {
         sizes="100vw"
         alt=""
         decoding="async"
-        fetchPriority="high"
         referrerPolicy="no-referrer"
         onLoad={(e) => {
           e.currentTarget.dataset.ready = "1";

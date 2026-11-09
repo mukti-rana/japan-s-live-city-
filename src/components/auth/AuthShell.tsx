@@ -65,7 +65,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-2 sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/15 bg-panel/80 p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.55)] backdrop-blur-xl sm:p-8">
+          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/20 bg-gradient-to-b from-white/[0.10] to-panel/45 p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.55),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-2xl backdrop-saturate-150 sm:p-8">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
@@ -96,12 +96,12 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                           </span>
                         </span>
                       </GuestLink>
-                      <p className="mt-2 text-center text-xs text-foreground/80">{tr("No account required. Start exploring Japan.")}</p>
+                      <p className="mt-2 text-center text-xs text-foreground/90">{tr("No account required. Start exploring Japan.")}</p>
                     </div>
 
                     <div role="separator" className="my-5 flex items-center gap-3">
                       <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
-                      <span className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground/75">{tr("Or sign in to your account")}</span>
+                      <span className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground/90">{tr("Or sign in to your account")}</span>
                       <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
                     </div>
 
