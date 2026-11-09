@@ -11,16 +11,16 @@ export const metadata: Metadata = {
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-// Opens guest-first; goes straight to the create-account form for ?form=1, a
-// failed attempt (?error=…) or the "check your email" confirmation.
+// Opens on the create-account form, with a way back to sign in and a guest
+// link. A failed attempt (?error=…) and the "check your email" confirmation
+// come back here and show above the form.
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
   const sp = await searchParams;
   const error = first(sp.error);
   const checkEmail = Boolean(first(sp.check_email));
-  const direct = Boolean(error || checkEmail || first(sp.form));
   return (
     <AuthShell
-      initialView={direct ? "signup" : "welcome"}
+      initialView="signup"
       signIn={<SignInForm configured={isSupabaseConfigured} />}
       signUp={<SignUpForm configured={isSupabaseConfigured} error={error} checkEmail={checkEmail} />}
     />

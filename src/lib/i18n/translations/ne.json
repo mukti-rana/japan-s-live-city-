@@ -1411,5 +1411,16 @@
   "Choose a longer password — at least 6 characters.": "लामो पासवर्ड छान्नुहोस् — कम्तीमा ६ अक्षर।",
   "Too many attempts. Please wait a minute and try again.": "धेरै प्रयास भए। कृपया एक मिनेट पर्खेर फेरि प्रयास गर्नुहोस्।",
   "Please enter a valid email address.": "कृपया मान्य इमेल ठेगाना लेख्नुहोस्।",
-  "We couldn't sign you in. Please try again.": "हामीले तपाईंलाई साइन इन गराउन सकेनौँ। कृपया फेरि प्रयास गर्नुहोस्।"
+  "We couldn't sign you in. Please try again.": "हामीले तपाईंलाई साइन इन गराउन सकेनौँ। कृपया फेरि प्रयास गर्नुहोस्।",
+  "Your journey through Japan starts here.": "जापानको तपाईंको यात्रा यहींबाट सुरु हुन्छ।",
+  "Or sign in to your account": "वा आफ्नो खातामा साइन इन गर्नुहोस्",
+  "Don't have an account?": "खाता छैन?",
+  "Already have an account?": "पहिले नै खाता छ?",
+  "Show password": "पासवर्ड देखाउनुहोस्",
+  "Hide password": "पासवर्ड लुकाउनुहोस्",
+  "Signing in…": "साइन इन हुँदै…",
+  "Creating account…": "खाता बनाउँदै…",
+  "Back to sign in": "साइन इनमा फर्कनुहोस्",
+  "Photo: {name}": "फोटो: {name}",
+  "CC0, Wikimedia Commons": "CC0, विकिमिडिया कमन्स"
 }

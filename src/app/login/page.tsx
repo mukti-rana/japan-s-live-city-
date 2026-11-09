@@ -11,16 +11,15 @@ export const metadata: Metadata = {
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-// Opens guest-first (the welcome screen). It opens straight on the sign-in
-// form when the visitor came to sign in on purpose (?form=1) or is returning
-// from a failed attempt (?error=…), so the message is never hidden.
+// The sign-in page: Explore as Guest on top, the sign-in form right below it.
+// A failed attempt comes back here with ?error=… and the message shows above
+// the form.
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const sp = await searchParams;
   const error = first(sp.error);
-  const direct = Boolean(error || first(sp.form));
   return (
     <AuthShell
-      initialView={direct ? "signin" : "welcome"}
+      initialView="signin"
       signIn={<SignInForm configured={isSupabaseConfigured} error={error} />}
       signUp={<SignUpForm configured={isSupabaseConfigured} />}
     />

@@ -20,8 +20,9 @@ function Notice({ tone, children }: { tone: "error" | "ok"; children: React.Reac
   );
 }
 
-// The existing sign-in form (same fields, same server action), now a
-// component so the welcome screen can show it in place.
+// The sign-in form: same fields and server action as ever, now compact so it
+// sits under the guest button. Supabase signs in with an email address, so
+// that is what the field asks for.
 export function SignInForm({ configured, error }: { configured: boolean; error?: string }) {
   const tr = useTranslate();
   const { language } = useLanguage();
@@ -29,15 +30,15 @@ export function SignInForm({ configured, error }: { configured: boolean; error?:
     <>
       {!configured && <SupabaseNotConfigured />}
       {error && <Notice tone="error">{known(friendlyAuthError(error), language)}</Notice>}
-      <form action={signInAction} className="flex flex-col gap-3.5">
-        <AuthField label="Email" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
-        <AuthField label="Password" name="password" type="password" placeholder="••••••••" autoComplete="current-password" />
+      <form action={signInAction} className="flex flex-col gap-3">
+        <AuthField compact label="Email" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
+        <AuthField compact label="Password" name="password" type="password" placeholder="••••••••" autoComplete="current-password" />
         <div className="flex justify-end">
-          <Link href="/forgot-password" className="text-xs text-muted transition-colors hover:text-azure focus-visible:text-azure focus-visible:outline-none focus-visible:underline">
+          <Link href="/forgot-password" className="rounded text-xs text-foreground/75 underline-offset-2 transition-colors hover:text-lilac hover:underline focus-visible:text-lilac focus-visible:outline-none focus-visible:underline">
             {tr("Forgot password?")}
           </Link>
         </div>
-        <AuthSubmitButton disabled={!configured}>
+        <AuthSubmitButton variant="quiet" disabled={!configured} pendingLabel={tr("Signing in…")}>
           <LogIn size={16} />
           {tr("Sign in")}
         </AuthSubmitButton>
@@ -55,10 +56,10 @@ export function SignUpForm({ configured, error, checkEmail }: { configured: bool
       {!configured && <SupabaseNotConfigured />}
       {checkEmail && <Notice tone="ok">{tr("Check your email for a confirmation link to finish creating your account.")}</Notice>}
       {error && <Notice tone="error">{known(friendlyAuthError(error), language)}</Notice>}
-      <form action={signUpAction} className="flex flex-col gap-3.5">
-        <AuthField label="Email" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
-        <AuthField label="Password" name="password" type="password" placeholder="At least 6 characters" autoComplete="new-password" />
-        <AuthSubmitButton disabled={!configured}>
+      <form action={signUpAction} className="flex flex-col gap-3">
+        <AuthField compact label="Email" name="email" type="email" placeholder="you@example.com" autoComplete="email" />
+        <AuthField compact label="Password" name="password" type="password" placeholder="At least 6 characters" autoComplete="new-password" />
+        <AuthSubmitButton disabled={!configured} pendingLabel={tr("Creating account…")}>
           <UserPlus size={16} />
           {tr("Create free account")}
         </AuthSubmitButton>

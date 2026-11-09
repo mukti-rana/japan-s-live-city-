@@ -1382,5 +1382,16 @@
   "Choose a longer password — at least 6 characters.": "请设置更长的密码——至少 6 个字符。",
   "Too many attempts. Please wait a minute and try again.": "尝试次数过多，请等一分钟后再试。",
   "Please enter a valid email address.": "请输入有效的邮箱地址。",
-  "We couldn't sign you in. Please try again.": "无法登录，请重试。"
+  "We couldn't sign you in. Please try again.": "无法登录，请重试。",
+  "Your journey through Japan starts here.": "你的日本之旅，从这里开始。",
+  "Or sign in to your account": "或登录你的账户",
+  "Don't have an account?": "还没有账户？",
+  "Already have an account?": "已有账户？",
+  "Show password": "显示密码",
+  "Hide password": "隐藏密码",
+  "Signing in…": "正在登录…",
+  "Creating account…": "正在创建账户…",
+  "Back to sign in": "返回登录",
+  "Photo: {name}": "照片：{name}",
+  "CC0, Wikimedia Commons": "CC0，维基共享资源"
 }

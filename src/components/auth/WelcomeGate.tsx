@@ -44,7 +44,7 @@ export default function WelcomeGate() {
           aria-modal="true"
           aria-label="LIVE CITY JAPAN"
         >
-          <AuthShell initialView="welcome" signIn={<SignInForm configured={configured} />} signUp={<SignUpForm configured={configured} />} />
+          <AuthShell initialView="signin" signIn={<SignInForm configured={configured} />} signUp={<SignUpForm configured={configured} />} />
         </motion.div>
       )}
     </AnimatePresence>

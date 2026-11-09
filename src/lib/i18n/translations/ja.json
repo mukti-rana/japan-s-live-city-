@@ -734,5 +734,16 @@
   "Choose a longer password — at least 6 characters.": "パスワードをもっと長くしてください（6文字以上）。",
   "Too many attempts. Please wait a minute and try again.": "試行回数が多すぎます。1分ほど待ってからもう一度お試しください。",
   "Please enter a valid email address.": "有効なメールアドレスを入力してください。",
-  "We couldn't sign you in. Please try again.": "ログインできませんでした。もう一度お試しください。"
+  "We couldn't sign you in. Please try again.": "ログインできませんでした。もう一度お試しください。",
+  "Your journey through Japan starts here.": "あなたの日本の旅は、ここから始まります。",
+  "Or sign in to your account": "またはアカウントにログイン",
+  "Don't have an account?": "アカウントをお持ちでないですか？",
+  "Already have an account?": "すでにアカウントをお持ちですか？",
+  "Show password": "パスワードを表示",
+  "Hide password": "パスワードを隠す",
+  "Signing in…": "ログイン中…",
+  "Creating account…": "アカウント作成中…",
+  "Back to sign in": "ログインに戻る",
+  "Photo: {name}": "写真：{name}",
+  "CC0, Wikimedia Commons": "CC0、ウィキメディア・コモンズ"
 }
