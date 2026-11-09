@@ -410,19 +410,21 @@ html[data-atm-paused="true"] .jn-drift { animation-play-state: paused; }
    when the tab is hidden and for visitors who ask for less motion. */
 @keyframes sky-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 .sky-drift { animation: sky-drift linear infinite; will-change: transform; }
-/* Sakura branches on the sign-in page: the limbs fade in, the
-   blossoms open outward one by one, and the whole branch sways very slightly. They
-   live inside .atm-anim, so reduced motion shows the finished branch. */
-@keyframes sakura-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes sakura-pop {
-  0% { transform: scale(0) rotate(-50deg); opacity: 0; }
-  60% { transform: scale(1.18) rotate(6deg); opacity: 1; }
-  100% { transform: scale(1) rotate(0); opacity: 1; }
-}
+/* Sakura on the sign-in page: the branch pictures fade in as the page opens
+   and then sway very slightly; single petals fall and flutter. They live
+   inside .atm-anim, so they stop when the tab is hidden and, for visitors who
+   ask for less motion, the branches simply stay put and the petals are hidden. */
+@keyframes sakura-in { from { opacity: 0; transform: scale(0.94) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
 @keyframes sakura-sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1.4deg); } }
-.sakura-fade { animation: sakura-fade 1s ease-out both; }
-.sakura-pop { transform-box: fill-box; transform-origin: center; animation: sakura-pop 0.9s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+@keyframes petal-flutter {
+  0%, 100% { transform: translate3d(-14px, 0, 0) perspective(160px) rotateX(10deg) rotateY(-30deg) rotateZ(-28deg); }
+  25% { transform: translate3d(0, 0, 0) perspective(160px) rotateX(75deg) rotateY(20deg) rotateZ(10deg); }
+  50% { transform: translate3d(14px, 0, 0) perspective(160px) rotateX(15deg) rotateY(35deg) rotateZ(38deg); }
+  75% { transform: translate3d(2px, 0, 0) perspective(160px) rotateX(-70deg) rotateY(-15deg) rotateZ(5deg); }
+}
+.sakura-in { animation: sakura-in 2.2s ease-out both; will-change: transform, opacity; }
 .sakura-sway { animation: sakura-sway 9s ease-in-out infinite; will-change: transform; }
+.petal-flutter { animation: petal-flutter ease-in-out infinite; }
 
 @keyframes auth-cloud { 0%, 100% { transform: translate3d(-6%, 0, 0); } 50% { transform: translate3d(10%, 0, 0); } }
 @keyframes auth-shimmer { 0%, 100% { opacity: 0.35; transform: translate3d(-1.5%, 0, 0); } 50% { opacity: 0.75; transform: translate3d(1.5%, 0, 0); } }

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "catalogue:build": "node scripts/build-catalogue.mjs",
-    "i18n:check": "node scripts/i18n-audit.mjs"
+    "i18n:check": "node scripts/i18n-audit.mjs",
+    "sakura:render": "node scripts/render-sakura.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.125.0",

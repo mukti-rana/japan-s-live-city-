@@ -2,6 +2,7 @@
 
 import SkyClouds from "@/components/auth/SkyClouds";
 import SakuraBranches from "@/components/auth/SakuraBranches";
+import { useId } from "react";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
@@ -24,7 +25,19 @@ const BASE = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d";
 const thumb = (w: number) => `${BASE}/${FILE}/${w}px-${FILE}`;
 const FILE_PAGE = `https://commons.wikimedia.org/wiki/File:${FILE}`;
 
-const PETALS = Array.from({ length: 9 }, (_, i) => ({ x: (i * 43 + 7) % 100, delay: -((i * 2.7) % 16), dur: 16 + ((i * 3) % 7), size: 7 + ((i * 5) % 6), dx: ((i * 19) % 60) - 30 }));
+// A handful of single petals (not a blizzard): different sizes, speeds and
+// sideways drift, falling and turning at their own pace.
+const PETAL = "M0 0 C -2.6 -1 -4.6 -4.6 -3.3 -7.1 C -2.6 -8.4 -1.1 -8.4 0 -7.2 C 1.1 -8.4 2.6 -8.4 3.3 -7.1 C 4.6 -4.6 2.6 -1 0 0 Z";
+const PETALS = [
+  { x: 6, size: 14, dur: 21, delay: -3, dx: 90, flutter: 4.6 },
+  { x: 17, size: 11, dur: 26, delay: -14, dx: 60, flutter: 5.8 },
+  { x: 31, size: 17, dur: 19, delay: -8, dx: 120, flutter: 4.1 },
+  { x: 44, size: 12, dur: 24, delay: -19, dx: 70, flutter: 5.2 },
+  { x: 58, size: 15, dur: 22, delay: -5, dx: 100, flutter: 4.8 },
+  { x: 71, size: 11, dur: 27, delay: -22, dx: 50, flutter: 6.1 },
+  { x: 83, size: 16, dur: 20, delay: -11, dx: 110, flutter: 4.4 },
+  { x: 93, size: 12, dur: 25, delay: -16, dx: 80, flutter: 5.5 },
+];
 
 function Illustration() {
   return (
@@ -67,9 +80,20 @@ function Illustration() {
 
 export default function FujiBackdrop() {
   const tr = useTranslate();
+  const petalFill = useId();
   return (
     <div className="group pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
       <Illustration />
+      <svg width="0" height="0" className="absolute" aria-hidden="true">
+        <defs>
+          <radialGradient id={petalFill} cx="0.5" cy="1" r="1.05">
+            <stop offset="0" stopColor="#e65f93" />
+            <stop offset="0.25" stopColor="#f7a0c1" />
+            <stop offset="0.65" stopColor="#fbd7e5" />
+            <stop offset="1" stopColor="#fdf4f8" />
+          </radialGradient>
+        </defs>
+      </svg>
 
       {/* The photograph. It starts invisible; the load handler (or the ref, if
           it finished loading before this page woke up) reveals it. */}
@@ -104,13 +128,16 @@ export default function FujiBackdrop() {
             top left (below the logo), a smaller one from the top right on
             narrow screens (on wide ones the sign-in panel sits there), and a
             soft out-of-focus one low on the left in front of the lake. */}
-        <SakuraBranches className="-left-3 top-14 w-[84vw] max-w-[700px] sm:w-[46vw]" seed={3} />
-        <SakuraBranches className="-right-3 top-14 w-[46vw] max-w-[380px] -scale-x-100 lg:hidden" seed={9} delay={0.5} />
-        <SakuraBranches className="-bottom-4 -left-4 w-[54vw] max-w-[460px] -scale-y-100 sm:w-[26vw]" seed={14} delay={1} blur={2.5} />
+        <SakuraBranches className="-left-3 top-14 w-[84vw] max-w-[700px] sm:w-[46vw]" branch="large" />
+        <SakuraBranches className="-right-3 top-14 w-[46vw] max-w-[380px] -scale-x-100 lg:hidden" branch="small" delay={0.5} />
+        <SakuraBranches className="-bottom-4 -left-4 w-[54vw] max-w-[460px] -scale-y-100 sm:w-[26vw]" branch="small" delay={1} />
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
         {PETALS.map((p, i) => (
-          <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
-            <span className="atm-sway atm-petal block h-full w-full opacity-70" style={{ animationDuration: `${4 + (i % 4)}s`, animationDelay: `${p.delay}s` }} />
+          <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size * 1.25, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
+            <svg viewBox="-4 -9 8 10" className="petal-flutter block h-full w-full" style={{ animationDuration: `${p.flutter}s`, animationDelay: `${p.delay}s` }}>
+              <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />
+              <path d="M0 -0.6 L0 -5.4" stroke="#e8749f" strokeWidth="0.14" opacity="0.4" fill="none" />
+            </svg>
           </span>
         ))}
       </div>
