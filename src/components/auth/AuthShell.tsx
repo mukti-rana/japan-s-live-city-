@@ -65,7 +65,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/20 bg-gradient-to-b from-white/[0.07] to-panel/25 p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.55),inset_0_1px_0_rgba(255,255,255,0.18)] backdrop-blur-md backdrop-saturate-150 [text-shadow:0_1px_10px_rgba(8,10,28,0.55)] sm:p-8">
+          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[6px] backdrop-saturate-150 [text-shadow:0_1px_10px_rgba(8,10,28,0.55)] sm:p-8">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
@@ -86,7 +86,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                     <div className="mt-6">
                       <GuestLink
                         label="Explore Japan as Guest"
-                        className={`auth-guest-glow group flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-lilac to-sakura text-base font-semibold text-background shadow-[0_12px_34px_-12px_rgba(196,181,253,0.7)] transition-all hover:brightness-110 active:scale-[0.985] ${ring}`}
+                        className={`auth-guest-glow group relative isolate flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-lilac to-sakura text-base font-semibold text-background shadow-[0_12px_34px_-12px_rgba(196,181,253,0.7)] transition-all hover:brightness-110 active:scale-[0.985] ${ring}`}
                       >
                         <Compass size={18} className="transition-transform duration-500 group-hover:rotate-45" aria-hidden="true" />
                         <span>
