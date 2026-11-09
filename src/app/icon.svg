@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2f6e"/>
+      <stop offset="1" stop-color="#0b0e1a"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ff6b9d"/>
+      <stop offset="1" stop-color="#f2c572"/>
+    </linearGradient>
+    <linearGradient id="fuji" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6c7fd8"/>
+      <stop offset="1" stop-color="#2b3a86"/>
+    </linearGradient>
+    <clipPath id="round"><circle cx="32" cy="32" r="30"/></clipPath>
+  </defs>
+  <circle cx="32" cy="32" r="31" fill="url(#sky)"/>
+  <g clip-path="url(#round)">
+    <circle cx="46" cy="21" r="8" fill="url(#sun)"/>
+    <path d="M2 50 L24 22 Q32 12 40 22 L62 50 Z" fill="url(#fuji)"/>
+    <path d="M24 22 Q32 12 40 22 L36.5 26 L32 22.5 L27.5 26 Z" fill="#f4f1ff"/>
+    <rect x="0" y="48" width="64" height="16" fill="#12183a"/>
+    <path d="M10 54 q5.5 -3 11 0 t11 0 t11 0 t11 0" fill="none" stroke="#4da3ff" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+  <circle cx="32" cy="32" r="30.2" fill="none" stroke="#ff6b9d" stroke-width="1.8"/>
+</svg>
