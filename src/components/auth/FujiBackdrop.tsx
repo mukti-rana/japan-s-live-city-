@@ -1,5 +1,6 @@
 "use client";
 
+import SkyClouds from "@/components/auth/SkyClouds";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
@@ -12,8 +13,8 @@ import { useTranslate } from "@/lib/i18n/inline";
 //      has loaded. It is loaded from Wikimedia Commons (CC0 — public domain
 //      dedication, by Marion & Christoph Aistl), not copied into this project.
 //      If it can't load, the illustration simply stays.
-//   3. Dusk colour (navy → lavender → pink), a soft glow at the horizon, and a
-//      little drifting mist and a few sakura petals.
+//   3. Dusk colour (navy → lavender → pink), a soft glow at the horizon, clouds
+//      drifting across the sky and over the mountain, and a few sakura petals.
 // Nothing here takes clicks, and the movement stops for people who ask for
 // less motion and while the tab is hidden.
 
@@ -97,8 +98,7 @@ export default function FujiBackdrop() {
       <div className="absolute inset-0 bg-[radial-gradient(70%_38%_at_50%_58%,rgba(255,150,190,0.28),transparent_70%)]" />
 
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
-        <span className="auth-cloud absolute -left-[10%] top-[10%] h-24 w-[55%] rounded-full bg-white/[0.08] blur-3xl" style={{ animationDuration: "70s" }} />
-        <span className="auth-cloud absolute left-[30%] top-[22%] h-20 w-[50%] rounded-full bg-white/[0.07] blur-3xl" style={{ animationDuration: "95s", animationDelay: "-30s" }} />
+        <SkyClouds />
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
         {PETALS.map((p, i) => (
           <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>

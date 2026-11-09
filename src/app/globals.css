@@ -15,6 +15,11 @@
   --panel: #0e1324;
   --neon-cyan: #22d3ee;
   --neon-purple: #a855f7;
+  /* Readable companion to --neon-purple. The saturated purple above only
+     reaches 4.86:1 on --background and drops to 4.12:1 over glass, so it is
+     for fills, borders and glows. Use --lilac for purple TEXT and icons:
+     8.8-10.4:1 across every surface in the app. */
+  --lilac: #c4b5fd;
   --glow: rgba(77, 163, 255, 0.35);
 
   /* Time-of-day ambient accents — updated at runtime by useAmbientLighting()
@@ -40,6 +45,7 @@
   --color-panel: var(--panel);
   --color-neon-cyan: var(--neon-cyan);
   --color-neon-purple: var(--neon-purple);
+  --color-lilac: var(--lilac);
   --font-sans: var(--font-space-grotesk);
   --font-jp: var(--font-jp);
 }
@@ -402,6 +408,8 @@ html[data-atm-paused="true"] .jn-drift { animation-play-state: paused; }
 /* Welcome / sign-in atmosphere: slow clouds and a soft shimmer on the water.
    Only transform and opacity move; they sit inside .atm-anim, so they stop
    when the tab is hidden and for visitors who ask for less motion. */
+@keyframes sky-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.sky-drift { animation: sky-drift linear infinite; will-change: transform; }
 @keyframes auth-cloud { 0%, 100% { transform: translate3d(-6%, 0, 0); } 50% { transform: translate3d(10%, 0, 0); } }
 @keyframes auth-shimmer { 0%, 100% { opacity: 0.35; transform: translate3d(-1.5%, 0, 0); } 50% { opacity: 0.75; transform: translate3d(1.5%, 0, 0); } }
 .auth-cloud { animation: auth-cloud ease-in-out infinite; }
