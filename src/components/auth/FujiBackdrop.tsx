@@ -120,6 +120,15 @@ export default function FujiBackdrop() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e1a]/32 via-[#3a2f72]/12 to-[#0b0e1a]/46" />
       <div className="absolute inset-0 bg-[radial-gradient(70%_38%_at_50%_58%,rgba(255,150,190,0.28),transparent_70%)]" />
 
+      {/* The dark wooded hillside on the left, softened: a slight blur, a little
+          less contrast, a gentle lift and a faint lavender haze over the darkest parts, faded out toward its edges so it blends
+          into the rest of the photograph. Nothing is drawn or added — it is the
+          same photo, just calmer in that one area. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[rgba(150,135,190,0.22)] [-webkit-backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [-webkit-mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)] [mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)]"
+      />
+
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
         {PETALS.map((p, i) => (
