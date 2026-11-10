@@ -35,6 +35,8 @@ export interface ReviewPhoto {
 
 export interface CommunityReview {
   id: string;
+  // The place reviewed (an Explore place id like "Q123").
+  placeRef: string;
   rating: number;
   body: string;
   recommend: boolean;
@@ -80,6 +82,8 @@ export interface CommunityQuestion {
   answerCount: number;
   helpfulCount: number;
   publishedAt: string;
+  // The newest answer's time (or when it was asked). Filled in by list queries.
+  lastActivityAt?: string;
   status: string;
   author: { username: string; avatarUrl: string | null };
   isMine: boolean;

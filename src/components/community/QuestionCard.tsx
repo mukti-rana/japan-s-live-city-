@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { CheckCircle2, MapPin, MessageSquareText } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, MessageSquareText, ThumbsUp } from "lucide-react";
+import Avatar from "@/components/community/Avatar";
 import Bi from "@/components/community/Bi";
 import LocalDate from "@/components/community/LocalDate";
 import Tx from "@/components/i18n/Tx";
@@ -50,9 +51,27 @@ export default function QuestionCard({ q }: { q: CommunityQuestion }) {
           <MessageSquareText size={13} aria-hidden="true" />
           {q.answerCount} <Tx en={q.answerCount === 1 ? "answer" : "answers"} />
         </span>
-        <Link href={`/community/u/${q.author.username}`} className="relative z-10 truncate rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{q.author.username}</Link>
-        <LocalDate iso={q.publishedAt} />
+        {q.helpfulCount > 0 && (
+          <span className="inline-flex items-center gap-1.5 text-mint">
+            <ThumbsUp size={13} aria-hidden="true" />
+            {q.helpfulCount} <Tx en="helpful" />
+          </span>
+        )}
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <Avatar username={q.author.username} avatarUrl={q.author.avatarUrl} size={20} />
+          <Link href={`/community/u/${q.author.username}`} className="relative z-10 truncate rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{q.author.username}</Link>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Clock size={12} aria-hidden="true" />
+          {q.answerCount > 0 && q.lastActivityAt ? <Tx en="Last answer" /> : <Tx en="Asked" />}{" "}
+          <LocalDate iso={q.answerCount > 0 && q.lastActivityAt ? q.lastActivityAt : q.publishedAt} />
+        </span>
       </div>
+      {q.answerCount === 0 && (
+        <p className="relative z-10 mt-2 text-xs font-medium text-gold">
+          <Tx en="Waiting for its first answer" />
+        </p>
+      )}
     </article>
   );
 }

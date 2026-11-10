@@ -129,9 +129,26 @@ export async function fetchQuestions(client: SupabaseClient, f: QuestionFilters,
   else q = q.order("published_at", { ascending: false });
   const from = (f.page - 1) * limit;
   const { data, error } = await q.range(from, from + limit);
-  if (error || !data) return null;
-  const rows = data as unknown as QuestionRow[];
-  return { questions: rows.slice(0, limit).map((r) => toQuestion(r, viewerId)), hasMore: rows.length > limit };
+  if (error || !data) {
+    console.error(`[community] questions: code=${error?.code ?? "none"} message=${(error?.message ?? "no data").replace(/\s+/g, " ").slice(0, 200)}`);
+    return null;
+  }
+  const rows = (data as unknown as QuestionRow[]).slice(0, limit);
+  const questions = rows.map((r) => toQuestion(r, viewerId));
+  await addLastActivity(client, questions);
+  return { questions, hasMore: (data as unknown[]).length > limit };
+}
+
+// When each question last had something happen: its newest published answer,
+// or when it was asked. One extra query covers the whole list.
+export async function addLastActivity(client: SupabaseClient, questions: CommunityQuestion[]): Promise<void> {
+  const answered = questions.filter((q) => q.answerCount > 0).map((q) => q.id);
+  const latest = new Map<string, string>();
+  if (answered.length > 0) {
+    const { data } = await client.from("community_answers").select("question_id,created_at").in("question_id", answered).eq("status", "published").order("created_at", { ascending: false }).limit(answered.length * 20);
+    for (const r of (data ?? []) as { question_id: string; created_at: string }[]) if (!latest.has(r.question_id)) latest.set(r.question_id, r.created_at);
+  }
+  for (const q of questions) q.lastActivityAt = latest.get(q.id) ?? q.publishedAt;
 }
 
 // "Ask a Local" questions: about an area, not tied to one place.

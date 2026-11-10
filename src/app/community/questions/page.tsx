@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HelpCircle, X } from "lucide-react";
 import Bi from "@/components/community/Bi";
+import CommunityHero from "@/components/community/CommunityHero";
 import CommunityTabs from "@/components/community/CommunityTabs";
+import Unavailable from "@/components/community/Unavailable";
 import QuestionList from "@/components/community/QuestionList";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID, FEATURED_AREAS, isAreaId } from "@/lib/community/areas";
@@ -23,7 +25,7 @@ async function load(sp: Record<string, string | string[] | undefined>) {
   const filters = questionFiltersFromParams(sp, isAreaId);
   const client = publicClient();
   const result = client ? await fetchQuestions(client, filters, null) : null;
-  return { filters, result };
+  return { filters, result, client: Boolean(client) };
 }
 
 export async function generateMetadata({ searchParams }: PageProps<"/community/questions">): Promise<Metadata> {
@@ -34,7 +36,7 @@ export async function generateMetadata({ searchParams }: PageProps<"/community/q
 }
 
 export default async function QuestionsPage({ searchParams }: PageProps<"/community/questions">) {
-  const { filters, result } = await load(await searchParams);
+  const { filters, result, client } = await load(await searchParams);
   const place = filters.placeRef ? getDestination(filters.placeRef) : null;
   const area = filters.areaId ? AREA_BY_ID.get(filters.areaId) : undefined;
   const askHref = `/community/questions/new${filters.placeRef ? `?place=${filters.placeRef}` : filters.areaId ? `?area=${filters.areaId}` : ""}`;
@@ -43,7 +45,7 @@ export default async function QuestionsPage({ searchParams }: PageProps<"/commun
   return (
     <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-6 pb-10">
       <CommunityTabs active="questions" />
-      <header className="rounded-3xl border border-glass-border bg-gradient-to-br from-lilac/10 via-glass-bg to-azure/10 p-5 backdrop-blur-xl sm:p-8">
+      <CommunityHero>
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-lilac">
           <HelpCircle size={14} aria-hidden="true" />
           <Tx en="Ask a Local" />
@@ -55,9 +57,9 @@ export default async function QuestionsPage({ searchParams }: PageProps<"/commun
           <Tx en="Ask about a place or a city, and get answers from people who have been there." />
         </p>
         <Link href={askHref} className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
-          <Tx en="Ask a question" />
+          <Tx en="Ask a Question" />
         </Link>
-      </header>
+      </CommunityHero>
 
       <div className="flex flex-col gap-3">
         {place ? (
@@ -84,9 +86,7 @@ export default async function QuestionsPage({ searchParams }: PageProps<"/commun
           </div>
         )}
         {result === null ? (
-          <p role="status" className="rounded-2xl border border-glass-border bg-glass-bg px-4 py-6 text-center text-sm text-foreground/85">
-            <Tx en="Questions aren't available right now. Please try again in a little while." />
-          </p>
+          <Unavailable reason={client ? "error" : "not_configured"} />
         ) : (
           <QuestionList basePath="/community/questions" filters={filters} questions={result.questions} hasMore={result.hasMore} emptyHint="No questions yet. Be the first to ask." />
         )}

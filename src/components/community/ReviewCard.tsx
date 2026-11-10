@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { MapPin, ThumbsDown, ThumbsUp } from "lucide-react";
 import Stars from "@/components/community/Stars";
 import LocalDate from "@/components/community/LocalDate";
 import { HelpfulButton, REVIEW_VOTES } from "@/components/community/HelpfulVotes";
@@ -7,6 +7,7 @@ import ReportButton from "@/components/community/ReportButton";
 import ReviewOwnerTools from "@/components/community/ReviewOwnerTools";
 import Tx from "@/components/i18n/Tx";
 import { photoUrl } from "@/lib/community/photos";
+import { getDestination } from "@/lib/explore/catalogue";
 import type { CommunityReview } from "@/lib/community/types";
 
 const NOTICE: Record<string, string> = {
@@ -18,7 +19,9 @@ const NOTICE: Record<string, string> = {
 // One review. The stars lead, then who, when, whether they'd recommend it, the
 // words and the photos. Your own review shows edit/delete instead of
 // helpful/report. Names are usernames only: no email or private detail.
-export default function ReviewCard({ review, placeRef }: { review: CommunityReview; placeRef: string }) {
+export default function ReviewCard({ review, placeRef, showPlace = false }: { review: CommunityReview; placeRef: string; showPlace?: boolean }) {
+  const place = showPlace ? getDestination(placeRef) : null;
+  const placeName = place ? (place.names.en ?? place.names.ja ?? null) : null;
   const photos = review.photos.flatMap((p) => {
     const full = photoUrl(p.path);
     const thumb = photoUrl(p.thumbPath ?? p.path);
@@ -41,6 +44,14 @@ export default function ReviewCard({ review, placeRef }: { review: CommunityRevi
       {review.isMine && review.status !== "published" && NOTICE[review.status] && (
         <p role="status" className="mb-3 rounded-xl border border-gold/40 bg-gold/10 px-3 py-2 text-xs text-foreground">
           <Tx en={NOTICE[review.status]} />
+        </p>
+      )}
+      {showPlace && placeName && (
+        <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+          <MapPin size={14} aria-hidden="true" className="shrink-0 text-azure" />
+          <Link href={`/explore/${placeRef}`} className="truncate rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            {placeName}
+          </Link>
         </p>
       )}
       <div className="flex flex-wrap items-center justify-between gap-2">

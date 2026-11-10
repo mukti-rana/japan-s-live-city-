@@ -15,7 +15,8 @@ export const dynamic = "force-dynamic";
 
 function Gate({ heading, body, signIn }: { heading: string; body: string; signIn?: boolean }) {
   return (
-    <div className="mx-auto w-full max-w-[1100px]">
+    <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6">
+      <CommunityTabs active="me" />
       <div className="rounded-3xl border border-glass-border bg-glass-bg px-5 py-12 text-center backdrop-blur-xl">
         <h1 className="text-xl font-semibold text-foreground"><Tx en={heading} /></h1>
         <p className="mx-auto mt-2 max-w-md text-sm text-foreground/85"><Tx en={body} /></p>

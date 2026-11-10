@@ -2,6 +2,7 @@ import { cache } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { supabaseAnonKey, supabaseUrl } from "@/lib/supabase/env";
 import { PAGE_SIZE, type FeedFilters } from "@/lib/community/feed";
+import { REGIONS } from "@/lib/explore/regions";
 import type { CommunityPost } from "@/lib/community/types";
 
 // Reads of PUBLIC community content. They use the public (anon) key without
@@ -9,11 +10,35 @@ import type { CommunityPost } from "@/lib/community/types";
 // Level Security in the database — not this code — is what limits the answer
 // to published posts. Nothing private is read here.
 
+const REGION_PREFECTURES = new Map(REGIONS.map((r) => [r.id, r.prefectureIds]));
+
 export type FeedResult =
   | { state: "ready"; posts: CommunityPost[]; hasMore: boolean }
-  // Supabase is not configured here, or the community tables are not set up
-  // yet (migration not run) or the request failed. The page says so plainly.
-  | { state: "unavailable" };
+  // The feed could not be read. `reason` says why, so the page (and the server
+  // log) can tell the three real situations apart instead of one vague message:
+  //   not_configured — this environment has no Supabase address / key;
+  //   not_set_up     — the community tables are missing (migrations not run);
+  //   error          — the database was unreachable or refused the request.
+  | { state: "unavailable"; reason: FeedProblem };
+
+export type FeedProblem = "not_configured" | "not_set_up" | "error";
+
+// PostgREST / Postgres codes that mean "that table, column or relationship is
+// not there" — i.e. the community migrations have not been run on this project.
+const MISSING_SCHEMA_CODES = new Set(["PGRST200", "PGRST204", "PGRST205", "42P01", "42703"]);
+
+export function classifyError(error: { code?: string | null; message?: string | null }): FeedProblem {
+  return error.code && MISSING_SCHEMA_CODES.has(error.code) ? "not_set_up" : "error";
+}
+
+// The real reason goes to the server log (never to the visitor's screen).
+// Messages are cut short: a wrong address can answer with a whole web page.
+export const brief = (text: string | null | undefined, max = 200) => (text ?? "").replace(/\s+/g, " ").slice(0, max);
+
+export function logProblem(where: string, problem: FeedProblem, error?: { code?: string | null; message?: string | null; details?: string | null; hint?: string | null }) {
+  const detail = error ? ` code=${error.code ?? "none"} message=${brief(error.message)}${error.hint ? ` hint=${brief(error.hint)}` : ""}` : "";
+  console.error(`[community] ${where}: ${problem}${detail}`);
+}
 
 export const POST_SELECT =
   "id,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at," +
@@ -69,11 +94,15 @@ function likeTerm(q: string): string {
 }
 
 async function load(filters: FeedFilters): Promise<FeedResult> {
-  if (!supabaseUrl || !supabaseAnonKey) return { state: "unavailable" };
+  if (!supabaseUrl || !supabaseAnonKey) {
+    logProblem("feed", "not_configured");
+    return { state: "unavailable", reason: "not_configured" };
+  }
   const client = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: false } });
 
   let query = client.from("community_posts").select(POST_SELECT).eq("status", "published");
   if (filters.area) query = query.eq("area_id", filters.area);
+  else if (filters.region) query = query.in("area_id", REGION_PREFECTURES.get(filters.region) ?? []);
   if (filters.category) query = query.eq("category_slug", filters.category);
   const term = filters.q ? likeTerm(filters.q) : "";
   if (term) query = query.ilike("search_text", `%${term}%`);
@@ -85,7 +114,11 @@ async function load(filters: FeedFilters): Promise<FeedResult> {
   const from = (filters.page - 1) * PAGE_SIZE;
   // One extra row tells us whether there is a next page.
   const { data, error } = await query.range(from, from + PAGE_SIZE);
-  if (error || !data) return { state: "unavailable" };
+  if (error || !data) {
+    const problem = error ? classifyError(error) : "error";
+    logProblem("feed", problem, error ?? undefined);
+    return { state: "unavailable", reason: problem };
+  }
 
   const rows = data as unknown as Row[];
   return { state: "ready", posts: rows.slice(0, PAGE_SIZE).map(toPost), hasMore: rows.length > PAGE_SIZE };

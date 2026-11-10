@@ -437,3 +437,22 @@ html[data-atm-paused="true"] .jn-drift { animation-play-state: paused; }
   mask-image: linear-gradient(to top, black, transparent);
   animation: auth-shimmer 9s ease-in-out infinite;
 }
+
+/* Community hero: a dusk-over-the-mountains backdrop. Two soft colour washes
+   drift very slowly and a ridge line sways a few pixels; only transform and
+   opacity move. They pause when the tab is hidden and stay still for visitors
+   who ask for less motion. */
+@keyframes cm-wash-a { from { transform: translate3d(-4%, 0, 0) scale(1); } to { transform: translate3d(6%, 3%, 0) scale(1.12); } }
+@keyframes cm-wash-b { from { transform: translate3d(5%, 2%, 0) scale(1.1); } to { transform: translate3d(-6%, -3%, 0) scale(1); } }
+@keyframes cm-ridge { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-3%, 0, 0); } }
+@keyframes cm-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.cm-wash-a { animation: cm-wash-a 26s ease-in-out infinite alternate; will-change: transform; }
+.cm-wash-b { animation: cm-wash-b 32s ease-in-out infinite alternate; will-change: transform; }
+.cm-ridge { animation: cm-ridge 40s ease-in-out infinite alternate; will-change: transform; }
+.cm-rise { animation: cm-rise 0.45s ease-out both; }
+html[data-atm-paused="true"] .cm-wash-a, html[data-atm-paused="true"] .cm-wash-b, html[data-atm-paused="true"] .cm-ridge { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .cm-wash-a, .cm-wash-b, .cm-ridge, .cm-rise { animation: none !important; } }
+/* Photos in cards ease in as they load and zoom a touch on hover. */
+.cm-photo { transition: transform 0.5s ease, opacity 0.4s ease; }
+@media (hover: hover) { .group:hover .cm-photo { transform: scale(1.04); } }
+@media (prefers-reduced-motion: reduce) { .cm-photo { transition: none; } .group:hover .cm-photo { transform: none; } }

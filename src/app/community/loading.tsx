@@ -3,6 +3,11 @@
 export default function CommunityLoading() {
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 pb-10" aria-busy="true">
+      <div className="flex gap-2 overflow-hidden">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="h-11 w-28 shrink-0 animate-pulse rounded-full bg-glass-bg" />
+        ))}
+      </div>
       <div className="h-56 animate-pulse rounded-3xl border border-glass-border bg-glass-bg sm:h-64" />
       <div className="flex gap-2 overflow-hidden">
         {Array.from({ length: 8 }, (_, i) => (
