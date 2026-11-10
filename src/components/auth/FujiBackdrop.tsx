@@ -114,12 +114,12 @@ export default function FujiBackdrop() {
         onError={(e) => {
           e.currentTarget.hidden = true;
         }}
-        className="auth-zoom absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 [object-position:50%_42%] data-[ready]:opacity-100"
+        className="auth-zoom absolute inset-0 h-full w-full object-cover opacity-0 brightness-[1.14] contrast-[1.14] transition-opacity duration-1000 [object-position:50%_42%] data-[ready]:opacity-100"
       />
 
       {/* Dusk colour over everything: deep navy above, lavender and pink at the
           horizon, navy again at the bottom edge. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e1a]/65 via-[#3a2f72]/30 to-[#0b0e1a]/75" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e1a]/45 via-[#3a2f72]/18 to-[#0b0e1a]/58" />
       <div className="absolute inset-0 bg-[radial-gradient(70%_38%_at_50%_58%,rgba(255,150,190,0.28),transparent_70%)]" />
 
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
