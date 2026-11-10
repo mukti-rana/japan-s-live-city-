@@ -153,7 +153,7 @@ export default function PostActions({ postId, title, likes, saves, isOwner, path
           </>
         )}
       </p>
-      {reporting && <ReportDialog postId={postId} onClose={() => setReporting(false)} />}
+      {reporting && <ReportDialog targetType="post" targetId={postId} onClose={() => setReporting(false)} />}
     </div>
   );
 }

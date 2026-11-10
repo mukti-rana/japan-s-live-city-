@@ -150,3 +150,73 @@ export function validatePostInput(raw: unknown, now: Date = new Date()): { ok: t
 
 export const REPORT_REASONS = ["inappropriate", "fake", "spam", "harassment", "misleading", "copyright", "unsafe"] as const;
 export type ReportReason = (typeof REPORT_REASONS)[number];
+
+// ───────────────────────── reviews ─────────────────────────
+
+export const REVIEW_LIMITS = { bodyMin: 10, bodyMax: 2000, maxPhotos: 4 } as const;
+
+export interface ReviewFields {
+  placeRef: string;
+  rating: number;
+  body: string;
+  recommend: boolean;
+  visitDate: string | null;
+  rightsConfirmed: boolean;
+}
+
+export interface ReviewInput extends ReviewFields {
+  // Photos newly uploaded for this review, and (when editing) existing photos to keep.
+  uploadPaths: string[];
+  keepPaths: string[];
+}
+
+export type ReviewErrors = Partial<Record<keyof ReviewInput, string>>;
+
+export const REVIEW_MESSAGES = {
+  rating: "Choose a star rating from 1 to 5.",
+  bodyShort: "If you write a review, please use at least 10 characters.",
+  bodyLong: "The review can be up to 2,000 characters.",
+  bodyLinks: "Please keep links out of the review (two at most).",
+  recommend: "Please say whether you would recommend this place.",
+  photosMany: "You can add up to 4 photos.",
+  placeRef: "That place could not be found.",
+} as const;
+
+// A star rating on its own is welcome; words are optional, but if there are some
+// they should say something (not just "ok").
+export function validateReviewFields(raw: Record<string, unknown>, hasPhotos: boolean, now: Date = new Date()): { ok: true; value: ReviewFields } | { ok: false; errors: ReviewErrors } {
+  const errors: ReviewErrors = {};
+  const placeRef = typeof raw.placeRef === "string" ? raw.placeRef.trim() : "";
+  const body = cleanText(raw.body, true);
+  const visitRaw = typeof raw.visitDate === "string" ? raw.visitDate.trim() : "";
+  const rating = raw.rating;
+
+  if (!/^Q[0-9]{1,12}$/.test(placeRef)) errors.placeRef = REVIEW_MESSAGES.placeRef;
+  if (typeof rating !== "number" || !Number.isInteger(rating) || rating < 1 || rating > 5) errors.rating = REVIEW_MESSAGES.rating;
+  if (body && body.length < REVIEW_LIMITS.bodyMin) errors.body = REVIEW_MESSAGES.bodyShort;
+  else if (body.length > REVIEW_LIMITS.bodyMax) errors.body = REVIEW_MESSAGES.bodyLong;
+  else if (countLinks(body) > LIMITS.maxLinksInCaption) errors.body = REVIEW_MESSAGES.bodyLinks;
+  if (typeof raw.recommend !== "boolean") errors.recommend = REVIEW_MESSAGES.recommend;
+  if (visitRaw && !isValidVisitDate(visitRaw, now)) errors.visitDate = MESSAGES.date;
+  if (hasPhotos && raw.rightsConfirmed !== true) errors.rightsConfirmed = MESSAGES.rights;
+
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { placeRef, rating: rating as number, body, recommend: raw.recommend as boolean, visitDate: visitRaw || null, rightsConfirmed: raw.rightsConfirmed === true } };
+}
+
+// The whole review submission as the server receives it.
+export function validateReviewInput(raw: unknown, now: Date = new Date()): { ok: true; value: ReviewInput } | { ok: false; errors: ReviewErrors } {
+  if (!raw || typeof raw !== "object") return { ok: false, errors: { rating: REVIEW_MESSAGES.rating } };
+  const r = raw as Record<string, unknown>;
+  const upload = Array.isArray(r.uploadPaths) ? r.uploadPaths : [];
+  const keep = Array.isArray(r.keepPaths) ? r.keepPaths : [];
+  const fields = validateReviewFields(r, upload.length > 0, now);
+  const errors: ReviewErrors = fields.ok ? {} : { ...fields.errors };
+
+  const all = [...upload, ...keep];
+  if (all.length > REVIEW_LIMITS.maxPhotos) errors.uploadPaths = REVIEW_MESSAGES.photosMany;
+  else if (!all.every((p) => typeof p === "string" && UPLOAD_PATH_RE.test(p)) || new Set(all).size !== all.length) errors.uploadPaths = MESSAGES.photoPaths;
+
+  if (!fields.ok || Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { ...fields.value, uploadPaths: upload as string[], keepPaths: keep as string[] } };
+}

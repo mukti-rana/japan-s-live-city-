@@ -15,12 +15,12 @@ export type FeedResult =
   // yet (migration not run) or the request failed. The page says so plainly.
   | { state: "unavailable" };
 
-const SELECT =
+export const POST_SELECT =
   "id,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at," +
   "profiles(username,avatar_url)," +
   "community_post_images(storage_path,thumb_path,width,height,alt,position)";
 
-interface Row {
+export interface Row {
   id: string;
   title: string;
   caption: string;
@@ -38,7 +38,7 @@ interface Row {
   community_post_images: { storage_path: string; thumb_path: string | null; width: number | null; height: number | null; alt: string | null; position: number }[] | null;
 }
 
-function toPost(r: Row): CommunityPost {
+export function toPost(r: Row): CommunityPost {
   const profile = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
   return {
     id: r.id,
@@ -72,7 +72,7 @@ async function load(filters: FeedFilters): Promise<FeedResult> {
   if (!supabaseUrl || !supabaseAnonKey) return { state: "unavailable" };
   const client = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: false } });
 
-  let query = client.from("community_posts").select(SELECT).eq("status", "published");
+  let query = client.from("community_posts").select(POST_SELECT).eq("status", "published");
   if (filters.area) query = query.eq("area_id", filters.area);
   if (filters.category) query = query.eq("category_slug", filters.category);
   const term = filters.q ? likeTerm(filters.q) : "";
@@ -94,3 +94,18 @@ async function load(filters: FeedFilters): Promise<FeedResult> {
 // React's cache() lets the page and its metadata share one query per request.
 export const fetchFeed = cache(async (key: string): Promise<FeedResult> => load(JSON.parse(key) as FeedFilters));
 export const feedKey = (f: FeedFilters) => JSON.stringify(f);
+
+// The public (cookie-free) client, for reads of public content.
+export function publicClient() {
+  if (!supabaseUrl || !supabaseAnonKey) return null;
+  return createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+}
+
+// Published posts about one place (photos shared from it).
+export async function fetchPlacePosts(placeRef: string, limit = 12): Promise<CommunityPost[]> {
+  const client = publicClient();
+  if (!client) return [];
+  const { data, error } = await client.from("community_posts").select(POST_SELECT).eq("status", "published").eq("place_ref", placeRef).order("published_at", { ascending: false }).limit(limit);
+  if (error || !data) return [];
+  return (data as unknown as Row[]).map(toPost);
+}

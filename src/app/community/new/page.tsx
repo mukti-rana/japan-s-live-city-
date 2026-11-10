@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import NewPostForm from "@/components/community/NewPostForm";
 import Tx from "@/components/i18n/Tx";
+import { getDestination } from "@/lib/explore/catalogue";
 
 export const metadata: Metadata = {
   title: "Share your experience — Community",
@@ -9,7 +10,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function NewPostPage() {
+// ?place=Q123 (from a place's page) pre-fills the place, which also decides the area.
+export default async function NewPostPage({ searchParams }: PageProps<"/community/new">) {
+  const raw = (await searchParams).place;
+  const ref = Array.isArray(raw) ? raw[0] : raw;
+  const place = ref && /^Q[0-9]{1,12}$/.test(ref) ? getDestination(ref) : null;
+  const initialPlace = place ? { label: place.names.en ?? place.names.ja ?? "", ref: place.id, areaId: place.prefectureId } : undefined;
   return (
     <div className="mx-auto w-full max-w-3xl pb-10">
       <header className="mb-6">
@@ -23,7 +29,7 @@ export default function NewPostPage() {
           <Tx en="Help the next visitor: show them what it's really like." />
         </p>
       </header>
-      <NewPostForm />
+      <NewPostForm initialPlace={initialPlace} />
     </div>
   );
 }

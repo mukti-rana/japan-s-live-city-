@@ -17,7 +17,7 @@ const REASON_TEXT: Record<ReportReason, string> = {
 
 // "Report this post": pick why, add a note if you like. Reports go to the
 // moderators; the person who posted is never told who reported.
-export default function ReportDialog({ postId, onClose }: { postId: string; onClose: () => void }) {
+export default function ReportDialog({ targetType = "post", targetId, onClose }: { targetType?: "post" | "review"; targetId: string; onClose: () => void }) {
   const tr = useTranslate();
   const [reason, setReason] = useState<ReportReason | "">("");
   const [details, setDetails] = useState("");
@@ -44,9 +44,9 @@ export default function ReportDialog({ postId, onClose }: { postId: string; onCl
     }
     const { error: dbError } = await createClient()
       .from("community_reports")
-      .insert({ reporter_id: auth.user.id, target_type: "post", target_id: postId, reason, details: details.trim().slice(0, 1000) || null });
+      .insert({ reporter_id: auth.user.id, target_type: targetType, target_id: targetId, reason, details: details.trim().slice(0, 1000) || null });
     if (!dbError) return setState("done");
-    setError(dbError.code === "23505" ? "You've already reported this post. Thank you." : dbError.code === "P0001" ? dbError.message : "We couldn't send your report. Please try again.");
+    setError(dbError.code === "23505" ? targetType === "review" ? "You've already reported this review. Thank you." : "You've already reported this post. Thank you." : dbError.code === "P0001" ? dbError.message : "We couldn't send your report. Please try again.");
     setState("error");
   }
 
@@ -54,7 +54,7 @@ export default function ReportDialog({ postId, onClose }: { postId: string; onCl
     <div role="dialog" aria-modal="true" aria-labelledby="report-h" className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" onClick={onClose}>
       <div className="w-full max-w-md rounded-2xl border border-glass-border bg-panel p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <h2 id="report-h" className="text-lg font-semibold text-foreground">
-          {tr("Report this post")}
+          {tr(targetType === "review" ? "Report this review" : "Report this post")}
         </h2>
         {state === "done" ? (
           <>
