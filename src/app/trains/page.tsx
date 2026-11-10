@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { TrainFront } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 import T from "@/components/i18n/T";
 import TrainAssistant from "@/components/trains/TrainAssistant";
@@ -18,8 +19,9 @@ export default function TrainsPage() {
             <p className="text-xs font-medium uppercase tracking-widest text-gold">
               <T k="footer.demoData" />
             </p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-              🚆 <T k="trains.title" />
+            <h1 className="mt-1 flex items-center gap-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+              <TrainFront size={26} className="shrink-0 text-azure" aria-hidden="true" />
+              <T k="trains.title" />
             </h1>
             <p className="mt-1.5 max-w-xl text-sm text-muted">
               <T k="trains.subtitle" />

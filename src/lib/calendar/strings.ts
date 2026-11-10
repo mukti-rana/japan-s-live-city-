@@ -65,6 +65,7 @@ export const C = {
   estimatedNote: { en: "Estimated date — usual schedule, not confirmed by the organizer.", ja: "推定日 — 例年の日程で、主催者の確認はありません。" },
   save: { en: "Save", ja: "保存", ne: "सेभ", hi: "सहेजें", zh: "保存", ko: "저장" },
   cancel: { en: "Cancel", ja: "キャンセル", ne: "रद्द", hi: "रद्द करें", zh: "取消", ko: "취소" },
+  close: { en: "Close", ja: "閉じる", ne: "बन्द गर्नुहोस्", hi: "बंद करें", zh: "关闭", ko: "닫기" },
   edit: { en: "Edit", ja: "編集", ne: "सम्पादन", hi: "संपादित करें", zh: "编辑", ko: "편집" },
   delete: { en: "Delete", ja: "削除", ne: "मेटाउनुहोस्", hi: "हटाएँ", zh: "删除", ko: "삭제" },
   duplicate: { en: "Duplicate", ja: "複製", ne: "प्रतिलिपि", hi: "डुप्लिकेट", zh: "复制", ko: "복제" },

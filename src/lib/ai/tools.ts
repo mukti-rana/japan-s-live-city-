@@ -128,14 +128,16 @@ export const WEB_SEARCH_TOOL: Anthropic.Messages.ToolUnion = {
 
 export const ALL_TOOLS: Anthropic.Messages.ToolUnion[] = [...CUSTOM_TOOLS, WEB_SEARCH_TOOL];
 
-export const TOOL_LABELS: Record<string, { label: string; icon: string }> = {
-  get_weather: { label: "Checking the weather", icon: "🌤️" },
-  get_train_status: { label: "Checking train lines", icon: "🚆" },
-  get_earthquakes: { label: "Checking recent earthquakes", icon: "🚨" },
-  get_events: { label: "Looking up festivals & events", icon: "🎉" },
-  get_places: { label: "Looking up places", icon: "🗺️" },
-  get_news: { label: "Checking the news", icon: "📰" },
-  get_trending: { label: "Checking what's trending", icon: "🔥" },
-  present_itinerary: { label: "Putting together your itinerary", icon: "🧳" },
-  web_search: { label: "Searching the web", icon: "🔎" },
+// Labels only. The matching icons live in ToolActivityPill, so this module
+// stays free of React/lucide imports — it is also loaded by the server route.
+export const TOOL_LABELS: Record<string, { label: string }> = {
+  get_weather: { label: "Checking the weather" },
+  get_train_status: { label: "Checking train lines" },
+  get_earthquakes: { label: "Checking recent earthquakes" },
+  get_events: { label: "Looking up festivals & events" },
+  get_places: { label: "Looking up places" },
+  get_news: { label: "Checking the news" },
+  get_trending: { label: "Checking what's trending" },
+  present_itinerary: { label: "Putting together your itinerary" },
+  web_search: { label: "Searching the web" },
 };

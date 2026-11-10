@@ -40,9 +40,16 @@ export default async function MyContributionsPage({ searchParams }: PageProps<"/
   const profile = await fetchProfileById(supabase, auth.user.id);
   if (!profile) return <Gate heading="We couldn't find your profile" body="Please try again in a little while." />;
   const tab = parseTab((await searchParams).tab, tabsFor(profile, true));
+  // Moderators get a link to the moderation page (everyone else never sees it).
+  const { data: isMod } = await supabase.rpc("is_moderator");
   return (
     <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6">
       <CommunityTabs active="me" />
+      {isMod === true && (
+        <Link href="/community/admin" className="inline-flex h-11 w-fit items-center gap-2 rounded-xl border border-lilac/50 bg-lilac/10 px-4 text-sm font-semibold text-lilac transition-colors hover:bg-lilac/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <Tx en="Open moderation" />
+        </Link>
+      )}
       <ProfileView client={supabase} profile={profile} owner tab={tab} basePath="/community/me" />
     </div>
   );
