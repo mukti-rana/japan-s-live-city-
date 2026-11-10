@@ -5,6 +5,7 @@ const ja: Record<TranslationKey, string> = {
   "nav.map": "日本地図",
   "map.subtitle": "ドラッグ・ズームで日本を探索。天気・イベント・公式警報をレイヤーで重ねられます。",
   "nav.explore": "探索",
+  "nav.community": "コミュニティ",
   "nav.trains": "電車",
   "nav.weather": "天気",
   "nav.news": "ニュース",

@@ -5,6 +5,7 @@ const ne: Record<TranslationKey, string> = {
   "nav.map": "जापान नक्सा",
   "map.subtitle": "जापान अन्वेषण गर्न तान्नुहोस् र जुम गर्नुहोस्। मौसम, कार्यक्रम र आधिकारिक चेतावनी थप्न सकिन्छ।",
   "nav.explore": "अन्वेषण",
+  "nav.community": "समुदाय",
   "nav.trains": "रेल",
   "nav.weather": "मौसम",
   "nav.news": "समाचार",

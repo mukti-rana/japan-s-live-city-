@@ -38,6 +38,7 @@ const PAGES: { href: string; key: string; kw: string; kwJa: string }[] = [
   { href: "/calendar", key: "nav.calendar", kw: "calendar", kwJa: "カレンダー" },
   { href: "/emergency", key: "nav.emergency", kw: "emergency sos", kwJa: "緊急" },
   { href: "/explore", key: "nav.explore", kw: "explore places", kwJa: "観光" },
+  { href: "/community", key: "nav.community", kw: "community photos reviews experiences questions", kwJa: "コミュニティ 口コミ 写真 体験" },
   { href: "/trending", key: "nav.trending", kw: "trending", kwJa: "トレンド" },
   { href: "/cities", key: "nav.cities", kw: "cities", kwJa: "都市" },
 ];
