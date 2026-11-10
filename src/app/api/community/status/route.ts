@@ -34,7 +34,8 @@ export async function GET() {
   await Promise.all(
     TABLES.map(async (t) => {
       try {
-        const { error } = await client.from(t).select("*", { count: "exact", head: true }).limit(1);
+        // A real GET of one row: a HEAD request would hide "table not found".
+        const { error } = await client.from(t).select("*").limit(1);
         tables[t] = !error ? "ok" : classifyError(error) === "not_set_up" ? "missing" : "error";
       } catch {
         tables[t] = "error";
@@ -59,7 +60,7 @@ export async function GET() {
   const summary = ok
     ? "Everything the community needs is reachable."
     : anyMissing
-      ? "Some community tables or the photo bucket are missing: run the community migrations (0003 to 0007) in the Supabase SQL editor."
+      ? "Some community tables or the photo bucket are missing: run the community migrations (0003 to 0008) in the Supabase SQL editor."
       : "The database could not be reached or refused the request.";
   return json({ configured: true, ok, summary, tables, bucket });
 }

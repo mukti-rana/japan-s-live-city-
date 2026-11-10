@@ -11,7 +11,7 @@ export default function Unavailable({ reason }: { reason: FeedProblem }) {
     reason === "not_configured"
       ? "Supabase is not configured here: add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local and restart the dev server."
       : reason === "not_set_up"
-        ? "The community tables are missing: run supabase/migrations/0003 to 0007 (in order) in the Supabase SQL editor."
+        ? "The community tables are missing: run supabase/migrations/0003 to 0008 (in order) in the Supabase SQL editor."
         : "The database request failed — see the server log (“[community] feed”) for the exact error.";
   return (
     <div role="status" className="rounded-3xl border border-glass-border bg-glass-bg px-5 py-10 text-center">
