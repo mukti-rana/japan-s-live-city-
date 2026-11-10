@@ -88,7 +88,7 @@ export function questionFiltersFromParams(sp: Record<string, string | string[] |
   };
 }
 
-interface QuestionRow {
+export interface QuestionRow {
   id: string;
   user_id: string;
   title: string;
@@ -103,8 +103,8 @@ interface QuestionRow {
   created_at: string;
   profiles: ProfileJoin;
 }
-const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,resolved,answer_count,helpful_count,status,published_at,created_at,profiles(username,avatar_url)";
-const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQuestion => ({
+export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,resolved,answer_count,helpful_count,status,published_at,created_at,profiles(username,avatar_url)";
+export const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQuestion => ({
   id: r.id,
   title: r.title,
   body: r.body,

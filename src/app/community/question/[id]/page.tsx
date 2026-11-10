@@ -150,7 +150,7 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
         )}
         {q.body && <p className="mt-4 whitespace-pre-line break-words text-sm leading-relaxed text-foreground/95 sm:text-base">{q.body}</p>}
         <p className="mt-4 text-xs text-foreground/75">
-          {q.author.username} · <LocalDate iso={q.publishedAt} />
+          <Link href={`/community/u/${q.author.username}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{q.author.username}</Link> · <LocalDate iso={q.publishedAt} />
         </p>
         <div className="mt-4 flex flex-wrap items-start gap-2">
           <ShareLinkButton title={q.title} path={`/community/question/${q.id}`} />

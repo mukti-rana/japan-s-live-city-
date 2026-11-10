@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import Stars from "@/components/community/Stars";
 import LocalDate from "@/components/community/LocalDate";
@@ -54,7 +55,7 @@ export default function ReviewCard({ review, placeRef }: { review: CommunityRevi
           )}
           <div>
             <p className="text-sm font-medium text-foreground">
-              {review.author.username}
+              <Link href={`/community/u/${review.author.username}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{review.author.username}</Link>
               {review.isMine && <span className="ml-2 rounded-full bg-lilac/20 px-2 py-0.5 text-[10px] font-semibold text-lilac"><Tx en="You" /></span>}
             </p>
             <p className="text-xs text-foreground/75">

@@ -323,3 +323,50 @@ export function validateAnswerBody(value: unknown): { ok: true; body: string } |
   const r = validateAnswerInput({ questionId: "00000000-0000-0000-0000-000000000000", body: value });
   return r.ok ? { ok: true, body: r.value.body } : { ok: false, error: r.errors.body ?? DISCUSSION_MESSAGES.answerShort };
 }
+
+// ───────────────────────── profiles ─────────────────────────
+
+export const PROFILE_LIMITS = { displayNameMax: 40, bioMax: 280, maxLinksInBio: 1 } as const;
+export const USERNAME_RE = /^[a-z0-9_]{3,24}$/;
+
+// Names that could pass for the site or its staff. (The database refuses them too.)
+export const RESERVED_USERNAMES = ["admin", "administrator", "moderator", "mod", "support", "staff", "official", "system", "root", "help", "livecity", "live_city", "livecityjapan", "null", "undefined", "anonymous"];
+
+export const PROFILE_MESSAGES = {
+  usernameFormat: "Usernames use 3 to 24 lowercase letters, numbers or underscores.",
+  usernameTaken: "That username is not available.",
+  displayNameLong: "Your display name can be up to 40 characters.",
+  bioLong: "Your bio can be up to 280 characters.",
+  bioLinks: "Please keep links out of your bio (one at most).",
+} as const;
+
+export interface ProfileInput {
+  username: string;
+  displayName: string | null;
+  bio: string | null;
+  showStats: boolean;
+  showVisited: boolean;
+}
+export type ProfileErrors = Partial<Record<keyof ProfileInput, string>>;
+
+// `currentUsername` is the person's present username: keeping it is always fine,
+// while a new name may not be reserved or look like someone else's generated one.
+export function validateProfileInput(raw: unknown, currentUsername: string): { ok: true; value: ProfileInput } | { ok: false; errors: ProfileErrors } {
+  if (!raw || typeof raw !== "object") return { ok: false, errors: { username: PROFILE_MESSAGES.usernameFormat } };
+  const r = raw as Record<string, unknown>;
+  const errors: ProfileErrors = {};
+  const username = typeof r.username === "string" ? r.username.trim().toLowerCase() : "";
+  const displayName = cleanText(r.displayName) || null;
+  const bio = cleanText(r.bio, true) || null;
+
+  if (!USERNAME_RE.test(username)) errors.username = PROFILE_MESSAGES.usernameFormat;
+  else if (username !== currentUsername && (RESERVED_USERNAMES.includes(username) || username.startsWith("traveler_"))) errors.username = PROFILE_MESSAGES.usernameTaken;
+  if (displayName && displayName.length > PROFILE_LIMITS.displayNameMax) errors.displayName = PROFILE_MESSAGES.displayNameLong;
+  if (bio && bio.length > PROFILE_LIMITS.bioMax) errors.bio = PROFILE_MESSAGES.bioLong;
+  else if (bio && countLinks(bio) > PROFILE_LIMITS.maxLinksInBio) errors.bio = PROFILE_MESSAGES.bioLinks;
+  if (typeof r.showStats !== "boolean") errors.showStats = PROFILE_MESSAGES.usernameFormat;
+  if (typeof r.showVisited !== "boolean") errors.showVisited = PROFILE_MESSAGES.usernameFormat;
+
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { username, displayName, bio, showStats: r.showStats as boolean, showVisited: r.showVisited as boolean } };
+}

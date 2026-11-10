@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bookmark, LogIn, LogOut, Settings, SlidersHorizontal, User, UserPlus } from "lucide-react";
+import { Bookmark, LogIn, LogOut, Settings, SlidersHorizontal, User, UserPlus, Users } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useInline, type Table } from "@/lib/i18n/inline";
 import { createClient } from "@/lib/supabase/client";
@@ -15,6 +15,7 @@ const TEXT = {
   signedIn: { en: "Signed in", ja: "ログイン中" },
   settings: { en: "Account settings", ja: "アカウント設定" },
   saved: { en: "Saved places", ja: "保存した場所" },
+  contributions: { en: "My contributions", ja: "マイ投稿" },
   prefs: { en: "Preferences", ja: "設定" },
   signOut: { en: "Sign out", ja: "ログアウト" },
   guest: { en: "You're browsing as a guest", ja: "ゲストとして閲覧中" },
@@ -87,6 +88,10 @@ export default function AccountMenu() {
               <Link href="/settings#saved" role="menuitem" onClick={close} className={ITEM}>
                 <Bookmark size={16} className="shrink-0 text-muted" aria-hidden="true" />
                 {text("saved")}
+              </Link>
+              <Link href="/community/me" role="menuitem" onClick={close} className={ITEM}>
+                <Users size={16} className="shrink-0 text-muted" aria-hidden="true" />
+                {text("contributions")}
               </Link>
               <Link href="/settings#preferences" role="menuitem" onClick={close} className={ITEM}>
                 <SlidersHorizontal size={16} className="shrink-0 text-muted" aria-hidden="true" />

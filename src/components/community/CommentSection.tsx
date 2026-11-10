@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Heart, Loader2, MessageCircle, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/supabase/AuthContext";
@@ -129,7 +130,7 @@ function Item({ c, children, target, liked, onToggleLike, replying, setReplying,
       )}
       <div className="min-w-0 flex-1">
         <p className="text-sm">
-          <span className="font-medium text-foreground">{c.author.username}</span>
+          <Link href={`/community/u/${c.author.username}`} className="rounded font-medium text-foreground underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{c.author.username}</Link>
           {c.isMine && <span className="ml-2 rounded-full bg-lilac/20 px-2 py-0.5 text-[10px] font-semibold text-lilac">{tr("You")}</span>}
           <span className="ml-2 text-xs text-foreground/70">
             <LocalDate iso={c.createdAt} />

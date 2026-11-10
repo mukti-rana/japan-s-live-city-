@@ -46,3 +46,33 @@ export async function processPhoto(input: Buffer): Promise<PhotoResult> {
     return { ok: false, reason: "unreadable" };
   }
 }
+
+// ───────────────────────── profile pictures ─────────────────────────
+
+export const AVATAR_EDGE = 256;
+
+export type AvatarResult = { ok: true; image: Buffer } | { ok: false; reason: "unsupported" | "tooSmall" | "tooLarge" | "unreadable" };
+
+// A profile picture: checked like any photo, turned upright, cropped to a centred
+// square and saved as a small WebP with no camera metadata.
+export async function processAvatar(input: Buffer): Promise<AvatarResult> {
+  try {
+    const meta = await sharp(input, { limitInputPixels: MAX_INPUT_PIXELS }).metadata();
+    if (!meta.format || !SUPPORTED.has(meta.format)) return { ok: false, reason: "unsupported" };
+    const rotated = (meta.orientation ?? 1) >= 5;
+    const w = (rotated ? meta.height : meta.width) ?? 0;
+    const h = (rotated ? meta.width : meta.height) ?? 0;
+    if (w * h > MAX_INPUT_PIXELS) return { ok: false, reason: "tooLarge" };
+    if (Math.min(w, h) < 100) return { ok: false, reason: "tooSmall" };
+    const image = await sharp(input, { limitInputPixels: MAX_INPUT_PIXELS, failOn: "error" })
+      .rotate()
+      .resize({ width: AVATAR_EDGE, height: AVATAR_EDGE, fit: "cover", position: "centre" })
+      .webp({ quality: 82 })
+      .toBuffer();
+    return { ok: true, image };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    if (/pixel limit|too large/i.test(message)) return { ok: false, reason: "tooLarge" };
+    return { ok: false, reason: "unreadable" };
+  }
+}

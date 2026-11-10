@@ -6,12 +6,15 @@ import { Bell, BellRing } from "lucide-react";
 import { dueReminders, reminderLabel } from "@/lib/calendar/reminders";
 import { useCalendar } from "@/lib/calendar/store";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { CommunityNotificationList, useCommunityNotifications } from "@/components/community/CommunityNotifications";
 import { useInline, type Table } from "@/lib/i18n/inline";
 import { ICON_BUTTON, MENU_PANEL, useDismiss } from "@/components/layout/usePopover";
 
 const TEXT = {
   title: { en: "Notifications", ja: "通知" },
   empty: { en: "You're all caught up.", ja: "新しい通知はありません。" },
+  community: { en: "Community", ja: "コミュニティ" },
+  reminders: { en: "Reminders", ja: "リマインダー" },
   emptyNote: {
     en: "Reminders you set in your calendar show up here while the site is open.",
     ja: "カレンダーで設定したリマインダーが、サイトを開いている間ここに表示されます。",
@@ -58,6 +61,7 @@ export default function NotificationsMenu() {
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, close, ref);
   const seen = Number(useSyncExternalStore(subscribe, seenSnapshot, () => "0"));
+  const community = useCommunityNotifications();
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000);
@@ -68,19 +72,26 @@ export default function NotificationsMenu() {
     const { fresh, earlier } = dueReminders({ ...cal.data, fired: {} }, new Date(now));
     return [...fresh, ...earlier].sort((a, b) => b.at - a.at).slice(0, 8);
   }, [cal.data, now]);
-  const unread = due.some((r) => r.at > seen);
+  const unread = due.some((r) => r.at > seen) || community.unread > 0;
+  const count = due.length + community.unread;
 
   return (
     <div ref={ref} className="relative">
       <button
         type="button"
         onClick={() => {
-          setOpen((o) => !o);
+          const opening = !open;
+          setOpen(opening);
           markSeen(Date.now());
+          if (opening) {
+            // Look for anything new, then mark what is shown as read once it has been on screen a moment.
+            void community.refresh();
+            if (community.unread > 0) window.setTimeout(() => void community.markAllRead(), 1500);
+          }
         }}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={unread ? `${t("topbar.notifications")} (${due.length})` : t("topbar.notifications")}
+        aria-label={unread ? `${t("topbar.notifications")} (${count})` : t("topbar.notifications")}
         title={t("topbar.notifications")}
         className={ICON_BUTTON}
       >
@@ -91,7 +102,14 @@ export default function NotificationsMenu() {
       {open && (
         <div role="dialog" aria-label={text("title")} className={`${MENU_PANEL} sm:w-80`}>
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
-          {due.length === 0 ? (
+          {community.items.length > 0 && (
+            <>
+              <p className="px-3 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{text("community")}</p>
+              <CommunityNotificationList items={community.items} onNavigate={close} />
+            </>
+          )}
+          {community.items.length > 0 && due.length > 0 && <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{text("reminders")}</p>}
+          {due.length === 0 && community.items.length > 0 ? null : due.length === 0 ? (
             <div className="px-3 pb-3 pt-1">
               <p className="text-sm font-medium text-foreground">{text("empty")}</p>
               <p className="mt-1 text-xs leading-snug text-muted">{text("emptyNote")}</p>

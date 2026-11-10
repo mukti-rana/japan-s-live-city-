@@ -145,7 +145,7 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
               </span>
             )}
             <span>
-              <span className="font-medium">{post.author.username}</span>
+              <Link href={`/community/u/${post.author.username}`} className="rounded font-medium underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{post.author.username}</Link>
               <span className="block text-xs text-foreground/70">
                 <LocalDate iso={post.publishedAt} />
               </span>

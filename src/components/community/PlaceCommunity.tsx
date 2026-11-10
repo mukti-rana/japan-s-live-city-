@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Camera, HelpCircle, MessageSquareText } from "lucide-react";
+import BeenHereButton from "@/components/community/BeenHereButton";
 import PostCard from "@/components/community/PostCard";
 import ReviewCard from "@/components/community/ReviewCard";
 import ReviewSummary from "@/components/community/ReviewSummary";
@@ -26,7 +27,8 @@ export default async function PlaceCommunity({ id }: { id: string }) {
         <h2 id="place-community-h" className="text-xl font-semibold text-foreground">
           <Tx en="Reviews & photos from visitors" />
         </h2>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-start gap-2">
+          <BeenHereButton placeRef={id} />
           <Link href={`${href}#reviews`} className={`${btn} bg-gradient-to-r from-lilac to-sakura text-background hover:brightness-110 focus-visible:ring-white/70`}>
             <MessageSquareText size={16} aria-hidden="true" />
             <Tx en="Write a review" />

@@ -5,6 +5,7 @@ import { Camera, ExternalLink } from "lucide-react";
 import Bi from "@/components/community/Bi";
 import PostCard from "@/components/community/PostCard";
 import ReviewCard from "@/components/community/ReviewCard";
+import BeenHereButton from "@/components/community/BeenHereButton";
 import ReviewComposer from "@/components/community/ReviewComposer";
 import ReviewList from "@/components/community/ReviewList";
 import ReviewSummary from "@/components/community/ReviewSummary";
@@ -110,7 +111,8 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
           <Bi en={found.en} ja={found.ja} />
         </h1>
         {found.en !== found.ja && <p className="mt-1 text-sm text-foreground/80">{found.ja}</p>}
-        <div className="mt-5 flex flex-wrap gap-3">
+        <div className="mt-5 flex flex-wrap items-start gap-3">
+          <BeenHereButton placeRef={id} />
           <Link href={`/community/new?place=${id}`} className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />

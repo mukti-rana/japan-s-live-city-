@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LocalDate from "@/components/community/LocalDate";
 import AnswerOwnerTools from "@/components/community/AnswerOwnerTools";
 import CommentSection from "@/components/community/CommentSection";
@@ -28,7 +29,7 @@ export default function AnswerCard({ answer, replies }: { answer: CommunityAnswe
         )}
         <div>
           <p className="text-sm font-medium text-foreground">
-            {answer.author.username}
+            <Link href={`/community/u/${answer.author.username}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{answer.author.username}</Link>
             {answer.isMine && (
               <span className="ml-2 rounded-full bg-lilac/20 px-2 py-0.5 text-[10px] font-semibold text-lilac">
                 <Tx en="You" />

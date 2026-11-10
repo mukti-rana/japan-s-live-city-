@@ -58,7 +58,7 @@ export default function PostCard({ post }: { post: CommunityPost }) {
                 {post.author.username.slice(0, 1)}
               </span>
             )}
-            <span className="truncate">{post.author.username}</span>
+            <Link href={`/community/u/${post.author.username}`} className="relative z-10 truncate rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{post.author.username}</Link>
           </span>
           <span className="flex shrink-0 items-center gap-3">
             <span className="flex items-center gap-1">

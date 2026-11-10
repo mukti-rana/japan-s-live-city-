@@ -50,7 +50,7 @@ export default function QuestionCard({ q }: { q: CommunityQuestion }) {
           <MessageSquareText size={13} aria-hidden="true" />
           {q.answerCount} <Tx en={q.answerCount === 1 ? "answer" : "answers"} />
         </span>
-        <span>{q.author.username}</span>
+        <Link href={`/community/u/${q.author.username}`} className="relative z-10 truncate rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{q.author.username}</Link>
         <LocalDate iso={q.publishedAt} />
       </div>
     </article>

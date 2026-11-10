@@ -96,3 +96,49 @@ export interface CommunityAnswer {
   author: { username: string; avatarUrl: string | null };
   isMine: boolean;
 }
+
+export interface CommunityProfile {
+  id: string;
+  username: string;
+  displayName: string | null;
+  avatarUrl: string | null;
+  bio: string | null;
+  createdAt: string;
+  showStats: boolean;
+  showVisited: boolean;
+}
+
+// Contribution numbers. `null` for a profile whose owner keeps them private.
+export interface ProfileStats {
+  posts: number;
+  reviews: number;
+  questions: number;
+  answers: number;
+  helpfulReceived: number;
+  visited: number;
+}
+
+export interface ProfileReview {
+  id: string;
+  placeRef: string;
+  rating: number;
+  body: string;
+  recommend: boolean;
+  status: string;
+  publishedAt: string;
+}
+
+export interface ProfileAnswer {
+  id: string;
+  body: string;
+  helpfulCount: number;
+  status: string;
+  createdAt: string;
+  question: { id: string; title: string } | null;
+}
+
+export interface VisitedPlace {
+  placeRef: string;
+  areaId: string;
+  visitedAt: string;
+}
