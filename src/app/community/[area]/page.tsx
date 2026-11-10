@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import CommunityHub from "@/components/community/CommunityHub";
 import { resolveArea } from "@/lib/community/areas";
 import { feedFiltersFromParams } from "@/lib/community/feed";
-import { fetchFeed, feedKey } from "@/lib/community/queries";
+import { fetchFeed, feedKey, publicClient } from "@/lib/community/queries";
+import { fetchAreaQuestions } from "@/lib/community/discussionQuery";
 import { communityMetadata } from "@/lib/community/seo";
 
 // /community/nara, /community/osaka ... and city names that belong to a
@@ -30,5 +31,7 @@ export default async function CommunityAreaPage({ params, searchParams }: PagePr
   if (!resolved) notFound();
   const filters = feedFiltersFromParams(await searchParams, resolved.area.id);
   const result = await fetchFeed(feedKey(filters));
-  return <CommunityHub basePath={`/community/${slug.toLowerCase()}`} area={resolved.area} featured={resolved.featured} filters={filters} result={result} />;
+  const client = publicClient();
+  const areaQuestions = client ? await fetchAreaQuestions(client, resolved.area.id, 3) : [];
+  return <CommunityHub basePath={`/community/${slug.toLowerCase()}`} area={resolved.area} featured={resolved.featured} filters={filters} result={result} areaQuestions={areaQuestions} />;
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ReviewCard from "@/components/community/ReviewCard";
-import { HelpfulProvider } from "@/components/community/HelpfulVotes";
+import { HelpfulProvider, REVIEW_VOTES } from "@/components/community/HelpfulVotes";
 import Tx from "@/components/i18n/Tx";
 import { REVIEW_SORTS, type ReviewFilters, type ReviewSort } from "@/lib/community/reviewQuery";
 import type { CommunityReview } from "@/lib/community/types";
@@ -50,7 +50,7 @@ export default function ReviewList({ basePath, placeRef, filters, reviews, hasMo
           </p>
         ) : null
       ) : (
-        <HelpfulProvider reviewIds={reviews.map((r) => r.id)}>
+        <HelpfulProvider ids={reviews.map((r) => r.id)} target={REVIEW_VOTES}>
           <ul className="flex flex-col gap-3">
             {reviews.map((r) => (
               <li key={r.id}>

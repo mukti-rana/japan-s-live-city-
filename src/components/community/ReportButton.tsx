@@ -5,10 +5,10 @@ import { Flag } from "lucide-react";
 import { useAuth } from "@/lib/supabase/AuthContext";
 import { useAccountPrompt } from "@/components/auth/AccountPromptProvider";
 import { useTranslate } from "@/lib/i18n/inline";
-import ReportDialog from "@/components/community/ReportDialog";
+import ReportDialog, { type ReportTarget } from "@/components/community/ReportDialog";
 
 // A small "Report" link for a review. Guests get the friendly sign-up card.
-export default function ReportButton({ targetType, targetId }: { targetType: "post" | "review"; targetId: string }) {
+export default function ReportButton({ targetType, targetId }: { targetType: ReportTarget; targetId: string }) {
   const tr = useTranslate();
   const { user } = useAuth();
   const { requestAccount } = useAccountPrompt();

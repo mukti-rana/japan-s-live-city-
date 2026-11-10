@@ -8,6 +8,8 @@ import ReviewCard from "@/components/community/ReviewCard";
 import ReviewComposer from "@/components/community/ReviewComposer";
 import ReviewList from "@/components/community/ReviewList";
 import ReviewSummary from "@/components/community/ReviewSummary";
+import QuestionCard from "@/components/community/QuestionCard";
+import { fetchQuestions } from "@/lib/community/discussionQuery";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import { fetchPlacePosts, publicClient } from "@/lib/community/queries";
@@ -61,16 +63,18 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
   let list = null;
   let mine = null;
   let posts: Awaited<ReturnType<typeof fetchPlacePosts>> = [];
+  let questions: Awaited<ReturnType<typeof fetchQuestions>> = null;
   if (isSupabaseConfigured) {
     // The visitor's own session, so their own (even unapproved) review can be shown to them.
     const supabase = await createClient();
     const { data: auth } = await supabase.auth.getUser();
     const viewer = auth.user?.id ?? null;
-    [stats, list, mine, posts] = await Promise.all([
+    [stats, list, mine, posts, questions] = await Promise.all([
       fetchReviewStats(supabase, id),
       fetchReviews(supabase, id, filters, viewer),
       viewer ? fetchMyReview(supabase, id, viewer) : Promise.resolve(null),
       fetchPlacePosts(id, 24),
+      fetchQuestions(supabase, { sort: "latest", placeRef: id, page: 1 }, viewer, 5),
     ]);
   }
   const markup =
@@ -135,6 +139,39 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
             {/* Your own review while it waits for approval or after it was hidden (the list shows published ones). */}
             {mine && mine.status !== "published" && <ReviewCard review={mine} placeRef={id} />}
             <ReviewList basePath={`/community/place/${id}`} placeRef={id} filters={filters} reviews={list.reviews} hasMore={list.hasMore} total={stats.count} />
+          </>
+        )}
+      </section>
+
+      <section id="questions" aria-labelledby="questions-h" className="scroll-mt-24 flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="questions-h" className="text-xl font-semibold text-foreground">
+            <Tx en="Questions & Answers" />
+          </h2>
+          <Link href={`/community/questions/new?place=${id}`} className="inline-flex h-10 items-center rounded-xl border border-glass-border bg-glass-bg px-4 text-sm font-medium text-foreground transition hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            <Tx en="Ask a question" />
+          </Link>
+        </div>
+        {questions === null ? (
+          <p role="status" className="rounded-2xl border border-glass-border bg-glass-bg px-4 py-6 text-center text-sm text-foreground/85">
+            <Tx en="Questions aren't available right now. Please try again in a little while." />
+          </p>
+        ) : questions.questions.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-white/20 bg-glass-bg px-4 py-8 text-center text-sm text-foreground/85">
+            <Tx en="No questions about this place yet. Ask the first one." />
+          </p>
+        ) : (
+          <>
+            <ul className="flex flex-col gap-3">
+              {questions.questions.map((q) => (
+                <li key={q.id}>
+                  <QuestionCard q={q} />
+                </li>
+              ))}
+            </ul>
+            <Link href={`/community/questions?place=${id}`} className="w-fit rounded text-sm font-medium text-lilac underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <Tx en="See all questions" /> →
+            </Link>
           </>
         )}
       </section>

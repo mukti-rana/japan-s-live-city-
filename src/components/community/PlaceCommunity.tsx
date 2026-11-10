@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Camera, MessageSquareText } from "lucide-react";
+import { Camera, HelpCircle, MessageSquareText } from "lucide-react";
 import PostCard from "@/components/community/PostCard";
 import ReviewCard from "@/components/community/ReviewCard";
 import ReviewSummary from "@/components/community/ReviewSummary";
@@ -34,6 +34,10 @@ export default async function PlaceCommunity({ id }: { id: string }) {
           <Link href={`/community/new?place=${id}`} className={`${btn} border border-glass-border bg-glass-bg text-foreground hover:border-white/30 focus-visible:ring-azure`}>
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />
+          </Link>
+          <Link href={`/community/questions/new?place=${id}`} className={`${btn} border border-glass-border bg-glass-bg text-foreground hover:border-white/30 focus-visible:ring-azure`}>
+            <HelpCircle size={16} aria-hidden="true" />
+            <Tx en="Ask a question" />
           </Link>
         </div>
       </div>

@@ -57,3 +57,42 @@ export interface ReviewStats {
   distribution: [number, number, number, number, number];
   recommendedPercent: number | null;
 }
+
+export interface CommunityComment {
+  id: string;
+  parentId: string | null;
+  depth: number;
+  body: string;
+  likeCount: number;
+  createdAt: string;
+  edited: boolean;
+  author: { username: string; avatarUrl: string | null };
+  isMine: boolean;
+}
+
+export interface CommunityQuestion {
+  id: string;
+  title: string;
+  body: string;
+  areaId: string;
+  placeRef: string | null;
+  resolved: boolean;
+  answerCount: number;
+  helpfulCount: number;
+  publishedAt: string;
+  status: string;
+  author: { username: string; avatarUrl: string | null };
+  isMine: boolean;
+}
+
+export interface CommunityAnswer {
+  id: string;
+  questionId: string;
+  body: string;
+  helpfulCount: number;
+  createdAt: string;
+  edited: boolean;
+  status: string;
+  author: { username: string; avatarUrl: string | null };
+  isMine: boolean;
+}

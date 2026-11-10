@@ -1,7 +1,7 @@
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 import Stars from "@/components/community/Stars";
 import LocalDate from "@/components/community/LocalDate";
-import { HelpfulButton } from "@/components/community/HelpfulVotes";
+import { HelpfulButton, REVIEW_VOTES } from "@/components/community/HelpfulVotes";
 import ReportButton from "@/components/community/ReportButton";
 import ReviewOwnerTools from "@/components/community/ReviewOwnerTools";
 import Tx from "@/components/i18n/Tx";
@@ -98,7 +98,7 @@ export default function ReviewCard({ review, placeRef }: { review: CommunityRevi
         <ReviewOwnerTools placeRef={placeRef} draft={draft} />
       ) : (
         <div className="mt-3 flex flex-wrap items-center gap-1">
-          <HelpfulButton reviewId={review.id} count={review.helpfulCount} isMine={false} />
+          <HelpfulButton id={review.id} target={REVIEW_VOTES} count={review.helpfulCount} isMine={false} ownHint="You can't vote on your own review." />
           <ReportButton targetType="review" targetId={review.id} />
         </div>
       )}

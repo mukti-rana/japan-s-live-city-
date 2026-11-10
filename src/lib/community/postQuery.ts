@@ -5,7 +5,7 @@ import { UUID_RE } from "@/lib/community/validation";
 import type { CommunityPost } from "@/lib/community/types";
 
 export type PostResult =
-  | { state: "ready"; post: CommunityPost; status: string; isOwner: boolean }
+  | { state: "ready"; post: CommunityPost; status: string; isOwner: boolean; viewerId: string | null }
   | { state: "missing" }
   | { state: "unavailable" };
 
@@ -53,6 +53,7 @@ export const fetchPost = cache(async (id: string): Promise<PostResult> => {
       state: "ready",
       status: r.status,
       isOwner: auth.user?.id === r.user_id,
+      viewerId: auth.user?.id ?? null,
       post: {
         id: r.id,
         title: r.title,

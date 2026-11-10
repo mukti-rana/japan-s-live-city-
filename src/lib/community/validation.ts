@@ -220,3 +220,106 @@ export function validateReviewInput(raw: unknown, now: Date = new Date()): { ok:
   if (!fields.ok || Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, value: { ...fields.value, uploadPaths: upload as string[], keepPaths: keep as string[] } };
 }
+
+// ───────────────────────── discussion: comments, questions, answers ─────────────────────────
+
+export const DISCUSSION_LIMITS = {
+  commentMax: 1000,
+  maxLinksInComment: 1,
+  questionTitleMin: 5,
+  questionTitleMax: 150,
+  questionBodyMax: 2000,
+  answerMin: 10,
+  answerMax: 3000,
+} as const;
+
+export const DISCUSSION_MESSAGES = {
+  commentEmpty: "Write something before posting.",
+  commentLong: "A comment can be up to 1,000 characters.",
+  commentLinks: "Please keep links out of comments (one at most).",
+  target: "That can't be commented on.",
+  parent: "That comment could not be found.",
+  questionTitleShort: "Give your question a title of at least 5 characters.",
+  questionTitleLong: "The title can be up to 150 characters.",
+  questionBodyLong: "The details can be up to 2,000 characters.",
+  questionArea: "Choose where in Japan your question is about.",
+  answerShort: "Please write at least 10 characters.",
+  answerLong: "An answer can be up to 3,000 characters.",
+  answerLinks: "Please keep links out of answers (two at most).",
+  question: "That question could not be found.",
+} as const;
+
+export interface CommentInput {
+  targetType: "post" | "answer";
+  targetId: string;
+  parentId: string | null;
+  body: string;
+}
+export type CommentErrors = Partial<Record<keyof CommentInput, string>>;
+
+export function validateCommentBody(value: unknown): { ok: true; body: string } | { ok: false; error: string } {
+  const body = cleanText(value, true);
+  if (!body) return { ok: false, error: DISCUSSION_MESSAGES.commentEmpty };
+  if (body.length > DISCUSSION_LIMITS.commentMax) return { ok: false, error: DISCUSSION_MESSAGES.commentLong };
+  if (countLinks(body) > DISCUSSION_LIMITS.maxLinksInComment) return { ok: false, error: DISCUSSION_MESSAGES.commentLinks };
+  return { ok: true, body };
+}
+
+export function validateCommentInput(raw: unknown): { ok: true; value: CommentInput } | { ok: false; errors: CommentErrors } {
+  if (!raw || typeof raw !== "object") return { ok: false, errors: { body: DISCUSSION_MESSAGES.commentEmpty } };
+  const r = raw as Record<string, unknown>;
+  const errors: CommentErrors = {};
+  const targetType = r.targetType === "post" || r.targetType === "answer" ? r.targetType : null;
+  const targetId = typeof r.targetId === "string" && UUID_RE.test(r.targetId) ? r.targetId : "";
+  const parentId = r.parentId === null || r.parentId === undefined || r.parentId === "" ? null : typeof r.parentId === "string" && UUID_RE.test(r.parentId) ? r.parentId : "bad";
+  const body = validateCommentBody(r.body);
+  if (!targetType || !targetId) errors.targetId = DISCUSSION_MESSAGES.target;
+  if (parentId === "bad") errors.parentId = DISCUSSION_MESSAGES.parent;
+  if (!body.ok) errors.body = body.error;
+  if (Object.keys(errors).length || !body.ok || !targetType) return { ok: false, errors };
+  return { ok: true, value: { targetType, targetId, parentId: parentId as string | null, body: body.body } };
+}
+
+export interface QuestionFields {
+  title: string;
+  body: string;
+  areaId: string;
+  placeRef: string | null;
+}
+export type QuestionErrors = Partial<Record<keyof QuestionFields | "resolved", string>>;
+
+export function validateQuestionFields(raw: Record<string, unknown>): { ok: true; value: QuestionFields } | { ok: false; errors: QuestionErrors } {
+  const errors: QuestionErrors = {};
+  const title = cleanText(raw.title);
+  const body = cleanText(raw.body, true);
+  const areaId = typeof raw.areaId === "string" ? raw.areaId : "";
+  const placeRefRaw = typeof raw.placeRef === "string" ? raw.placeRef.trim() : "";
+  if (title.length < DISCUSSION_LIMITS.questionTitleMin) errors.title = DISCUSSION_MESSAGES.questionTitleShort;
+  else if (title.length > DISCUSSION_LIMITS.questionTitleMax) errors.title = DISCUSSION_MESSAGES.questionTitleLong;
+  if (body.length > DISCUSSION_LIMITS.questionBodyMax) errors.body = DISCUSSION_MESSAGES.questionBodyLong;
+  else if (countLinks(body) > LIMITS.maxLinksInCaption) errors.body = MESSAGES.captionLinks;
+  if (!isAreaId(areaId)) errors.areaId = DISCUSSION_MESSAGES.questionArea;
+  if (placeRefRaw && !/^Q[0-9]{1,12}$/.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { title, body, areaId, placeRef: placeRefRaw || null } };
+}
+
+export function validateAnswerInput(raw: unknown): { ok: true; value: { questionId: string; body: string } } | { ok: false; errors: { questionId?: string; body?: string } } {
+  if (!raw || typeof raw !== "object") return { ok: false, errors: { body: DISCUSSION_MESSAGES.answerShort } };
+  const r = raw as Record<string, unknown>;
+  const errors: { questionId?: string; body?: string } = {};
+  const questionId = typeof r.questionId === "string" && UUID_RE.test(r.questionId) ? r.questionId : "";
+  const body = cleanText(r.body, true);
+  if (!questionId) errors.questionId = DISCUSSION_MESSAGES.question;
+  if (body.length < DISCUSSION_LIMITS.answerMin) errors.body = DISCUSSION_MESSAGES.answerShort;
+  else if (body.length > DISCUSSION_LIMITS.answerMax) errors.body = DISCUSSION_MESSAGES.answerLong;
+  else if (countLinks(body) > LIMITS.maxLinksInCaption) errors.body = DISCUSSION_MESSAGES.answerLinks;
+  if (Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { questionId, body } };
+}
+
+// For editing an answer: just the words.
+export function validateAnswerBody(value: unknown): { ok: true; body: string } | { ok: false; error: string } {
+  const r = validateAnswerInput({ questionId: "00000000-0000-0000-0000-000000000000", body: value });
+  return r.ok ? { ok: true, body: r.value.body } : { ok: false, error: r.errors.body ?? DISCUSSION_MESSAGES.answerShort };
+}

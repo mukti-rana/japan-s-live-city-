@@ -6,11 +6,14 @@ import Bi from "@/components/community/Bi";
 import LocalDate from "@/components/community/LocalDate";
 import PostActions from "@/components/community/PostActions";
 import PostGallery from "@/components/community/PostGallery";
+import CommentSection from "@/components/community/CommentSection";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import { CATEGORY_BY_SLUG } from "@/lib/community/categories";
 import { photoUrl } from "@/lib/community/photos";
 import { fetchPost } from "@/lib/community/postQuery";
+import { fetchPostComments } from "@/lib/community/discussionQuery";
+import { createClient } from "@/lib/supabase/server";
 
 // A post is worth indexing once it is published, has a photo, and says enough to be useful.
 const MIN_CAPTION_FOR_INDEX = 30;
@@ -58,7 +61,9 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
       </div>
     );
   }
-  const { post, status, isOwner } = res;
+  const { post, status, isOwner, viewerId } = res;
+  // Comments only exist on published posts.
+  const comments = status === "published" ? await fetchPostComments(await createClient(), post.id, viewerId) : null;
   const area = AREA_BY_ID.get(post.areaId);
   const category = CATEGORY_BY_SLUG.get(post.categorySlug);
   const images = post.images.flatMap((img) => {
@@ -150,6 +155,21 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
           <PostActions postId={post.id} title={post.title} likes={post.likeCount} saves={post.saveCount} isOwner={isOwner} path={`/community/post/${post.id}`} />
         </div>
       </div>
+
+      {status === "published" && (
+        <section aria-labelledby="comments-h" className="mt-8 max-w-3xl">
+          <h2 id="comments-h" className="mb-4 text-xl font-semibold text-foreground">
+            <Tx en="Comments" /> {comments && comments.length > 0 && <span className="text-base font-normal text-foreground/70">({comments.length})</span>}
+          </h2>
+          {comments === null ? (
+            <p role="status" className="text-sm text-foreground/85">
+              <Tx en="Comments aren't available right now." />
+            </p>
+          ) : (
+            <CommentSection target={{ type: "post", id: post.id }} comments={comments} />
+          )}
+        </section>
+      )}
     </article>
   );
 }

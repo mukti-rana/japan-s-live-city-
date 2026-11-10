@@ -1,14 +1,17 @@
 import Link from "next/link";
-import { Camera, Compass, Map as MapIcon, Users } from "lucide-react";
+import { Camera, Compass, HelpCircle, Map as MapIcon, Users } from "lucide-react";
 import Tx from "@/components/i18n/Tx";
 import Bi from "@/components/community/Bi";
 import CommunitySearch from "@/components/community/CommunitySearch";
+import CommunityTabs from "@/components/community/CommunityTabs";
+import QuestionCard from "@/components/community/QuestionCard";
 import PostCard from "@/components/community/PostCard";
 import { AREA_BY_ID, FEATURED_AREAS, type Area, type FeaturedArea } from "@/lib/community/areas";
 import { CATEGORIES } from "@/lib/community/categories";
 import { feedQuery, isFiltered, type FeedFilters, type FeedSort } from "@/lib/community/feed";
 import type { FeedResult } from "@/lib/community/queries";
 import { REGIONS } from "@/lib/explore/regions";
+import type { CommunityQuestion } from "@/lib/community/types";
 
 const chip = (on: boolean) =>
   `inline-flex shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
@@ -32,12 +35,15 @@ export default function CommunityHub({
   featured,
   filters,
   result,
+  areaQuestions = [],
 }: {
   basePath: string;
   area?: Area;
   featured?: FeaturedArea;
   filters: FeedFilters;
   result: FeedResult;
+  // "Ask a Local" questions about this area (area pages only).
+  areaQuestions?: CommunityQuestion[];
 }) {
   const link = (patch: Partial<FeedFilters>) => `${basePath}${feedQuery({ ...filters, page: 1, ...patch })}`;
   const filtered = isFiltered(filters);
@@ -46,6 +52,7 @@ export default function CommunityHub({
 
   return (
     <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 pb-10">
+      <CommunityTabs active="discover" />
       <header className="rounded-3xl border border-glass-border bg-gradient-to-br from-lilac/10 via-glass-bg to-azure/10 p-5 backdrop-blur-xl sm:p-8">
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-lilac">
           <Users size={14} aria-hidden="true" />
@@ -67,6 +74,10 @@ export default function CommunityHub({
           <Link href="/community/new" className="inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />
+          </Link>
+          <Link href={`/community/questions/new${area ? `?area=${area.id}` : ""}`} className="inline-flex h-12 shrink-0 items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-5 text-sm font-medium text-foreground transition hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            <HelpCircle size={16} aria-hidden="true" />
+            <Tx en="Ask a Local" />
           </Link>
         </div>
       </header>
@@ -149,6 +160,32 @@ export default function CommunityHub({
           )}
         </div>
       </nav>
+
+      {area && (
+        <section aria-labelledby="ask-local-h" className="flex flex-col gap-3 rounded-3xl border border-glass-border bg-glass-bg p-5 backdrop-blur-xl sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 id="ask-local-h" className="text-lg font-semibold text-foreground">
+              <Tx en="Ask a Local" /> · <Bi en={nameEn ?? area.en} ja={nameJa ?? area.ja} />
+            </h2>
+            <Link href={`/community/questions?area=${area.id}`} className="rounded text-sm font-medium text-lilac underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <Tx en="See all questions" /> →
+            </Link>
+          </div>
+          {areaQuestions.length === 0 ? (
+            <p className="text-sm text-foreground/85">
+              <Tx en="No questions about this area yet. Ask the first one." />
+            </p>
+          ) : (
+            <ul className="grid gap-3 lg:grid-cols-3">
+              {areaQuestions.map((q) => (
+                <li key={q.id}>
+                  <QuestionCard q={q} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       <section aria-labelledby="community-posts">
         <h2 id="community-posts" className="sr-only">
