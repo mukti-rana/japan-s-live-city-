@@ -16,7 +16,7 @@ export type FeedResult =
   | { state: "unavailable" };
 
 const SELECT =
-  "id,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,published_at," +
+  "id,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at," +
   "profiles(username,avatar_url)," +
   "community_post_images(storage_path,thumb_path,width,height,alt,position)";
 
@@ -32,6 +32,7 @@ interface Row {
   visit_date: string | null;
   like_count: number;
   comment_count: number;
+  save_count: number;
   published_at: string;
   profiles: { username: string; avatar_url: string | null } | { username: string; avatar_url: string | null }[] | null;
   community_post_images: { storage_path: string; thumb_path: string | null; width: number | null; height: number | null; alt: string | null; position: number }[] | null;
@@ -51,6 +52,7 @@ function toPost(r: Row): CommunityPost {
     visitDate: r.visit_date,
     likeCount: r.like_count,
     commentCount: r.comment_count,
+    saveCount: r.save_count,
     publishedAt: r.published_at,
     author: { username: profile?.username ?? "traveler", avatarUrl: profile?.avatar_url ?? null },
     images: (r.community_post_images ?? [])

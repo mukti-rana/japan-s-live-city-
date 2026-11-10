@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CATEGORY_BY_SLUG } from "@/lib/community/categories";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import { photoUrl } from "@/lib/community/photos";
@@ -18,7 +19,7 @@ export default function PostCard({ post }: { post: CommunityPost }) {
   const ratio = cover?.width && cover?.height ? `${cover.width} / ${cover.height}` : "4 / 3";
 
   return (
-    <article className="mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-glass-border bg-panel/70 backdrop-blur-xl transition-colors hover:border-white/25">
+    <article className="relative mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-glass-border bg-panel/70 backdrop-blur-xl transition-colors hover:border-white/25">
       {src && (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={cover?.alt ?? post.title} loading="lazy" decoding="async" style={{ aspectRatio: ratio }} className="block h-auto w-full bg-glass-bg object-cover" />
@@ -40,7 +41,12 @@ export default function PostCard({ post }: { post: CommunityPost }) {
             </span>
           )}
         </div>
-        <h3 className="text-base font-semibold leading-snug text-foreground">{post.title}</h3>
+        <h3 className="text-base font-semibold leading-snug text-foreground">
+          {/* The whole card opens the post: the title link stretches over it. */}
+          <Link href={`/community/post/${post.id}`} className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-azure focus-visible:after:rounded-2xl">
+            {post.title}
+          </Link>
+        </h3>
         {post.caption && <p className="line-clamp-3 text-sm leading-relaxed text-foreground/85">{post.caption}</p>}
         <div className="mt-1 flex items-center justify-between gap-3 text-xs text-foreground/80">
           <span className="flex min-w-0 items-center gap-2">

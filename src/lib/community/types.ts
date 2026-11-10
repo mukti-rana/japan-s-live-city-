@@ -20,6 +20,7 @@ export interface CommunityPost {
   visitDate: string | null;
   likeCount: number;
   commentCount: number;
+  saveCount: number;
   publishedAt: string;
   author: { username: string; avatarUrl: string | null };
   images: CommunityImage[];

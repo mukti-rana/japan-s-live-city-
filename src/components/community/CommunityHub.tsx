@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Compass, Map as MapIcon, Users } from "lucide-react";
+import { Camera, Compass, Map as MapIcon, Users } from "lucide-react";
 import Tx from "@/components/i18n/Tx";
 import Bi from "@/components/community/Bi";
 import CommunitySearch from "@/components/community/CommunitySearch";
@@ -62,8 +62,12 @@ export default function CommunityHub({
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-foreground/90 sm:text-base">
           {area ? <Tx en="Real experiences, photos and recommendations shared by people who have been here." /> : <Tx en="Discover real experiences, beautiful places and recommendations shared by people across Japan." />}
         </p>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <CommunitySearch action={basePath} defaultValue={filters.q} category={filters.category} />
+          <Link href="/community/new" className="inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+            <Camera size={16} aria-hidden="true" />
+            <Tx en="Share your experience" />
+          </Link>
         </div>
       </header>
 
@@ -162,10 +166,14 @@ export default function CommunityHub({
                 <Tx en="No community posts yet" />
               </h2>
               <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-foreground/85">
-                <Tx en="Photo sharing opens in the next update. Until then, explore Japan's places and the live map." />
+                <Tx en="Be the first to share a photo and your experience. Or explore Japan's places and the live map." />
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Link href="/explore" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+                <Link href="/community/new" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+                  <Camera size={16} aria-hidden="true" />
+                  <Tx en="Share your experience" />
+                </Link>
+                <Link href="/explore" className="inline-flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-5 py-2.5 text-sm font-medium text-foreground transition hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
                   <Compass size={16} aria-hidden="true" />
                   <Tx en="Explore Japan" />
                 </Link>
