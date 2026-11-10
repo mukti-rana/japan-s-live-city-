@@ -1,6 +1,5 @@
 "use client";
 
-import SkyClouds from "@/components/auth/SkyClouds";
 import { useId } from "react";
 import { useTranslate } from "@/lib/i18n/inline";
 
@@ -122,7 +121,6 @@ export default function FujiBackdrop() {
       <div className="absolute inset-0 bg-[radial-gradient(70%_38%_at_50%_58%,rgba(255,150,190,0.28),transparent_70%)]" />
 
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
-        <SkyClouds />
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
         {PETALS.map((p, i) => (
           <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size * 1.25, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
