@@ -105,6 +105,9 @@ export default function CommunityHub({
             <Tx en="Ask a Local" />
           </Link>
         </div>
+        <Link href={`/community/search${filters.q ? `?q=${encodeURIComponent(filters.q)}` : ""}`} className="mt-3 inline-flex h-9 items-center gap-1 rounded text-xs font-medium text-lilac underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <Tx en="Search reviews, questions, people and places too" /> →
+        </Link>
       </CommunityHero>
 
       <nav aria-labelledby="community-filters" className="flex flex-col gap-3">
@@ -221,9 +224,15 @@ export default function CommunityHub({
             </Link>
           </div>
           {areaQuestions.length === 0 ? (
-            <p className="text-sm text-foreground/85">
-              <Tx en="No questions about this area yet. Ask the first one." />
-            </p>
+            <div className="flex flex-col items-start gap-3">
+              <p className="text-sm text-foreground/85">
+                <Tx en="No questions about this area yet. Ask the first one." />
+              </p>
+              <Link href={`/community/questions/new?area=${area.id}`} className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+                <HelpCircle size={16} aria-hidden="true" />
+                <Tx en="Ask a Question" />
+              </Link>
+            </div>
           ) : (
             <ul className="grid gap-3 lg:grid-cols-3">
               {areaQuestions.map((q) => (

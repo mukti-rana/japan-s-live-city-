@@ -136,8 +136,10 @@ export interface RecommendedPlace {
 // ranked by how many reviewers recommend them, then by average stars. A place
 // appears only if at least one reviewer recommends it. Looks at the most recent
 // reviews only, so the work stays small.
-export async function fetchRecommendedPlaces(client: SupabaseClient, limit = 6): Promise<RecommendedPlace[]> {
-  const { data, error } = await client.from("community_reviews").select("place_ref,rating,recommend").eq("status", "published").order("published_at", { ascending: false }).limit(500);
+export async function fetchRecommendedPlaces(client: SupabaseClient, limit = 6, since?: string): Promise<RecommendedPlace[]> {
+  let q = client.from("community_reviews").select("place_ref,rating,recommend").eq("status", "published");
+  if (since) q = q.gte("published_at", since);
+  const { data, error } = await q.order("published_at", { ascending: false }).limit(500);
   if (error || !data) return [];
   const by = new Map<string, { n: number; rec: number; sum: number }>();
   for (const r of data as { place_ref: string; rating: number; recommend: boolean }[]) {

@@ -89,7 +89,7 @@ export function toPost(r: Row): CommunityPost {
 
 // The text a visitor typed, made safe to put inside a LIKE pattern: the
 // wildcard characters and the separators the query builder uses are removed.
-function likeTerm(q: string): string {
+export function likeTerm(q: string): string {
   return q.toLowerCase().replace(/[\\%_,()*]/g, " ").replace(/\s+/g, " ").trim();
 }
 
