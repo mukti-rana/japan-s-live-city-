@@ -127,10 +127,10 @@ function DockItem({
       <motion.span
         aria-hidden="true"
         style={{ scale: reducedMotion ? 1 : scale, transformOrigin: ORIGIN[position] }}
-        className={`flex h-full w-full items-center justify-center rounded-xl border transition-colors duration-200 ${
+        className={`flex h-full w-full items-center justify-center rounded-xl border backdrop-blur-sm transition-colors duration-200 ${
           item.isActive
             ? "border-sakura/40 bg-sakura/20 text-sakura"
-            : `border-glass-border bg-glass-bg-strong group-hover:border-azure/30 ${
+            : `border-white/10 bg-black/30 group-hover:border-azure/40 group-hover:bg-black/20 ${
                 item.accent ? ACCENT_CLASS[item.accent] : "text-foreground"
               }`
         }`}
@@ -156,7 +156,7 @@ function DockItem({
             exit={reducedMotion ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: 0.94 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
             style={labelStyle}
-            className="pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border border-glass-border bg-panel px-2.5 py-1 text-xs font-medium text-foreground shadow-lg shadow-black/40"
+            className="pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border border-white/10 bg-black/80 px-2.5 py-1 text-xs font-medium text-foreground shadow-lg shadow-black/40 backdrop-blur-md"
           >
             {item.label}
           </motion.span>
@@ -223,8 +223,9 @@ export function MagneticDock({
       aria-label={label}
       onPointerMove={reducedMotion ? undefined : handlePointerMove}
       onPointerLeave={() => pointer.set(Infinity)}
-      // panel/85 is the project's scrim for glass over non-uniform backdrops.
-      className={`inline-flex gap-3 rounded-2xl border border-glass-border bg-panel/85 p-2 shadow-lg shadow-black/40 backdrop-blur-xl ${
+      // Black glass: a see-through black tint over a strong blur, with a hair-thin
+      // light edge. The blur keeps what is behind it from fighting with the icons.
+      className={`inline-flex gap-3 rounded-2xl border border-white/10 bg-black/40 p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 ${
         isVertical ? "flex-col" : "flex-row"
       } ${className}`}
     >
