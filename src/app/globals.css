@@ -456,3 +456,9 @@ html[data-atm-paused="true"] .cm-wash-a, html[data-atm-paused="true"] .cm-wash-b
 .cm-photo { transition: transform 0.5s ease, opacity 0.4s ease; }
 @media (hover: hover) { .group:hover .cm-photo { transform: scale(1.04); } }
 @media (prefers-reduced-motion: reduce) { .cm-photo { transition: none; } .group:hover .cm-photo { transform: none; } }
+
+/* Shine border (see ShineBorder.tsx): the gradient turns around the card's centre. */
+@keyframes shine-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+.shine-spin { animation: shine-spin linear infinite; will-change: transform; transform: translate(-50%, -50%); }
+html[data-atm-paused="true"] .shine-spin { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .shine-spin { animation: none !important; } }

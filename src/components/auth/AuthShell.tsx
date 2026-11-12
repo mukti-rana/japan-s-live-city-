@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Playfair_Display } from "next/font/google";
 import { ArrowLeft, Compass } from "lucide-react";
 import Logo from "@/components/ui/Logo";
+import ShineBorder from "@/components/ui/ShineBorder";
 import GuestLink from "@/components/auth/GuestLink";
 import FujiBackdrop from "@/components/auth/FujiBackdrop";
 import AuthLanguageMenu from "@/components/auth/AuthLanguageMenu";
@@ -65,7 +66,8 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[4px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
+          <section aria-labelledby="auth-title" className="pointer-events-auto relative w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[4px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
+            <ShineBorder />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
