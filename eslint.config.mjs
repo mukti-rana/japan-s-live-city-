@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Third-party SmoothUI components, installed as-is from its registry.
+    "src/components/smoothui/**",
   ]),
 ]);
 

@@ -10,6 +10,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEFAULT_LANGUAGE } from "@/lib/ai/languages";
 import type { UIMessage } from "@/components/ai/uiTypes";
 import AiOffNotice from "@/components/ai/AiOffNotice";
+import { useAssistantOrb } from "@/components/ai/AssistantOrb";
 
 function newId(): string {
   return Math.random().toString(36).slice(2);
@@ -50,6 +51,7 @@ export default function ChatAssistant({
   }, []);
   const [image, setImage] = useState<AttachedImage | null>(null);
   const [loading, setLoading] = useState(false);
+  const orb = useAssistantOrb();
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   function updateMessage(id: string, updater: (m: UIMessage) => UIMessage) {
@@ -91,6 +93,9 @@ export default function ChatAssistant({
       { id: assistantId, role: "assistant", content: "", cards: [], pendingTools: [] },
     ]);
     setLoading(true);
+    // Waiting for the reply to start.
+    orb.set("thinking");
+    let failed = false;
 
     try {
       const res = await fetch("/api/ai/assistant", {
@@ -112,12 +117,14 @@ export default function ChatAssistant({
           error: data?.error ?? "Something went wrong. Please try again.",
         }));
         setLoading(false);
+        orb.flash("error", 2000);
         return;
       }
 
       for await (const event of readNdjsonStream(res.body)) {
         switch (event.type) {
           case "text":
+            orb.set("streaming");
             updateMessage(assistantId, (m) => ({ ...m, content: m.content + event.delta }));
             break;
           case "tool_start":
@@ -136,17 +143,22 @@ export default function ChatAssistant({
             updateMessage(assistantId, (m) => ({ ...m, cards: [...m.cards, event.card] }));
             break;
           case "error":
+            failed = true;
             updateMessage(assistantId, (m) => ({ ...m, error: event.message }));
             break;
           case "done":
             break;
         }
       }
+      // The reply finished: "done" for a moment, or "error" if the stream said so.
+      if (failed) orb.flash("error", 2000);
+      else orb.flash("done", 1500);
     } catch {
       updateMessage(assistantId, (m) => ({
         ...m,
         error: "Couldn't reach LIVE CITY AI. Check your connection and try again.",
       }));
+      orb.flash("error", 2000);
     } finally {
       setLoading(false);
     }
