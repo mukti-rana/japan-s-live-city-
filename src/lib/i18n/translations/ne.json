@@ -2001,5 +2001,10 @@
   "Places aren't available right now.": "ठाउँहरू अहिले उपलब्ध छैनन्।",
   "That place could not be found in Japan.": "जापानमा त्यो ठाउँ फेला परेन।",
   "We couldn't save that place. Please try again.": "हामीले त्यो ठाउँ सुरक्षित गर्न सकेनौँ। कृपया फेरि प्रयास गर्नुहोस्।",
-  "You are adding places too quickly. Please wait a little.": "तपाईं धेरै छिटो ठाउँ थप्दै हुनुहुन्छ। कृपया केही पर्खनुहोस्।"
+  "You are adding places too quickly. Please wait a little.": "तपाईं धेरै छिटो ठाउँ थप्दै हुनुहुन्छ। कृपया केही पर्खनुहोस्।",
+  "This page could not be found": "यो पृष्ठ फेला परेन",
+  "The address may be mistyped, or the page may have moved or been removed.": "ठेगाना गलत टाइप भएको हुन सक्छ, वा पृष्ठ सारिएको वा हटाइएको हुन सक्छ।",
+  "Back to home": "गृहपृष्ठमा फर्कनुहोस्",
+  "Explore": "अन्वेषण",
+  "Popular pages": "लोकप्रिय पृष्ठहरू"
 }

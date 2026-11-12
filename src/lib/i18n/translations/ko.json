@@ -1972,5 +1972,10 @@
   "Places aren't available right now.": "지금은 장소 기능을 이용할 수 없습니다.",
   "That place could not be found in Japan.": "일본에서 해당 장소를 찾을 수 없습니다.",
   "We couldn't save that place. Please try again.": "해당 장소를 저장하지 못했습니다. 다시 시도해 주세요.",
-  "You are adding places too quickly. Please wait a little.": "장소를 너무 빠르게 추가하고 있어요. 잠시 기다려 주세요."
+  "You are adding places too quickly. Please wait a little.": "장소를 너무 빠르게 추가하고 있어요. 잠시 기다려 주세요.",
+  "This page could not be found": "이 페이지를 찾을 수 없습니다",
+  "The address may be mistyped, or the page may have moved or been removed.": "주소가 잘못 입력되었거나 페이지가 이동 또는 삭제되었을 수 있습니다.",
+  "Back to home": "홈으로 돌아가기",
+  "Explore": "탐색",
+  "Popular pages": "인기 페이지"
 }

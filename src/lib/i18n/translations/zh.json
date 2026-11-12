@@ -1972,5 +1972,10 @@
   "Places aren't available right now.": "目前无法使用地点功能。",
   "That place could not be found in Japan.": "在日本找不到该地点。",
   "We couldn't save that place. Please try again.": "无法保存该地点，请重试。",
-  "You are adding places too quickly. Please wait a little.": "添加地点太频繁了，请稍等。"
+  "You are adding places too quickly. Please wait a little.": "添加地点太频繁了，请稍等。",
+  "This page could not be found": "找不到此页面",
+  "The address may be mistyped, or the page may have moved or been removed.": "地址可能输入有误，或页面已被移动或删除。",
+  "Back to home": "返回首页",
+  "Explore": "探索",
+  "Popular pages": "热门页面"
 }

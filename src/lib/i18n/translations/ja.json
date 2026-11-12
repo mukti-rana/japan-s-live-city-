@@ -1332,5 +1332,10 @@
   "Places aren't available right now.": "現在、場所機能はご利用いただけません。",
   "That place could not be found in Japan.": "日本国内でその場所が見つかりません。",
   "We couldn't save that place. Please try again.": "その場所を保存できませんでした。もう一度お試しください。",
-  "You are adding places too quickly. Please wait a little.": "場所の追加が速すぎます。少し待ってください。"
+  "You are adding places too quickly. Please wait a little.": "場所の追加が速すぎます。少し待ってください。",
+  "This page could not be found": "このページは見つかりませんでした",
+  "The address may be mistyped, or the page may have moved or been removed.": "アドレスが間違っているか、ページが移動または削除された可能性があります。",
+  "Back to home": "ホームに戻る",
+  "Explore": "探索",
+  "Popular pages": "人気のページ"
 }
