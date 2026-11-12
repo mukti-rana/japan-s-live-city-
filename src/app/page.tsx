@@ -13,6 +13,7 @@ import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import TrendRadarSection from "@/components/home/TrendRadarSection";
 import EmergencyPreview from "@/components/emergency/EmergencyPreview";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
+import QuickDock from "@/components/home/QuickDock";
 import WelcomeGate from "@/components/auth/WelcomeGate";
 import YourDay from "@/components/calendar/YourDay";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
@@ -110,6 +111,8 @@ export default function Home() {
             <QuickAccessWidget />
           </Cell>
         </div>
+
+        <QuickDock />
       </div>
     </LiveLocationProvider>
   );
