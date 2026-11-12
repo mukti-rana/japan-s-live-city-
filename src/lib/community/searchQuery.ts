@@ -91,6 +91,10 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
   const pattern = `%${term}%`;
   // Inside an "or" filter a quote would end the value early, so none are allowed.
   const orPattern = `%${term.replace(/["']/g, " ")}%`;
+  // Usernames often contain underscores, which are a wildcard in LIKE: for the
+  // people search they are escaped so "aiko_t" finds "aiko_travels", not "aikoXt…".
+  const rawTerm = s.q.toLowerCase().replace(/[\\%*,()"']/g, " ").replace(/\s+/g, " ").trim();
+  const peoplePattern = `%${rawTerm.replace(/_/g, "\\_")}%`;
   let failed = false;
   const fail = (where: string, error: { code?: string; message?: string }) => {
     failed = true;
@@ -110,7 +114,7 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
       : [],
     want("reviews")
       ? (async () => {
-          const { data, error } = await client.from("community_reviews").select("id,place_ref,rating,body,recommend,helpful_count,published_at,created_at,profiles(username)").eq("status", "published").ilike("body", pattern).order("helpful_count", { ascending: false }).order("published_at", { ascending: false }).range(from, from + limit);
+          const { data, error } = await client.from("community_reviews").select("id,place_ref,rating,body,recommend,helpful_count,published_at,created_at,profiles!community_reviews_user_id_fkey(username)").eq("status", "published").ilike("body", pattern).order("helpful_count", { ascending: false }).order("published_at", { ascending: false }).range(from, from + limit);
           if (error) fail("reviews", error);
           return (data ?? []) as unknown as { id: string; place_ref: string; rating: number; body: string; recommend: boolean; helpful_count: number; published_at: string | null; created_at: string; profiles: Profile }[];
         })()
@@ -126,7 +130,7 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
       : [],
     want("people")
       ? (async () => {
-          const { data, error } = await client.from("profiles").select("username,display_name,avatar_url").or(`username.ilike.${orPattern},display_name.ilike.${orPattern}`).order("username").range(0, limit - 1);
+          const { data, error } = await client.from("profiles").select("username,display_name,avatar_url").or(`username.ilike.${peoplePattern},display_name.ilike.${peoplePattern}`).order("username").range(0, limit - 1);
           if (error) fail("people", error);
           return (data ?? []) as { username: string; display_name: string | null; avatar_url: string | null }[];
         })()

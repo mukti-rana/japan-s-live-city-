@@ -25,11 +25,11 @@ const nameOf = (p: Profile) => (Array.isArray(p) ? p[0]?.username : p?.username)
 const cut = (s: string | null | undefined, n = 280) => ((s ?? "").length > n ? `${(s ?? "").slice(0, n)}…` : (s ?? ""));
 
 const SELECT: Record<Content, string> = {
-  post: "id,user_id,title,caption,status,created_at,profiles(username),community_post_images(thumb_path,storage_path,position)",
-  comment: "id,user_id,body,status,created_at,post_id,answer_id,profiles(username),community_answers(question_id)",
-  review: "id,user_id,body,rating,status,place_ref,created_at,profiles(username)",
-  question: "id,user_id,title,body,status,created_at,profiles(username)",
-  answer: "id,user_id,body,status,question_id,created_at,profiles(username)",
+  post: "id,user_id,title,caption,status,created_at,profiles!community_posts_user_id_fkey(username),community_post_images(thumb_path,storage_path,position)",
+  comment: "id,user_id,body,status,created_at,post_id,answer_id,profiles!community_comments_user_id_fkey(username),community_answers(question_id)",
+  review: "id,user_id,body,rating,status,place_ref,created_at,profiles!community_reviews_user_id_fkey(username)",
+  question: "id,user_id,title,body,status,created_at,profiles!community_questions_user_id_fkey(username)",
+  answer: "id,user_id,body,status,question_id,created_at,profiles!community_answers_user_id_fkey(username)",
 };
 
 interface Raw {
@@ -145,7 +145,7 @@ export interface SuspensionRow {
 }
 
 export async function fetchSuspensions(client: SupabaseClient): Promise<SuspensionRow[]> {
-  const { data } = await client.from("community_suspensions").select("user_id,reason,suspended_at,until,profiles(username)").order("suspended_at", { ascending: false }).limit(100);
+  const { data } = await client.from("community_suspensions").select("user_id,reason,suspended_at,until,profiles!community_suspensions_user_id_fkey(username)").order("suspended_at", { ascending: false }).limit(100);
   return ((data ?? []) as unknown as { user_id: string; reason: string; suspended_at: string; until: string | null; profiles: Profile }[]).map((r) => ({ userId: r.user_id, username: nameOf(r.profiles), reason: r.reason, suspendedAt: r.suspended_at, until: r.until, ended: r.until !== null && new Date(r.until).getTime() <= Date.now() }));
 }
 

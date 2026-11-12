@@ -31,7 +31,7 @@ export function reviewFiltersFromParams(sp: Record<string, string | string[] | u
 }
 
 const PHOTOS = "community_review_images(storage_path,thumb_path,width,height,position)";
-const COLUMNS = "id,user_id,place_ref,rating,body,recommend,visit_date,helpful_count,status,published_at,created_at,profiles(username,avatar_url)";
+const COLUMNS = "id,user_id,place_ref,rating,body,recommend,visit_date,helpful_count,status,published_at,created_at,profiles!community_reviews_user_id_fkey(username,avatar_url)";
 
 interface Row {
   id: string;

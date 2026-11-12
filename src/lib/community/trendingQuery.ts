@@ -62,7 +62,7 @@ export async function fetchTrending(client: SupabaseClient, period: Period): Pro
 
   const contributorsP = (async () => {
     const make = (table: string) => {
-      let q = client.from(table).select("user_id,profiles(username,avatar_url)").eq("status", "published");
+      let q = client.from(table).select(`user_id,profiles!${table}_user_id_fkey(username,avatar_url)`).eq("status", "published");
       if (since) q = q.gte("published_at", since);
       return q.order("published_at", { ascending: false }).limit(500);
     };

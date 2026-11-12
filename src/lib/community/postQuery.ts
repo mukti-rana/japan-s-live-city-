@@ -11,7 +11,7 @@ export type PostResult =
 
 const SELECT =
   "id,user_id,status,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at,created_at," +
-  "profiles(username,avatar_url)," +
+  "profiles!community_posts_user_id_fkey(username,avatar_url)," +
   "community_post_images(storage_path,thumb_path,width,height,alt,position)";
 
 interface Row {

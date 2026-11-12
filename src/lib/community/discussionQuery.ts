@@ -28,7 +28,7 @@ interface CommentRow {
   answer_id: string | null;
   profiles: ProfileJoin;
 }
-const COMMENT_COLUMNS = "id,user_id,parent_id,depth,body,like_count,created_at,edited_at,post_id,answer_id,profiles(username,avatar_url)";
+const COMMENT_COLUMNS = "id,user_id,parent_id,depth,body,like_count,created_at,edited_at,post_id,answer_id,profiles!community_comments_user_id_fkey(username,avatar_url)";
 const toComment = (r: CommentRow, viewerId: string | null): CommunityComment => ({
   id: r.id,
   parentId: r.parent_id,
@@ -103,7 +103,7 @@ export interface QuestionRow {
   created_at: string;
   profiles: ProfileJoin;
 }
-export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,resolved,answer_count,helpful_count,status,published_at,created_at,profiles(username,avatar_url)";
+export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,resolved,answer_count,helpful_count,status,published_at,created_at,profiles!community_questions_user_id_fkey(username,avatar_url)";
 export const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQuestion => ({
   id: r.id,
   title: r.title,
@@ -179,7 +179,7 @@ interface AnswerRow {
 }
 
 export async function fetchAnswers(client: SupabaseClient, questionId: string, sort: AnswerSort, viewerId: string | null): Promise<CommunityAnswer[]> {
-  let q = client.from("community_answers").select("id,user_id,question_id,body,helpful_count,status,created_at,updated_at,profiles(username,avatar_url)").eq("question_id", questionId);
+  let q = client.from("community_answers").select("id,user_id,question_id,body,helpful_count,status,created_at,updated_at,profiles!community_answers_user_id_fkey(username,avatar_url)").eq("question_id", questionId);
   q = sort === "newest" ? q.order("created_at", { ascending: false }) : q.order("helpful_count", { ascending: false }).order("created_at", { ascending: true });
   const { data } = await q.limit(100);
   return ((data ?? []) as unknown as AnswerRow[])
