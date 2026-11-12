@@ -16,6 +16,8 @@ export interface CommunityPost {
   cityLabel: string | null;
   placeRef: string | null;
   placeLabel: string | null;
+  // The kind of place (restaurant, cafe, hotel…), when a place was attached.
+  placeCategory: string | null;
   categorySlug: string;
   visitDate: string | null;
   likeCount: number;
@@ -37,6 +39,8 @@ export interface CommunityReview {
   id: string;
   // The place reviewed (an Explore place id like "Q123").
   placeRef: string;
+  placeName: string | null;
+  placeCategory: string | null;
   rating: number;
   body: string;
   recommend: boolean;
@@ -78,6 +82,8 @@ export interface CommunityQuestion {
   body: string;
   areaId: string;
   placeRef: string | null;
+  placeName: string | null;
+  placeCategory: string | null;
   resolved: boolean;
   answerCount: number;
   helpfulCount: number;

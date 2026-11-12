@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Camera, Compass, Star } from "lucide-react";
+import AreaPicker from "@/components/community/AreaPicker";
+import Bi from "@/components/community/Bi";
+import PlaceTypeIcon from "@/components/community/PlaceTypeIcon";
+import { AREA_BY_ID } from "@/lib/community/areas";
+import { PLACE_CATEGORIES } from "@/lib/community/placeTypes";
 import CommunityHero from "@/components/community/CommunityHero";
 import CommunityTabs from "@/components/community/CommunityTabs";
 import ReviewCard from "@/components/community/ReviewCard";
@@ -25,6 +30,8 @@ const href = (f: ReviewFilters, patch: Partial<ReviewFilters>) => {
   const p = new URLSearchParams();
   if (n.sort !== "newest") p.set("sort", n.sort);
   if (n.photosOnly) p.set("photos", "1");
+  if (n.area) p.set("area", n.area);
+  if (n.placeType) p.set("type", n.placeType);
   if (n.page > 1) p.set("page", String(n.page));
   const q = p.toString();
   return `/community/reviews${q ? `?${q}` : ""}`;
@@ -49,7 +56,17 @@ export async function generateMetadata({ searchParams }: PageProps<"/community/r
 // listed (the database enforces that); each links to its place.
 export default async function CommunityReviewsPage({ searchParams }: PageProps<"/community/reviews">) {
   const { filters, configured, result } = await load(await searchParams);
-  const touched = filters.sort !== "newest" || filters.photosOnly;
+  const touched = filters.sort !== "newest" || filters.photosOnly || Boolean(filters.area) || Boolean(filters.placeType);
+  const area = filters.area ? AREA_BY_ID.get(filters.area) : undefined;
+  // What stays when the prefecture changes.
+  const carry = (() => {
+    const p = new URLSearchParams();
+    if (filters.sort !== "newest") p.set("sort", filters.sort);
+    if (filters.photosOnly) p.set("photos", "1");
+    if (filters.placeType) p.set("type", filters.placeType);
+    const q = p.toString();
+    return q ? `?${q}` : "";
+  })();
 
   return (
     <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-6 pb-10">
@@ -93,6 +110,26 @@ export default async function CommunityReviewsPage({ searchParams }: PageProps<"
                 <Tx en="Reset filters" />
               </Link>
             )}
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <AreaPicker currentSlug={area?.id} currentLabel={area ? { en: area.en, ja: area.ja } : undefined} query={carry} paramBase="/community/reviews" />
+            </div>
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-labelledby="rv-type">
+              <span id="rv-type" className="sr-only">
+                <Tx en="Type of place" />
+              </span>
+              <Link href={href(filters, { placeType: undefined })} className={chip(!filters.placeType)} aria-current={!filters.placeType ? "page" : undefined}>
+                <Tx en="All places" />
+              </Link>
+              {PLACE_CATEGORIES.map((c) => (
+                <Link key={c.id} href={href(filters, { placeType: c.id })} className={`${chip(filters.placeType === c.id)} gap-1.5`} aria-current={filters.placeType === c.id ? "page" : undefined}>
+                  <PlaceTypeIcon category={c.id} size={12} />
+                  <Bi en={c.en} ja={c.ja} />
+                </Link>
+              ))}
+            </div>
           </div>
 
           {result.reviews.length === 0 ? (

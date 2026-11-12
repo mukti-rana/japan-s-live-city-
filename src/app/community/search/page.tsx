@@ -186,13 +186,13 @@ export default async function CommunitySearchPage({ searchParams }: PageProps<"/
               <H id="s-reviews"><Tx en="Reviews" /></H>
               <ul className="grid gap-3 md:grid-cols-2">
                 {results.reviews.map((r) => {
-                  const place = getDestination(r.placeRef);
+                  const place = r.placeName ? null : getDestination(r.placeRef);
                   return (
                     <li key={r.id} className="rounded-2xl border border-glass-border bg-panel/60 p-4">
                       <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                         <Star size={13} aria-hidden="true" className="text-gold" />
-                        <Link href={`/explore/${r.placeRef}`} className="truncate underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                          {place ? (place.names.en ?? place.names.ja) : <Tx en="A place in Japan" />}
+                        <Link href={`/community/place/${r.placeRef}`} className="truncate underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                          {r.placeName ?? (place ? (place.names.en ?? place.names.ja) : <Tx en="A place in Japan" />)}
                         </Link>
                       </p>
                       <p className="mt-1 flex items-center gap-2 text-xs text-foreground/80">

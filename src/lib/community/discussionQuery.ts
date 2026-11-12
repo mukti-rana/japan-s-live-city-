@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { PLACE_REF_RE } from "@/lib/community/placeTypes";
 import type { CommunityAnswer, CommunityComment, CommunityQuestion } from "@/lib/community/types";
 
 // Reading comments, questions and answers. As with reviews, each function takes
@@ -83,7 +84,7 @@ export function questionFiltersFromParams(sp: Record<string, string | string[] |
   return {
     sort: QUESTION_SORTS.includes(sort as QuestionSort) ? (sort as QuestionSort) : "latest",
     areaId: area && isArea(area) ? area : undefined,
-    placeRef: place && /^Q[0-9]{1,12}$/.test(place) ? place : undefined,
+    placeRef: place && PLACE_REF_RE.test(place) ? place : undefined,
     page: Number.isFinite(page) && page >= 1 && page <= 200 ? page : 1,
   };
 }
@@ -95,6 +96,8 @@ export interface QuestionRow {
   body: string;
   area_id: string;
   place_ref: string | null;
+  place_name: string | null;
+  place_category: string | null;
   resolved: boolean;
   answer_count: number;
   helpful_count: number;
@@ -103,13 +106,15 @@ export interface QuestionRow {
   created_at: string;
   profiles: ProfileJoin;
 }
-export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,resolved,answer_count,helpful_count,status,published_at,created_at,profiles!community_questions_user_id_fkey(username,avatar_url)";
+export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,place_name,place_category,resolved,answer_count,helpful_count,status,published_at,created_at,profiles!community_questions_user_id_fkey(username,avatar_url)";
 export const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQuestion => ({
   id: r.id,
   title: r.title,
   body: r.body,
   areaId: r.area_id,
   placeRef: r.place_ref,
+  placeName: r.place_name,
+  placeCategory: r.place_category,
   resolved: r.resolved,
   answerCount: r.answer_count,
   helpfulCount: r.helpful_count,

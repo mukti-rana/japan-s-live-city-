@@ -10,7 +10,7 @@ export type PostResult =
   | { state: "unavailable" };
 
 const SELECT =
-  "id,user_id,status,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at,created_at," +
+  "id,user_id,status,title,caption,area_id,city_label,place_ref,place_label,place_category,category_slug,visit_date,like_count,comment_count,save_count,published_at,created_at," +
   "profiles!community_posts_user_id_fkey(username,avatar_url)," +
   "community_post_images(storage_path,thumb_path,width,height,alt,position)";
 
@@ -24,6 +24,7 @@ interface Row {
   city_label: string | null;
   place_ref: string | null;
   place_label: string | null;
+  place_category: string | null;
   category_slug: string;
   visit_date: string | null;
   like_count: number;
@@ -62,6 +63,7 @@ export const fetchPost = cache(async (id: string): Promise<PostResult> => {
         cityLabel: r.city_label,
         placeRef: r.place_ref,
         placeLabel: r.place_label,
+        placeCategory: r.place_category,
         categorySlug: r.category_slug,
         visitDate: r.visit_date,
         likeCount: r.like_count,

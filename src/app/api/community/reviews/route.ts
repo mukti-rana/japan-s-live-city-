@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { getDestination } from "@/lib/explore/catalogue";
+import { resolvePlace } from "@/lib/community/places";
 import { isSameOrigin, json } from "@/lib/community/http";
 import { validateReviewInput } from "@/lib/community/validation";
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   const input = parsed.value;
   if (input.keepPaths.length) return json({ error: "Something went wrong. Please try again." }, 400);
 
-  const place = getDestination(input.placeRef);
+  const place = await resolvePlace(supabase, input.placeRef);
   if (!place) return json({ error: "Please check the highlighted fields.", fields: { placeRef: "That place could not be found." } }, 422);
 
   if (input.uploadPaths.some((p) => !p.startsWith(`${user.id}/`))) return json({ error: "Some photos could not be found. Please add them again." }, 400);
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
   const { data: review, error: reviewError } = await supabase
     .from("community_reviews")
-    .insert({ user_id: user.id, place_ref: input.placeRef, area_id: place.prefectureId, rating: input.rating, body: input.body, recommend: input.recommend, visit_date: input.visitDate })
+    .insert({ user_id: user.id, place_ref: input.placeRef, place_name: place.name, place_category: place.category, area_id: place.areaId, rating: input.rating, body: input.body, recommend: input.recommend, visit_date: input.visitDate })
     .select("id,status")
     .single();
   if (reviewError || !review) {

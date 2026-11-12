@@ -8,6 +8,8 @@ import CommunitySearch from "@/components/community/CommunitySearch";
 import CommunityTabs from "@/components/community/CommunityTabs";
 import Unavailable from "@/components/community/Unavailable";
 import QuestionCard from "@/components/community/QuestionCard";
+import PlaceTypeIcon from "@/components/community/PlaceTypeIcon";
+import { PLACE_CATEGORIES, PLACE_CATEGORY_BY_ID } from "@/lib/community/placeTypes";
 import { FEATURED_AREAS, type Area, type FeaturedArea } from "@/lib/community/areas";
 import { CATEGORIES, CATEGORY_BY_SLUG } from "@/lib/community/categories";
 import { feedQuery, isFiltered, type FeedFilters, type FeedSort } from "@/lib/community/feed";
@@ -63,7 +65,7 @@ export default function CommunityHub({
   // On the Photos page the city is a filter like any other.
   const filtered = isFiltered(filters) || (photos && Boolean(area));
   // What follows the city when you switch city: topic, search and sort stay.
-  const carry = feedQuery({ category: filters.category, q: filters.q, sort: filters.sort });
+  const carry = feedQuery({ category: filters.category, placeType: filters.placeType, q: filters.q, sort: filters.sort });
   const areaHref = (slug: string, areaId: string) => {
     if (!photos) return `/community/${slug}${carry}`;
     const p = new URLSearchParams(carry.replace(/^\?/, ""));
@@ -95,7 +97,7 @@ export default function CommunityHub({
           {area ? <Tx en="Real experiences, photos and recommendations shared by people who have been here." /> : <Tx en="Discover real experiences, beautiful places and recommendations shared by people across Japan." />}
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <CommunitySearch action={basePath} defaultValue={filters.q} category={filters.category} region={filters.region} area={photos ? area?.id : undefined} />
+          <CommunitySearch action={basePath} defaultValue={filters.q} category={filters.category} region={filters.region} area={photos ? area?.id : undefined} placeType={filters.placeType} />
           <Link href="/community/new" className="inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />
@@ -161,6 +163,21 @@ export default function CommunityHub({
           ))}
         </div>
 
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-labelledby="community-ptype">
+          <span id="community-ptype" className="sr-only">
+            <Tx en="Type of place" />
+          </span>
+          <Link href={link({ placeType: undefined })} className={chip(!filters.placeType)} aria-current={!filters.placeType ? "page" : undefined}>
+            <Tx en="All places" />
+          </Link>
+          {PLACE_CATEGORIES.map((c) => (
+            <Link key={c.id} href={link({ placeType: c.id })} className={`${chip(filters.placeType === c.id)} gap-1.5`} aria-current={filters.placeType === c.id ? "page" : undefined}>
+              <PlaceTypeIcon category={c.id} size={12} />
+              <Bi en={c.en} ja={c.ja} />
+            </Link>
+          ))}
+        </div>
+
         <div className="flex flex-wrap items-center gap-2" role="group" aria-labelledby="community-sort">
           <span id="community-sort" className="text-xs font-medium text-foreground/80">
             <Tx en="Sort by" />
@@ -172,7 +189,7 @@ export default function CommunityHub({
           ))}
         </div>
 
-        {(area || filters.region || filters.category || filters.q) && (
+        {(area || filters.region || filters.category || filters.placeType || filters.q) && (
           <div className="flex flex-wrap items-center gap-2" role="group" aria-labelledby="community-selected">
             <span id="community-selected" className="text-xs font-medium text-foreground/80">
               <Tx en="Showing" />
@@ -196,6 +213,12 @@ export default function CommunityHub({
             {filters.category && CATEGORY_BY_SLUG.get(filters.category) && (
               <Link href={link({ category: undefined })} className={pill}>
                 <Bi en={CATEGORY_BY_SLUG.get(filters.category)!.en} ja={CATEGORY_BY_SLUG.get(filters.category)!.ja} />
+                <X size={12} aria-hidden="true" />
+              </Link>
+            )}
+            {filters.placeType && PLACE_CATEGORY_BY_ID.get(filters.placeType) && (
+              <Link href={link({ placeType: undefined })} className={pill}>
+                <Bi en={PLACE_CATEGORY_BY_ID.get(filters.placeType)!.en} ja={PLACE_CATEGORY_BY_ID.get(filters.placeType)!.ja} />
                 <X size={12} aria-hidden="true" />
               </Link>
             )}

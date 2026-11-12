@@ -6,6 +6,8 @@ import { photoUrl } from "@/lib/community/photos";
 import type { CommunityPost } from "@/lib/community/types";
 import Bi from "@/components/community/Bi";
 import LocalDate from "@/components/community/LocalDate";
+import PlaceTypeIcon from "@/components/community/PlaceTypeIcon";
+import { isPlaceCategory } from "@/lib/community/placeTypes";
 import PostCardActions from "@/components/community/PostCardActions";
 import Tx from "@/components/i18n/Tx";
 
@@ -48,9 +50,17 @@ export default function PostCard({ post }: { post: CommunityPost }) {
       <div className="flex flex-col gap-2.5 p-4">
         {(where || area) && (
           <p className="flex min-w-0 items-center gap-1 text-xs font-medium text-azure">
-            <MapPin size={12} aria-hidden="true" className="shrink-0" />
+            {post.placeCategory && isPlaceCategory(post.placeCategory) ? <PlaceTypeIcon category={post.placeCategory} size={12} className="shrink-0" /> : <MapPin size={12} aria-hidden="true" className="shrink-0" />}
             <span className="truncate">
-              {where ? `${where}${area ? ", " : ""}` : ""}
+              {where && post.placeRef ? (
+                // The place name opens that place's page (reviews, photos, questions).
+                <Link href={`/community/place/${post.placeRef}`} className="relative z-10 rounded underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                  {where}
+                </Link>
+              ) : (
+                where
+              )}
+              {where && area ? ", " : ""}
               {area && <Bi en={area.en} ja={area.ja} />}
             </span>
           </p>

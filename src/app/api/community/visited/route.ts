@@ -1,4 +1,5 @@
-import { getDestination } from "@/lib/explore/catalogue";
+import { resolvePlace } from "@/lib/community/places";
+import { PLACE_REF_RE } from "@/lib/community/placeTypes";
 import { dbFailure, readJson, requireUser } from "@/lib/community/apiAuth";
 import { json } from "@/lib/community/http";
 
@@ -6,7 +7,7 @@ export const runtime = "nodejs";
 
 const placeOf = (raw: unknown): string | null => {
   const ref = typeof (raw as { placeRef?: unknown } | undefined)?.placeRef === "string" ? ((raw as { placeRef: string }).placeRef).trim() : "";
-  return /^Q[0-9]{1,12}$/.test(ref) ? ref : null;
+  return PLACE_REF_RE.test(ref) ? ref : null;
 };
 
 // "Been here": you mark a place yourself. Nothing is ever marked from your
@@ -15,9 +16,9 @@ export async function PUT(request: Request) {
   const ctx = await requireUser(request, { unavailable: "That isn't available right now.", signIn: "Please sign in to mark places you've been to." });
   if ("response" in ctx) return ctx.response;
   const ref = placeOf(await readJson(request));
-  const place = ref ? getDestination(ref) : null;
+  const place = ref ? await resolvePlace(ctx.supabase, ref) : null;
   if (!ref || !place) return json({ error: "That place could not be found." }, 422);
-  const { error } = await ctx.supabase.from("community_visited").upsert({ user_id: ctx.user.id, place_ref: ref, area_id: place.prefectureId }, { onConflict: "user_id,place_ref", ignoreDuplicates: true });
+  const { error } = await ctx.supabase.from("community_visited").upsert({ user_id: ctx.user.id, place_ref: ref, area_id: place.areaId }, { onConflict: "user_id,place_ref", ignoreDuplicates: true });
   if (error) return dbFailure(error, "That didn't work. Please try again.");
   return json({ placeRef: ref, visited: true });
 }

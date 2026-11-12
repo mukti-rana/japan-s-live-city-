@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { getDestination } from "@/lib/explore/catalogue";
+import { resolvePlace } from "@/lib/community/places";
 import { isSameOrigin, json } from "@/lib/community/http";
 import { validatePostInput } from "@/lib/community/validation";
 
@@ -54,11 +54,13 @@ export async function POST(request: Request) {
   // A place from Explore decides the area, so a post can never be filed under the wrong prefecture.
   let areaId = input.areaId;
   let placeLabel = input.placeLabel;
+  let placeCategory: string | null = null;
   if (input.placeRef) {
-    const place = getDestination(input.placeRef);
+    const place = await resolvePlace(supabase, input.placeRef);
     if (!place) return json({ error: "Please check the highlighted fields.", fields: { placeRef: "That place could not be found. Pick one from the list or type its name." } }, 422);
-    areaId = place.prefectureId;
-    placeLabel = placeLabel ?? place.names.en ?? place.names.ja ?? null;
+    areaId = place.areaId;
+    placeLabel = placeLabel ?? place.name;
+    placeCategory = place.category;
   }
 
   const { data: post, error: postError } = await supabase
@@ -71,6 +73,7 @@ export async function POST(request: Request) {
       city_label: input.cityLabel,
       place_ref: input.placeRef,
       place_label: placeLabel,
+      place_category: placeCategory,
       category_slug: input.categorySlug,
       visit_date: input.visitDate,
       client_key: input.clientKey,

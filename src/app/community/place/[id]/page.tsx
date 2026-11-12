@@ -16,24 +16,26 @@ import { AREA_BY_ID } from "@/lib/community/areas";
 import { fetchPlacePosts, publicClient } from "@/lib/community/queries";
 import { fetchMyReview, fetchReviewStats, fetchReviews, reviewFiltersFromParams } from "@/lib/community/reviewQuery";
 import { MIN_INDEXABLE_POSTS } from "@/lib/community/seo";
-import { getDestination } from "@/lib/explore/catalogue";
+import PlaceInfo from "@/components/community/PlaceInfo";
+import { resolvePlace } from "@/lib/community/places";
+import { isPlaceRef, type CommunityPlace } from "@/lib/community/placeTypes";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 // Star-rating markup is only added once a place has this many real reviews.
 const MIN_REVIEWS_FOR_RATING_MARKUP = 5;
 
-const isPlaceId = (id: string) => /^Q[0-9]{1,12}$/.test(id);
-const nameOf = (id: string) => {
-  const place = getDestination(id);
-  return place ? { place, en: place.names.en ?? place.names.ja ?? "Place", ja: place.names.ja ?? place.names.en ?? "Place" } : null;
-};
+const namesOf = (place: CommunityPlace) => ({ place, en: place.nameEn ?? place.name, ja: place.nameJa ?? place.name });
+
+// The kind of business a place is, for search engines' structured data.
+const SCHEMA_TYPE: Record<string, string> = { restaurant: "Restaurant", cafe: "CafeOrCoffeeShop", hotel: "Hotel", gym: "ExerciseGym", salon: "HairSalon", shopping: "Store", department_store: "DepartmentStore", attraction: "TouristAttraction", other: "Place" };
 
 export async function generateMetadata({ params, searchParams }: PageProps<"/community/place/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const found = isPlaceId(id) ? nameOf(id) : null;
-  if (!found) return { robots: { index: false, follow: false } };
   const client = publicClient();
+  const resolved = isPlaceRef(id) ? await resolvePlace(client, id) : null;
+  const found = resolved ? namesOf(resolved) : null;
+  if (!found) return { robots: { index: false, follow: false } };
   const [stats, posts] = client ? await Promise.all([fetchReviewStats(client, id), fetchPlacePosts(id, 12)]) : [null, []];
   const sp = await searchParams;
   const plain = !sp.rsort && !sp.photos && !sp.rpage;
@@ -53,12 +55,13 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/com
 
 export default async function PlaceCommunityPage({ params, searchParams }: PageProps<"/community/place/[id]">) {
   const { id } = await params;
-  if (!isPlaceId(id)) notFound();
-  const found = nameOf(id);
-  if (!found) notFound();
+  if (!isPlaceRef(id)) notFound();
+  const resolved = await resolvePlace(publicClient(), id);
+  if (!resolved) notFound();
+  const found = namesOf(resolved);
   const { place } = found;
   const filters = reviewFiltersFromParams(await searchParams);
-  const area = AREA_BY_ID.get(place.prefectureId);
+  const area = AREA_BY_ID.get(place.areaId);
 
   let stats = null;
   let list = null;
@@ -82,8 +85,10 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
     stats && stats.count >= MIN_REVIEWS_FOR_RATING_MARKUP && stats.average
       ? JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "TouristAttraction",
+          "@type": SCHEMA_TYPE[place.category] ?? "Place",
           name: found.en,
+          ...(place.address ? { address: place.address } : {}),
+          geo: { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lon },
           aggregateRating: { "@type": "AggregateRating", ratingValue: stats.average, reviewCount: stats.count, bestRating: 5, worstRating: 1 },
         }).replace(/</g, "\\u003c")
       : null;
@@ -117,12 +122,16 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />
           </Link>
-          <Link href={`/explore/${id}`} className="inline-flex h-11 items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-5 text-sm font-medium text-foreground transition hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-            <ExternalLink size={16} aria-hidden="true" />
-            <Tx en="Place details and map" />
-          </Link>
+          {place.source === "catalogue" && (
+            <Link href={`/explore/${id}`} className="inline-flex h-11 items-center gap-2 rounded-xl border border-glass-border bg-glass-bg px-5 text-sm font-medium text-foreground transition hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <ExternalLink size={16} aria-hidden="true" />
+              <Tx en="Place details and map" />
+            </Link>
+          )}
         </div>
       </header>
+
+      <PlaceInfo place={place} link={false} />
 
       <section id="reviews" aria-labelledby="reviews-h" className="scroll-mt-24 flex flex-col gap-4">
         <h2 id="reviews-h" className="text-xl font-semibold text-foreground">

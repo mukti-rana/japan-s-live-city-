@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { Camera, Flame, HelpCircle, LayoutGrid, Star, UserRound } from "lucide-react";
+import { Camera, Flame, HelpCircle, LayoutGrid, MapPin, Star, UserRound } from "lucide-react";
 import Tx from "@/components/i18n/Tx";
 
-export type CommunitySection = "discover" | "trending" | "photos" | "reviews" | "questions" | "me";
+export type CommunitySection = "discover" | "trending" | "photos" | "reviews" | "places" | "questions" | "me";
 
 const TABS: { id: CommunitySection; href: string; en: string; Icon: typeof Camera }[] = [
   { id: "discover", href: "/community", en: "Discover", Icon: LayoutGrid },
   { id: "trending", href: "/community/trending", en: "Trending", Icon: Flame },
   { id: "photos", href: "/community/photos", en: "Photos", Icon: Camera },
   { id: "reviews", href: "/community/reviews", en: "Reviews", Icon: Star },
+  { id: "places", href: "/community/places", en: "Places", Icon: MapPin },
   { id: "questions", href: "/community/questions", en: "Questions & Answers", Icon: HelpCircle },
   { id: "me", href: "/community/me", en: "My Contributions", Icon: UserRound },
 ];

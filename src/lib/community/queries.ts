@@ -41,7 +41,7 @@ export function logProblem(where: string, problem: FeedProblem, error?: { code?:
 }
 
 export const POST_SELECT =
-  "id,title,caption,area_id,city_label,place_ref,place_label,category_slug,visit_date,like_count,comment_count,save_count,published_at," +
+  "id,title,caption,area_id,city_label,place_ref,place_label,place_category,category_slug,visit_date,like_count,comment_count,save_count,published_at," +
   "profiles!community_posts_user_id_fkey(username,avatar_url)," +
   "community_post_images(storage_path,thumb_path,width,height,alt,position)";
 
@@ -53,6 +53,7 @@ export interface Row {
   city_label: string | null;
   place_ref: string | null;
   place_label: string | null;
+  place_category: string | null;
   category_slug: string;
   visit_date: string | null;
   like_count: number;
@@ -73,6 +74,7 @@ export function toPost(r: Row): CommunityPost {
     cityLabel: r.city_label,
     placeRef: r.place_ref,
     placeLabel: r.place_label,
+    placeCategory: r.place_category,
     categorySlug: r.category_slug,
     visitDate: r.visit_date,
     likeCount: r.like_count,
@@ -104,6 +106,7 @@ async function load(filters: FeedFilters): Promise<FeedResult> {
   if (filters.area) query = query.eq("area_id", filters.area);
   else if (filters.region) query = query.in("area_id", REGION_PREFECTURES.get(filters.region) ?? []);
   if (filters.category) query = query.eq("category_slug", filters.category);
+  if (filters.placeType) query = query.eq("place_category", filters.placeType);
   const term = filters.q ? likeTerm(filters.q) : "";
   if (term) query = query.ilike("search_text", `%${term}%`);
 

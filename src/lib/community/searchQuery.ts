@@ -48,6 +48,7 @@ export const searchable = (q: string) => likeTerm(q).length >= MIN_SEARCH_LENGTH
 export interface ReviewHit {
   id: string;
   placeRef: string;
+  placeName: string | null;
   rating: number;
   body: string;
   recommend: boolean;
@@ -101,7 +102,7 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
     console.error(`[community] search ${where}: code=${error.code ?? "none"} message=${(error.message ?? "").replace(/\s+/g, " ").slice(0, 200)}`);
   };
 
-  const [posts, reviews, questions, people] = await Promise.all([
+  const [posts, reviews, questions, people, savedPlaces] = await Promise.all([
     want("photos")
       ? (async () => {
           let q = client.from("community_posts").select(POST_SELECT).eq("status", "published").ilike("search_text", pattern);
@@ -114,9 +115,9 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
       : [],
     want("reviews")
       ? (async () => {
-          const { data, error } = await client.from("community_reviews").select("id,place_ref,rating,body,recommend,helpful_count,published_at,created_at,profiles!community_reviews_user_id_fkey(username)").eq("status", "published").ilike("body", pattern).order("helpful_count", { ascending: false }).order("published_at", { ascending: false }).range(from, from + limit);
+          const { data, error } = await client.from("community_reviews").select("id,place_ref,place_name,rating,body,recommend,helpful_count,published_at,created_at,profiles!community_reviews_user_id_fkey(username)").eq("status", "published").ilike("body", pattern).order("helpful_count", { ascending: false }).order("published_at", { ascending: false }).range(from, from + limit);
           if (error) fail("reviews", error);
-          return (data ?? []) as unknown as { id: string; place_ref: string; rating: number; body: string; recommend: boolean; helpful_count: number; published_at: string | null; created_at: string; profiles: Profile }[];
+          return (data ?? []) as unknown as { id: string; place_ref: string; place_name: string | null; rating: number; body: string; recommend: boolean; helpful_count: number; published_at: string | null; created_at: string; profiles: Profile }[];
         })()
       : [],
     want("questions")
@@ -135,17 +136,25 @@ export async function runSearch(client: SupabaseClient, s: SearchParams): Promis
           return (data ?? []) as { username: string; display_name: string | null; avatar_url: string | null }[];
         })()
       : [],
+    // Places people have added from the map (restaurants, cafes, hotels…), found by name or address.
+    want("places")
+      ? (async () => {
+          const { data } = await client.from("community_places").select("place_ref,display_name,name_en,name_ja,address").or(`display_name.ilike.${orPattern},name_en.ilike.${orPattern},name_ja.ilike.${orPattern},address.ilike.${orPattern}`).limit(one ? 12 : 4);
+          return (data ?? []) as { place_ref: string; display_name: string; name_en: string | null; name_ja: string | null; address: string | null }[];
+        })()
+      : [],
   ]);
   // Every searched table failed: report that rather than a false "no results".
   if (failed && posts.length + reviews.length + questions.length + people.length === 0) return null;
 
-  const places = want("places") ? suggest(s.q, "en").filter((x) => x.type === "place" && x.id).slice(0, one ? 12 : 4).map((x) => ({ id: x.id as string, label: x.label, sub: x.sub })) : [];
+  const sights = want("places") ? suggest(s.q, "en").filter((x) => x.type === "place" && x.id).slice(0, one ? 12 : 4).map((x) => ({ id: x.id as string, label: x.label, sub: x.sub })) : [];
+  const places = [...savedPlaces.map((p) => ({ id: p.place_ref, label: p.display_name, sub: p.address ?? "" })), ...sights].slice(0, one ? 12 : 6);
   const take = <T,>(rows: T[]) => rows.slice(0, limit);
   const more = (rows: unknown[]) => one && rows.length > limit;
   const hasMore = s.type === "photos" ? more(posts) : s.type === "reviews" ? more(reviews) : s.type === "questions" ? more(questions) : false;
   return {
     posts: take(posts).map(toPost),
-    reviews: take(reviews).map((r) => ({ id: r.id, placeRef: r.place_ref, rating: r.rating, body: r.body, recommend: r.recommend, helpfulCount: r.helpful_count, publishedAt: r.published_at ?? r.created_at, author: (Array.isArray(r.profiles) ? r.profiles[0]?.username : r.profiles?.username) ?? "traveler" })),
+    reviews: take(reviews).map((r) => ({ id: r.id, placeRef: r.place_ref, placeName: r.place_name, rating: r.rating, body: r.body, recommend: r.recommend, helpfulCount: r.helpful_count, publishedAt: r.published_at ?? r.created_at, author: (Array.isArray(r.profiles) ? r.profiles[0]?.username : r.profiles?.username) ?? "traveler" })),
     questions: take(questions).map((r) => toQuestion(r, null)),
     people: take(people).map((p) => ({ username: p.username, displayName: p.display_name, avatarUrl: p.avatar_url })),
     places,

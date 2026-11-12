@@ -1,4 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { resolvePlaces } from "@/lib/community/places";
+import { isAreaId } from "@/lib/community/areas";
+import { isPlaceCategory, type CommunityPlace, type PlaceCategory } from "@/lib/community/placeTypes";
 import type { CommunityReview, ReviewStats } from "@/lib/community/types";
 
 // Reading reviews. Every function takes the Supabase client to use: the public
@@ -12,6 +15,9 @@ export const REVIEWS_PER_PAGE = 10;
 
 export interface ReviewFilters {
   sort: ReviewSort;
+  // Only used on the Community reviews page: the prefecture and kind of place.
+  area?: string;
+  placeType?: PlaceCategory;
   photosOnly: boolean;
   page: number;
 }
@@ -23,7 +29,11 @@ const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v
 export function reviewFiltersFromParams(sp: Record<string, string | string[] | undefined>, keys = { sort: "rsort", page: "rpage" }): ReviewFilters {
   const sort = first(sp[keys.sort]);
   const page = Number.parseInt(first(sp[keys.page]) ?? "1", 10);
+  const area = first(sp.area);
+  const type = first(sp.type);
   return {
+    area: isAreaId(area) ? area : undefined,
+    placeType: isPlaceCategory(type) ? type : undefined,
     sort: REVIEW_SORTS.includes(sort as ReviewSort) ? (sort as ReviewSort) : "newest",
     photosOnly: first(sp.photos) === "1",
     page: Number.isFinite(page) && page >= 1 && page <= 200 ? page : 1,
@@ -31,12 +41,14 @@ export function reviewFiltersFromParams(sp: Record<string, string | string[] | u
 }
 
 const PHOTOS = "community_review_images(storage_path,thumb_path,width,height,position)";
-const COLUMNS = "id,user_id,place_ref,rating,body,recommend,visit_date,helpful_count,status,published_at,created_at,profiles!community_reviews_user_id_fkey(username,avatar_url)";
+const COLUMNS = "id,user_id,place_ref,place_name,place_category,rating,body,recommend,visit_date,helpful_count,status,published_at,created_at,profiles!community_reviews_user_id_fkey(username,avatar_url)";
 
 interface Row {
   id: string;
   user_id: string;
   place_ref: string;
+  place_name: string | null;
+  place_category: string | null;
   rating: number;
   body: string;
   recommend: boolean;
@@ -54,6 +66,8 @@ function toReview(r: Row, viewerId: string | null): CommunityReview {
   return {
     id: r.id,
     placeRef: r.place_ref,
+    placeName: r.place_name,
+    placeCategory: r.place_category,
     rating: r.rating,
     body: r.body,
     recommend: r.recommend,
@@ -111,6 +125,8 @@ export async function fetchMyReview(client: SupabaseClient, placeRef: string, vi
 export async function fetchAllReviews(client: SupabaseClient, filters: ReviewFilters, viewerId: string | null, limit = REVIEWS_PER_PAGE): Promise<{ reviews: CommunityReview[]; hasMore: boolean } | null> {
   const photos = filters.photosOnly ? PHOTOS.replace("community_review_images(", "community_review_images!inner(") : PHOTOS;
   let q = client.from("community_reviews").select(`${COLUMNS},${photos}`).eq("status", "published");
+  if (filters.area) q = q.eq("area_id", filters.area);
+  if (filters.placeType) q = q.eq("place_category", filters.placeType);
   if (filters.sort === "highest") q = q.order("rating", { ascending: false }).order("published_at", { ascending: false });
   else if (filters.sort === "lowest") q = q.order("rating", { ascending: true }).order("published_at", { ascending: false });
   else if (filters.sort === "helpful") q = q.order("helpful_count", { ascending: false }).order("published_at", { ascending: false });
@@ -130,6 +146,8 @@ export interface RecommendedPlace {
   reviews: number;
   recommends: number;
   average: number;
+  // The place itself (name, address…), when it can be found.
+  place: CommunityPlace | null;
 }
 
 // The places people recommend most, worked out from real published reviews:
@@ -149,9 +167,11 @@ export async function fetchRecommendedPlaces(client: SupabaseClient, limit = 6, 
     if (r.recommend) e.rec += 1;
     by.set(r.place_ref, e);
   }
-  return [...by.entries()]
+  const ranked = [...by.entries()]
     .filter(([, e]) => e.rec > 0)
     .map(([placeRef, e]) => ({ placeRef, reviews: e.n, recommends: e.rec, average: e.sum / e.n }))
     .sort((a, b) => b.recommends - a.recommends || b.average - a.average || b.reviews - a.reviews)
     .slice(0, limit);
+  const places = await resolvePlaces(client, ranked.map((r) => r.placeRef));
+  return ranked.map((r) => ({ ...r, place: places.get(r.placeRef) ?? null }));
 }

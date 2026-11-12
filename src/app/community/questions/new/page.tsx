@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import AskQuestionForm from "@/components/community/AskQuestionForm";
 import Tx from "@/components/i18n/Tx";
 import { isAreaId } from "@/lib/community/areas";
-import { getDestination } from "@/lib/explore/catalogue";
+import { pickedFrom } from "@/lib/community/pickedPlace";
+import { resolvePlace } from "@/lib/community/places";
+import { PLACE_REF_RE } from "@/lib/community/placeTypes";
+import { publicClient } from "@/lib/community/queries";
 
 export const metadata: Metadata = {
   title: "Ask a question — Community",
@@ -15,8 +18,8 @@ export default async function AskPage({ searchParams }: PageProps<"/community/qu
   const sp = await searchParams;
   const placeRaw = Array.isArray(sp.place) ? sp.place[0] : sp.place;
   const areaRaw = Array.isArray(sp.area) ? sp.area[0] : sp.area;
-  const place = placeRaw && /^Q[0-9]{1,12}$/.test(placeRaw) ? getDestination(placeRaw) : null;
-  const initialPlace = place ? { label: place.names.en ?? place.names.ja ?? "", ref: place.id, areaId: place.prefectureId } : undefined;
+  const place = placeRaw && PLACE_REF_RE.test(placeRaw) ? await resolvePlace(publicClient(), placeRaw) : null;
+  const initialPlace = place ? pickedFrom(place) : undefined;
   const initialArea = !place && areaRaw && isAreaId(areaRaw) ? areaRaw : undefined;
 
   return (

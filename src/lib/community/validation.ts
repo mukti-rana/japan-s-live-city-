@@ -1,5 +1,6 @@
 import { isAreaId } from "@/lib/community/areas";
 import { isCategorySlug } from "@/lib/community/categories";
+import { PLACE_REF_RE } from "@/lib/community/placeTypes";
 
 // The rules for a new post, in one place. The browser uses them to help the
 // person fix a problem before uploading anything, and the server uses the very
@@ -109,7 +110,7 @@ export function validateFields(raw: Record<string, unknown>, now: Date = new Dat
   if (!isCategorySlug(categorySlug)) errors.categorySlug = MESSAGES.category;
   if (cityLabel && cityLabel.length > LIMITS.cityMax) errors.cityLabel = MESSAGES.cityLong;
   if (placeLabel && placeLabel.length > LIMITS.placeMax) errors.placeLabel = MESSAGES.placeLong;
-  if (placeRefRaw && !/^Q[0-9]{1,12}$/.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
+  if (placeRefRaw && !PLACE_REF_RE.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
   if (visitRaw && !isValidVisitDate(visitRaw, now)) errors.visitDate = MESSAGES.date;
   if (raw.rightsConfirmed !== true) errors.rightsConfirmed = MESSAGES.rights;
 
@@ -191,7 +192,7 @@ export function validateReviewFields(raw: Record<string, unknown>, hasPhotos: bo
   const visitRaw = typeof raw.visitDate === "string" ? raw.visitDate.trim() : "";
   const rating = raw.rating;
 
-  if (!/^Q[0-9]{1,12}$/.test(placeRef)) errors.placeRef = REVIEW_MESSAGES.placeRef;
+  if (!PLACE_REF_RE.test(placeRef)) errors.placeRef = REVIEW_MESSAGES.placeRef;
   if (typeof rating !== "number" || !Number.isInteger(rating) || rating < 1 || rating > 5) errors.rating = REVIEW_MESSAGES.rating;
   if (body && body.length < REVIEW_LIMITS.bodyMin) errors.body = REVIEW_MESSAGES.bodyShort;
   else if (body.length > REVIEW_LIMITS.bodyMax) errors.body = REVIEW_MESSAGES.bodyLong;
@@ -299,7 +300,7 @@ export function validateQuestionFields(raw: Record<string, unknown>): { ok: true
   if (body.length > DISCUSSION_LIMITS.questionBodyMax) errors.body = DISCUSSION_MESSAGES.questionBodyLong;
   else if (countLinks(body) > LIMITS.maxLinksInCaption) errors.body = MESSAGES.captionLinks;
   if (!isAreaId(areaId)) errors.areaId = DISCUSSION_MESSAGES.questionArea;
-  if (placeRefRaw && !/^Q[0-9]{1,12}$/.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
+  if (placeRefRaw && !PLACE_REF_RE.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, value: { title, body, areaId, placeRef: placeRefRaw || null } };
 }

@@ -14,6 +14,9 @@ import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import { fetchAnswerComments, fetchAnswers, fetchQuestion, type AnswerSort } from "@/lib/community/discussionQuery";
 import { getDestination } from "@/lib/explore/catalogue";
+import PlaceInfo from "@/components/community/PlaceInfo";
+import { resolvePlace } from "@/lib/community/places";
+import { publicClient } from "@/lib/community/queries";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { UUID_RE } from "@/lib/community/validation";
@@ -39,8 +42,7 @@ export async function generateMetadata({ params }: PageProps<"/community/questio
   const res = await load((await params).id);
   if (res.state !== "ready") return { robots: { index: false, follow: false } };
   const { question: q } = res;
-  const place = q.placeRef ? getDestination(q.placeRef) : null;
-  const where = place ? place.names.en ?? place.names.ja : AREA_BY_ID.get(q.areaId)?.en;
+  const where = q.placeName ?? (q.placeRef ? getDestination(q.placeRef)?.names.en : null) ?? AREA_BY_ID.get(q.areaId)?.en;
   const title = `${q.title}${where ? ` — ${where}` : ""}`;
   const description = (q.body || `A question about ${where ?? "Japan"} with answers from the community.`).replace(/\s+/g, " ").slice(0, 160);
   // Worth indexing once it is published and has at least one answer.
@@ -70,9 +72,9 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
   const published = answers.filter((a) => a.status === "published");
 
   const area = AREA_BY_ID.get(q.areaId);
-  const place = q.placeRef ? getDestination(q.placeRef) : null;
-  const placeName = place ? place.names.en ?? place.names.ja ?? null : null;
-  const askMore = place ? `/community/questions?place=${place.id}` : `/community/questions?area=${q.areaId}`;
+  const place = q.placeRef ? await resolvePlace(publicClient(), q.placeRef) : null;
+  const placeName = place?.name ?? q.placeName ?? null;
+  const askMore = q.placeRef ? `/community/questions?place=${q.placeRef}` : `/community/questions?area=${q.areaId}`;
 
   // Question-and-answer markup for search engines, only once there are real answers.
   const markup =
@@ -139,7 +141,7 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
             <MapPin size={15} aria-hidden="true" className="shrink-0 text-lilac" />
             <span>
               {place ? (
-                <Link href={`/community/place/${place.id}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                <Link href={`/community/place/${place.ref}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
                   {placeName}
                 </Link>
               ) : null}
@@ -147,6 +149,11 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
               {area && <Bi en={area.en} ja={area.ja} />}
             </span>
           </p>
+        )}
+        {place && (
+          <div className="mt-4">
+            <PlaceInfo place={place} compact link={false} />
+          </div>
         )}
         {q.body && <p className="mt-4 whitespace-pre-line break-words text-sm leading-relaxed text-foreground/95 sm:text-base">{q.body}</p>}
         <p className="mt-4 text-xs text-foreground/75">

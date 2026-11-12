@@ -7,6 +7,9 @@ import LocalDate from "@/components/community/LocalDate";
 import PostActions from "@/components/community/PostActions";
 import PostGallery from "@/components/community/PostGallery";
 import CommentSection from "@/components/community/CommentSection";
+import PlaceInfo from "@/components/community/PlaceInfo";
+import { resolvePlace } from "@/lib/community/places";
+import { publicClient } from "@/lib/community/queries";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import { CATEGORY_BY_SLUG } from "@/lib/community/categories";
@@ -72,6 +75,8 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
     return src && thumb ? [{ src, thumb, alt: img.alt ?? post.title, width: img.width, height: img.height }] : [];
   });
   const where = post.placeLabel ?? post.cityLabel;
+  // The place the post is about: name, address, a small map and the Google Maps links.
+  const place = post.placeRef ? await resolvePlace(publicClient(), post.placeRef) : null;
 
   return (
     <article className="mx-auto w-full max-w-[1200px] pb-10">
@@ -112,7 +117,7 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
                 <MapPin size={15} aria-hidden="true" className="shrink-0 text-lilac" />
                 <span>
                   {post.placeRef ? (
-                    <Link href={`/explore/${post.placeRef}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                    <Link href={`/community/place/${post.placeRef}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
                       {where}
                     </Link>
                   ) : (
@@ -155,6 +160,12 @@ export default async function PostPage({ params }: PageProps<"/community/post/[i
           <PostActions postId={post.id} title={post.title} likes={post.likeCount} saves={post.saveCount} isOwner={isOwner} path={`/community/post/${post.id}`} />
         </div>
       </div>
+
+      {place && (
+        <div className="mt-6">
+          <PlaceInfo place={place} />
+        </div>
+      )}
 
       {status === "published" && (
         <section aria-labelledby="comments-h" className="mt-8 max-w-3xl">

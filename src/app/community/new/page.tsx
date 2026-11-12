@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import NewPostForm from "@/components/community/NewPostForm";
 import Tx from "@/components/i18n/Tx";
-import { getDestination } from "@/lib/explore/catalogue";
+import { pickedFrom } from "@/lib/community/pickedPlace";
+import { resolvePlace } from "@/lib/community/places";
+import { PLACE_REF_RE } from "@/lib/community/placeTypes";
+import { publicClient } from "@/lib/community/queries";
 
 export const metadata: Metadata = {
   title: "Share your experience — Community",
@@ -10,12 +13,12 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// ?place=Q123 (from a place's page) pre-fills the place, which also decides the area.
+// ?place=Q123 or ?place=N123 (from a place's page) pre-fills the place, which also decides the area.
 export default async function NewPostPage({ searchParams }: PageProps<"/community/new">) {
   const raw = (await searchParams).place;
   const ref = Array.isArray(raw) ? raw[0] : raw;
-  const place = ref && /^Q[0-9]{1,12}$/.test(ref) ? getDestination(ref) : null;
-  const initialPlace = place ? { label: place.names.en ?? place.names.ja ?? "", ref: place.id, areaId: place.prefectureId } : undefined;
+  const place = ref && PLACE_REF_RE.test(ref) ? await resolvePlace(publicClient(), ref) : null;
+  const initialPlace = place ? pickedFrom(place) : undefined;
   return (
     <div className="mx-auto w-full max-w-3xl pb-10">
       <header className="mb-6">

@@ -12,8 +12,9 @@ import type { CommunityQuestion } from "@/lib/community/types";
 // is resolved, how many answers it has, and who asked.
 export default function QuestionCard({ q }: { q: CommunityQuestion }) {
   const area = AREA_BY_ID.get(q.areaId);
-  const place = q.placeRef ? getDestination(q.placeRef) : null;
-  const placeName = place ? place.names.en ?? place.names.ja ?? null : null;
+  // The name saved with the question; older questions fall back to the Explore catalogue.
+  const catalogue = q.placeRef && !q.placeName ? getDestination(q.placeRef) : null;
+  const placeName = q.placeName ?? (catalogue ? (catalogue.names.en ?? catalogue.names.ja ?? null) : null);
 
   return (
     <article className="relative rounded-2xl border border-glass-border bg-panel/60 p-4 backdrop-blur-xl transition-colors hover:border-white/25 sm:p-5">
