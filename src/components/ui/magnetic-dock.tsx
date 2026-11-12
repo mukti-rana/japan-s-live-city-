@@ -130,7 +130,7 @@ function DockItem({
         className={`flex h-full w-full items-center justify-center rounded-xl border backdrop-blur-sm transition-colors duration-200 ${
           item.isActive
             ? "border-sakura/40 bg-sakura/20 text-sakura"
-            : `border-white/10 bg-black/30 group-hover:border-azure/40 group-hover:bg-black/20 ${
+            : `border-white/10 bg-black/15 group-hover:border-azure/40 group-hover:bg-black/10 ${
                 item.accent ? ACCENT_CLASS[item.accent] : "text-foreground"
               }`
         }`}
@@ -223,9 +223,9 @@ export function MagneticDock({
       aria-label={label}
       onPointerMove={reducedMotion ? undefined : handlePointerMove}
       onPointerLeave={() => pointer.set(Infinity)}
-      // Black glass: a see-through black tint over a strong blur, with a hair-thin
+      // Black glass: a very see-through black tint over a strong blur, with a hair-thin
       // light edge. The blur keeps what is behind it from fighting with the icons.
-      className={`inline-flex gap-3 rounded-2xl border border-white/10 bg-black/40 p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 ${
+      className={`inline-flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 ${
         isVertical ? "flex-col" : "flex-row"
       } ${className}`}
     >
