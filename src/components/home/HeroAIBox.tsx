@@ -38,11 +38,11 @@ export default function HeroAIBox() {
       />
 
       <div className="relative flex flex-col gap-3">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <div className="flex flex-col items-center gap-2 text-center">
           <div className="shrink-0">
-            <AIOrbFace aria-label={`Assistant is ${orbState}`} size={120} state={orbState} />
+            <AIOrbFace aria-label={`Assistant is ${orbState}`} size={150} state={orbState} />
           </div>
-          <div className="min-w-[8rem]">
+          <div>
             <p className="text-sm font-semibold text-foreground">
               <T k="ai.homeGreetingTitle" />
             </p>
