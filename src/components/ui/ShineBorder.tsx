@@ -7,7 +7,7 @@
 // (transform) is animated, so it is cheap. It pauses when the tab is hidden
 // (html[data-atm-paused]) and stands still for visitors who ask for less
 // motion — the colours then simply stay where they are.
-export default function ShineBorder({ colors = ["#a07cfe", "#fe8fb5", "#ffbe7b"], duration = 7, width = 2 }: { colors?: string[]; duration?: number; width?: number }) {
+export default function ShineBorder({ colors = ["#a07cfe", "#fe8fb5", "#ffbe7b"], duration = 3.5, width = 2 }: { colors?: string[]; duration?: number; width?: number }) {
   // Two bright "comets" of colour, opposite each other, each fading out behind
   // it — so the eye can follow the light travelling round the edge. The rest of
   // the ring stays clear, leaving the card's own soft border showing.
