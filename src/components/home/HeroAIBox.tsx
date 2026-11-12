@@ -40,7 +40,7 @@ export default function HeroAIBox() {
       <div className="relative flex flex-col gap-3">
         <div className="flex items-center gap-2.5">
           <div className="shrink-0">
-            <AIOrbFace aria-label={`Assistant is ${orbState}`} size={44} state={orbState} />
+            <AIOrbFace aria-label={`Assistant is ${orbState}`} size={88} state={orbState} />
           </div>
           <div>
             <p className="text-sm font-semibold text-foreground">
