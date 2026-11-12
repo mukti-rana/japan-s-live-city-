@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import AIOrbFace from "@/components/smoothui/ai-orb-face";
+import type { AIState } from "@/components/smoothui/ai-core";
 import T from "@/components/i18n/T";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 
@@ -15,10 +17,15 @@ export default function HeroAIBox() {
   const { t } = useLanguage();
   const router = useRouter();
   const [value, setValue] = useState("");
+  // The orb reacts to what you do here: it "listens" while you type and
+  // "thinks" for a moment as you send the question to the assistant page.
+  const [sending, setSending] = useState(false);
+  const orbState: AIState = sending ? "thinking" : value.trim() ? "listening" : "idle";
 
   function ask(text: string) {
     const trimmed = text.trim();
     if (!trimmed) return;
+    setSending(true);
     router.push(`/ai-assistant?q=${encodeURIComponent(trimmed)}`);
   }
 
@@ -32,13 +39,9 @@ export default function HeroAIBox() {
 
       <div className="relative flex flex-col gap-3">
         <div className="flex items-center gap-2.5">
-          <motion.div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure via-neon-purple to-sakura text-white shadow-[0_0_16px_3px_rgba(168,85,247,0.4)]"
-            animate={{ scale: [1, 1.06, 1] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <Sparkles size={16} />
-          </motion.div>
+          <div className="shrink-0">
+            <AIOrbFace aria-label={`Assistant is ${orbState}`} size={44} state={orbState} />
+          </div>
           <div>
             <p className="text-sm font-semibold text-foreground">
               <T k="ai.homeGreetingTitle" />
