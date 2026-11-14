@@ -1345,5 +1345,7 @@
   "Show results": "結果を表示",
   "Search locations": "場所を検索",
   "No match": "一致なし",
-  "View post": "投稿を見る"
+  "View post": "投稿を見る",
+  "Switch to light mode": "ライトモードに切り替え",
+  "Switch to dark mode": "ダークモードに切り替え"
 }

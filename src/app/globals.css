@@ -28,6 +28,13 @@
   --ambient-primary: #4da3ff;
   --ambient-secondary: #a855f7;
   --ambient-glow: rgba(77, 163, 255, 0.35);
+
+  /* Community surfaces (dark values are exactly what Community used before). */
+  --cm-surface: #0b0b0b;
+  --cm-card: #121212;
+  --cm-pop: #101010;
+  --cm-pop-foot: #0c0c0c;
+  --cm-input: #000000;
 }
 
 @theme inline {
@@ -46,6 +53,11 @@
   --color-neon-cyan: var(--neon-cyan);
   --color-neon-purple: var(--neon-purple);
   --color-lilac: var(--lilac);
+  --color-cm-surface: var(--cm-surface);
+  --color-cm-card: var(--cm-card);
+  --color-cm-pop: var(--cm-pop);
+  --color-cm-pop-foot: var(--cm-pop-foot);
+  --color-cm-input: var(--cm-input);
   --font-sans: var(--font-space-grotesk);
   --font-jp: var(--font-jp);
 }
@@ -491,3 +503,118 @@ html[data-atm-paused="true"] .shine-spin { animation-play-state: paused; }
 @keyframes cm-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 .cm-skeleton { background: linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%); background-size: 200% 100%; animation: cm-shimmer 1.6s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .cm-pop, .cm-sheet, .cm-fade, .cm-skeleton { animation: none !important; } }
+/* Theme toggle (Magic UI): the browser's default cross-fade is switched off so the
+   toggler's own circular reveal is the only transition. */
+::view-transition-old(root), ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* ───────── Light theme ─────────
+   Dark is the default and is exactly what the site always looked like: <html>
+   carries the "dark" class (see layout.tsx and the pre-paint script). Taking the
+   class off switches to the light palette below.
+
+   The colour tokens are re-pointed, and so are Tailwind's own white and black:
+   the many "white on dark" utilities (text-white, border-white/10, bg-white/5,
+   bg-black/40...) become "ink on light" without being edited one by one. */
+html:not(.dark) {
+  color-scheme: light;
+  --background: #f3f5f9;
+  --foreground: #0f172a;
+  --muted: #5a6478;
+  --panel: #ffffff;
+  --sidebar-bg: #ffffff;
+  --glass-bg: rgba(15, 23, 42, 0.04);
+  --glass-bg-strong: rgba(15, 23, 42, 0.07);
+  --glass-border: rgba(15, 23, 42, 0.13);
+  --sakura: #d63a74;
+  --gold: #9a6a08;
+  --azure: #1668d9;
+  --mint: #12803a;
+  --neon-cyan: #0b7490;
+  --neon-purple: #7c3aed;
+  --lilac: #6a45d8;
+  --glow: rgba(22, 104, 217, 0.22);
+  --ambient-primary: #1668d9;
+  --ambient-secondary: #7c3aed;
+  --ambient-glow: rgba(22, 104, 217, 0.22);
+  --cm-surface: #ffffff;
+  --cm-card: #ffffff;
+  --cm-pop: #ffffff;
+  --cm-pop-foot: #f3f5f9;
+  --cm-input: #ffffff;
+
+  --color-white: #0f172a;
+  --color-black: #ffffff;
+  /* Light shades picked for dark backgrounds become their dark partners. */
+  --color-red-100: #7f1d1d; --color-red-200: #991b1b; --color-red-300: #b91c1c; --color-red-400: #dc2626;
+  --color-orange-200: #9a3412; --color-orange-300: #c2410c; --color-orange-400: #ea580c;
+  --color-amber-200: #92400e; --color-amber-300: #b45309; --color-amber-400: #d97706;
+  --color-yellow-200: #854d0e; --color-yellow-300: #a16207; --color-yellow-400: #ca8a04;
+  --color-lime-200: #3f6212; --color-lime-300: #4d7c0f; --color-lime-400: #65a30d;
+  --color-green-200: #166534; --color-green-300: #15803d; --color-green-400: #16a34a;
+  --color-emerald-200: #065f46; --color-emerald-300: #047857; --color-emerald-400: #059669;
+  --color-teal-200: #115e59; --color-teal-300: #0f766e; --color-teal-400: #0d9488;
+  --color-cyan-200: #155e75; --color-cyan-300: #0e7490; --color-cyan-400: #0891b2;
+  --color-sky-200: #075985; --color-sky-300: #0369a1; --color-sky-400: #0284c7;
+  --color-blue-200: #1e40af; --color-blue-300: #1d4ed8; --color-blue-400: #2563eb;
+  --color-indigo-200: #3730a3; --color-indigo-300: #4338ca; --color-indigo-400: #4f46e5;
+  --color-violet-200: #5b21b6; --color-violet-300: #6d28d9; --color-violet-400: #7c3aed;
+  --color-purple-200: #6b21a8; --color-purple-300: #7e22ce; --color-purple-400: #9333ea;
+  --color-fuchsia-200: #86198f; --color-fuchsia-300: #a21caf; --color-fuchsia-400: #c026d3;
+  --color-pink-200: #9d174d; --color-pink-300: #be185d; --color-pink-400: #db2777;
+  --color-rose-200: #9f1239; --color-rose-300: #be123c; --color-rose-400: #e11d48;
+}
+
+/* Community: dark is the black theme above; light is a clean white one. */
+html:not(.dark) .cm-theme {
+  --background: #f5f6f8;
+  --foreground: #0a0a0a;
+  --muted: #6b6f7a;
+  --panel: #ffffff;
+  --glass-bg: rgba(10, 10, 10, 0.035);
+  --glass-bg-strong: rgba(10, 10, 10, 0.06);
+  --glass-border: rgba(10, 10, 10, 0.12);
+  --azure: #1668d9;
+  --lilac: #6a45d8;
+  --glow: rgba(22, 104, 217, 0.2);
+  background: #f5f6f8;
+}
+html:not(.dark) .cm-theme ::selection { background: rgba(22, 104, 217, 0.25); }
+html:not(.dark) .cm-skeleton { background: linear-gradient(90deg, #e9ecf2 25%, #f4f6fa 50%, #e9ecf2 75%); background-size: 200% 100%; }
+
+/* The animated night/sunset scene behind the pages is a dark-theme feature. */
+html:not(.dark) .atm-in { display: none; }
+/* Hard-coded lilac text (the readable purple) follows the light token. */
+html:not(.dark) .text-\[\#c4b5fd\] { color: var(--lilac); }
+html:not(.dark) .bg-\[\#c4b5fd\] { background-color: var(--lilac); }
+/* Leaflet: the dark map tiles are inverted into the matching light map. */
+html:not(.dark) .leaflet-container { background: #e5e9ef !important; }
+html:not(.dark) .lc-map--dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(1.02) contrast(0.95); }
+html:not(.dark) .leaflet-control-attribution { background: rgba(255, 255, 255, 0.85) !important; }
+html:not(.dark) .leaflet-popup-content-wrapper { box-shadow: 0 8px 28px -10px rgba(15, 23, 42, 0.35); }
+/* Satellite maps (no lc-map--dark) keep their natural colours. */
+/* A subtree that stays dark in the light theme: photo and video overlays, weather
+   scenes and similar art that is drawn dark. It re-applies the dark palette. */
+html:not(.dark) .keep-dark-ink {
+  color-scheme: dark;
+  --background: #0b0e1a;
+  --foreground: #f4f4f8;
+  --muted: #8b8fa3;
+  --panel: #0e1324;
+  --sidebar-bg: #070914;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-strong: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --sakura: #ff6b9d;
+  --gold: #f2c572;
+  --azure: #4da3ff;
+  --mint: #4ade80;
+  --neon-cyan: #22d3ee;
+  --neon-purple: #a855f7;
+  --lilac: #c4b5fd;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  color: var(--foreground);
+}

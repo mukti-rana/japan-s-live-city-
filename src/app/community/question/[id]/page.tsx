@@ -121,7 +121,7 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
         </p>
       )}
 
-      <header className="rounded-3xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-8">
+      <header className="rounded-3xl border border-white/10 bg-cm-surface p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {q.resolved && (
             <span className="inline-flex items-center gap-1 rounded-full bg-mint/15 px-2.5 py-1 font-medium text-mint">

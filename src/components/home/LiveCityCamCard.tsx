@@ -35,7 +35,7 @@ export default function LiveCityCamCard() {
         ))}
       </div>
 
-      <div className="relative aspect-video w-full flex-1 overflow-hidden rounded-xl bg-[#0a1024]">
+      <div className="keep-dark-ink relative aspect-video w-full flex-1 overflow-hidden rounded-xl bg-[#0a1024]">
         <iframe
           key={cam.videoId}
           src={`https://www.youtube.com/embed/${cam.videoId}?autoplay=1&mute=1&rel=0&playsinline=1`}

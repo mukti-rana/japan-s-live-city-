@@ -1985,5 +1985,7 @@
   "Show results": "결과 보기",
   "Search locations": "지역 검색",
   "No match": "일치하는 항목 없음",
-  "View post": "게시물 보기"
+  "View post": "게시물 보기",
+  "Switch to light mode": "라이트 모드로 전환",
+  "Switch to dark mode": "다크 모드로 전환"
 }

@@ -81,7 +81,7 @@ export default function HeroCard() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr]">
-      <div className="relative min-h-[240px] overflow-hidden p-5 sm:p-6">
+      <div className="keep-dark-ink relative min-h-[240px] overflow-hidden p-5 sm:p-6">
         {heroImages.length > 0 ? (
           heroImages.map((img, i) => (
             <motion.div

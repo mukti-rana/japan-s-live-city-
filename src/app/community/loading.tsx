@@ -14,7 +14,7 @@ export default function CommunityLoading() {
           <div key={i} className="cm-skeleton h-10 w-28 shrink-0 rounded-full" />
         ))}
       </div>
-      <div className="rounded-2xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-6">
+      <div className="rounded-2xl border border-white/10 bg-cm-surface p-5 sm:p-6">
         <div className="cm-skeleton h-3 w-24 rounded" />
         <div className="cm-skeleton mt-4 h-9 w-72 max-w-full rounded-lg" />
         <div className="cm-skeleton mt-3 h-4 w-full max-w-md rounded" />
@@ -27,7 +27,7 @@ export default function CommunityLoading() {
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 2xl:grid-cols-4">
         {Array.from({ length: 8 }, (_, i) => (
-          <div key={i} className="overflow-hidden rounded-2xl border border-white/[0.08] bg-[#121212]">
+          <div key={i} className="overflow-hidden rounded-2xl border border-white/[0.08] bg-cm-card">
             <div className="cm-skeleton aspect-[4/3]" />
             <div className="flex flex-col gap-3 p-4">
               <div className="cm-skeleton h-4 w-1/2 rounded" />

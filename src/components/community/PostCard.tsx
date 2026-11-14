@@ -27,9 +27,9 @@ export default function PostCard({ post, reveal }: { post: CommunityPost; reveal
   const extra = post.images.length - 1;
 
   return (
-    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[#121212] transition-colors duration-300 hover:border-white/20 motion-reduce:transition-none">
+    <article className="group relative flex h-full w-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-cm-card transition-colors duration-300 hover:border-white/20 motion-reduce:transition-none">
       {src && (
-        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-[#0a0a0a]">
+        <div className="relative aspect-[4/3] shrink-0 overflow-hidden bg-cm-pop-foot">
           {reveal ? (
             <ScrollImageReveal src={src} alt={cover?.alt ?? post.title} mask={reveal.mask} direction={reveal.direction} once parallax={16} rounded="rounded-none" className="absolute inset-0 h-full w-full" />
           ) : (

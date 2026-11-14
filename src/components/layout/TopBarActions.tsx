@@ -6,13 +6,14 @@ import AccountMenu from "@/components/layout/AccountMenu";
 import HeaderSearch from "@/components/layout/HeaderSearch";
 import NotificationsMenu from "@/components/layout/NotificationsMenu";
 import LanguageSwitcher from "@/components/i18n/LanguageSwitcher";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 import EmergencyQuickPanel from "@/components/emergency/EmergencyQuickPanel";
 import { useSessionCity } from "@/lib/geo/sessionCity";
 import { E } from "@/lib/emergency/strings";
 import { useInline } from "@/lib/i18n/inline";
 
 // Search in the middle (it takes the spare room), then one even row of
-// controls: SOS, language, notifications, account.
+// controls: SOS, language, theme, notifications, account.
 export default function TopBarActions() {
   const city = useSessionCity();
   const e = useInline(E);
@@ -39,7 +40,7 @@ export default function TopBarActions() {
           onClick={() => setSosOpen(true)}
           aria-haspopup="dialog"
           aria-label={e("title")}
-          className="mr-1 flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-red-400/30 bg-red-600/90 px-3 text-xs font-bold tracking-wide text-white transition-colors duration-200 hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 active:bg-red-700"
+          className="mr-1 flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-red-400/30 bg-red-600/90 px-3 text-xs font-bold tracking-wide text-white transition-colors duration-200 hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-300 active:bg-red-700 keep-dark-ink"
         >
           <ShieldAlert size={15} aria-hidden="true" />
           {e("sos")}
@@ -47,6 +48,7 @@ export default function TopBarActions() {
         {sosOpen && <EmergencyQuickPanel onClose={() => setSosOpen(false)} />}
 
         <LanguageSwitcher variant="topbar" />
+        <ThemeToggle />
         <NotificationsMenu />
         <AccountMenu />
       </div>

@@ -183,12 +183,12 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
                   <ChevronDown size={14} aria-hidden="true" className={`text-foreground/55 transition-transform ${open ? "rotate-180" : ""}`} />
                 </button>
                 {open && (
-                  <div role="dialog" aria-label={tr(f.label)} className="cm-pop absolute left-0 top-full z-40 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-white/12 bg-[#101010] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.9)]">
+                  <div role="dialog" aria-label={tr(f.label)} className="cm-pop absolute left-0 top-full z-40 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-white/12 bg-cm-pop shadow-[0_24px_60px_-12px_rgba(0,0,0,0.9)]">
                     <div className="max-h-[min(60vh,420px)] overflow-y-auto p-3">
                       <OptionList facet={f} value={draft} onToggle={(v) => setDraft((d) => toggle(f, d, v))} hrefFor={f.mode === "single" ? (v) => build({ ...current, [f.id]: v === null ? [] : [v] }) : undefined} onNavigate={() => setOpenId(null)} />
                     </div>
                     {f.mode === "multi" && (
-                      <div className="flex items-center justify-between gap-2 border-t border-white/10 bg-[#0c0c0c] p-3">
+                      <div className="flex items-center justify-between gap-2 border-t border-white/10 bg-cm-pop-foot p-3">
                         <button type="button" onClick={() => setDraft([])} className="rounded-lg px-2 py-2 text-sm font-medium text-foreground/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
                           {tr("Clear")}
                         </button>
@@ -247,7 +247,7 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
       {sheet && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <div className="cm-fade absolute inset-0 bg-black/70" onClick={() => setSheet(false)} aria-hidden="true" />
-          <div role="dialog" aria-modal="true" aria-label={tr("Filters")} className="cm-sheet absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-white/12 bg-[#101010]">
+          <div role="dialog" aria-modal="true" aria-label={tr("Filters")} className="cm-sheet absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-white/12 bg-cm-pop">
             <div className="flex items-center justify-between px-5 pb-2 pt-4">
               <h2 className="text-lg font-semibold text-white">{tr("Filters")}</h2>
               <button type="button" onClick={() => setSheet(false)} aria-label={tr("Close")} className="flex h-10 w-10 items-center justify-center rounded-full text-foreground/80 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
@@ -290,7 +290,7 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
                 );
               })}
             </div>
-            <div className="flex items-center gap-3 border-t border-white/10 bg-[#0c0c0c] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+            <div className="flex items-center gap-3 border-t border-white/10 bg-cm-pop-foot p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <button
                 type="button"
                 onClick={() => {

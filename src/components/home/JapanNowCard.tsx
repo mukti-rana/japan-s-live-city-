@@ -250,7 +250,7 @@ export default function JapanNowCard() {
   const fact = facts[at];
 
   return (
-    <div className="relative h-full min-h-[260px] overflow-hidden" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
+    <div className="keep-dark-ink relative h-full min-h-[260px] overflow-hidden" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
       <Image src="/images/sakura-pagoda.jpg" alt="" fill sizes="(min-width: 1280px) 20vw, 100vw" className="jn-drift object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e1a]/90 via-[#0b0e1a]/45 to-[#0b0e1a]/55" />
       {cur && <SeasonParticles season={cur.season} />}

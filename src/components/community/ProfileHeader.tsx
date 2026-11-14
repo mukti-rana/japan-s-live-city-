@@ -20,7 +20,7 @@ export default function ProfileHeader({ profile, stats, owner }: { profile: Comm
     : [];
 
   return (
-    <header className="rounded-3xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-8">
+    <header className="rounded-3xl border border-white/10 bg-cm-surface p-5 sm:p-8">
       <div className="flex flex-wrap items-center gap-4 sm:gap-6">
         <Avatar username={profile.username} avatarUrl={profile.avatarUrl} size={88} />
         <div className="min-w-0 flex-1">

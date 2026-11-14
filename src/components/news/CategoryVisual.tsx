@@ -130,7 +130,7 @@ export default function CategoryVisual({
       role={decorative ? undefined : "img"}
       aria-hidden={decorative ? true : undefined}
       aria-label={decorative ? undefined : `${label} — ${text("illustration")}`}
-      className={`${className.includes("absolute") ? "" : "relative"} isolate overflow-hidden ${className}`}
+      className={`keep-dark-ink ${className.includes("absolute") ? "" : "relative"} isolate overflow-hidden ${className}`}
       style={{ background: `linear-gradient(135deg, ${look.from} 0%, ${look.to} 78%)` }}
     >
       <div

@@ -1985,5 +1985,7 @@
   "Show results": "显示结果",
   "Search locations": "搜索地点",
   "No match": "无匹配项",
-  "View post": "查看帖子"
+  "View post": "查看帖子",
+  "Switch to light mode": "切换到浅色模式",
+  "Switch to dark mode": "切换到深色模式"
 }

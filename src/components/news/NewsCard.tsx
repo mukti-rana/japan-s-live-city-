@@ -183,7 +183,7 @@ export default function NewsCard({
 
     if (!hasPicture) {
       return (
-        <article className="relative isolate overflow-hidden rounded-2xl border border-glass-border">
+        <article className="keep-dark-ink relative isolate overflow-hidden rounded-2xl border border-glass-border">
           <CategoryVisual topic={topic} size="backdrop" className="absolute inset-0 -z-10" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0b0e1a]/70 via-[#0b0e1a]/30 to-transparent" aria-hidden="true" />
           <div className="flex min-w-0 flex-col gap-3 p-5 sm:p-8 lg:max-w-[46rem] lg:p-10">{copy}</div>

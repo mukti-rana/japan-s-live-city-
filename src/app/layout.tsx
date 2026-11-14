@@ -14,6 +14,7 @@ import { FavoritesProvider } from "@/lib/personalization/FavoritesContext";
 import PreferencesSync from "@/lib/personalization/PreferencesSync";
 import ReminderHost from "@/components/calendar/ReminderHost";
 import { siteUrl } from "@/lib/siteUrl";
+import { themeInitScript } from "@/lib/theme/theme";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -35,10 +36,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // Dark is the default. The script in <head> may switch to light before first
+    // paint (saved choice, or a device that prefers light), so the class on the
+    // server and in the browser can differ on purpose.
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${notoSansJp.variable} antialiased`}
+      suppressHydrationWarning
+      className={`dark ${spaceGrotesk.variable} ${notoSansJp.variable} antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="flex min-h-screen flex-col bg-background text-foreground">
         <LanguageProvider>
           <AuthProvider>

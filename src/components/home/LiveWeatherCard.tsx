@@ -307,7 +307,7 @@ export default function LiveWeatherCard() {
         <>
           <div className="grid gap-4 md:grid-cols-2">
             {/* Left: place, temperature, condition */}
-            <section className="relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
+            <section className="keep-dark-ink relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
               <WeatherAtmosphere icon={weather.icon} isNight={night} />
               <div className="relative">
                 <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">

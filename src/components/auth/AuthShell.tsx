@@ -51,7 +51,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
   const textLink = `rounded font-semibold text-lilac underline-offset-2 transition-colors hover:text-white hover:underline ${ring}`;
 
   return (
-    <div data-auth-shell className="fixed inset-0 z-[70] overflow-y-auto bg-background">
+    <div data-auth-shell className="keep-dark-ink fixed inset-0 z-[70] overflow-y-auto bg-background">
       <div className="relative isolate flex min-h-full flex-col">
         <FujiBackdrop />
 

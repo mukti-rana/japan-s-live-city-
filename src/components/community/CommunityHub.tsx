@@ -139,7 +139,7 @@ export default function CommunityHub({
       <FilterToolbar path={basePath} facets={toolbarFacets} q={filters.q} clearHref={photos ? basePath : "/community"} />
 
       {area && !photos && (
-        <section aria-labelledby="ask-local-h" className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-6">
+        <section aria-labelledby="ask-local-h" className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-cm-surface p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="ask-local-h" className="text-lg font-semibold tracking-tight text-foreground">
               <Tx en="Ask a Local" /> · <Bi en={nameEn ?? area.en} ja={nameJa ?? area.ja} />
@@ -182,7 +182,7 @@ export default function CommunityHub({
           filtered ? (
             <Notice heading="Nothing matches these filters" body="Try a different city, topic or search." action={{ href: photos ? basePath : "/community", label: "Clear filters" }} />
           ) : (
-            <div className="rounded-2xl border border-dashed border-white/15 bg-[#0b0b0b] px-5 py-14 text-center sm:py-20">
+            <div className="rounded-2xl border border-dashed border-white/15 bg-cm-surface px-5 py-14 text-center sm:py-20">
               <span aria-hidden="true" className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
                 <Users size={26} className="text-azure" />
               </span>
@@ -240,7 +240,7 @@ export default function CommunityHub({
 
 function Notice({ heading, body, action }: { heading: string; body: string; action?: { href: string; label: string } }) {
   return (
-    <div role="status" className="rounded-2xl border border-white/10 bg-[#0b0b0b] px-5 py-12 text-center">
+    <div role="status" className="rounded-2xl border border-white/10 bg-cm-surface px-5 py-12 text-center">
       <h2 className="text-lg font-semibold text-foreground">
         <Tx en={heading} />
       </h2>

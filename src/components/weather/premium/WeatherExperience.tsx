@@ -156,7 +156,7 @@ export default function WeatherExperience({
   return (
     <div className="flex flex-col gap-4">
       {/* HERO */}
-      <div className="relative overflow-hidden rounded-3xl border border-glass-border">
+      <div className="keep-dark-ink relative overflow-hidden rounded-3xl border border-glass-border">
         <div className="absolute inset-0">
           <WeatherScene icon={snapshot.icon} isNight={isNight} variant="backdrop" className="h-full w-full" />
         </div>
