@@ -49,21 +49,22 @@ export interface FilterFacet {
 
 const ICONS = { location: MapPin, region: MapIcon, topic: Hash, type: Store, sort: ArrowUpDown } as const;
 
-// One compact toolbar instead of a row of options for every filter. Desktop:
-// each filter is a button that opens a small popover. Phone: one "Filters"
-// button opens a bottom sheet. Chosen filters show as removable chips with a
-// count and "Clear all". Every choice ends up in the address bar (the same
-// query values the page already understood), so results can be shared, and
-// single choices and chips are plain links.
-export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, children }: { path: string; facets: FilterFacet[]; extra?: Record<string, string>; q?: string; clearHref: string; children?: ReactNode }) {
+// One filter button instead of rows of options: a sliders icon (with the number
+// of active filters) opens every filter in one panel — a popover on desktop, a
+// bottom sheet on a phone. Chosen filters then show as small removable chips
+// with "Clear all". Every choice ends up in the address bar (the same query
+// values the page already understood), so results can be shared.
+//
+// `lead` and `trail` let a page put its own search box and buttons in the same
+// row as the filter button; `children` follow the filter button.
+export default function FilterToolbar({ path, facets, extra = {}, q, qIsFilter = true, clearHref, lead, trail, children }: { path: string; facets: FilterFacet[]; extra?: Record<string, string>; q?: string; qIsFilter?: boolean; clearHref: string; lead?: ReactNode; trail?: ReactNode; children?: ReactNode }) {
   const tr = useTranslate();
   const router = useRouter();
-  const [openId, setOpenId] = useState<string | null>(null);
-  const [sheet, setSheet] = useState(false);
+  const [open, setOpen] = useState(false);
   const [section, setSection] = useState<string | null>(null);
-  const [draft, setDraft] = useState<string[]>([]);
-  const [sheetDraft, setSheetDraft] = useState<Record<string, string[]>>({});
+  const [draft, setDraft] = useState<Record<string, string[]>>({});
   const bar = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
 
   const current = useMemo(() => {
     const out: Record<string, string[]> = {};
@@ -94,51 +95,36 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
 
   const optionOf = (f: FilterFacet, v: string) => f.options.find((o) => o.value === v);
   const narrowing = facets.filter((f) => f.narrows !== false);
-  const activeCount = narrowing.reduce((n, f) => n + f.selected.length, 0) + (q ? 1 : 0);
+  const activeCount = narrowing.reduce((n, f) => n + f.selected.length, 0) + (q && qIsFilter ? 1 : 0);
 
-  // Close the popover on an outside click or Escape.
+  // Close on an outside click (desktop popover) or Escape; the phone sheet also
+  // stops the page behind it from scrolling.
   useEffect(() => {
-    if (!openId) return;
+    if (!open) return;
     const down = (e: MouseEvent) => {
-      if (bar.current && !bar.current.contains(e.target as Node)) setOpenId(null);
+      if (window.matchMedia("(min-width: 768px)").matches && bar.current && !bar.current.contains(e.target as Node)) setOpen(false);
     };
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenId(null);
+      if (e.key === "Escape") {
+        setOpen(false);
+        trigger.current?.focus();
+      }
     };
     document.addEventListener("mousedown", down);
     document.addEventListener("keydown", key);
+    const prev = document.body.style.overflow;
+    if (!window.matchMedia("(min-width: 768px)").matches) document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("mousedown", down);
       document.removeEventListener("keydown", key);
-    };
-  }, [openId]);
-
-  // The phone sheet: Escape closes it and the page behind does not scroll.
-  useEffect(() => {
-    if (!sheet) return;
-    const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSheet(false);
-    };
-    document.addEventListener("keydown", key);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", key);
       document.body.style.overflow = prev;
     };
-  }, [sheet]);
+  }, [open]);
 
   const toggle = (f: FilterFacet, list: string[], v: string): string[] => (f.mode === "single" ? (list[0] === v ? [] : [v]) : list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
-  const openFacet = (f: FilterFacet) => {
-    if (openId === f.id) return setOpenId(null);
-    setDraft(f.selected);
-    setOpenId(f.id);
-  };
-
   const apply = (sel: Record<string, string[]>) => {
-    setOpenId(null);
-    setSheet(false);
+    setOpen(false);
     router.push(build(sel));
   };
 
@@ -150,84 +136,107 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
       chips.push({ key: `${f.id}:${v}`, label: <Bi en={o.en} ja={o.ja} />, remove: o.en, href: build({ ...current, [f.id]: f.selected.filter((x) => x !== v) }) });
     }
   }
-  if (q) chips.push({ key: "q", label: <>“{q}”</>, remove: q, href: build(current, false) });
-
-  const btn = (on: boolean) =>
-    `inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-      on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/25 hover:text-white"
-    }`;
+  if (q && qIsFilter) chips.push({ key: "q", label: <>“{q}”</>, remove: q, href: build(current, false) });
 
   return (
     <div ref={bar} className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Desktop: one button per filter, each with its own popover. */}
-        <div className="hidden flex-wrap items-center gap-2 md:flex" role="group" aria-label={tr("Filters")}>
-          {facets.map((f) => {
-            const Icon = ICONS[f.icon];
-            const open = openId === f.id;
-            const active = f.selected.length > 0 && f.narrows !== false;
-            const first = f.selected.length > 0 ? optionOf(f, f.selected[0]) : undefined;
-            return (
-              <div key={f.id} className="relative">
-                <button type="button" onClick={() => openFacet(f)} aria-haspopup="dialog" aria-expanded={open} className={btn(open || active)}>
-                  <Icon size={15} aria-hidden="true" className={active ? "text-azure" : "text-foreground/65"} />
-                  <span>{tr(f.label)}</span>
-                  {f.mode === "single" && (first ? (
-                    <span className={`max-w-[9rem] truncate ${active ? "text-white" : "text-foreground/65"}`}>
-                      <Bi en={first.en} ja={first.ja} />
-                    </span>
-                  ) : f.allLabel ? (
-                    <span className="max-w-[9rem] truncate text-foreground/65">{tr(f.allLabel)}</span>
-                  ) : null)}
-                  {f.mode === "multi" && f.selected.length > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-azure px-1 text-[11px] font-semibold text-black">{f.selected.length}</span>}
-                  <ChevronDown size={14} aria-hidden="true" className={`text-foreground/55 transition-transform ${open ? "rotate-180" : ""}`} />
-                </button>
-                {open && (
-                  <div role="dialog" aria-label={tr(f.label)} className="cm-pop absolute left-0 top-full z-40 mt-2 w-[min(92vw,380px)] overflow-hidden rounded-2xl border border-white/12 bg-cm-pop shadow-[0_24px_60px_-12px_rgba(0,0,0,0.9)]">
-                    <div className="max-h-[min(60vh,420px)] overflow-y-auto p-3">
-                      <OptionList facet={f} value={draft} onToggle={(v) => setDraft((d) => toggle(f, d, v))} hrefFor={f.mode === "single" ? (v) => build({ ...current, [f.id]: v === null ? [] : [v] }) : undefined} onNavigate={() => setOpenId(null)} />
-                    </div>
-                    {f.mode === "multi" && (
-                      <div className="flex items-center justify-between gap-2 border-t border-white/10 bg-cm-pop-foot p-3">
-                        <button type="button" onClick={() => setDraft([])} className="rounded-lg px-2 py-2 text-sm font-medium text-foreground/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                          {tr("Clear")}
+      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
+        {lead}
+        <div className="relative order-4 shrink-0">
+          <button
+            ref={trigger}
+            type="button"
+            onClick={() => {
+              if (!open) {
+                setDraft(current);
+                setSection(null);
+              }
+              setOpen((o) => !o);
+            }}
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            aria-label={activeCount > 0 ? `${tr("Filters")} (${activeCount})` : tr("Filters")}
+            title={tr("Filters")}
+            className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${open || activeCount > 0 ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/80 hover:border-white/25 hover:text-white"}`}
+          >
+            <SlidersHorizontal size={17} aria-hidden="true" className={activeCount > 0 ? "text-azure" : ""} />
+            {activeCount > 0 && <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-azure px-1 text-[10px] font-bold text-black">{activeCount}</span>}
+          </button>
+
+          {open && (
+            <div className="fixed inset-0 z-[60] md:static md:inset-auto md:z-auto">
+              <div className="cm-fade absolute inset-0 bg-black/70 md:hidden" onClick={() => setOpen(false)} aria-hidden="true" />
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={tr("Filters")}
+                className="cm-sheet absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-white/12 bg-cm-pop md:inset-x-auto md:bottom-auto md:right-0 md:top-full md:z-40 md:mt-2 md:max-h-[min(78vh,640px)] md:w-[420px] md:rounded-2xl md:border md:shadow-[0_24px_60px_-12px_rgba(0,0,0,0.9)]"
+              >
+                <div className="flex items-center justify-between px-5 pb-2 pt-4 md:pt-3">
+                  <h2 className="text-lg font-semibold text-white md:text-base">{tr("Filters")}</h2>
+                  <button type="button" onClick={() => setOpen(false)} aria-label={tr("Close")} className="flex h-10 w-10 items-center justify-center rounded-full text-foreground/80 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure md:h-8 md:w-8">
+                    <X size={18} aria-hidden="true" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto px-3 pb-3">
+                  {facets.map((f) => {
+                    const Icon = ICONS[f.icon];
+                    const sel = draft[f.id] ?? [];
+                    const isOpen = section === f.id;
+                    const chosen = sel.map((v) => optionOf(f, v)).filter((o): o is FilterOption => Boolean(o));
+                    return (
+                      <div key={f.id} className="border-b border-white/8 last:border-0">
+                        <button type="button" onClick={() => setSection(isOpen ? null : f.id)} aria-expanded={isOpen} className="flex min-h-14 w-full items-center gap-3 rounded-xl px-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                          <Icon size={18} aria-hidden="true" className="shrink-0 text-foreground/65" />
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-base font-medium text-white md:text-sm">{tr(f.label)}</span>
+                            <span className="block truncate text-sm text-foreground/65 md:text-xs">
+                              {chosen.length === 0
+                                ? f.allLabel
+                                  ? tr(f.allLabel)
+                                  : tr("Any")
+                                : chosen.map((o, i) => (
+                                    <span key={o.value}>
+                                      {i > 0 && ", "}
+                                      <Bi en={o.en} ja={o.ja} />
+                                    </span>
+                                  ))}
+                            </span>
+                          </span>
+                          <ChevronDown size={18} aria-hidden="true" className={`shrink-0 text-foreground/55 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </button>
-                        <button type="button" onClick={() => apply({ ...current, [f.id]: draft })} className="h-10 rounded-xl bg-white px-5 text-sm font-semibold text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                          {tr("Apply")}
-                        </button>
+                        {isOpen && (
+                          <div className="px-1 pb-4">
+                            <OptionList facet={f} value={sel} onToggle={(v) => setDraft((d) => ({ ...d, [f.id]: toggle(f, d[f.id] ?? [], v) }))} />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                )}
+                    );
+                  })}
+                </div>
+                <div className="flex items-center gap-3 border-t border-white/10 bg-cm-pop-foot p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:rounded-b-2xl md:p-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const cleared: Record<string, string[]> = {};
+                      for (const f of facets) cleared[f.id] = f.narrows === false ? (draft[f.id] ?? []) : [];
+                      setDraft(cleared);
+                    }}
+                    className="h-12 rounded-xl border border-white/15 px-5 text-sm font-medium text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure md:h-10"
+                  >
+                    {tr("Clear all")}
+                  </button>
+                  <button type="button" onClick={() => apply(draft)} className="h-12 flex-1 rounded-xl bg-white text-sm font-semibold text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure md:h-10">
+                    {tr("Show results")}
+                  </button>
+                </div>
               </div>
-            );
-          })}
+            </div>
+          )}
         </div>
 
-        {/* Phone: a single button that opens a bottom sheet. */}
-        <button
-          type="button"
-          onClick={() => {
-            setSheetDraft(current);
-            setSection(null);
-            setSheet(true);
-          }}
-          aria-haspopup="dialog"
-          aria-expanded={sheet}
-          className={`${btn(activeCount > 0)} md:hidden`}
-        >
-          <SlidersHorizontal size={15} aria-hidden="true" className={activeCount > 0 ? "text-azure" : "text-foreground/65"} />
-          {tr("Filters")}
-          {activeCount > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-azure px-1 text-[11px] font-semibold text-black">{activeCount}</span>}
-        </button>
-
         {children}
-
-        {activeCount > 0 && (
-          <Link href={clearHref} className="ml-auto inline-flex h-10 items-center rounded-full px-3 text-sm font-medium text-foreground/80 underline-offset-2 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-            {tr("Clear all")}
-          </Link>
-        )}
+        {trail}
       </div>
 
       {chips.length > 0 && (
@@ -241,72 +250,9 @@ export default function FilterToolbar({ path, facets, extra = {}, q, clearHref, 
               <X size={12} aria-hidden="true" />
             </Link>
           ))}
-        </div>
-      )}
-
-      {sheet && (
-        <div className="fixed inset-0 z-[60] md:hidden">
-          <div className="cm-fade absolute inset-0 bg-black/70" onClick={() => setSheet(false)} aria-hidden="true" />
-          <div role="dialog" aria-modal="true" aria-label={tr("Filters")} className="cm-sheet absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-3xl border-t border-white/12 bg-cm-pop">
-            <div className="flex items-center justify-between px-5 pb-2 pt-4">
-              <h2 className="text-lg font-semibold text-white">{tr("Filters")}</h2>
-              <button type="button" onClick={() => setSheet(false)} aria-label={tr("Close")} className="flex h-10 w-10 items-center justify-center rounded-full text-foreground/80 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                <X size={18} aria-hidden="true" />
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-3 pb-3">
-              {facets.map((f) => {
-                const Icon = ICONS[f.icon];
-                const sel = sheetDraft[f.id] ?? [];
-                const open = section === f.id;
-                const chosen = sel.map((v) => optionOf(f, v)).filter((o): o is FilterOption => Boolean(o));
-                return (
-                  <div key={f.id} className="border-b border-white/8 last:border-0">
-                    <button type="button" onClick={() => setSection(open ? null : f.id)} aria-expanded={open} className="flex min-h-14 w-full items-center gap-3 rounded-xl px-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                      <Icon size={18} aria-hidden="true" className="shrink-0 text-foreground/65" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block text-base font-medium text-white">{tr(f.label)}</span>
-                        <span className="block truncate text-sm text-foreground/65">
-                          {chosen.length === 0
-                            ? f.allLabel
-                              ? tr(f.allLabel)
-                              : tr("Any")
-                            : chosen.map((o, i) => (
-                                <span key={o.value}>
-                                  {i > 0 && ", "}
-                                  <Bi en={o.en} ja={o.ja} />
-                                </span>
-                              ))}
-                        </span>
-                      </span>
-                      <ChevronDown size={18} aria-hidden="true" className={`shrink-0 text-foreground/55 transition-transform ${open ? "rotate-180" : ""}`} />
-                    </button>
-                    {open && (
-                      <div className="px-1 pb-4">
-                        <OptionList facet={f} value={sel} onToggle={(v) => setSheetDraft((d) => ({ ...d, [f.id]: toggle(f, d[f.id] ?? [], v) }))} />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex items-center gap-3 border-t border-white/10 bg-cm-pop-foot p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-              <button
-                type="button"
-                onClick={() => {
-                  const cleared: Record<string, string[]> = {};
-                  for (const f of facets) cleared[f.id] = f.narrows === false ? (sheetDraft[f.id] ?? []) : [];
-                  setSheetDraft(cleared);
-                }}
-                className="h-12 rounded-xl border border-white/15 px-5 text-sm font-medium text-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-              >
-                {tr("Clear all")}
-              </button>
-              <button type="button" onClick={() => apply(sheetDraft)} className="h-12 flex-1 rounded-xl bg-white text-sm font-semibold text-black transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-                {tr("Show results")}
-              </button>
-            </div>
-          </div>
+          <Link href={clearHref} className="inline-flex h-8 items-center rounded-full px-2.5 text-xs font-medium text-foreground/75 underline-offset-2 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            {tr("Clear all")}
+          </Link>
         </div>
       )}
     </div>

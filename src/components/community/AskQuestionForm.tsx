@@ -148,7 +148,7 @@ export default function AskQuestionForm({ initialPlace, initialArea }: { initial
           {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
           {busy ? `${tr("Posting…")}` : tr("Ask the community")}
         </button>
-        <Link href="/community/questions" className={`rounded text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline ${ring}`}>
+        <Link href="/community/help" className={`rounded text-sm text-foreground/80 underline-offset-2 hover:text-foreground hover:underline ${ring}`}>
           {tr("Cancel")}
         </Link>
       </div>

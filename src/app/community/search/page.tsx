@@ -97,6 +97,7 @@ export default async function CommunitySearchPage({ searchParams }: PageProps<"/
         <FilterToolbar
           path="/community/search"
           q={s.q}
+          qIsFilter={false}
           extra={s.type !== "all" ? { type: s.type } : {}}
           clearHref={href({ ...s, area: undefined, category: undefined, page: 1 }, {})}
           facets={[

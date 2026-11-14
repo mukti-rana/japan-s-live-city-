@@ -30,10 +30,10 @@
   --ambient-glow: rgba(77, 163, 255, 0.35);
 
   /* Community surfaces (dark values are exactly what Community used before). */
-  --cm-surface: #0b0b0b;
-  --cm-card: #121212;
-  --cm-pop: #101010;
-  --cm-pop-foot: #0c0c0c;
+  --cm-surface: #151515;
+  --cm-card: #111111;
+  --cm-pop: #151515;
+  --cm-pop-foot: #111111;
   --cm-input: #000000;
 }
 
@@ -483,7 +483,7 @@ html[data-atm-paused="true"] .shine-spin { animation-play-state: paused; }
   --background: #050505;
   --foreground: #f5f5f5;
   --muted: #8d8d93;
-  --panel: #141414;
+  --panel: #111111;
   --glass-bg: rgba(255, 255, 255, 0.035);
   --glass-bg-strong: rgba(255, 255, 255, 0.07);
   --glass-border: rgba(255, 255, 255, 0.09);
@@ -499,6 +499,7 @@ html[data-atm-paused="true"] .shine-spin { animation-play-state: paused; }
 @keyframes cm-fade { from { opacity: 0; } to { opacity: 1; } }
 .cm-pop { animation: cm-pop 0.16s ease-out both; }
 .cm-sheet { animation: cm-sheet 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@media (min-width: 768px) { .cm-sheet { animation: cm-pop 0.16s ease-out both; } }
 .cm-fade { animation: cm-fade 0.2s ease-out both; }
 @keyframes cm-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 .cm-skeleton { background: linear-gradient(90deg, #111 25%, #1a1a1a 50%, #111 75%); background-size: 200% 100%; animation: cm-shimmer 1.6s linear infinite; }

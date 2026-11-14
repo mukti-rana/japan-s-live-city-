@@ -39,7 +39,7 @@ export default function DiscoverySections({ data, part }: { data: Discovery; par
   const { trending, hidden, reviews, places, questions } = data;
   if (part === "top") {
     return trending.length > 0 ? (
-      <Section id="trending-h" icon={<TrendingUp size={16} />} heading="Trending in Japan" href="/community/trending" more="See all">
+      <Section id="trending-h" icon={<TrendingUp size={16} />} heading="Popular experiences" href="/community/trending" more="See all">
         <PostRail posts={trending} />
       </Section>
     ) : null;

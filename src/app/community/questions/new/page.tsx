@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AskQuestionForm from "@/components/community/AskQuestionForm";
+import CommunityTabs from "@/components/community/CommunityTabs";
 import Tx from "@/components/i18n/Tx";
 import { isAreaId } from "@/lib/community/areas";
 import { pickedFrom } from "@/lib/community/pickedPlace";
@@ -23,16 +24,17 @@ export default async function AskPage({ searchParams }: PageProps<"/community/qu
   const initialArea = !place && areaRaw && isAreaId(areaRaw) ? areaRaw : undefined;
 
   return (
-    <div className="mx-auto w-full max-w-3xl pb-10">
-      <header className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-lilac">
-          <Tx en={place ? "Questions & Answers" : "Ask a Local"} />
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 pb-10">
+      <CommunityTabs active="help" />
+      <header>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/60">
+          <Tx en={place ? "Need Help?" : "Ask a Local"} />
         </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          <Tx en="Ask a question" />
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <Tx en="I Need Help" />
         </h1>
-        <p className="mt-2 text-sm text-foreground/85">
-          <Tx en="People who have been there will answer." />
+        <p className="mt-2 text-sm text-foreground/70">
+          <Tx en="Ask the community. People who have been there will answer." />
         </p>
       </header>
       <AskQuestionForm initialPlace={initialPlace} initialArea={initialArea} />

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HelpCircle, X } from "lucide-react";
+import { ArrowLeft, HelpCircle, X } from "lucide-react";
 import FilterToolbar from "@/components/community/FilterToolbar";
 import CommunityHero from "@/components/community/CommunityHero";
 import CommunityTabs from "@/components/community/CommunityTabs";
@@ -43,18 +43,19 @@ export default async function QuestionsPage({ searchParams }: PageProps<"/commun
     <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-6 pb-10">
       <CommunityTabs active="questions" />
       <CommunityHero>
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-lilac">
-          <HelpCircle size={14} aria-hidden="true" />
-          <Tx en="Ask a Local" />
-        </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-          <Tx en="Questions & Answers" />
+        <Link href="/community/help" className="mb-2 inline-flex items-center gap-1 text-xs font-medium text-foreground/65 underline-offset-2 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <ArrowLeft size={13} aria-hidden="true" />
+          <Tx en="Need Help?" />
+        </Link>
+        <h1 className="text-foreground">
+          <Tx en="I Can Help" />
         </h1>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-foreground/90 sm:text-base">
-          <Tx en="Ask about a place or a city, and get answers from people who have been there." />
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground/70 sm:text-base">
+          <Tx en="Questions from the community. Open one to share what you know." />
         </p>
-        <Link href={askHref} className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
-          <Tx en="Ask a Question" />
+        <Link href={askHref} className="mt-4 inline-flex h-10 items-center gap-2 rounded-xl border border-white/15 px-4 text-sm font-medium text-foreground transition-colors hover:border-white/30 hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <HelpCircle size={15} aria-hidden="true" />
+          <Tx en="I Need Help" />
         </Link>
       </CommunityHero>
 

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Camera, ChevronLeft, ChevronRight, Compass, HelpCircle, Map as MapIcon, Users } from "lucide-react";
 import Tx from "@/components/i18n/Tx";
 import Bi from "@/components/community/Bi";
-import CommunityHero from "@/components/community/CommunityHero";
 import CommunitySearch from "@/components/community/CommunitySearch";
 import CommunityTabs from "@/components/community/CommunityTabs";
 import FilterToolbar, { type FilterFacet } from "@/components/community/FilterToolbar";
@@ -18,6 +17,7 @@ import { REGIONS } from "@/lib/explore/regions";
 import type { CommunityQuestion } from "@/lib/community/types";
 import type { Discovery } from "@/lib/community/discoveryQuery";
 import DiscoverySections from "@/components/community/DiscoverySections";
+import LatestPhotos from "@/components/community/LatestPhotos";
 import PostGrid from "@/components/community/PostGrid";
 
 const pager = "inline-flex h-11 items-center gap-1.5 rounded-xl border border-white/12 bg-white/[0.04] px-4 text-sm font-medium text-foreground transition-colors hover:border-white/30 hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
@@ -61,7 +61,6 @@ export default function CommunityHub({
   const link = (patch: Partial<FeedFilters>) => `${basePath}${feedQuery({ ...filters, page: 1, ...patch }, photos)}`;
   // On the Photos page the city is a filter like any other.
   const filtered = isFiltered(filters) || (photos && Boolean(area));
-  const heading = photos ? "Photos from across Japan" : "Japan through your eyes";
   const nameEn = featured?.en ?? area?.en;
   const nameJa = featured?.ja ?? area?.ja;
 
@@ -97,46 +96,35 @@ export default function CommunityHub({
   // The region filter makes no sense on one city's own page.
   const toolbarFacets = area && !photos ? facets.filter((f) => f.id !== "region") : facets;
 
-  return (
-    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-6">
-      <CommunityTabs active={photos ? "photos" : "discover"} />
-      <CommunityHero>
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="min-w-0">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/60">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-azure" />
-              <Tx en="Community" />
-            </p>
-            <h1 className="mt-2.5 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{area && nameEn && nameJa ? <Bi en={nameEn} ja={nameJa} /> : <Tx en={heading} />}</h1>
-            {area && featured && featured.areaId === area.id && featured.slug !== area.id && (
-              <p className="mt-1 text-sm text-foreground/70">
-                <Bi en={area.en} ja={area.ja} />
-              </p>
-            )}
-            <p className="mt-2 max-w-xl text-sm leading-relaxed text-foreground/70 sm:text-base">
-              {area ? <Tx en="Real experiences, photos and recommendations shared by people who have been here." /> : <Tx en="Discover real experiences, places and recommendations shared by people across Japan." />}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link href="/community/new" className={`${primary} h-12 justify-center px-6 text-sm`}>
-              <Camera size={16} aria-hidden="true" />
-              <Tx en="Share your experience" />
-            </Link>
-            <Link href={`/community/questions/new${area ? `?area=${area.id}` : ""}`} className={`${secondary} h-10 justify-center px-4 text-sm`}>
-              <HelpCircle size={15} aria-hidden="true" />
-              <Tx en="Ask a Local" />
-            </Link>
-          </div>
-        </div>
-        <div className="mt-5">
-          <CommunitySearch action={basePath} defaultValue={filters.q} category={filters.categories.join(",")} region={filters.regions.join(",")} area={photos ? area?.id : undefined} placeType={filters.placeTypes.join(",")} />
-          <Link href={`/community/search${filters.q ? `?q=${encodeURIComponent(filters.q)}` : ""}`} className="mt-2 inline-flex h-9 items-center gap-1 rounded text-xs font-medium text-foreground/65 underline-offset-2 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-            <Tx en="Search reviews, questions, people and places too" /> →
-          </Link>
-        </div>
-      </CommunityHero>
+  // The small heading at the left of the header row: the place's name on a city
+  // page, otherwise just "Community" (or "Photos").
+  const title = area && nameEn && nameJa ? <Bi en={nameEn} ja={nameJa} /> : <Tx en={photos ? "Photos" : "Community"} />;
 
-      <FilterToolbar path={basePath} facets={toolbarFacets} q={filters.q} clearHref={photos ? basePath : "/community"} />
+  return (
+    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-5">
+      <CommunityTabs active={photos ? "photos" : "discover"} />
+
+      {/* Compact header: title, search, the one filter button, and Share. */}
+      <FilterToolbar
+        path={basePath}
+        facets={toolbarFacets}
+        q={filters.q}
+        clearHref={photos ? basePath : "/community"}
+        lead={
+          <>
+            <h1 className="order-1 text-lg font-semibold tracking-tight text-foreground sm:mr-1 sm:text-xl">{title}</h1>
+            <div className="order-3 w-[calc(100%-3rem)] min-w-0 sm:order-2 sm:w-auto sm:max-w-xl sm:flex-1">
+              <CommunitySearch action="/community/search" defaultValue={filters.q} />
+            </div>
+          </>
+        }
+        trail={
+          <Link href="/community/new" className={`${primary} order-2 ml-auto h-10 px-4 text-sm sm:order-5`}>
+            <Camera size={16} aria-hidden="true" />
+            <Tx en="Share your experience" />
+          </Link>
+        }
+      />
 
       {area && !photos && (
         <section aria-labelledby="ask-local-h" className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-cm-surface p-5 sm:p-6">
@@ -170,11 +158,9 @@ export default function CommunityHub({
         </section>
       )}
 
-      {discovery && !filtered && !area && <DiscoverySections data={discovery} part="top" />}
-
       <section aria-labelledby="community-posts">
         <h2 id="community-posts" className={result.state === "ready" && result.posts.length > 0 ? "mb-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl" : "sr-only"}>
-          <Tx en={filtered || area ? "Community posts" : "Latest community photos"} />
+          <Tx en={filtered || area ? "Community posts" : "Latest community posts"} />
         </h2>
         {result.state === "unavailable" ? (
           <Unavailable reason={result.reason} />
@@ -233,6 +219,9 @@ export default function CommunityHub({
         )}
       </section>
 
+      {result.state === "ready" && !filtered && !area && filters.page === 1 && <LatestPhotos posts={result.posts} />}
+
+      {discovery && !filtered && !area && <DiscoverySections data={discovery} part="top" />}
       {discovery && !filtered && !area && <DiscoverySections data={discovery} part="rest" />}
     </div>
   );
