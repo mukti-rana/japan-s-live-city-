@@ -306,7 +306,7 @@ export default function CommunityHub({
           )
         ) : (
           <>
-            <PostGrid posts={result.posts} />
+            <PostGrid posts={result.posts} reveal={photos} />
             {(filters.page > 1 || result.hasMore) && (
               <div className="mt-4 flex items-center justify-between gap-3">
                 {filters.page > 1 ? (

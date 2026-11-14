@@ -9,13 +9,16 @@ import LocalDate from "@/components/community/LocalDate";
 import PlaceTypeIcon from "@/components/community/PlaceTypeIcon";
 import { isPlaceCategory } from "@/lib/community/placeTypes";
 import PostCardActions from "@/components/community/PostCardActions";
+import ScrollImageReveal, { type ScrollImageRevealProps } from "@/components/smoothui/scroll-image-reveal";
 import Tx from "@/components/i18n/Tx";
 
 // One post in the feed. The photo leads (thumbnail, lazy-loaded, with its real
 // proportions so the layout does not jump); then the place and city, the title,
 // a short caption, who shared it and when, the real like and comment counts,
-// and Save / Share. The whole card opens the post.
-export default function PostCard({ post }: { post: CommunityPost }) {
+// and Save / Share. The whole card opens the post. With `reveal`, the photo is
+// revealed with a mask as the page scrolls past it (once, then it stays open);
+// under "reduce motion" it simply shows.
+export default function PostCard({ post, reveal }: { post: CommunityPost; reveal?: { mask: NonNullable<ScrollImageRevealProps["mask"]>; direction?: ScrollImageRevealProps["direction"] } }) {
   const cover = post.images[0];
   const src = cover ? photoUrl(cover.thumbPath ?? cover.path) : null;
   const area = AREA_BY_ID.get(post.areaId);
@@ -28,8 +31,12 @@ export default function PostCard({ post }: { post: CommunityPost }) {
     <article className="group relative mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-glass-border bg-panel/70 shadow-[0_10px_30px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:shadow-[0_18px_40px_-18px_rgba(168,85,247,0.35)] motion-reduce:transition-none motion-reduce:hover:translate-y-0">
       {src && (
         <div className="relative overflow-hidden bg-glass-bg" style={{ aspectRatio: ratio }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt={cover?.alt ?? post.title} loading="lazy" decoding="async" className="cm-photo absolute inset-0 h-full w-full object-cover" />
+          {reveal ? (
+            <ScrollImageReveal src={src} alt={cover?.alt ?? post.title} mask={reveal.mask} direction={reveal.direction} once parallax={16} rounded="rounded-none" className="absolute inset-0 h-full w-full" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={cover?.alt ?? post.title} loading="lazy" decoding="async" className="cm-photo absolute inset-0 h-full w-full object-cover" />
+          )}
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/45 to-transparent" />
           {extra > 0 && (
             <span className="absolute right-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">
