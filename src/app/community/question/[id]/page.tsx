@@ -95,7 +95,7 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
       : null;
 
   const sortChip = (on: boolean) =>
-    `rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30"}`;
+    `rounded-full border px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30"}`;
 
   return (
     <article className="mx-auto flex w-full max-w-[900px] flex-col gap-6 pb-10">
@@ -121,7 +121,7 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
         </p>
       )}
 
-      <header className="rounded-3xl border border-glass-border bg-gradient-to-br from-lilac/10 via-glass-bg to-azure/10 p-5 backdrop-blur-xl sm:p-8">
+      <header className="rounded-3xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-2 text-xs">
           {q.resolved && (
             <span className="inline-flex items-center gap-1 rounded-full bg-mint/15 px-2.5 py-1 font-medium text-mint">

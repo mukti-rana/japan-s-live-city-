@@ -104,9 +104,9 @@ async function load(filters: FeedFilters): Promise<FeedResult> {
 
   let query = client.from("community_posts").select(POST_SELECT).eq("status", "published");
   if (filters.area) query = query.eq("area_id", filters.area);
-  else if (filters.region) query = query.in("area_id", REGION_PREFECTURES.get(filters.region) ?? []);
-  if (filters.category) query = query.eq("category_slug", filters.category);
-  if (filters.placeType) query = query.eq("place_category", filters.placeType);
+  else if (filters.regions.length) query = query.in("area_id", filters.regions.flatMap((r) => REGION_PREFECTURES.get(r) ?? []));
+  if (filters.categories.length) query = query.in("category_slug", filters.categories);
+  if (filters.placeTypes.length) query = query.in("place_category", filters.placeTypes);
   const term = filters.q ? likeTerm(filters.q) : "";
   if (term) query = query.ilike("search_text", `%${term}%`);
 

@@ -126,7 +126,7 @@ export default function PlacesExplorer({ places, view }: { places: ExplorerPlace
             </button>
           </>
         ) : (
-          <button type="button" onClick={locate} disabled={geo === "asking"} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-4 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
+          <button type="button" onClick={locate} disabled={geo === "asking"} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-azure px-4 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
             <LocateFixed size={15} aria-hidden="true" />
             {geo === "asking" ? tr("Finding you…") : tr("Show places near me")}
           </button>

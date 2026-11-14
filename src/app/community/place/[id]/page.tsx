@@ -111,14 +111,14 @@ export default async function PlaceCommunityPage({ params, searchParams }: PageP
         )}
       </nav>
 
-      <header className="rounded-3xl border border-glass-border bg-gradient-to-br from-lilac/10 via-glass-bg to-azure/10 p-5 backdrop-blur-xl sm:p-8">
+      <header className="rounded-3xl border border-white/10 bg-[#0b0b0b] p-5 sm:p-8">
         <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
           <Bi en={found.en} ja={found.ja} />
         </h1>
         {found.en !== found.ja && <p className="mt-1 text-sm text-foreground/80">{found.ja}</p>}
         <div className="mt-5 flex flex-wrap items-start gap-3">
           <BeenHereButton placeRef={id} />
-          <Link href={`/community/new?place=${id}`} className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+          <Link href={`/community/new?place=${id}`} className="inline-flex h-11 items-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />
           </Link>

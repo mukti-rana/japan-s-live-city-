@@ -7,7 +7,7 @@ import type { CommunityReview } from "@/lib/community/types";
 
 const chip = (on: boolean) =>
   `inline-flex shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-    on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
+    on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
   }`;
 
 const SORT_TEXT: Record<ReviewSort, string> = { newest: "Newest", highest: "Highest rated", lowest: "Lowest rated", helpful: "Most helpful" };

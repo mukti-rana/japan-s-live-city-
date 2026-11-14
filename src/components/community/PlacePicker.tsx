@@ -239,7 +239,7 @@ export default function PlacePicker({ value, onChange, describedBy }: { value: P
             </option>
           ))}
         </select>
-        <button type="button" onClick={searchMap} disabled={busy} className={`inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-4 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
+        <button type="button" onClick={searchMap} disabled={busy} className={`inline-flex h-10 items-center gap-1.5 rounded-xl bg-azure px-4 text-xs font-semibold text-black transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
           {busy ? <Loader2 size={14} className="animate-spin" aria-hidden="true" /> : <Search size={14} aria-hidden="true" />}
           {tr("Search the map")}
         </button>

@@ -145,7 +145,7 @@ export default function ProfileEditor({ profile }: { profile: CommunityProfile }
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <Avatar username={profile.username} avatarUrl={profile.avatarUrl} size={72} />
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => fileRef.current?.click()} disabled={avatarBusy} className={`inline-flex h-10 items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-4 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-60 ${ring}`}>
+            <button type="button" onClick={() => fileRef.current?.click()} disabled={avatarBusy} className={`inline-flex h-10 items-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-60 ${ring}`}>
               {avatarBusy ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : <Camera size={15} aria-hidden="true" />}
               {tr("Choose a picture")}
             </button>
@@ -232,7 +232,7 @@ export default function ProfileEditor({ profile }: { profile: CommunityProfile }
           </p>
         )}
         <div>
-          <button type="submit" disabled={busy} aria-busy={busy} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-6 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
+          <button type="submit" disabled={busy} aria-busy={busy} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-azure px-6 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
             {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
             {tr("Save profile")}
           </button>

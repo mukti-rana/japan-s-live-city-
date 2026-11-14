@@ -6,7 +6,7 @@ import type { CommunityQuestion } from "@/lib/community/types";
 
 const chip = (on: boolean) =>
   `inline-flex shrink-0 items-center rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-    on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
+    on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
   }`;
 
 const SORT_TEXT: Record<QuestionSort, string> = { latest: "Latest", answers: "Most answered", unanswered: "Unanswered", helpful: "Most helpful" };
@@ -44,7 +44,7 @@ export default function QuestionList({ basePath, filters, questions, hasMore, sh
           <Tx en={filters.sort === "unanswered" ? "Every question has an answer. Nice." : (emptyHint ?? "No questions yet.")} />
         </p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="grid gap-3 xl:grid-cols-2">
           {questions.map((q) => (
             <li key={q.id}>
               <QuestionCard q={q} />

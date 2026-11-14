@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, Search, Star } from "lucide-react";
-import AreaPicker from "@/components/community/AreaPicker";
+import FilterToolbar from "@/components/community/FilterToolbar";
+import { locationOptions } from "@/lib/community/locationOptions";
 import Avatar from "@/components/community/Avatar";
-import Bi from "@/components/community/Bi";
 import CommunityHero from "@/components/community/CommunityHero";
 import CommunityTabs from "@/components/community/CommunityTabs";
 import LocalDate from "@/components/community/LocalDate";
@@ -12,7 +12,6 @@ import QuestionCard from "@/components/community/QuestionCard";
 import Stars from "@/components/community/Stars";
 import Unavailable from "@/components/community/Unavailable";
 import Tx from "@/components/i18n/Tx";
-import { AREA_BY_ID } from "@/lib/community/areas";
 import { CATEGORIES } from "@/lib/community/categories";
 import { MAX_QUERY_LENGTH } from "@/lib/community/feed";
 import { publicClient } from "@/lib/community/queries";
@@ -27,7 +26,7 @@ const TYPE_TEXT: Record<SearchType, string> = { all: "Everything", photos: "Phot
 
 const chip = (on: boolean) =>
   `inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-    on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
+    on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
   }`;
 
 const href = (s: SearchParams, patch: Partial<SearchParams>) => {
@@ -53,21 +52,11 @@ export default async function CommunitySearchPage({ searchParams }: PageProps<"/
   const client = publicClient();
   const ready = searchable(s.q);
   const results = client && ready ? await runSearch(client, s) : null;
-  const area = s.area ? AREA_BY_ID.get(s.area) : undefined;
-  // What stays when the city changes.
-  const carry = (() => {
-    const p = new URLSearchParams();
-    if (s.q) p.set("q", s.q);
-    if (s.type !== "all") p.set("type", s.type);
-    if (s.category) p.set("category", s.category);
-    const q = p.toString();
-    return q ? `?${q}` : "";
-  })();
   const total = results ? results.posts.length + results.reviews.length + results.questions.length + results.people.length + results.places.length : 0;
   const filterNote = s.type === "reviews" || s.type === "people" || s.type === "places";
 
   return (
-    <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-6 pb-10">
+    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-6 pb-10">
       <CommunityTabs active="discover" />
       <CommunityHero>
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-lilac">
@@ -88,7 +77,7 @@ export default async function CommunitySearchPage({ searchParams }: PageProps<"/
             <Search size={16} aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/60" />
             <input type="search" name="q" defaultValue={s.q} maxLength={MAX_QUERY_LENGTH} autoFocus={!s.q} className="h-12 w-full rounded-xl border border-glass-border bg-black/25 pl-10 pr-3 text-base text-foreground outline-none transition-colors hover:border-white/20 focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm" />
           </label>
-          <button type="submit" className="h-12 shrink-0 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-5 text-sm font-semibold text-white transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+          <button type="submit" className="h-12 shrink-0 rounded-xl bg-azure px-5 text-sm font-semibold text-black transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background">
             <Tx en="Search" />
           </button>
         </form>
@@ -105,22 +94,16 @@ export default async function CommunitySearchPage({ searchParams }: PageProps<"/
             </Link>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <AreaPicker currentSlug={area?.id} currentLabel={area ? { en: area.en, ja: area.ja } : undefined} query={carry} paramBase="/community/search" />
-          <div className="-mx-1 flex min-w-0 flex-1 gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-labelledby="s-topic">
-            <span id="s-topic" className="sr-only">
-              <Tx en="Topic" />
-            </span>
-            <Link href={href(s, { category: undefined, page: 1 })} className={chip(!s.category)} aria-current={!s.category ? "page" : undefined}>
-              <Tx en="All topics" />
-            </Link>
-            {CATEGORIES.map((c) => (
-              <Link key={c.slug} href={href(s, { category: c.slug, page: 1 })} className={chip(s.category === c.slug)} aria-current={s.category === c.slug ? "page" : undefined}>
-                <Bi en={c.en} ja={c.ja} />
-              </Link>
-            ))}
-          </div>
-        </div>
+        <FilterToolbar
+          path="/community/search"
+          q={s.q}
+          extra={s.type !== "all" ? { type: s.type } : {}}
+          clearHref={href({ ...s, area: undefined, category: undefined, page: 1 }, {})}
+          facets={[
+            { id: "location", label: "Location", icon: "location", param: "area", mode: "single", options: locationOptions("param"), selected: s.area ? [s.area] : [], allLabel: "All Japan", searchable: true },
+            { id: "topic", label: "Topic", icon: "topic", param: "category", mode: "single", options: CATEGORIES.map((c) => ({ value: c.slug, en: c.en, ja: c.ja })), selected: s.category ? [s.category] : [], allLabel: "All topics" },
+          ]}
+        />
         {(s.area || s.category) && filterNote && (
           <p className="text-xs text-foreground/75">
             <Tx en="City and topic only narrow photos and questions." />

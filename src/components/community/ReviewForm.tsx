@@ -158,7 +158,7 @@ export default function ReviewForm({ placeRef, draft, onDone, onCancel }: { plac
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={Boolean(busy)} aria-busy={Boolean(busy)} className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-6 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
+        <button type="submit" disabled={Boolean(busy)} aria-busy={Boolean(busy)} className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-azure px-6 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
           {busy ? (
             <>
               <Loader2 size={16} className="animate-spin" aria-hidden="true" />

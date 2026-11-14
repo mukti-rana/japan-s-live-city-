@@ -80,7 +80,7 @@ export default function CameraCapture({ onCapture, onClose }: { onCapture: (file
           <>
             <video ref={video} playsInline muted className="aspect-video w-full rounded-xl bg-black object-cover" />
             <div className="mt-4 flex justify-center">
-              <button type="button" onClick={snap} disabled={!ready} className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-6 py-3 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+              <button type="button" onClick={snap} disabled={!ready} className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
                 <Camera size={18} aria-hidden="true" />
                 {tr("Take photo")}
               </button>

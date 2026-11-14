@@ -103,7 +103,7 @@ export default function ReportDialog({ targetType = "post", targetId, onClose }:
               </p>
             )}
             <div className="mt-1 flex gap-3">
-              <button type="submit" disabled={!reason || state === "sending"} className="rounded-xl bg-gradient-to-r from-sakura to-lilac px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+              <button type="submit" disabled={!reason || state === "sending"} className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
                 {state === "sending" ? tr("Sending…") : tr("Send report")}
               </button>
               <button type="button" onClick={onClose} className="rounded-xl border border-glass-border bg-glass-bg px-5 py-2.5 text-sm font-medium text-foreground hover:border-white/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">

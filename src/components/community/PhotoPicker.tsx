@@ -215,7 +215,7 @@ export default function PhotoPicker({
       </div>
 
       <div className="mt-4 flex flex-wrap gap-3">
-        <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-lilac to-sakura px-4 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 focus-within:ring-2 focus-within:ring-white/70 ${blocked ? "pointer-events-none opacity-50" : ""}`}>
+        <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 focus-within:ring-2 focus-within:ring-white/70 ${blocked ? "pointer-events-none opacity-50" : ""}`}>
           <ImagePlus size={16} aria-hidden="true" />
           {tr("Choose photos")}
           <input type="file" accept="image/*" multiple className="sr-only" disabled={blocked} onChange={pick} />

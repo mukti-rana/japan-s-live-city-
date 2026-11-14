@@ -20,7 +20,7 @@ const PERIOD_TEXT: Record<Period, string> = { week: "This week", month: "This mo
 
 const chip = (on: boolean) =>
   `inline-flex h-10 shrink-0 items-center rounded-full border px-4 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-    on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
+    on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"
   }`;
 
 const H = ({ id, children }: { id: string; children: React.ReactNode }) => (
@@ -39,7 +39,7 @@ export default async function TrendingPage({ searchParams }: PageProps<"/communi
   const empty = data && data.posts.length + data.places.length + data.contributors.length + data.questions.length === 0;
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 pb-10">
+    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-6 pb-10">
       <CommunityTabs active="trending" />
       <CommunityHero>
         <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-lilac">

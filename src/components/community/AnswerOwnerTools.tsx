@@ -54,7 +54,7 @@ export default function AnswerOwnerTools({ id, body }: { id: string; body: strin
         <textarea id={`ae-${id}`} value={text} onChange={(e) => { setText(e.target.value); setError(""); }} maxLength={DISCUSSION_LIMITS.answerMax} rows={5} className="w-full rounded-xl border border-glass-border bg-black/30 px-3.5 py-2.5 text-base text-foreground outline-none focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm" />
         {error && <p role="alert" className="text-xs font-medium text-sakura">{tr(error)}</p>}
         <div className="flex gap-2">
-          <button type="submit" disabled={busy === "save"} className="inline-flex h-9 items-center gap-2 rounded-lg bg-gradient-to-r from-azure to-neon-purple px-4 text-xs font-semibold text-white hover:brightness-110 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <button type="submit" disabled={busy === "save"} className="inline-flex h-9 items-center gap-2 rounded-lg bg-azure px-4 text-xs font-semibold text-black hover:brightness-110 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
             {busy === "save" && <Loader2 size={13} className="animate-spin" aria-hidden="true" />}
             {tr("Save changes")}
           </button>

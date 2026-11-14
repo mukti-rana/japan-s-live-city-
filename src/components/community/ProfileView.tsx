@@ -35,7 +35,7 @@ export default async function ProfileView({ client, profile, owner, tab, basePat
   const tabs = tabsFor(profile, owner);
 
   const link = (t: ProfileTab) => `${basePath}${t === "posts" ? "" : `?tab=${t}`}`;
-  const chip = (on: boolean) => `inline-flex shrink-0 items-center rounded-full border px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${on ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"}`;
+  const chip = (on: boolean) => `inline-flex shrink-0 items-center rounded-full border px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${on ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30 hover:text-foreground"}`;
 
   let content: React.ReactNode = null;
   if (tab === "posts" || tab === "photos") {

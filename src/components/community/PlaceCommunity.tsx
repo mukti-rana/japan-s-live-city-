@@ -29,7 +29,7 @@ export default async function PlaceCommunity({ id }: { id: string }) {
         </h2>
         <div className="flex flex-wrap items-start gap-2">
           <BeenHereButton placeRef={id} />
-          <Link href={`${href}#reviews`} className={`${btn} bg-gradient-to-r from-lilac to-sakura text-background hover:brightness-110 focus-visible:ring-white/70`}>
+          <Link href={`${href}#reviews`} className={`${btn} bg-white text-background hover:brightness-110 focus-visible:ring-white/70`}>
             <MessageSquareText size={16} aria-hidden="true" />
             <Tx en="Write a review" />
           </Link>

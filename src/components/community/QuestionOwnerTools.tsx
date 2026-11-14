@@ -65,7 +65,7 @@ export default function QuestionOwnerTools({ id, title, body, resolved }: { id: 
         </div>
         {error && <p role="alert" className="text-xs font-medium text-sakura">{tr(error)}</p>}
         <div className="flex gap-2">
-          <button type="submit" disabled={busy === "save"} className="inline-flex h-9 items-center gap-2 rounded-lg bg-gradient-to-r from-azure to-neon-purple px-4 text-xs font-semibold text-white hover:brightness-110 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <button type="submit" disabled={busy === "save"} className="inline-flex h-9 items-center gap-2 rounded-lg bg-azure px-4 text-xs font-semibold text-black hover:brightness-110 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
             {busy === "save" && <Loader2 size={13} className="animate-spin" aria-hidden="true" />}
             {tr("Save changes")}
           </button>

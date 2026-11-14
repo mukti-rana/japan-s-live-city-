@@ -19,8 +19,8 @@ const TABS: { id: CommunitySection; href: string; en: string; Icon: typeof Camer
 // readers with aria-current.
 export default function CommunityTabs({ active }: { active: CommunitySection }) {
   return (
-    <nav aria-label="Community" className="-mx-3 overflow-x-auto px-3 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-      <ul className="flex w-max gap-2 sm:w-auto sm:flex-wrap">
+    <nav aria-label="Community" className="-mx-3 overflow-x-auto border-b border-white/8 px-3 pb-3 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <ul className="flex w-max gap-1 sm:w-auto sm:flex-wrap">
         {TABS.map(({ id, href, en, Icon }) => {
           const on = active === id;
           return (
@@ -28,11 +28,11 @@ export default function CommunityTabs({ active }: { active: CommunitySection }) 
               <Link
                 href={href}
                 aria-current={on ? "page" : undefined}
-                className={`inline-flex h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-                  on ? "border-lilac/60 bg-lilac/20 text-lilac shadow-[0_0_18px_-4px_rgba(196,181,253,0.55)]" : "border-glass-border bg-glass-bg text-foreground/85 hover:-translate-y-px hover:border-white/30 hover:text-foreground"
+                className={`inline-flex h-10 items-center gap-2 rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
+                  on ? "border-white/25 bg-white/10 text-white" : "border-transparent text-foreground/70 hover:bg-white/[0.06] hover:text-white"
                 }`}
               >
-                <Icon size={15} aria-hidden="true" />
+                <Icon size={15} aria-hidden="true" className={on ? "text-azure" : ""} />
                 <Tx en={en} />
               </Link>
             </li>

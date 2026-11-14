@@ -13,12 +13,13 @@ const REVEALS = [
   { mask: "wipe", direction: "right" },
 ] as const;
 
-// Posts in a masonry grid (columns keep each photo's real proportions). One
+// Posts in an even grid (every card the same shape, photos cropped to fit; the
+// post itself shows the whole photo). One
 // provider tells every card which of them you have saved, in a single request.
 export default function PostGrid({ posts, reveal }: { posts: CommunityPost[]; reveal?: boolean }) {
   return (
     <FeedActionsProvider postIds={posts.map((p) => p.id)}>
-      <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 2xl:grid-cols-4">
         {posts.map((post, i) => (
           <PostCard key={post.id} post={post} reveal={reveal ? REVEALS[i % REVEALS.length] : undefined} />
         ))}
@@ -32,9 +33,9 @@ export default function PostGrid({ posts, reveal }: { posts: CommunityPost[]; re
 export function PostRail({ posts }: { posts: CommunityPost[] }) {
   return (
     <FeedActionsProvider postIds={posts.map((p) => p.id)}>
-      <ul className="-mx-3 flex snap-x snap-mandatory items-start gap-4 overflow-x-auto px-3 pb-2 sm:mx-0 sm:px-0 [scrollbar-width:thin]">
+      <ul className="-mx-3 flex snap-x snap-mandatory gap-4 overflow-x-auto px-3 pb-2 sm:mx-0 sm:px-0 lg:grid lg:snap-none lg:grid-cols-3 lg:gap-5 lg:overflow-visible lg:pb-0 2xl:grid-cols-4 [scrollbar-width:thin]">
         {posts.map((post) => (
-          <li key={post.id} className="w-[78vw] max-w-[320px] shrink-0 snap-start sm:w-[300px]">
+          <li key={post.id} className="flex w-[78vw] max-w-[320px] shrink-0 snap-start sm:w-[300px] lg:w-auto lg:max-w-none">
             <PostCard post={post} />
           </li>
         ))}

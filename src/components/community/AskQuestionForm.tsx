@@ -76,7 +76,7 @@ export default function AskQuestionForm({ initialPlace, initialArea }: { initial
         <p className="mx-auto mt-2 max-w-md text-sm text-foreground/85">{tr(configured ? "Browsing is open to everyone. A free account lets you ask questions, answer them and join the conversation." : "Please try again in a little while.")}</p>
         {configured && (
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link href="/login?form=1" className={`rounded-xl bg-gradient-to-r from-lilac to-sakura px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 ${ring}`}>
+            <Link href="/login?form=1" className={`rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-background transition hover:brightness-110 ${ring}`}>
               {tr("Sign in")}
             </Link>
             <Link href="/signup?form=1" className={`rounded-xl border border-glass-border bg-glass-bg px-5 py-2.5 text-sm font-medium text-foreground transition hover:border-white/30 ${ring}`}>
@@ -144,7 +144,7 @@ export default function AskQuestionForm({ initialPlace, initialArea }: { initial
         </p>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={busy} aria-busy={busy} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-6 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
+        <button type="submit" disabled={busy} aria-busy={busy} className={`inline-flex h-11 items-center gap-2 rounded-xl bg-azure px-6 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-70 ${ring}`}>
           {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
           {busy ? `${tr("Posting…")}` : tr("Ask the community")}
         </button>

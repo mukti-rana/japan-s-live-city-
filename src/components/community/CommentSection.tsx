@@ -78,7 +78,7 @@ function Composer({ target, parentId, initial, editId, onDone, onCancel, autoFoc
         className={field}
       />
       <div className="flex flex-wrap items-center gap-2">
-        <button type="submit" disabled={busy || !text.trim()} className={`inline-flex h-9 items-center gap-2 rounded-lg bg-gradient-to-r from-azure to-neon-purple px-4 text-xs font-semibold text-white transition hover:brightness-110 disabled:opacity-50 ${ring}`}>
+        <button type="submit" disabled={busy || !text.trim()} className={`inline-flex h-9 items-center gap-2 rounded-lg bg-azure px-4 text-xs font-semibold text-black transition hover:brightness-110 disabled:opacity-50 ${ring}`}>
           {busy && <Loader2 size={13} className="animate-spin" aria-hidden="true" />}
           {submitLabel}
         </button>
@@ -315,7 +315,7 @@ export default function CommentSection({ target, comments, collapsible = false, 
           {comments.length > 1 && (
             <div className="flex flex-wrap items-center gap-2" role="group" aria-label={tr("Sort comments")}>
               {(["newest", "top"] as const).map((s) => (
-                <button key={s} type="button" onClick={() => setSort(s)} aria-pressed={sort === s} className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${ring} ${sort === s ? "border-azure/60 bg-azure/20 text-azure" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30"}`}>
+                <button key={s} type="button" onClick={() => setSort(s)} aria-pressed={sort === s} className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${ring} ${sort === s ? "border-white/30 bg-white/10 text-white" : "border-glass-border bg-glass-bg text-foreground/85 hover:border-white/30"}`}>
                   {s === "newest" ? tr("Newest") : tr("Top comments")}
                 </button>
               ))}

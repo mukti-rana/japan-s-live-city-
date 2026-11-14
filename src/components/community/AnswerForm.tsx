@@ -63,7 +63,7 @@ export default function AnswerForm({ questionId }: { questionId: string }) {
         className="w-full rounded-xl border border-glass-border bg-black/30 px-3.5 py-2.5 text-base text-foreground outline-none transition-colors placeholder:text-foreground/55 hover:border-white/20 focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm"
       />
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={busy} className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-azure to-neon-purple px-6 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+        <button type="submit" disabled={busy} className="inline-flex h-11 items-center gap-2 rounded-xl bg-azure px-6 text-sm font-semibold text-black transition hover:brightness-110 disabled:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-background">
           {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
           {tr("Post answer")}
         </button>
