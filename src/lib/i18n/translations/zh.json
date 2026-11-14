@@ -2005,5 +2005,14 @@
   "Search posts, places, people and more": "搜索帖子、地点、用户等",
   "See all photos": "查看全部照片",
   "Latest community posts": "社区最新帖子",
-  "Popular experiences": "热门体验"
+  "Popular experiences": "热门体验",
+  "Add up to 4 photos. Location data is removed from every photo.": "最多可添加4张照片。每张照片的位置信息都会被移除。",
+  "Leave both empty to ask about Japan in general.": "两项都留空，则表示询问日本的一般性问题。",
+  "Anywhere in Japan": "日本任意地方",
+  "Tips for a good question": "好问题的小贴士",
+  "Be specific: the place, the season, what you plan to do.": "尽量具体：地点、季节、你打算做什么。",
+  "Say who you travel with, or what you already tried.": "说明和谁同行，或已经尝试过什么。",
+  "A photo (a sign, a menu, a map) helps people answer faster.": "附上照片（路牌、菜单、地图）能让别人更快回答。",
+  "Choose one of the listed topics.": "请从列表中选择一个主题。",
+  "A question can have up to 4 photos.": "每个问题最多可以有4张照片。"
 }

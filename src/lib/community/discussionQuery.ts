@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isCategorySlug } from "@/lib/community/categories";
 import { PLACE_REF_RE } from "@/lib/community/placeTypes";
 import type { CommunityAnswer, CommunityComment, CommunityQuestion } from "@/lib/community/types";
 
@@ -72,6 +73,7 @@ export const QUESTIONS_PER_PAGE = 15;
 export interface QuestionFilters {
   sort: QuestionSort;
   areaId?: string;
+  categorySlug?: string;
   placeRef?: string;
   page: number;
 }
@@ -80,10 +82,12 @@ export function questionFiltersFromParams(sp: Record<string, string | string[] |
   const sort = first(sp.sort);
   const area = first(sp.area);
   const place = first(sp.place);
+  const category = first(sp.category);
   const page = Number.parseInt(first(sp.page) ?? "1", 10);
   return {
     sort: QUESTION_SORTS.includes(sort as QuestionSort) ? (sort as QuestionSort) : "latest",
     areaId: area && isArea(area) ? area : undefined,
+    categorySlug: isCategorySlug(category) ? category : undefined,
     placeRef: place && PLACE_REF_RE.test(place) ? place : undefined,
     page: Number.isFinite(page) && page >= 1 && page <= 200 ? page : 1,
   };
@@ -94,10 +98,12 @@ export interface QuestionRow {
   user_id: string;
   title: string;
   body: string;
-  area_id: string;
+  area_id: string | null;
   place_ref: string | null;
   place_name: string | null;
   place_category: string | null;
+  category_slug: string | null;
+  community_question_images: { storage_path: string; thumb_path: string | null; width: number | null; height: number | null; position: number }[] | null;
   resolved: boolean;
   answer_count: number;
   helpful_count: number;
@@ -106,7 +112,7 @@ export interface QuestionRow {
   created_at: string;
   profiles: ProfileJoin;
 }
-export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,place_name,place_category,resolved,answer_count,helpful_count,status,published_at,created_at,profiles!community_questions_user_id_fkey(username,avatar_url)";
+export const QUESTION_COLUMNS = "id,user_id,title,body,area_id,place_ref,place_name,place_category,category_slug,community_question_images(storage_path,thumb_path,width,height,position),resolved,answer_count,helpful_count,status,published_at,created_at,profiles!community_questions_user_id_fkey(username,avatar_url)";
 export const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQuestion => ({
   id: r.id,
   title: r.title,
@@ -115,6 +121,8 @@ export const toQuestion = (r: QuestionRow, viewerId: string | null): CommunityQu
   placeRef: r.place_ref,
   placeName: r.place_name,
   placeCategory: r.place_category,
+  categorySlug: r.category_slug,
+  images: [...(r.community_question_images ?? [])].sort((a, b) => a.position - b.position).map((i) => ({ path: i.storage_path, thumbPath: i.thumb_path, width: i.width, height: i.height })),
   resolved: r.resolved,
   answerCount: r.answer_count,
   helpfulCount: r.helpful_count,
@@ -128,6 +136,7 @@ export async function fetchQuestions(client: SupabaseClient, f: QuestionFilters,
   let q = client.from("community_questions").select(QUESTION_COLUMNS).eq("status", "published");
   if (f.areaId) q = q.eq("area_id", f.areaId);
   if (f.placeRef) q = q.eq("place_ref", f.placeRef);
+  if (f.categorySlug) q = q.eq("category_slug", f.categorySlug);
   if (f.sort === "unanswered") q = q.eq("answer_count", 0).order("published_at", { ascending: false });
   else if (f.sort === "answers") q = q.order("answer_count", { ascending: false }).order("published_at", { ascending: false });
   else if (f.sort === "helpful") q = q.order("helpful_count", { ascending: false }).order("published_at", { ascending: false });

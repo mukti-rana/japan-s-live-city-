@@ -34,14 +34,18 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   return json({ id });
 }
 
-// Delete your own question (and its answers and comments).
+// Delete your own question (and its answers, comments and photos).
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const ctx = await requireUser(request, { unavailable: "That isn't available right now.", signIn: "Please sign in." });
   if ("response" in ctx) return ctx.response;
   const { id } = await params;
   if (!validId(id)) return json({ error: "That question could not be found." }, 404);
+  // Note the photos first so their files can be removed with the question.
+  const { data: photos } = await ctx.supabase.from("community_question_images").select("storage_path,thumb_path").eq("question_id", id);
   const { data, error } = await ctx.supabase.from("community_questions").delete().eq("id", id).eq("user_id", ctx.user.id).select("id").maybeSingle();
   if (error) return dbFailure(error, "We couldn't delete that question. Please try again.");
   if (!data) return json({ error: "That question could not be found." }, 404);
+  const files = (photos ?? []).flatMap((i: { storage_path: string; thumb_path: string | null }) => [i.storage_path, i.thumb_path].filter(Boolean) as string[]);
+  if (files.length) await ctx.supabase.storage.from("community-photos").remove(files);
   return json({ ok: true });
 }

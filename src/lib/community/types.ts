@@ -80,10 +80,15 @@ export interface CommunityQuestion {
   id: string;
   title: string;
   body: string;
-  areaId: string;
+  // Empty for a question about Japan in general.
+  areaId: string | null;
   placeRef: string | null;
   placeName: string | null;
   placeCategory: string | null;
+  // The optional topic (food, nature…).
+  categorySlug: string | null;
+  // The question's photos (up to 4), in order.
+  images: { path: string; thumbPath: string | null; width: number | null; height: number | null }[];
   resolved: boolean;
   answerCount: number;
   helpfulCount: number;

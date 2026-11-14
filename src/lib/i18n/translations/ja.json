@@ -1365,5 +1365,15 @@
   "Search posts, places, people and more": "投稿・場所・人などを検索",
   "See all photos": "すべての写真を見る",
   "Latest community posts": "コミュニティの最新投稿",
-  "Popular experiences": "人気の体験"
+  "Popular experiences": "人気の体験",
+  "Add up to 4 photos. Location data is removed from every photo.": "写真は4枚まで追加できます。すべての写真から位置情報は削除されます。",
+  "Where": "場所",
+  "Leave both empty to ask about Japan in general.": "どちらも空のままにすると、日本全般についての質問になります。",
+  "Anywhere in Japan": "日本全国",
+  "Tips for a good question": "良い質問のコツ",
+  "Be specific: the place, the season, what you plan to do.": "具体的に：場所、季節、やりたいこと。",
+  "Say who you travel with, or what you already tried.": "誰と行くか、すでに試したことも書きましょう。",
+  "A photo (a sign, a menu, a map) helps people answer faster.": "写真（標識、メニュー、地図など）があると、より早く答えてもらえます。",
+  "Choose one of the listed topics.": "一覧のトピックから選んでください。",
+  "A question can have up to 4 photos.": "質問に付けられる写真は4枚までです。"
 }

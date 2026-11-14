@@ -12,6 +12,10 @@ import ReportButton from "@/components/community/ReportButton";
 import ShareLinkButton from "@/components/community/ShareLinkButton";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
+import { CATEGORY_BY_SLUG } from "@/lib/community/categories";
+import { photoUrl } from "@/lib/community/photos";
+import CommunityTabs from "@/components/community/CommunityTabs";
+import PostGallery from "@/components/community/PostGallery";
 import { fetchAnswerComments, fetchAnswers, fetchQuestion, type AnswerSort } from "@/lib/community/discussionQuery";
 import { getDestination } from "@/lib/explore/catalogue";
 import PlaceInfo from "@/components/community/PlaceInfo";
@@ -42,7 +46,7 @@ export async function generateMetadata({ params }: PageProps<"/community/questio
   const res = await load((await params).id);
   if (res.state !== "ready") return { robots: { index: false, follow: false } };
   const { question: q } = res;
-  const where = q.placeName ?? (q.placeRef ? getDestination(q.placeRef)?.names.en : null) ?? AREA_BY_ID.get(q.areaId)?.en;
+  const where = q.placeName ?? (q.placeRef ? getDestination(q.placeRef)?.names.en : null) ?? (q.areaId ? AREA_BY_ID.get(q.areaId)?.en : undefined);
   const title = `${q.title}${where ? ` — ${where}` : ""}`;
   const description = (q.body || `A question about ${where ?? "Japan"} with answers from the community.`).replace(/\s+/g, " ").slice(0, 160);
   // Worth indexing once it is published and has at least one answer.
@@ -71,10 +75,16 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
   const hasMine = answers.some((a) => a.isMine);
   const published = answers.filter((a) => a.status === "published");
 
-  const area = AREA_BY_ID.get(q.areaId);
+  const area = q.areaId ? AREA_BY_ID.get(q.areaId) : undefined;
+  const category = q.categorySlug ? CATEGORY_BY_SLUG.get(q.categorySlug) : undefined;
+  const photos = q.images.flatMap((i) => {
+    const src = photoUrl(i.path);
+    const thumb = photoUrl(i.thumbPath ?? i.path);
+    return src && thumb ? [{ src, thumb, alt: `${q.title}`, width: i.width, height: i.height }] : [];
+  });
   const place = q.placeRef ? await resolvePlace(publicClient(), q.placeRef) : null;
   const placeName = place?.name ?? q.placeName ?? null;
-  const askMore = q.placeRef ? `/community/questions?place=${q.placeRef}` : `/community/questions?area=${q.areaId}`;
+  const askMore = q.placeRef ? `/community/questions?place=${q.placeRef}` : q.areaId ? `/community/questions?area=${q.areaId}` : "/community/questions";
 
   // Question-and-answer markup for search engines, only once there are real answers.
   const markup =
@@ -99,11 +109,16 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
 
   return (
     <article className="mx-auto flex w-full max-w-[900px] flex-col gap-6 pb-10">
+      <CommunityTabs active="questions" />
       {markup && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: markup }} />}
 
       <nav className="flex flex-wrap items-center gap-1.5 text-xs text-foreground/80">
+        <Link href="/community/help" className="rounded underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <Tx en="Need Help?" />
+        </Link>
+        <span aria-hidden="true">›</span>
         <Link href="/community/questions" className="rounded underline-offset-2 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          <Tx en="Questions & Answers" />
+          <Tx en="I Can Help" />
         </Link>
         {area && (
           <>
@@ -129,10 +144,15 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
               <Tx en="Resolved" />
             </span>
           )}
-          {!q.placeRef && (
+          {!q.placeRef && q.areaId && (
             <span className="rounded-full border border-lilac/40 bg-lilac/10 px-2.5 py-1 font-medium text-lilac">
               <Tx en="Ask a Local" />
             </span>
+          )}
+          {category && (
+            <Link href={`/community/questions?category=${category.slug}`} className="rounded-full border border-white/15 bg-white/[0.04] px-2.5 py-1 font-medium text-foreground/85 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <Bi en={category.en} ja={category.ja} />
+            </Link>
           )}
         </div>
         <h1 className="mt-2 text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-3xl">{q.title}</h1>
@@ -156,6 +176,11 @@ export default async function QuestionPage({ params, searchParams }: PageProps<"
           </div>
         )}
         {q.body && <p className="mt-4 whitespace-pre-line break-words text-sm leading-relaxed text-foreground/95 sm:text-base">{q.body}</p>}
+        {photos.length > 0 && (
+          <div className="mt-5">
+            <PostGallery images={photos} />
+          </div>
+        )}
         <p className="mt-4 text-xs text-foreground/75">
           <Link href={`/community/u/${q.author.username}`} className="rounded underline-offset-2 hover:text-azure hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">{q.author.username}</Link> · <LocalDate iso={q.publishedAt} />
         </p>

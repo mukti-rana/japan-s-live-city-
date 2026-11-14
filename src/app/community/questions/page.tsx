@@ -8,6 +8,7 @@ import Unavailable from "@/components/community/Unavailable";
 import QuestionList from "@/components/community/QuestionList";
 import Tx from "@/components/i18n/Tx";
 import { isAreaId } from "@/lib/community/areas";
+import { CATEGORIES } from "@/lib/community/categories";
 import { locationOptions } from "@/lib/community/locationOptions";
 import { fetchQuestions, QUESTION_SORTS, questionFiltersFromParams, type QuestionSort } from "@/lib/community/discussionQuery";
 import { publicClient } from "@/lib/community/queries";
@@ -29,7 +30,7 @@ async function load(sp: Record<string, string | string[] | undefined>) {
 
 export async function generateMetadata({ searchParams }: PageProps<"/community/questions">): Promise<Metadata> {
   const { filters, result } = await load(await searchParams);
-  const plain = !filters.areaId && !filters.placeRef && filters.sort === "latest" && filters.page === 1;
+  const plain = !filters.areaId && !filters.placeRef && !filters.categorySlug && filters.sort === "latest" && filters.page === 1;
   const indexable = plain && (result?.questions.length ?? 0) >= MIN_INDEXABLE_POSTS;
   return { title: TITLE, description: DESCRIPTION, alternates: { canonical: "/community/questions" }, robots: { index: indexable, follow: true }, openGraph: { title: TITLE, description: DESCRIPTION, url: "/community/questions" } };
 }
@@ -75,6 +76,7 @@ export default async function QuestionsPage({ searchParams }: PageProps<"/commun
           extra={filters.placeRef ? { place: filters.placeRef } : {}}
           facets={[
             ...(place ? [] : [{ id: "location", label: "Location", icon: "location" as const, param: "area", mode: "single" as const, options: locationOptions("param"), selected: filters.areaId ? [filters.areaId] : [], allLabel: "All Japan", searchable: true }]),
+            { id: "topic", label: "Topic", icon: "topic" as const, param: "category", mode: "single" as const, options: CATEGORIES.map((c) => ({ value: c.slug, en: c.en, ja: c.ja })), selected: filters.categorySlug ? [filters.categorySlug] : [], allLabel: "All topics" },
             { id: "sort", label: "Sort by", icon: "sort" as const, param: "sort", mode: "single" as const, options: QUESTION_SORTS.map((s) => ({ value: s, en: SORT_TEXT[s], ja: SORT_JA[s] })), selected: [filters.sort], defaultValue: "latest", narrows: false },
           ]}
         />

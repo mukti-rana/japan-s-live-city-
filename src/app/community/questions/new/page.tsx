@@ -24,11 +24,11 @@ export default async function AskPage({ searchParams }: PageProps<"/community/qu
   const initialArea = !place && areaRaw && isAreaId(areaRaw) ? areaRaw : undefined;
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 pb-10">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 pb-10">
       <CommunityTabs active="help" />
       <header>
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-foreground/60">
-          <Tx en={place ? "Need Help?" : "Ask a Local"} />
+          <Tx en="Need Help?" />
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           <Tx en="I Need Help" />

@@ -244,6 +244,8 @@ export const DISCUSSION_MESSAGES = {
   questionTitleLong: "The title can be up to 150 characters.",
   questionBodyLong: "The details can be up to 2,000 characters.",
   questionArea: "Choose where in Japan your question is about.",
+  questionCategory: "Choose one of the listed topics.",
+  questionPhotosMany: "A question can have up to 4 photos.",
   answerShort: "Please write at least 10 characters.",
   answerLong: "An answer can be up to 3,000 characters.",
   answerLinks: "Please keep links out of answers (two at most).",
@@ -281,28 +283,49 @@ export function validateCommentInput(raw: unknown): { ok: true; value: CommentIn
   return { ok: true, value: { targetType, targetId, parentId: parentId as string | null, body: body.body } };
 }
 
+export const QUESTION_MAX_PHOTOS = 4;
+
 export interface QuestionFields {
   title: string;
   body: string;
-  areaId: string;
+  // Optional: a question can be about Japan in general.
+  areaId: string | null;
   placeRef: string | null;
+  // Optional topic (the same topics posts use).
+  categorySlug: string | null;
 }
-export type QuestionErrors = Partial<Record<keyof QuestionFields | "resolved", string>>;
+export type QuestionErrors = Partial<Record<keyof QuestionFields | "resolved" | "uploadPaths", string>>;
 
 export function validateQuestionFields(raw: Record<string, unknown>): { ok: true; value: QuestionFields } | { ok: false; errors: QuestionErrors } {
   const errors: QuestionErrors = {};
   const title = cleanText(raw.title);
   const body = cleanText(raw.body, true);
-  const areaId = typeof raw.areaId === "string" ? raw.areaId : "";
+  const areaRaw = typeof raw.areaId === "string" ? raw.areaId : "";
   const placeRefRaw = typeof raw.placeRef === "string" ? raw.placeRef.trim() : "";
+  const categoryRaw = typeof raw.categorySlug === "string" ? raw.categorySlug : "";
   if (title.length < DISCUSSION_LIMITS.questionTitleMin) errors.title = DISCUSSION_MESSAGES.questionTitleShort;
   else if (title.length > DISCUSSION_LIMITS.questionTitleMax) errors.title = DISCUSSION_MESSAGES.questionTitleLong;
   if (body.length > DISCUSSION_LIMITS.questionBodyMax) errors.body = DISCUSSION_MESSAGES.questionBodyLong;
   else if (countLinks(body) > LIMITS.maxLinksInCaption) errors.body = MESSAGES.captionLinks;
-  if (!isAreaId(areaId)) errors.areaId = DISCUSSION_MESSAGES.questionArea;
+  if (areaRaw && !isAreaId(areaRaw)) errors.areaId = DISCUSSION_MESSAGES.questionArea;
   if (placeRefRaw && !PLACE_REF_RE.test(placeRefRaw)) errors.placeRef = MESSAGES.placeRef;
+  if (categoryRaw && !isCategorySlug(categoryRaw)) errors.categorySlug = DISCUSSION_MESSAGES.questionCategory;
   if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, value: { title, body, areaId, placeRef: placeRefRaw || null } };
+  return { ok: true, value: { title, body, areaId: areaRaw || null, placeRef: placeRefRaw || null, categorySlug: categoryRaw || null } };
+}
+
+// A new question: the fields above plus up to four photos already uploaded
+// through /api/community/upload (all optional).
+export function validateQuestionInput(raw: unknown): { ok: true; value: QuestionFields & { uploadPaths: string[] } } | { ok: false; errors: QuestionErrors } {
+  if (!raw || typeof raw !== "object") return { ok: false, errors: { title: DISCUSSION_MESSAGES.questionTitleShort } };
+  const r = raw as Record<string, unknown>;
+  const fields = validateQuestionFields(r);
+  const errors: QuestionErrors = fields.ok ? {} : { ...fields.errors };
+  const paths = Array.isArray(r.uploadPaths) ? r.uploadPaths : [];
+  if (paths.length > QUESTION_MAX_PHOTOS) errors.uploadPaths = DISCUSSION_MESSAGES.questionPhotosMany;
+  else if (!paths.every((p) => typeof p === "string" && UPLOAD_PATH_RE.test(p)) || new Set(paths).size !== paths.length) errors.uploadPaths = MESSAGES.photoPaths;
+  if (!fields.ok || Object.keys(errors).length) return { ok: false, errors };
+  return { ok: true, value: { ...fields.value, uploadPaths: paths as string[] } };
 }
 
 export function validateAnswerInput(raw: unknown): { ok: true; value: { questionId: string; body: string } } | { ok: false; errors: { questionId?: string; body?: string } } {

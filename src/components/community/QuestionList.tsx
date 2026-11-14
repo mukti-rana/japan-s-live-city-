@@ -18,6 +18,7 @@ export default function QuestionList({ basePath, filters, questions, hasMore, sh
     const p = new URLSearchParams();
     if (f.areaId) p.set("area", f.areaId);
     if (f.placeRef) p.set("place", f.placeRef);
+    if (f.categorySlug) p.set("category", f.categorySlug);
     if (f.sort !== "latest") p.set("sort", f.sort);
     if (f.page > 1) p.set("page", String(f.page));
     const q = p.toString();
