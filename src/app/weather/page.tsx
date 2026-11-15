@@ -54,7 +54,7 @@ export default async function WeatherPage({ searchParams }: PageProps<"/weather"
         </Reveal>
 
         <Reveal delay={0.06}>
-          <p className="text-[11px] text-muted">
+          <p className="text-xs text-muted">
             <Tx en={`Forecasts from Open-Meteo · ${WEATHER_CITIES.length} cities`} />
           </p>
         </Reveal>

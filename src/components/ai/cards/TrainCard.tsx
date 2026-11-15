@@ -21,7 +21,7 @@ export default function TrainCard({ data }: { data: TrainCardData }) {
 
       <div className="flex items-start gap-2 rounded-lg border border-gold/25 bg-gold/5 p-2">
         <TriangleAlert size={13} className="mt-0.5 shrink-0 text-gold" />
-        <p className="text-[10px] leading-relaxed text-muted">{tr(data.disclaimer)}</p>
+        <p className="text-xs leading-relaxed text-muted">{tr(data.disclaimer)}</p>
       </div>
 
       <ul className="flex flex-col gap-1.5">

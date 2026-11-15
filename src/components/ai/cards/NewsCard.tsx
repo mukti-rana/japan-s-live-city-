@@ -23,7 +23,7 @@ export default function NewsCard({ data }: { data: NewsCardData }) {
             >
               {item.title}
             </a>
-            <p className="mt-0.5 text-[10px] text-muted">
+            <p className="mt-0.5 text-xs text-muted">
               {item.source} · {dateFormatter(language, { dateStyle: "medium" }).format(new Date(item.publishedAt))}
             </p>
           </li>

@@ -23,7 +23,7 @@ export default function ToolActivityPill({ tool }: { tool: string }) {
   const label = TOOL_LABELS[tool]?.label ?? tool;
   const Icon = TOOL_ICONS[tool] ?? Wrench;
   return (
-    <span className="flex w-fit items-center gap-1.5 rounded-full border border-glass-border bg-glass-bg px-2.5 py-1 text-[11px] text-muted">
+    <span className="flex w-fit items-center gap-1.5 rounded-full border border-glass-border bg-glass-bg px-2.5 py-1 text-xs text-muted">
       <Loader2 size={11} className="animate-spin" aria-hidden="true" />
       <Icon size={12} className="shrink-0 text-lilac" aria-hidden="true" />
       {tr(label)}…

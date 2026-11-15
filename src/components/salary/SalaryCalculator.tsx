@@ -92,7 +92,7 @@ export default function SalaryCalculator() {
           onChange={setOvertimeHoursPerWeek}
         />
 
-        <p className="text-[11px] leading-relaxed text-muted">
+        <p className="text-sm leading-relaxed text-muted">
           <Tx en="Overtime is estimated at a 1.25× premium, Japan's statutory minimum. Actual rates vary by employer and time of day/week." />
         </p>
       </GlassCard>
@@ -129,7 +129,7 @@ export default function SalaryCalculator() {
 
         <div className="mt-1 flex gap-2 rounded-xl border border-gold/25 bg-gold/5 p-3">
           <TriangleAlert size={15} className="mt-0.5 shrink-0 text-gold" />
-          <p className="text-[11px] leading-relaxed text-muted">
+          <p className="text-sm leading-relaxed text-muted">
             <Tx en="These are rough estimates only — not tax or legal advice. Income tax, resident tax, and social insurance deductions are not included yet." />
           </p>
         </div>

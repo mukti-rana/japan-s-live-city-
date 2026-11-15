@@ -23,14 +23,14 @@ export default function EarthquakeCard({ data }: { data: EarthquakeCardData }) {
                 <span className="font-medium text-foreground">{eq.location}</span>
                 <span className="text-sakura">M{eq.magnitude}</span>
               </div>
-              <p className="mt-0.5 text-[10px] text-muted">
+              <p className="mt-0.5 text-xs text-muted">
                 {tr("Depth")} {eq.depthKm} km · {tr("Max intensity")} {eq.maxIntensity} · {tr("Tsunami")}: {tr(eq.tsunami)}
               </p>
             </li>
           ))}
         </ul>
       )}
-      <p className="text-[9px] text-muted/70">{data.source}</p>
+      <p className="text-xs text-muted/90">{data.source}</p>
     </GlassCard>
   );
 }

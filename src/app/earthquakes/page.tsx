@@ -64,7 +64,7 @@ export default async function EarthquakesPage() {
                             : "bg-mint/15 text-mint"
                       }`}
                     >
-                      <span className="text-[9px] leading-none"><Tx en="Shindo" /></span>
+                      <span className="text-xs leading-none"><Tx en="Shindo" /></span>
                       <span className="text-sm font-bold leading-tight">
                         {quake.maxIntensity}
                       </span>
@@ -96,7 +96,7 @@ export default async function EarthquakesPage() {
             </ul>
           )}
 
-          <p className="mt-4 text-[11px] text-muted">
+          <p className="mt-4 text-xs text-muted">
             <Tx en="Source: P2P Quake (relaying JMA data). Updated every few minutes." />
           </p>
         </GlassCard>

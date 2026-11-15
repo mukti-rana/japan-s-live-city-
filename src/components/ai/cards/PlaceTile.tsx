@@ -23,7 +23,7 @@ export default function PlaceTile({ name, image, gradient, description, href, su
         <Thumb gradient={gradient} icon={Landmark} src={image} alt={name} className="h-20 w-full" />
         {badge && (
           <span
-            className={`absolute right-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-[9px] font-medium ${
+            className={`absolute right-1.5 top-1.5 rounded-md px-1.5 py-0.5 text-xs font-medium ${
               badge.tone === "ongoing" ? "bg-mint/20 text-mint" : "bg-sakura/20 text-sakura"
             }`}
           >
@@ -31,9 +31,9 @@ export default function PlaceTile({ name, image, gradient, description, href, su
           </span>
         )}
       </div>
-      <p className="truncate text-[11px] font-medium text-foreground group-hover:text-azure">{name}</p>
-      {subtitle && <p className="truncate text-[9px] text-muted">{subtitle}</p>}
-      {description && <p className="line-clamp-2 text-[9px] text-muted/80">{description}</p>}
+      <p className="truncate text-xs font-medium text-foreground group-hover:text-azure">{name}</p>
+      {subtitle && <p className="truncate text-xs text-muted">{subtitle}</p>}
+      {description && <p className="line-clamp-2 text-xs text-muted/90">{description}</p>}
     </a>
   );
 }

@@ -27,7 +27,7 @@ export default function CardHeader({
       <div className={`flex h-6 w-6 items-center justify-center rounded-lg ${ACCENTS[accent]}`}>
         <Icon size={13} />
       </div>
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-foreground/90">{text}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-foreground/90">{text}</p>
     </div>
   );
 }

@@ -75,7 +75,7 @@ export default function ChatInputBar({
             value={language}
             onChange={(e) => onLanguageChange(e.target.value as LanguageCode)}
             disabled={disabled}
-            className="rounded-lg border border-glass-border bg-glass-bg px-2 py-1 text-[11px] text-muted outline-none disabled:opacity-50"
+            className="rounded-lg border border-glass-border bg-glass-bg px-2 py-1 text-xs text-muted outline-none disabled:opacity-50"
           >
             {LANGUAGES.map((lang) => (
               <option key={lang.code} value={lang.code}>

@@ -107,7 +107,7 @@ export default function RentCalculator() {
           />
         </div>
 
-        <p className="text-[11px] leading-relaxed text-muted">
+        <p className="text-sm leading-relaxed text-muted">
           <Tx en="Defaults reflect common Tokyo-area norms — every landlord and agency sets its own terms, so treat this as a starting estimate." />
         </p>
       </GlassCard>
@@ -142,7 +142,7 @@ export default function RentCalculator() {
         <div className="flex items-center justify-between rounded-xl border border-sakura/25 bg-sakura/5 px-4 py-3.5">
           <div>
             <p className="text-xs text-muted"><Tx en="Total move-in cost" /></p>
-            <p className="text-[11px] text-muted">
+            <p className="text-xs text-muted">
               {tr(`≈ ${result.totalInMonthsRent.toFixed(1)}× monthly rent`)}
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function RentCalculator() {
 
         <div className="flex gap-2 rounded-xl border border-gold/25 bg-gold/5 p-3">
           <TriangleAlert size={15} className="mt-0.5 shrink-0 text-gold" />
-          <p className="text-[11px] leading-relaxed text-muted">
+          <p className="text-sm leading-relaxed text-muted">
             <Tx en="An estimate only, not a quote. Actual costs vary by property, city, and agency — some charge less (or more), and a few no-key-money listings skip 礼金 entirely." />
           </p>
         </div>

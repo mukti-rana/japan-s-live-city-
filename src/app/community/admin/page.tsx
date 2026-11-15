@@ -88,7 +88,7 @@ export default async function ModerationPage({ searchParams }: PageProps<"/commu
             <li key={v} className="shrink-0">
               <Link href={`/community/admin?view=${v}`} aria-current={view === v ? "page" : undefined} className={tab(view === v)}>
                 <Tx en={VIEW_TEXT[v]} />
-                {v === "reports" && openReports > 0 && <span className="rounded-full bg-sakura px-2 py-0.5 text-[11px] font-bold text-background">{openReports}</span>}
+                {v === "reports" && openReports > 0 && <span className="rounded-full bg-sakura px-2 py-0.5 text-xs font-bold text-background">{openReports}</span>}
               </Link>
             </li>
           ))}

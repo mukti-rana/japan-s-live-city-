@@ -94,7 +94,7 @@ export default async function CommunityPlacesPage({ searchParams }: PageProps<"/
       ) : (
         <PlacesExplorer places={places} view={f.view} />
       )}
-      <p className="text-center text-[11px] text-foreground/60">
+      <p className="text-center text-xs text-foreground/60">
         <Tx en="Place data from OpenStreetMap contributors and Wikidata." />
       </p>
     </div>

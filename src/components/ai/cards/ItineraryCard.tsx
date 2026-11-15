@@ -16,7 +16,7 @@ export default function ItineraryCard({ data }: { data: ItineraryCardData }) {
                 <li key={i} className="text-xs">
                   <span className="font-medium text-azure">{item.time}</span>{" "}
                   <span className="text-foreground/90">— {item.title}</span>
-                  {item.note && <p className="mt-0.5 text-[10px] text-muted">{item.note}</p>}
+                  {item.note && <p className="mt-0.5 text-xs text-muted">{item.note}</p>}
                 </li>
               ))}
             </ul>

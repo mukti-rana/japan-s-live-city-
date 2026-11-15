@@ -19,12 +19,12 @@ export default function WeatherCard({ data }: { data: WeatherCardData }) {
         <WeatherIcon icon={data.icon} size={32} className="text-gold" />
         <div>
           <p className="text-2xl font-semibold text-foreground">{Math.round(data.tempC)}°C</p>
-          <p className="text-[11px] text-muted">
+          <p className="text-xs text-muted">
             {tr(data.condition)} · {tr("Feels")} {Math.round(data.feelsLikeC)}°
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-2 text-[10px] text-muted">
+      <div className="grid grid-cols-2 gap-2 text-xs text-muted">
         <p>{tr("Humidity")} {data.humidity}%</p>
         <p>{tr("Wind")} {Math.round(data.windKmh)} km/h</p>
         <p>{tr("High")} {Math.round(data.todayHigh)}° / {tr("Low")} {Math.round(data.todayLow)}°</p>
@@ -32,7 +32,7 @@ export default function WeatherCard({ data }: { data: WeatherCardData }) {
           {tr("Sunrise")} {data.sunrise} · {tr("Sunset")} {data.sunset}
         </p>
       </div>
-      <p className="text-[9px] text-muted/70">{data.source} · {tr("checked")} {dateFormatter(language, { timeStyle: "short" }).format(new Date(data.updatedAt))}</p>
+      <p className="text-xs text-muted/90">{data.source} · {tr("checked")} {dateFormatter(language, { timeStyle: "short" }).format(new Date(data.updatedAt))}</p>
     </GlassCard>
   );
 }

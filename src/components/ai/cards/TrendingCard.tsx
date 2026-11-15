@@ -19,7 +19,7 @@ export default function TrendingCard({ data }: { data: TrendingCardData }) {
               href={topic.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex shrink-0 items-center gap-1 text-[10px] text-muted hover:text-azure"
+              className="flex shrink-0 items-center gap-1 text-xs text-muted hover:text-azure"
             >
               <Tx en={topic.viewsLabel} />
               <ExternalLink size={10} />

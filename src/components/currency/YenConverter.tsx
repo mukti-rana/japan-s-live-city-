@@ -107,7 +107,7 @@ export default function YenConverter({ rates }: { rates: JpyRates | null }) {
               </div>
             </div>
 
-            <p className="mt-4 text-[11px] text-muted">
+            <p className="mt-4 text-xs text-muted">
               {tr("Rates from the European Central Bank via Frankfurter, updated {date}. For reference only — banks and exchanges add their own margin.").replace("{date}", rates.date)}
             </p>
           </>
@@ -125,7 +125,7 @@ export default function YenConverter({ rates }: { rates: JpyRates | null }) {
                 key={code}
                 className="rounded-xl border border-glass-border bg-glass-bg px-3 py-2.5 text-center"
               >
-                <p className="text-[10px] text-muted">{code}</p>
+                <p className="text-xs text-muted">{code}</p>
                 <p className="mt-0.5 text-sm font-semibold tabular-nums text-foreground">
                   {formatAmount(100 * rates.rates[code])}
                 </p>

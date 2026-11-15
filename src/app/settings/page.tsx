@@ -55,7 +55,7 @@ export default async function SettingsPage() {
 
       <Reveal delay={0.07}>
         <GlassCard className="scroll-mt-20 p-5">
-          <p id="appearance" className="scroll-mt-20 text-[11px] font-semibold uppercase tracking-widest text-muted"><Tx en="Appearance" /></p>
+          <p id="appearance" className="scroll-mt-20 text-xs font-semibold uppercase tracking-wide text-muted"><Tx en="Appearance" /></p>
           <p className="mt-1 text-sm font-semibold text-foreground"><Tx en="Background atmosphere" /></p>
           <p className="mb-3 mt-1 text-xs text-muted"><Tx en="A living Japanese backdrop behind the pages — chosen by season and weather, or by you." /></p>
           <AtmosphereSettings />
