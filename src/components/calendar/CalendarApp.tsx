@@ -3,7 +3,7 @@
 import { dateFormatter } from "@/lib/i18n/datetime";
 import type { LanguageCode } from "@/lib/i18n/languages";
 import { useMemo, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Copy, Download, ExternalLink, Pencil, Plus, Search, Settings as SettingsIcon, Sparkles, Trash2, Upload } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Copy, Download, ExternalLink, MapPin, Pencil, Plus, Search, Settings as SettingsIcon, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { AgendaView, Chip, DayView, MonthView, WeekView, type Entry } from "@/components/calendar/CalendarViews";
 import ItemForm from "@/components/calendar/ItemForm";
 import SettingsPanel from "@/components/calendar/SettingsPanel";
@@ -207,7 +207,7 @@ export default function CalendarApp({ initialQuick = "" }: { initialQuick?: stri
           <form onSubmit={(e) => { e.preventDefault(); reviewQuick(); }} className="flex flex-col gap-2 sm:flex-row">
             <label className="relative flex-1">
               <span className="sr-only">{t("quickAdd")}</span>
-              <Sparkles size={15} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-neon-purple" aria-hidden="true" />
+              <Sparkles size={15} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-lilac" aria-hidden="true" />
               <input value={quick} onChange={(e) => { setQuick(e.target.value); setProposal(null); }} placeholder={t("quickPlaceholder")} className="h-11 w-full rounded-xl border border-white/20 bg-background pl-10 pr-3 text-base text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure sm:text-sm" />
             </label>
             <button type="submit" disabled={!quick.trim()} className={`${btn} disabled:opacity-50`}>
@@ -221,8 +221,13 @@ export default function CalendarApp({ initialQuick = "" }: { initialQuick?: stri
       {notice && (
         <p role="status" className="flex items-center justify-between gap-3 rounded-xl border border-mint/30 bg-mint/10 p-3 text-sm text-foreground">
           {notice}
-          <button type="button" onClick={() => setNotice(null)} className="text-xs font-semibold text-muted hover:text-foreground">
-            ✕
+          <button
+            type="button"
+            onClick={() => setNotice(null)}
+            aria-label={t("close")}
+            className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-muted after:absolute after:left-1/2 after:top-1/2 after:h-11 after:w-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-[''] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+          >
+            <X size={14} aria-hidden="true" />
           </button>
         </p>
       )}
@@ -434,10 +439,10 @@ export default function CalendarApp({ initialQuick = "" }: { initialQuick?: stri
                 <p className="mt-2 text-sm text-foreground/85">{importing.items.length} {t("eventTab").toLowerCase()} / {t("taskTab").toLowerCase()}{importing.skipped ? ` · ${importing.skipped} skipped` : ""}</p>
                 <ul className="mt-2 max-h-56 space-y-1 overflow-y-auto text-sm text-foreground/85">
                   {importing.items.slice(0, 50).map((i, n) => (
-                    <li key={n}>• {i.date} {i.startTime ?? ""} — {i.title}{i.caveats.length ? " ⚠" : ""}</li>
+                    <li key={n}>• {i.date} {i.startTime ?? ""} — {i.title}{i.caveats.length > 0 && <AlertTriangle size={12} className="ml-1 inline shrink-0 align-[-2px] text-amber-200" aria-hidden="true" />}</li>
                   ))}
                 </ul>
-                {importing.items.some((i) => i.caveats.length) && <p className="mt-2 text-xs text-amber-200">⚠ {importing.items.find((i) => i.caveats.length)?.caveats[0]}</p>}
+                {importing.items.some((i) => i.caveats.length) && <p className="mt-2 flex items-start gap-1.5 text-xs text-amber-200"><AlertTriangle size={13} className="mt-px shrink-0" aria-hidden="true" />{importing.items.find((i) => i.caveats.length)?.caveats[0]}</p>}
               </>
             )}
             <div className="mt-4 flex justify-end gap-2">
@@ -494,7 +499,7 @@ function EntryDetails({ occ, onClose, onEdit, onDuplicate, onDeleteOne, onDelete
           {it.startTime && !it.allDay ? ` · ${it.startTime}${it.endTime ? `–${it.endTime}` : ""} JST` : ""}
         </p>
         {rec && <p className="text-xs text-muted">{rec}</p>}
-        {it.location && <p className="mt-1.5 text-sm text-foreground/85">📍 {it.location}</p>}
+        {it.location && <p className="mt-1.5 flex items-start gap-1.5 text-sm text-foreground/85"><MapPin size={14} className="mt-0.5 shrink-0 text-gold" aria-hidden="true" />{it.location}</p>}
         {it.notes && <p className="mt-2 whitespace-pre-wrap text-sm text-foreground/80">{it.notes}</p>}
         {it.reminders.length > 0 && <p className="mt-2 text-xs text-muted">{t("reminders")}: {it.reminders.map(reminderLabel).join(", ")}</p>}
         {it.linkedEvent?.url && (
@@ -547,7 +552,7 @@ function DayPanel({ day, entries, forecast, layerEvents, personal, onClose, onNe
         <h2 className="text-base font-bold text-foreground">{fmt(day, language, { weekday: "long", month: "long", day: "numeric" })}</h2>
         <div className="flex gap-2">
           <button type="button" onClick={onNew} className={`${btn} inline-flex items-center gap-1.5`}><Plus size={14} aria-hidden="true" />{t("newItem")}</button>
-          <button type="button" onClick={onClose} className={btn}>✕</button>
+          <button type="button" onClick={onClose} aria-label={t("close")} className={`${btn} inline-flex items-center justify-center`}><X size={14} aria-hidden="true" /></button>
         </div>
       </div>
       {w && (

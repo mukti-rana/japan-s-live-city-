@@ -102,7 +102,7 @@ export function EventFacts({ event, showKind = true }: { event: EventView; showK
     <div className="flex flex-col gap-1.5 text-xs text-foreground/80">
       <div className="flex flex-wrap items-center gap-1.5">
         {showKind && (
-          <span className="rounded-full bg-neon-purple/20 px-2 py-0.5 text-[10px] font-semibold text-neon-purple">
+          <span className="rounded-full bg-neon-purple/20 px-2 py-0.5 text-[10px] font-semibold text-lilac">
             {t(`events.kind.${event.kind}` as TranslationKey)}
           </span>
         )}

@@ -279,7 +279,7 @@ export default function EventsHub({
           className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
         >
           {KIND_CHIPS.map((k) => (
-            <button key={k.id} type="button" aria-pressed={filters.kind === k.id} onClick={() => update({ kind: filters.kind === k.id ? "" : k.id })} className={`${chip} snap-start ${filters.kind === k.id ? "border-neon-purple/50 bg-neon-purple/20 text-neon-purple" : chipOff}`}>
+            <button key={k.id} type="button" aria-pressed={filters.kind === k.id} onClick={() => update({ kind: filters.kind === k.id ? "" : k.id })} className={`${chip} snap-start ${filters.kind === k.id ? "border-neon-purple/50 bg-neon-purple/20 text-lilac" : chipOff}`}>
               {t(`events.kind.${k.id}` as TranslationKey)}
             </button>
           ))}

@@ -28,7 +28,7 @@ export default function AddToCalendarButton({ event, compact = false }: { event:
         onClick={add}
         disabled={already}
         aria-label={`${already ? t("alreadyAdded") : t("addToCalendar")}: ${event.title}`}
-        className={`inline-flex items-center gap-1.5 rounded-full border font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${compact ? "min-h-8 px-2.5 text-[11px]" : "min-h-10 px-4 text-sm"} ${already ? "border-mint/40 bg-mint/10 text-mint" : "border-neon-purple/50 bg-neon-purple/10 text-neon-purple hover:bg-neon-purple/20"}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${compact ? "min-h-8 px-2.5 text-[11px]" : "min-h-10 px-4 text-sm"} ${already ? "border-mint/40 bg-mint/10 text-mint" : "border-neon-purple/50 bg-neon-purple/10 text-lilac hover:bg-neon-purple/20"}`}
       >
         {already ? <Check size={compact ? 12 : 14} aria-hidden="true" /> : <CalendarPlus size={compact ? 12 : 14} aria-hidden="true" />}
         {already ? t("alreadyAdded") : t("addToCalendar")}

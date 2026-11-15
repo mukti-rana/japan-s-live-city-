@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Search, Bot, Star, MapPin } from "lucide-react";
+import { Search, Bot, Star, MapPin, AlertTriangle } from "lucide-react";
 import Tabs from "@/components/ui/Tabs";
 import GlassCard from "@/components/ui/GlassCard";
 import T from "@/components/i18n/T";
@@ -154,7 +154,7 @@ export default function TrainAssistant() {
       {/* Current disruptions */}
       <div>
         <p className="mb-3 text-sm font-semibold text-foreground">
-          ⚠️ <T k="trains.currentDisruptions" />
+          <AlertTriangle size={14} className="mr-1.5 inline shrink-0 align-[-2px] text-gold" aria-hidden="true" /><T k="trains.currentDisruptions" />
         </p>
         {disruptions.length === 0 ? (
           <GlassCard className="flex items-center gap-2 p-4">
@@ -210,7 +210,7 @@ export default function TrainAssistant() {
       {/* Ask LIVE CITY */}
       <GlassCard className="p-5">
         <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-          <Bot size={15} className="text-neon-purple" />
+          <Bot size={15} className="text-lilac" />
           <T k="trains.askLiveCity" />
         </p>
         <p className="mb-3 text-xs text-muted">

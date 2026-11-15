@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import L from "leaflet";
 import { AttributionControl, MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
-import { TrainFront } from "lucide-react";
+import { TrainFront, Star } from "lucide-react";
 import Link from "next/link";
 import MapControls, { type BaseKey, type LayerKey } from "@/components/map/MapControls";
 import MapPanel, { type AlertsPayload, type EventGroup, type Selection } from "@/components/map/MapPanel";
@@ -540,7 +540,7 @@ export default function FullMap() {
         {layers.events && (
           <div className="pointer-events-auto w-full rounded-xl border border-glass-border bg-panel/95 px-3 py-2 shadow-lg backdrop-blur-xl">
             <p className="flex items-center gap-1.5 text-[11px] text-foreground/85">
-              <span className="flex h-4 w-4 items-center justify-center rounded-full bg-neon-purple text-[9px] font-bold text-white">★</span>
+              <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-neon-purple text-white"><Star size={9} strokeWidth={2.5} fill="currentColor" aria-hidden="true" /></span>
               {text("eventsLegend")}
             </p>
             <label className="mt-1.5 flex items-start gap-2 text-[11px] leading-snug text-muted">

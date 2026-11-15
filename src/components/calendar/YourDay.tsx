@@ -163,7 +163,7 @@ export default function YourDay() {
       <form action="/calendar" className="mt-auto flex gap-2">
         <label className="relative flex-1">
           <span className="sr-only">{t("quickAdd")}</span>
-          <Sparkles size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-neon-purple" aria-hidden="true" />
+          <Sparkles size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-lilac" aria-hidden="true" />
           <input name="quick" value={text} onChange={(e) => setText(e.target.value)} placeholder={t("addSomething")} className="h-10 w-full rounded-xl border border-glass-border bg-panel pl-9 pr-3 text-base text-foreground placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure sm:text-sm" />
         </label>
         <button type="submit" disabled={!text.trim()} className="min-h-10 rounded-xl border border-glass-border px-3 text-sm font-semibold text-foreground hover:bg-white/10 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">

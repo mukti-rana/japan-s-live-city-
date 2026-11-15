@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, X } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { PREFECTURES } from "@/lib/news/places";
 import { chooseNewsPlace, type NewsPlace } from "@/lib/news/useNews";
-import { known, localize, translate } from "@/lib/i18n/inline";
+import { known, localize, translate, useTranslate } from "@/lib/i18n/inline";
 
 const POPULAR = ["Tokyo", "Osaka", "Kyoto", "Nagoya", "Kobe", "Fukuoka", "Sapporo", "Hiroshima", "Sendai", "Nara"];
 
@@ -14,6 +14,7 @@ const POPULAR = ["Tokyo", "Osaka", "Kyoto", "Nagoya", "Kobe", "Fukuoka", "Sappor
 // and any time they want to change it. It never blocks the rest of the site.
 export default function PlacePicker({ current, compact = false }: { current: NewsPlace; compact?: boolean }) {
   const { t, language } = useLanguage();
+  const tr = useTranslate();
   const [changing, setChanging] = useState(false);
 
   if (current.place && !changing) {
@@ -70,9 +71,16 @@ export default function PlacePicker({ current, compact = false }: { current: New
             </option>
           ))}
         </select>
+        {/* 32px visual to match the chips and select beside it; the ::after
+            overlay is out of flow and carries the 44px touch target. */}
         {changing && (
-          <button type="button" onClick={() => setChanging(false)} className="px-2 text-xs text-muted hover:text-foreground">
-            ✕
+          <button
+            type="button"
+            onClick={() => setChanging(false)}
+            aria-label={tr("Close")}
+            className="relative flex h-8 w-8 items-center justify-center rounded-full text-muted after:absolute after:left-1/2 after:top-1/2 after:h-11 after:w-11 after:-translate-x-1/2 after:-translate-y-1/2 after:content-[''] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+          >
+            <X size={14} aria-hidden="true" />
           </button>
         )}
       </div>

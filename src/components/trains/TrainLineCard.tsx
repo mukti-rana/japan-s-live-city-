@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, Star, MapPin, Compass } from "lucide-react";
+import { ChevronDown, Star, MapPin, Compass, ArrowRight } from "lucide-react";
 import T from "@/components/i18n/T";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { translate } from "@/lib/i18n/inline";
@@ -108,7 +108,7 @@ export default function TrainLineCard({
               <span className="text-muted">
                 <T k="trains.direction" />:{" "}
               </span>
-              <span className="text-foreground">➡️ {line.direction}</span>
+              <span className="inline-flex items-center gap-1 text-foreground"><ArrowRight size={13} className="shrink-0" aria-hidden="true" />{line.direction}</span>
             </p>
           )}
           <div className="mt-1 flex flex-wrap gap-2">

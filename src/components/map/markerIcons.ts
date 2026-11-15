@@ -1,4 +1,5 @@
 import L from "leaflet";
+import { Star } from "lucide-react";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import WeatherIcon from "@/components/ui/WeatherIcon";
@@ -9,6 +10,14 @@ import type { WeatherIconKind } from "@/lib/services/weather";
 // and are escaped anyway.
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
+
+// Event markers are plain Leaflet HTML, so the star is rendered to a static
+// SVG string once rather than used as an emoji glyph.
+let starCache: string | null = null;
+function starSvg(): string {
+  if (!starCache) starCache = renderToStaticMarkup(createElement(Star, { size: 11, strokeWidth: 2.5, fill: "currentColor" }));
+  return starCache;
+}
 
 const iconSvg = new Map<WeatherIconKind, string>();
 function weatherSvg(kind: WeatherIconKind): string {
@@ -47,7 +56,7 @@ export function weatherIcon(opts: { name: string; tempC: number; color: string; 
 export function eventIcon(count: number, selected: boolean) {
   return L.divIcon({
     className: "",
-    html: `<div class="lc-ev ${selected ? "lc-ev--sel" : ""}">${count > 1 ? count : "★"}</div>`,
+    html: `<div class="lc-ev ${selected ? "lc-ev--sel" : ""}">${count > 1 ? count : starSvg()}</div>`,
     iconSize: [0, 0],
     iconAnchor: [0, 0],
   });
