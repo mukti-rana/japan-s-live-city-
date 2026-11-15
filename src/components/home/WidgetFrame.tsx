@@ -35,7 +35,7 @@ export default function WidgetFrame({
   className?: string;
 }) {
   return (
-    <GlassCard className={`flex flex-col gap-3.5 p-4 ${className}`}>
+    <GlassCard variant="solid" className={`flex flex-col gap-4 p-5 ${className}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex min-w-0 items-center gap-2">
           <div
@@ -54,7 +54,7 @@ export default function WidgetFrame({
 
           {live && (
             <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-              <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-mint" />
               <T k="widget.live" />
             </span>
           )}

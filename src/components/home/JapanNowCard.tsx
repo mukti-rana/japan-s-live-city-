@@ -252,7 +252,7 @@ export default function JapanNowCard() {
   return (
     <div className="keep-dark-ink relative h-full min-h-[260px] overflow-hidden" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocusCapture={() => setPaused(true)} onBlurCapture={() => setPaused(false)}>
       <Image src="/images/sakura-pagoda.jpg" alt="" fill sizes="(min-width: 1280px) 20vw, 100vw" className="jn-drift object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0b0e1a]/90 via-[#0b0e1a]/45 to-[#0b0e1a]/55" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0b]/90 via-[#0a0a0b]/45 to-[#0a0a0b]/55" />
       {cur && <SeasonParticles season={cur.season} />}
 
       <div className="relative flex h-full flex-col gap-3 p-5">
@@ -272,7 +272,7 @@ export default function JapanNowCard() {
         {season && <p className="text-[10px] text-foreground/55">{tr("Next: {name} in about {n} days").replace("{name}", language === "ja" ? season.next.ja : tr(season.next.en)).replace("{n}", String(season.daysToNext))}</p>}
 
         {fact && (
-          <div className="mt-auto rounded-2xl border border-white/10 bg-[#0b0e1a]/60 p-3.5 backdrop-blur-md">
+          <div className="mt-auto rounded-2xl border border-white/10 bg-[#0a0a0b]/60 p-3.5 backdrop-blur-md">
             <div key={fact.key} className="jn-fade">
               <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-azure">
                 {fact.ring !== undefined && (

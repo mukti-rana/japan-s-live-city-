@@ -32,7 +32,7 @@ export default function HeroAIBox() {
   return (
     <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-xl border border-glass-border p-4">
       <motion.div
-        className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-azure/40 via-neon-purple/40 to-sakura/40 blur-3xl"
+        className="hidden"
         animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.08, 1] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -69,7 +69,7 @@ export default function HeroAIBox() {
         <button
           type="submit"
           aria-label={t("ai.askButton")}
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-azure to-neon-purple text-white transition-opacity hover:opacity-90"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-azure text-background transition-opacity hover:opacity-90"
         >
           <ArrowRight size={13} />
         </button>

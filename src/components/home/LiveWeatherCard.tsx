@@ -162,7 +162,7 @@ function Tile({
         {bar !== undefined && (
           <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-glass-bg-strong" aria-hidden="true">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-azure to-neon-purple"
+              className="h-full rounded-full bg-azure"
               style={{ width: `${Math.min(Math.max(bar, 0), 100)}%` }}
             />
           </div>
@@ -269,7 +269,7 @@ export default function LiveWeatherCard() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">{t("weather.liveWeatherTitle")}</h2>
           {weather && isFresh && (
             <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-              <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" aria-hidden="true" />
+              <span className="h-1.5 w-1.5 rounded-full bg-mint" aria-hidden="true" />
               {text("live")}
             </span>
           )}

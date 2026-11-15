@@ -45,7 +45,7 @@ export default function LiveCityCamCard() {
           allowFullScreen
         />
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#0b0e1a]/85 to-transparent p-3">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#0a0a0b]/85 to-transparent p-3">
           <p className="font-mono text-[10px] text-foreground/80">{location}</p>
           <a
             href={cam.watchUrl}

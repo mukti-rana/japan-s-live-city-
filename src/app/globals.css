@@ -63,18 +63,23 @@
   --dur-slow: 300ms;   /* entrance */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  --background: #0b0e1a;
+  /* Deep-black foundation. These are the long-standing token NAMES re-pointed
+     to the near-black scale — the same trick .cm-theme already uses for
+     Community — so every component follows without being rewritten.
+     Previous navy values: background #0b0e1a, panel #0e1324, sidebar #070914,
+     glass-bg .05, glass-border .1. */
+  --background: #0a0a0b;
   --foreground: #f4f4f8;
   --sakura: #ff6b9d;
   --gold: #f2c572;
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-bg-strong: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.035);
+  --glass-bg-strong: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.07);
   --muted: #8b8fa3;
-  --sidebar-bg: #070914;
+  --sidebar-bg: #0a0a0b;
   --azure: #4da3ff;
   --mint: #4ade80;
-  --panel: #0e1324;
+  --panel: #111113;
   --neon-cyan: #22d3ee;
   --neon-purple: #a855f7;
   /* Readable companion to --neon-purple. The saturated purple above only

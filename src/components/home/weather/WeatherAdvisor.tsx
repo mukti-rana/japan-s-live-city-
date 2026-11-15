@@ -76,7 +76,7 @@ export default function WeatherAdvisor({ weather, isNight, uvLabel }: { weather:
         <Card icon={<Umbrella size={14} aria-hidden="true" />} tone="bg-neon-purple/15 text-[#c4b5fd]" title={tr("Umbrella advice")} headline={tr(a.umbrella.headline)} items={[]} details={rainDetails} />
         <Card icon={<Sun size={14} aria-hidden="true" />} tone="bg-gold/15 text-gold" title={tr("Sun protection")} headline={tr(s.headline)} items={s.items.map((i) => tr(i))} details={sunDetails} />
       </div>
-      <p className="rounded-2xl border border-azure/25 bg-gradient-to-r from-azure/10 to-neon-purple/10 px-4 py-3 text-sm leading-relaxed text-foreground">
+      <p className="rounded-2xl border border-glass-border bg-glass-bg px-4 py-3 text-sm leading-relaxed text-foreground">
         <span className="mr-2 text-[11px] font-semibold uppercase tracking-wide text-[#c4b5fd]">{tr("Today's advice")}</span>
         {parts.join(". ")}.
       </p>

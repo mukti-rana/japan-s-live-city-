@@ -105,7 +105,7 @@ export default function HeroCard() {
           <div className={`absolute inset-0 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
         )}
         <HeroAtmosphere condition={sceneIcon} season={season} isNight={isNight} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0b0e1a]/90 via-[#0b0e1a]/55 to-[#0b0e1a]/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0b]/90 via-[#0a0a0b]/55 to-[#0a0a0b]/20" />
 
         <div className="relative">
           <LiveClock timeZone="Asia/Tokyo">
@@ -136,7 +136,7 @@ export default function HeroCard() {
                     <button
                       type="button"
                       onClick={requestLocation}
-                      className="flex min-h-10 items-center gap-2 rounded-full bg-gradient-to-r from-azure to-neon-purple px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+                      className="flex min-h-10 items-center gap-2 rounded-full bg-azure px-4 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
                     >
                       <LocateFixed size={16} aria-hidden="true" />
                       {tr("Use my location")}
@@ -158,7 +158,7 @@ export default function HeroCard() {
                   </span>
                   {isLive && (
                     <span className="flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-medium text-mint">
-                      <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-mint" />
                       {t("widget.live")}
                     </span>
                   )}
