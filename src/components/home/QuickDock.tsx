@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Sparkles,
   Languages,
@@ -41,8 +42,41 @@ const TOOLS: {
 // Pointer-driven, so it is desktop-only; below lg the floating menu button
 // owns the bottom edge. Sticky rather than fixed, so it centres on the content
 // column and comes to rest above the footer instead of covering it.
+//
+// It tucks away while the page is scrolled down, so it never sits over a card being read,
+// and comes back when scrolling up, near the top or bottom of the page, when the pointer
+// goes to the bottom edge, or when a keyboard user tabs into it.
 export default function QuickDock() {
   const { t } = useLanguage();
+  const [away, setAway] = useState(false);
+
+  useEffect(() => {
+    let last = window.scrollY;
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const y = window.scrollY;
+        const dy = y - last;
+        if (Math.abs(dy) < 8) return;
+        last = y;
+        const nearTop = y < 160;
+        const nearEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 200;
+        setAway(!(nearTop || nearEnd || dy < 0));
+      });
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (event.pointerType !== "touch" && event.clientY > window.innerHeight - 96) setAway(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointer);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
 
   const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, accent, dividerAfter }) => ({
     id: href,
@@ -54,7 +88,13 @@ export default function QuickDock() {
   }));
 
   return (
-    <div className="pointer-events-none sticky bottom-4 z-30 hidden justify-center lg:flex">
+    <div
+      data-away={away}
+      onFocusCapture={() => setAway(false)}
+      className={`pointer-events-none sticky bottom-4 z-30 hidden justify-center transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none lg:flex ${
+        away ? "translate-y-[calc(100%+1.5rem)] opacity-0 [&>nav]:pointer-events-none" : ""
+      }`}
+    >
       <MagneticDock items={items} label={t("quickaccess.title")} className="pointer-events-auto" />
     </div>
   );
