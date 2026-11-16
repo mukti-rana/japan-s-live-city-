@@ -11,5 +11,7 @@ export const CITY_PHOTOS: Record<string, readonly HomePhoto[]> = {
   nara: [HOME_PHOTOS.todaiji, HOME_PHOTOS.naraKasugaTorii, HOME_PHOTOS.naraDeer],
   hiroshima: [HOME_PHOTOS.itsukushima, HOME_PHOTOS.hiroshimaAtomicBombDome, HOME_PHOTOS.hiroshimaPeaceCenotaph],
   kobe: [HOME_PHOTOS.kobePortTower, HOME_PHOTOS.kobeCityFromHills],
+  sapporo: [HOME_PHOTOS.sapporoTvTower, HOME_PHOTOS.sapporoOdoriParkWinter, HOME_PHOTOS.sapporoSusukinoNight],
+  fukuoka: [HOME_PHOTOS.fukuokaHakataSkyline, HOME_PHOTOS.fukuokaHakataSkylineDusk, HOME_PHOTOS.fukuokaOhoriParkPond],
   sendai: [HOME_PHOTOS.sendaiOsakiHachimangu, HOME_PHOTOS.sendaiTanabataStreamers],
 };

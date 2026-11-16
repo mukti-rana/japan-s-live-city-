@@ -1,9 +1,15 @@
 # Homepage photographs — credits and licences
 
-Twenty-four photographs from [Wikimedia Commons](https://commons.wikimedia.org/), used on the LIVE CITY JAPAN homepage (the hero slideshow shows each city's own photographs).
-All twenty-four are released under **CC0 1.0** (public-domain dedication), so no credit is legally required. They are credited on the page anyway.
+Thirty photographs from [Wikimedia Commons](https://commons.wikimedia.org/), used on the LIVE CITY JAPAN homepage (the hero slideshow shows each city's own photographs).
 
-**What was changed:** each photo was resized to 2560 px on its longest side (the 3000 px Chureito original was resized to 2560 px; the sixteen added later were resized from Commons' 3840 px copy) and saved as WebP at quality 80. Camera metadata was removed. Nothing else was altered.
+| Licence | Photos | Credit required? |
+|---|---|---|
+| **CC0 1.0** (public-domain dedication) | 24 — every city except Sapporo and Fukuoka, plus the Fuji and Hakodate photos | No. They are credited on the page anyway, as a courtesy. |
+| **CC BY 2.0 / 4.0** | 6 — Sapporo (3) and Fukuoka (3) | **Yes.** The photographer's name and the licence are shown with each photo (bottom-right of the hero) and in the footer, each linking to the photo's Commons page and the licence text. |
+
+**What was changed:** every photo was resized to 2560 px on its longest side and saved as WebP at quality 80, with camera metadata removed. The Chureito original (3000 px) was resized from its own file; the other photos were resized from Commons' 3840 px copy. Nothing else was altered. For the CC BY photographs this is the "indication of changes" the licence asks for.
+
+## CC0 photographs (24)
 
 | File here | Photo on Commons | Author | Licence | Source |
 |---|---|---|---|---|
@@ -33,6 +39,20 @@ All twenty-four are released under **CC0 1.0** (public-domain dedication), so no
 | `sendai-tanabata-streamers.webp` | 仙台七夕まつり2026の装飾.jpg | Raspico | [CC0](http://creativecommons.org/publicdomain/zero/1.0/deed.en) | [File:仙台七夕まつり2026の装飾.jpg](https://commons.wikimedia.org/wiki/File:%E4%BB%99%E5%8F%B0%E4%B8%83%E5%A4%95%E3%81%BE%E3%81%A4%E3%82%8A2026%E3%81%AE%E8%A3%85%E9%A3%BE.jpg) |
 
 Original sizes:
- Roppongi at night seen from Shibuya Stream.jpg 6383×3759 px; 20181110 Fushimi Inari Torii 9.jpg 5760×3840 px; Osaka Dotonbori yoru 04.jpg 5707×3805 px; 20181111 Itsukushima Shrine torii-2.jpg 4702×3135 px; 20190121 Tōdai-ji Great South Gate-1.jpg 5651×3767 px; 12-Chureito-pagoda-and-Mount-Fuji-Japan (29677439878).jpg 3000×1688 px; Aerial view of Hakodate at night.jpg 5568×3712 px; Kiyomizu-dera autumn night.jpg 5538×3829 px; Traditional and Technology in Japan - Zojo-ji Temple and Tokyo Tower (2016-03-17 by Little MiMi @Pixabay 1270519).jpg 6000×4000 px; Sunset on cityscape of Tokyo (2015-01-19 by calvision @Pixabay 617627).jpg 7360×4912 px; Shinjuku Station South Entrance area at night, Tokyo, Japan (2015-01-24 by calvision @Pixabay 617590).jpg 7346×4896 px; Osaka Nakanoshima 2026 yoru.jpg 4028×2685 px; Osaka Castle and Gokurakubashi Bridge.jpg 5707×3805 px; 20190121 Osaka Castle-2.jpg 5760×3840 px; Sagano Bamboo forest 2.jpg 5616×3744 px; Romon at dusk, view from inside, Fushimi Inari-taisha, Kyoto, 2016.jpg 5796×3854 px; Kasuga-taisha, ichinotorii.jpg 6016×4000 px; 20190121 Nara deer-4.jpg 5760×3840 px; 20190317 Atomic Bomb Dome-1.jpg 5760×3840 px; Hiroshima Peace Memorial Park cenotaph.jpg 5184×3456 px; 20190901 Kobe Port Tower and Maritime Museum-1.jpg 5710×3807 px; Kobe from Hill (24240539707).jpg 4288×2848 px; Sendai - Sendai6182.jpg 4728×3546 px; 仙台七夕まつり2026の装飾.jpg 4000×3000 px.
 
-Adding a photo? Use only images whose licence allows reuse, add a row here, and add its entry to `src/lib/data/homePhotos.ts`.
+## CC BY photographs (6) — attribution required
+
+Used under the Creative Commons Attribution licence shown in the table. Only plain **CC BY** photographs were chosen (not share-alike, non-commercial or no-derivatives), so resizing and compressing them is permitted provided credit is given.
+
+| File here | Photo on Commons | Author | Licence | Source |
+|---|---|---|---|---|
+| `sapporo-tv-tower.webp` | Sapporo TV Tower 20180715.jpg | ume-y | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) | [File:Sapporo_TV_Tower_20180715.jpg](https://commons.wikimedia.org/wiki/File:Sapporo_TV_Tower_20180715.jpg) |
+| `sapporo-odori-park-winter.webp` | This is Sapporo (6960447275).jpg | Cesar I. Martins | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) | [File:This_is_Sapporo_(6960447275).jpg](https://commons.wikimedia.org/wiki/File:This_is_Sapporo_(6960447275).jpg) |
+| `sapporo-susukino-night.webp` | Night view Sapporo Susukino.jpg | Purity Standard | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0) | [File:Night_view_Sapporo_Susukino.jpg](https://commons.wikimedia.org/wiki/File:Night_view_Sapporo_Susukino.jpg) |
+| `fukuoka-hakata-skyline.webp` | Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 47 115000.jpeg | Nesnad | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) | [File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_47_115000.jpeg](https://commons.wikimedia.org/wiki/File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_47_115000.jpeg) |
+| `fukuoka-hakata-skyline-dusk.webp` | Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 33 995000.jpeg | Nesnad | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) | [File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_33_995000.jpeg](https://commons.wikimedia.org/wiki/File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_33_995000.jpeg) |
+| `fukuoka-ohori-park-pond.webp` | Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg | Hirho | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0) | [File:Ōhori_Park_The_W_shore_of_Matsushima_Ōhori-kōen_Chūō-ku_Fukuoka_20260616_175108.jpg](https://commons.wikimedia.org/wiki/File:%C5%8Chori_Park_The_W_shore_of_Matsushima_%C5%8Chori-k%C5%8Den_Ch%C5%AB%C5%8D-ku_Fukuoka_20260616_175108.jpg) |
+
+Original sizes: Sapporo TV Tower 20180715.jpg 6000×4000 px; This is Sapporo (6960447275).jpg 5184×3456 px; Night view Sapporo Susukino.jpg 9610×6881 px; Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 47 115000.jpeg 6602×3902 px; Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 33 995000.jpeg 5958×3910 px; Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg 7984×5984 px.
+
+Adding a photo? Use only images whose licence allows reuse (CC0, or plain CC BY with a visible credit), add a row to the right table here, add its entry to `src/lib/data/homePhotos.ts` and, for a hero slideshow, to `src/lib/data/cityPhotos.ts`. The footer lists photographers by licence automatically.

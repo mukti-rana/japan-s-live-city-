@@ -1,6 +1,8 @@
 // The photographs on the homepage, with who took them and under what licence.
-// All twenty-four are from Wikimedia Commons, licensed CC0 (public-domain dedication), so
-// no credit is legally required — it is shown anyway, as a courtesy. Each file was
+// All thirty are from Wikimedia Commons. Twenty-four are CC0 (public-domain dedication), so no
+// credit is legally required — it is shown anyway, as a courtesy. Six (Sapporo and Fukuoka) are
+// CC BY 2.0 / 4.0, which DO require credit: the photographer and licence are shown with the photo
+// and in the footer, each linking to its source, and the footer says they were resized and compressed. Each file was
 // resized to 2560 px wide and converted to WebP at quality 80; camera metadata was
 // removed. The full record (source pages, originals) is in
 // public/images/home/CREDITS.md.
@@ -235,6 +237,60 @@ export const HOME_PHOTOS = {
     focus: "65% 50%",
     blur: "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADQBACdASoYABIAPu1srVEppaQiqAqpMB2JYgCdMxEP+A+EoQ+M83WcmELRe2kKQADODWrs/bNdc+qVGUW7cVQDyZkXRHgsVFqq1HNJkNfGVFRU1mKlshgJclTUpnX2Mg3PPSjX/pIcXa1vio9HV6okuKzKUrcFOpB3pHuiP2hopQwQG+2KAA==",
     credit: {"title": "仙台七夕まつり2026の装飾.jpg", "author": "Raspico", "license": "CC0", "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en", "sourceUrl": "https://commons.wikimedia.org/wiki/File:%E4%BB%99%E5%8F%B0%E4%B8%83%E5%A4%95%E3%81%BE%E3%81%A4%E3%82%8A2026%E3%81%AE%E8%A3%85%E9%A3%BE.jpg"},
+  },
+  sapporoTvTower: {
+    src: "/images/home/sapporo-tv-tower.webp",
+    width: 2560,
+    height: 1707,
+    alt: "Sapporo TV Tower rising above the trees under a cloudy sky",
+    focus: "50% 50%",
+    blur: "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAADwAwCdASoYABAAPu1iqk2ppaQiMAgBMB2JZwC/OB2Olc/6RMAWrfhQAP6KFq/GMlq4PhbR4wOnLzHl29japjSurfohD6gyp2xBPYCcnl9n1b3puyZ0IZbbDdEqKFpMTndkHfC3uwqcuSJusO8dLYIAAAA=",
+    credit: {"title": "Sapporo TV Tower 20180715.jpg", "author": "ume-y", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sapporo_TV_Tower_20180715.jpg"},
+  },
+  sapporoOdoriParkWinter: {
+    src: "/images/home/sapporo-odori-park-winter.webp",
+    width: 2560,
+    height: 1707,
+    alt: "Odori Park stretching through central Sapporo in winter, seen from the TV Tower, with mountains beyond",
+    focus: "62% 50%",
+    blur: "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JZACdACKT7nXka5+bgUcAAP7TK78410l+rXjlItV5TkmkUNcw5WI2yphXUv3YZwiq6li6NxQb5gQsagYIKQ9LXQ45oAAA",
+    credit: {"title": "This is Sapporo (6960447275).jpg", "author": "Cesar I. Martins", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:This_is_Sapporo_(6960447275).jpg"},
+  },
+  sapporoSusukinoNight: {
+    src: "/images/home/sapporo-susukino-night.webp",
+    width: 2560,
+    height: 1833,
+    alt: "The neon signs of Susukino in Sapporo along an empty street at night",
+    focus: "78% 50%",
+    blur: "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAABQBACdASoYABEAPu1iqE2ppaOiMAgBMB2JZwDO7CHgAXO6dsx/DQdTG5AAAP70H0ISIWMrRlGCQGZauIwVQLKwiIRw6EOpvZ7nbzb1s2AAAA==",
+    credit: {"title": "Night view Sapporo Susukino.jpg", "author": "Purity Standard", "license": "CC BY 2.0", "licenseUrl": "https://creativecommons.org/licenses/by/2.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Night_view_Sapporo_Susukino.jpg"},
+  },
+  fukuokaHakataSkyline: {
+    src: "/images/home/fukuoka-hakata-skyline.webp",
+    width: 2560,
+    height: 1513,
+    alt: "Hakata's buildings and a green park under a blue sky with scattered clouds",
+    focus: "50% 50%",
+    blur: "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADQAwCdASoYAA4APu1kqk4ppaQiMAgBMB2JZgCdACPx1jZ1q6r6BoAA96DIIO7XFIWAA4lnbwkE/nArvXEuAYzZm+yyEpM6El+h/lOTX66yLtbopIodYCL1yZ5A+AAA",
+    credit: {"title": "Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 47 115000.jpeg", "author": "Nesnad", "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_47_115000.jpeg"},
+  },
+  fukuokaHakataSkylineDusk: {
+    src: "/images/home/fukuoka-hakata-skyline-dusk.webp",
+    width: 2560,
+    height: 1680,
+    alt: "The same Hakata skyline at dusk, the sky turning blue and pink",
+    focus: "50% 50%",
+    blur: "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAABwAwCdASoYABAAPu1kqk4ppaQiMAgBMB2JYgCdAA2GOcI8CUoA/q9uWPt815IvuRTE1FjDBDGDdt/cVmm1hMMeolpscoRwTi0+CuRGhWJ72EoGp0wdTTZ1qCvywAAA",
+    credit: {"title": "Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 33 995000.jpeg", "author": "Nesnad", "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hakata_skyline_clouds_buildings_-_2024_September_23_24_various_09_29_33_995000.jpeg"},
+  },
+  fukuokaOhoriParkPond: {
+    src: "/images/home/fukuoka-ohori-park-pond.webp",
+    width: 2560,
+    height: 1919,
+    alt: "Pine trees on the shore of Matsushima island in the pond at Ōhori Park, Fukuoka",
+    focus: "50% 50%",
+    blur: "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBQCdASoYABIAPuVgp02pJaOiMAwBIByJZgDCgCBXjJifijlPS/06CxqoDyXIJUMAAP50HppfvqRGOsMMeEIqybAWYR+pGKcHDUzHvvUzvN+HFRfFiRDaBMK0BLwhJURR5I7+kpM7+l+K9jERqytLDTpuDW14cMfo8hm5U4C+gAAA",
+    credit: {"title": "Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg", "author": "Hirho", "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:%C5%8Chori_Park_The_W_shore_of_Matsushima_%C5%8Chori-k%C5%8Den_Ch%C5%AB%C5%8D-ku_Fukuoka_20260616_175108.jpg"},
   },
 } as const satisfies Record<string, HomePhoto>;
 
