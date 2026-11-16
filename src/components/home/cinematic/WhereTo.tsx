@@ -13,7 +13,7 @@ function PlaceCard({ photo, kanji, place, href, sizes, className }: { photo: Hom
   return (
     <ScrollReveal>
       <article className={`group relative isolate flex items-end overflow-hidden rounded-2xl border border-line ${className}`}>
-        <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} quality={75} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
+        <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
         <div className="flex w-full items-end justify-between gap-4 p-[clamp(20px,3vw,40px)]">
           <div className="min-w-0">

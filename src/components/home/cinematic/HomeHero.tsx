@@ -109,7 +109,7 @@ export default function HomeHero() {
       {photo ? (
         <div key={photo.src} className="home-fade absolute inset-0 -z-30">
           <div className="home-zoom absolute inset-0">
-            <Image src={photo.src} alt={photo.alt} fill priority sizes="100vw" quality={78} placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[96%_50%] sm:object-[88%_50%] lg:object-center" />
+            <Image src={photo.src} alt={photo.alt} fill preload sizes="100vw" placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[96%_50%] sm:object-[88%_50%] lg:object-center" />
           </div>
         </div>
       ) : (
