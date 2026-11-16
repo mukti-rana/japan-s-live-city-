@@ -109,7 +109,7 @@ export default function HomeHero() {
       {photo ? (
         <div key={photo.src} className="home-fade absolute inset-0 -z-30">
           <div className="home-zoom absolute inset-0">
-            <Image src={photo.src} alt={photo.alt} fill priority sizes="100vw" quality={78} placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[68%_50%] sm:object-center" />
+            <Image src={photo.src} alt={photo.alt} fill priority sizes="100vw" quality={78} placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[96%_50%] sm:object-[88%_50%] lg:object-center" />
           </div>
         </div>
       ) : (
@@ -118,7 +118,9 @@ export default function HomeHero() {
       <div aria-hidden="true" className="absolute inset-0 -z-20">
         <HeroAtmosphere condition={weather?.icon ?? "clear"} season={season} isNight={isNight} />
       </div>
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0)_28%,rgba(0,0,0,0.62)_72%,#000_100%),linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,0,0,0)_62%)]" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_26%,rgba(0,0,0,0.5)_62%,#000_100%)]" />
+      {/* A side shade for the text column, wide screens only (on a phone the text sits over the lower part). */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,0,0,0)_62%)] sm:block" />
 
       <div className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32">
         <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.2em] text-white/70">
