@@ -786,3 +786,18 @@ body:has([data-home-root]) > footer { background: #000000; border-color: rgba(25
 .home-fade { animation: home-fade 0.7s ease-out both; }
 html[data-atm-paused="true"] .home-zoom { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .home-zoom, .home-fade { animation: none; } }
+
+/* Homepage: nothing reads smaller than 12px. The widgets on this page are shared with other
+   pages, which keep their own sizes; only here are the 9, 10 and 11px labels lifted to 12px. */
+[data-home-root] .text-\[9px\], [data-home-root] .text-\[10px\], [data-home-root] .text-\[11px\],
+body:has([data-home-root]) [data-site-header] .text-\[9px\],
+body:has([data-home-root]) [data-site-header] .text-\[10px\],
+body:has([data-home-root]) [data-site-header] .text-\[11px\],
+body:has([data-home-root]) > footer .text-\[9px\],
+body:has([data-home-root]) > footer .text-\[10px\],
+body:has([data-home-root]) > footer .text-\[11px\],
+body:has([data-home-root]) aside .text-\[9px\],
+body:has([data-home-root]) aside .text-\[10px\],
+body:has([data-home-root]) aside .text-\[11px\] {
+  font-size: 0.75rem;
+}
