@@ -43,37 +43,44 @@ const TOOLS: {
 // owns the bottom edge. Sticky rather than fixed, so it centres on the content
 // column and comes to rest above the footer instead of covering it.
 //
-// It tucks away while the page is scrolled down, so it never sits over a card being read,
-// and comes back when scrolling up, near the top or bottom of the page, when the pointer
-// goes to the bottom edge, or when a keyboard user tabs into it.
+// It never sits over what is being read. It is shown on the opening screen and at the very
+// end of the page, where there is nothing under it; everywhere else it is tucked away, and
+// comes up only when asked for: the pointer going to the bottom edge, or a keyboard user
+// tabbing into it. A thin line at the bottom edge shows it is there.
 export default function QuickDock() {
   const { t } = useLanguage();
-  const [away, setAway] = useState(false);
+  const [atEnds, setAtEnds] = useState(true);
+  const [edge, setEdge] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const shown = atEnds || edge || focused;
 
   useEffect(() => {
-    let last = window.scrollY;
     let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const y = window.scrollY;
+      const nearTop = y < window.innerHeight * 0.6;
+      const nearEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 160;
+      setAtEnds(nearTop || nearEnd);
+    };
     const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const y = window.scrollY;
-        const dy = y - last;
-        if (Math.abs(dy) < 8) return;
-        last = y;
-        const nearTop = y < 160;
-        const nearEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 200;
-        setAway(!(nearTop || nearEnd || dy < 0));
-      });
+      if (!frame) frame = requestAnimationFrame(measure);
     };
     const onPointer = (event: PointerEvent) => {
-      if (event.pointerType !== "touch" && event.clientY > window.innerHeight - 96) setAway(false);
+      if (event.pointerType === "touch") return;
+      // Reveal at the bottom edge; once the pointer has moved well clear of the dock, tuck it away again.
+      const fromBottom = window.innerHeight - event.clientY;
+      if (fromBottom < 72) setEdge(true);
+      else if (fromBottom > 168) setEdge(false);
     };
+    measure();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("resize", onScroll);
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
@@ -88,14 +95,19 @@ export default function QuickDock() {
   }));
 
   return (
-    <div
-      data-away={away}
-      onFocusCapture={() => setAway(false)}
-      className={`pointer-events-none sticky bottom-4 z-30 hidden justify-center transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none lg:flex ${
-        away ? "translate-y-[calc(100%+1.5rem)] opacity-0 [&>nav]:pointer-events-none" : ""
-      }`}
-    >
-      <MagneticDock items={items} label={t("quickaccess.title")} className="pointer-events-auto" />
-    </div>
+    <>
+      <div
+        data-away={!shown}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={() => setFocused(false)}
+        className={`pointer-events-none sticky bottom-4 z-30 hidden justify-center transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none lg:flex ${
+          shown ? "" : "translate-y-[calc(100%+1.5rem)] opacity-0 [&>nav]:pointer-events-none"
+        }`}
+      >
+        <MagneticDock items={items} label={t("quickaccess.title")} className="pointer-events-auto" />
+      </div>
+      {/* The "dock is down here" cue, only while the dock is tucked away. */}
+      <span aria-hidden="true" className={`pointer-events-none fixed bottom-1.5 left-1/2 z-30 hidden h-1 w-14 -translate-x-1/2 rounded-full bg-white/35 transition-opacity duration-300 motion-reduce:transition-none lg:block ${shown ? "opacity-0" : "opacity-100"}`} />
+    </>
   );
 }
