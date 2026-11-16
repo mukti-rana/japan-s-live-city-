@@ -98,7 +98,7 @@ export default function Home() {
         {/* 06 — trains (still labelled DEMO until a live feed is connected) */}
         <BackdropBand photo={HOME_PHOTOS.dotonbori} side="right">
           <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status">
-            <ScrollReveal className="max-w-3xl">
+            <ScrollReveal className="max-w-2xl">
               <TrainListWidget />
             </ScrollReveal>
           </Chapter>

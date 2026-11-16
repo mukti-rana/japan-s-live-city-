@@ -13,10 +13,10 @@ const BLUR = "blur" as const;
 export default function BackdropBand({ photo, children, side, className = "" }: { photo: HomePhoto; children: ReactNode; side?: "right"; className?: string }) {
   return (
     <div className={`relative isolate overflow-hidden ${className}`}>
-      <Image src={photo.src} alt="" sizes="100vw" fill placeholder={BLUR} blurDataURL={photo.blur} className={`-z-20 object-cover ${side === "right" ? "opacity-80 md:object-[70%_50%]" : "opacity-55"}`} />
-      <div aria-hidden="true" className={`absolute inset-0 -z-10 bg-[linear-gradient(#000,rgba(0,0,0,0.78)_26%,rgba(0,0,0,0.78)_74%,#000)] ${side === "right" ? "md:hidden" : ""}`} />
+      <Image src={photo.src} alt="" sizes="100vw" fill placeholder={BLUR} blurDataURL={photo.blur} className={`-z-20 object-cover ${side === "right" ? "opacity-80 xl:object-[70%_50%]" : "opacity-55"}`} />
+      <div aria-hidden="true" className={`absolute inset-0 -z-10 bg-[linear-gradient(#000,rgba(0,0,0,0.78)_26%,rgba(0,0,0,0.78)_74%,#000)] ${side === "right" ? "xl:hidden" : ""}`} />
       {side === "right" && (
-        <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(#000,transparent_22%,transparent_78%,#000),linear-gradient(90deg,#000_0%,rgba(0,0,0,0.9)_38%,rgba(0,0,0,0.3)_100%)] md:block" />
+        <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(#000,transparent_22%,transparent_78%,#000),linear-gradient(90deg,#000_0%,rgba(0,0,0,0.9)_38%,rgba(0,0,0,0.3)_100%)] xl:block" />
       )}
       {children}
       <PhotoCredit photo={photo} className="absolute bottom-3 right-[clamp(20px,5vw,72px)] hidden sm:block" />
