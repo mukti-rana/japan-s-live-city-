@@ -15,7 +15,6 @@ import { lookup } from "@/lib/i18n/translate";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
 import { useAmbientLighting } from "@/lib/theme/ambientLighting";
-import { clockOf } from "@/lib/weather/insights";
 import { currentSeasonJST, isNightNow } from "@/lib/weather/time";
 import type { WeatherSnapshot } from "@/lib/services/weather";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
@@ -186,7 +185,7 @@ export default function HomeHero() {
                 <b className="font-medium text-white">{Math.round(weather.tempC)}°</b> {translate(weather.condition, language)}
               </span>
               <span className="hidden sm:inline">
-                {tr("Sunrise")} <b className="font-medium text-white">{clockOf(weather.sunrise)}</b> · {tr("Sunset")} <b className="font-medium text-white">{clockOf(weather.sunset)}</b>
+                {tr("Sunrise")} <b className="font-medium text-white">{weather.sunrise}</b> · {tr("Sunset")} <b className="font-medium text-white">{weather.sunset}</b>
               </span>
             </>
           ) : (isLive || isManual) && !isLoadingLocation ? (
