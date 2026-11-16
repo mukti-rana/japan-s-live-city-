@@ -17,7 +17,7 @@ function PlaceCard({ photo, kanji, place, href, sizes, className }: { photo: Hom
       <article className={`group relative isolate flex h-full items-end overflow-hidden ${className}`}>
         <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-        <div className={`flex w-full items-end justify-between gap-4 py-[clamp(24px,5vh,56px)] ${PAD}`}>
+        <div className={`flex w-full flex-col items-start gap-3 py-[clamp(24px,5vh,56px)] xl:flex-row xl:items-end xl:justify-between xl:gap-4 ${PAD}`}>
           <div className="min-w-0">
             <p lang="ja" aria-hidden="true" className="font-[family-name:var(--font-home-kanji)] text-[clamp(22px,2.8vw,40px)] text-white/85 [text-shadow:0_1px_12px_rgba(0,0,0,0.7)]">
               {kanji}
@@ -29,7 +29,7 @@ function PlaceCard({ photo, kanji, place, href, sizes, className }: { photo: Hom
               </Link>
             </h3>
           </div>
-          <PhotoCredit photo={photo} className="relative z-10 hidden shrink-0 text-right sm:block" />
+          <PhotoCredit photo={photo} className="relative z-10 hidden shrink-0 sm:block xl:text-right" />
         </div>
       </article>
     </ScrollReveal>
