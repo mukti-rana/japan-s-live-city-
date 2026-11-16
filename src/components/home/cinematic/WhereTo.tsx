@@ -11,9 +11,9 @@ const PAD = "px-[clamp(20px,5vw,72px)]";
 
 // `place` is the place's own name (a proper noun), shown as it is written. The photographs
 // run edge to edge with only a hairline of black between them.
-function PlaceCard({ photo, kanji, place, href, sizes, className }: { photo: HomePhoto; kanji: string; place: string; href: string; sizes: string; className: string }) {
+function PlaceCard({ photo, kanji, place, href, sizes, className, delay = 0 }: { photo: HomePhoto; kanji: string; place: string; href: string; sizes: string; className: string; delay?: number }) {
   return (
-    <ScrollReveal className="h-full">
+    <ScrollReveal className="h-full" delay={delay}>
       <article className={`group relative isolate flex h-full items-end overflow-hidden ${className}`}>
         <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
@@ -52,11 +52,11 @@ export default function WhereTo() {
         <PlaceCard photo={HOME_PHOTOS.fushimi} kanji="伏見稲荷大社" place="Fushimi Inari, Kyoto" href="/explore/Q714828" sizes="100vw" className={first} />
         <div className="grid gap-[3px] md:grid-cols-2">
           <PlaceCard photo={HOME_PHOTOS.dotonbori} kanji="道頓堀" place="Dōtonbori, Osaka" href="/osaka" sizes={halfSizes} className={half} />
-          <PlaceCard photo={HOME_PHOTOS.itsukushima} kanji="厳島神社" place="Itsukushima, Miyajima" href="/explore/Q191763" sizes={halfSizes} className={half} />
+          <PlaceCard photo={HOME_PHOTOS.itsukushima} kanji="厳島神社" place="Itsukushima, Miyajima" href="/explore/Q191763" sizes={halfSizes} className={half} delay={0.12} />
         </div>
         <div className="grid gap-[3px] md:grid-cols-2">
           <PlaceCard photo={HOME_PHOTOS.todaiji} kanji="東大寺" place="Tōdai-ji, Nara" href="/explore/Q460367" sizes={halfSizes} className={half} />
-          <PlaceCard photo={HOME_PHOTOS.fuji} kanji="富士山" place="Chureito Pagoda & Fuji" href="/explore/Q21652375" sizes={halfSizes} className={half} />
+          <PlaceCard photo={HOME_PHOTOS.fuji} kanji="富士山" place="Chureito Pagoda & Fuji" href="/explore/Q21652375" sizes={halfSizes} className={half} delay={0.12} />
         </div>
       </div>
       <div className={`${CHAPTER_WIDTH} mt-[clamp(56px,10vh,120px)]`}>

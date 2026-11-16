@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import T from "@/components/i18n/T";
 import Tx from "@/components/i18n/Tx";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
@@ -27,8 +28,8 @@ export default function HomeFooterIndex() {
           <Tx en="All destinations" />
         </h2>
         <nav aria-labelledby="home-index-h" className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
-          {COLUMNS.map((c) => (
-            <div key={c.heading}>
+          {COLUMNS.map((c, i) => (
+            <ScrollReveal key={c.heading} delay={i * 0.06}>
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-text-tertiary">
                 <Tx en={c.heading} />
               </p>
@@ -41,7 +42,7 @@ export default function HomeFooterIndex() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScrollReveal>
           ))}
         </nav>
         <p className="mt-12 max-w-[90ch] text-xs leading-relaxed text-text-tertiary">

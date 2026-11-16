@@ -59,10 +59,14 @@ export default function Home() {
             <ScrollReveal>
               <LiveWeatherCard headingLevel={3} />
             </ScrollReveal>
-            <ScrollReveal className="grid grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
-              <EmergencyPreview />
-              <EventsNearYou />
-            </ScrollReveal>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
+              <ScrollReveal from="left" className="h-full">
+                <EmergencyPreview />
+              </ScrollReveal>
+              <ScrollReveal from="right" delay={0.08} className="h-full">
+                <EventsNearYou />
+              </ScrollReveal>
+            </div>
           </div>
         </Chapter>
 
@@ -72,10 +76,14 @@ export default function Home() {
         {/* 04 — the map and a real camera */}
         <BackdropBand photo={HOME_PHOTOS.hakodate}>
           <Chapter id="live" number="04" label="Live" heading="A live window" intro="The map of Japan, and a real camera on Shibuya Crossing." href="/map" linkLabel="Open the map" flush>
-            <ScrollReveal className="grid grid-cols-1 gap-4 md:grid-cols-[3fr_2fr] [&>*]:min-w-0">
-              <JapanMapWidget />
-              <LiveCityCamCard />
-            </ScrollReveal>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-[3fr_2fr] [&>*]:min-w-0">
+              <ScrollReveal from="left" className="h-full">
+                <JapanMapWidget />
+              </ScrollReveal>
+              <ScrollReveal from="right" delay={0.1} className="h-full">
+                <LiveCityCamCard />
+              </ScrollReveal>
+            </div>
           </Chapter>
         </BackdropBand>
 
@@ -85,10 +93,14 @@ export default function Home() {
             <ScrollReveal>
               <LatestNewsNearYou headingLevel={3} />
             </ScrollReveal>
-            <ScrollReveal className="grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_1fr] [&>*]:min-w-0">
-              <HeadlinesMini />
-              <JapanNowCard />
-            </ScrollReveal>
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_1fr] [&>*]:min-w-0">
+              <ScrollReveal from="left" className="h-full">
+                <HeadlinesMini />
+              </ScrollReveal>
+              <ScrollReveal from="right" delay={0.1} className="h-full">
+                <JapanNowCard />
+              </ScrollReveal>
+            </div>
             <ScrollReveal>
               <TrendRadarSection headingLevel={3} />
             </ScrollReveal>
@@ -98,7 +110,7 @@ export default function Home() {
         {/* 06 — trains (still labelled DEMO until a live feed is connected) */}
         <BackdropBand photo={HOME_PHOTOS.dotonbori} side="right">
           <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status">
-            <ScrollReveal className="max-w-2xl">
+            <ScrollReveal from="left" className="max-w-2xl">
               <TrainListWidget />
             </ScrollReveal>
           </Chapter>

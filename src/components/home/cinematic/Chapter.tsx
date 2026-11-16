@@ -26,27 +26,39 @@ export function ChapterHeader({
   className?: string;
 }) {
   return (
-    <ScrollReveal className={`flex flex-wrap items-end justify-between gap-x-8 gap-y-5 border-t border-white/10 pt-[clamp(20px,3vh,32px)] ${className}`}>
-      <div className="min-w-0">
-        <p className="text-xs font-medium uppercase tracking-[0.22em] text-text-tertiary">
-          <span className="tabular-nums">{number}</span> <span aria-hidden="true">·</span> <Tx en={label} />
-        </p>
-        <h2 id={`${id}-h`} className="mt-[clamp(14px,2.4vh,28px)] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,116px)] font-normal leading-[0.98] tracking-[-0.025em] text-foreground">
-          <Tx en={heading} />
-        </h2>
-        {intro && (
-          <p className="mt-[clamp(14px,2.4vh,28px)] max-w-[54ch] text-[clamp(16px,1.35vw,20px)] leading-relaxed text-text-secondary">
-            <Tx en={intro} />
-          </p>
+    <div className={className}>
+      {/* The hairline draws itself, then the label, heading, line of text and link follow it. */}
+      <ScrollReveal from="line" className="h-px w-full bg-white/10" />
+      <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-5 pt-[clamp(20px,3vh,32px)]">
+        <div className="min-w-0">
+          <ScrollReveal delay={0.1}>
+            <p className="text-xs font-medium uppercase tracking-[0.22em] text-text-tertiary">
+              <span className="tabular-nums">{number}</span> <span aria-hidden="true">·</span> <Tx en={label} />
+            </p>
+          </ScrollReveal>
+          <ScrollReveal from="left" delay={0.18}>
+            <h2 id={`${id}-h`} className="mt-[clamp(14px,2.4vh,28px)] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,116px)] font-normal leading-[0.98] tracking-[-0.025em] text-foreground">
+              <Tx en={heading} />
+            </h2>
+          </ScrollReveal>
+          {intro && (
+            <ScrollReveal delay={0.3}>
+              <p className="mt-[clamp(14px,2.4vh,28px)] max-w-[54ch] text-[clamp(16px,1.35vw,20px)] leading-relaxed text-text-secondary">
+                <Tx en={intro} />
+              </p>
+            </ScrollReveal>
+          )}
+        </div>
+        {href && linkLabel && (
+          <ScrollReveal from="right" delay={0.36}>
+            <Link href={href} className="inline-flex h-11 items-center rounded-full border border-white/20 bg-black/50 px-5 text-sm text-white/85 backdrop-blur-sm transition-colors hover:border-white/50 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <Tx en={linkLabel} />
+              <span aria-hidden="true" className="ml-1.5">→</span>
+            </Link>
+          </ScrollReveal>
         )}
       </div>
-      {href && linkLabel && (
-        <Link href={href} className="inline-flex h-11 items-center rounded-full border border-white/20 bg-black/50 px-5 text-sm text-white/85 backdrop-blur-sm transition-colors hover:border-white/50 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          <Tx en={linkLabel} />
-          <span aria-hidden="true" className="ml-1.5">→</span>
-        </Link>
-      )}
-    </ScrollReveal>
+    </div>
   );
 }
 
