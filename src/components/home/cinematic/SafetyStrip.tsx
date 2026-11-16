@@ -15,11 +15,11 @@ export default function SafetyStrip() {
   const tr = useTranslate();
   return (
     <div>
-      <ul className="grid gap-3 sm:grid-cols-3">
+      <ul className="grid border-t border-white/10 sm:grid-cols-3 sm:divide-x sm:divide-white/10 max-sm:divide-y max-sm:divide-white/10">
         {QUICK_NUMBERS.map((q) => (
           <li key={q.id}>
-            <a href={`tel:${q.number}`} aria-label={`${tr("Call")}: ${q.number} — ${pickJaEn(q.label, language)}`} className={`flex min-h-24 flex-col items-center justify-center gap-1 rounded-2xl border border-line bg-surface-1 px-4 py-4 text-center transition-colors hover:border-line-strong ${ring}`}>
-              <span className="flex items-center gap-2 font-[family-name:var(--font-home-serif)] text-4xl leading-none text-white tabular-nums">
+            <a href={`tel:${q.number}`} aria-label={`${tr("Call")}: ${q.number} — ${pickJaEn(q.label, language)}`} className={`flex min-h-32 flex-col items-center justify-center gap-2 px-4 py-6 text-center transition-colors hover:bg-white/[0.03] ${ring}`}>
+              <span className="flex items-center gap-2 font-[family-name:var(--font-home-serif)] text-[clamp(40px,5vw,72px)] leading-none text-white tabular-nums">
                 <PhoneCall size={18} aria-hidden="true" className="text-danger" />
                 {q.number}
               </span>

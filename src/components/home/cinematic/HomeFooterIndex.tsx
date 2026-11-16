@@ -21,8 +21,8 @@ export default function HomeFooterIndex() {
   // Each photographer once, linking to their first photograph's page.
   const authors = Object.values(HOME_PHOTOS).filter((p, i, all) => all.findIndex((q) => q.credit.author === p.credit.author) === i);
   return (
-    <section aria-labelledby="home-index-h" className="border-t border-line pb-[clamp(120px,14vw,160px)] pt-[clamp(48px,7vw,88px)]">
-      <div className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)]">
+    <section aria-labelledby="home-index-h" className="border-t border-white/10 pb-[clamp(120px,14vw,160px)] pt-[clamp(48px,7vw,88px)]">
+      <div className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)]">
         <h2 id="home-index-h" className="sr-only">
           <Tx en="All destinations" />
         </h2>

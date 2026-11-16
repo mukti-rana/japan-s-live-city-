@@ -1,3 +1,4 @@
+import "@/components/home/cinematic/cinematic.css";
 import Chapter from "@/components/home/cinematic/Chapter";
 import ChapterRail from "@/components/home/cinematic/ChapterRail";
 import BackdropBand from "@/components/home/cinematic/BackdropBand";
@@ -95,11 +96,13 @@ export default function Home() {
         </Chapter>
 
         {/* 06 — trains (still labelled DEMO until a live feed is connected) */}
-        <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status" flush>
-          <ScrollReveal className="max-w-3xl">
-            <TrainListWidget />
-          </ScrollReveal>
-        </Chapter>
+        <BackdropBand photo={HOME_PHOTOS.dotonbori} side="right">
+          <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status">
+            <ScrollReveal className="max-w-3xl">
+              <TrainListWidget />
+            </ScrollReveal>
+          </Chapter>
+        </BackdropBand>
 
         {/* 07 — the latest real Community posts */}
         <CommunityChapter />

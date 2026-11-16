@@ -5,16 +5,21 @@ import type { HomePhoto } from "@/lib/data/homePhotos";
 
 const BLUR = "blur" as const;
 
-// A full-width band with a photograph dimmed far down behind it. The picture is
+// A full-width band with a photograph behind it, fading to pure black at the top and
+// bottom so it melts into the chapters either side (no border, no edge). The picture is
 // decoration (the credit is the visible text); every block of text on top sits on a
-// black scrim, fading to pure black at the top and bottom edges.
-export default function BackdropBand({ photo, children, className = "" }: { photo: HomePhoto; children: ReactNode; className?: string }) {
+// black scrim. `side="right"` keeps the left, where the text is, darker and lets the
+// photograph show on the right on wide screens.
+export default function BackdropBand({ photo, children, side, className = "" }: { photo: HomePhoto; children: ReactNode; side?: "right"; className?: string }) {
   return (
-    <div className={`relative isolate overflow-hidden border-y border-line ${className}`}>
-      <Image src={photo.src} alt="" sizes="100vw" fill placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 object-cover opacity-55" />
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(#000,rgba(0,0,0,0.72)_28%,rgba(0,0,0,0.72)_72%,#000)]" />
+    <div className={`relative isolate overflow-hidden ${className}`}>
+      <Image src={photo.src} alt="" sizes="100vw" fill placeholder={BLUR} blurDataURL={photo.blur} className={`-z-20 object-cover ${side === "right" ? "opacity-80 md:object-[70%_50%]" : "opacity-55"}`} />
+      <div aria-hidden="true" className={`absolute inset-0 -z-10 bg-[linear-gradient(#000,rgba(0,0,0,0.78)_26%,rgba(0,0,0,0.78)_74%,#000)] ${side === "right" ? "md:hidden" : ""}`} />
+      {side === "right" && (
+        <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(#000,transparent_22%,transparent_78%,#000),linear-gradient(90deg,#000_0%,rgba(0,0,0,0.9)_38%,rgba(0,0,0,0.3)_100%)] md:block" />
+      )}
       {children}
-      <PhotoCredit photo={photo} className="absolute bottom-3 right-[clamp(16px,4vw,48px)] hidden sm:block" />
+      <PhotoCredit photo={photo} className="absolute bottom-3 right-[clamp(20px,5vw,72px)] hidden sm:block" />
     </div>
   );
 }

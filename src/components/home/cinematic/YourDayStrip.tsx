@@ -59,8 +59,8 @@ export default function YourDayStrip() {
   if (local.events.length) parts.push(language === "ja" ? `地域のイベントが${local.events.length}件あります。` : `${local.events.length} local event${local.events.length === 1 ? "" : "s"} today.`);
 
   return (
-    <section id="your-day" aria-labelledby="your-day-h" className="border-y border-line bg-surface-1">
-      <div className="mx-auto flex w-full max-w-[1240px] flex-wrap items-center gap-x-6 gap-y-3 px-[clamp(16px,4vw,48px)] py-4">
+    <section id="your-day" aria-labelledby="your-day-h" className="border-b border-white/10 bg-black">
+      <div className="mx-auto flex w-full max-w-[1480px] flex-wrap items-center gap-x-6 gap-y-3 px-[clamp(20px,5vw,72px)] py-5">
         <h2 id="your-day-h" className="font-[family-name:var(--font-home-serif)] text-xl font-normal text-foreground">
           {t("yourDay")}
         </h2>
@@ -83,7 +83,7 @@ export default function YourDayStrip() {
         </Link>
       </div>
       {open && (
-        <div id="your-day-details" className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-6">
+        <div id="your-day-details" className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)] pb-6">
           <div className="max-w-xl">
             <YourDay />
           </div>

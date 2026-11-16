@@ -1,0 +1,41 @@
+/* Homepage only (imported by the home page, so no other route loads it).
+
+   The page reads as one continuous scroll, not a wall of dashboard boxes. The widgets are the
+   same shared components used on other pages; here their frames are taken off and each one
+   becomes an open section under a hairline. Nothing is hidden or removed: every label,
+   number, button and state is still there. Everything below is scoped to [data-home-root]. */
+
+/* ── Cards (GlassCard and WidgetFrame): no box, a hairline above, room to breathe ── */
+[data-home-root] [data-card] {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding: clamp(20px, 3vh, 32px) 0 0;
+  /* GlassCard lifts on hover through an inline transform; an open section should not move. */
+  transform: none !important;
+}
+
+/* ── Tiles inside a card: open cells separated by hairlines instead of boxes in boxes ── */
+[data-home-root] [data-card] :is(.rounded-xl, .rounded-2xl).border.border-glass-border.bg-glass-bg,
+[data-home-root] [data-card] :is(.rounded-xl, .rounded-2xl).border.border-glass-border.bg-glass-bg-strong\/40 {
+  background: transparent;
+  border-width: 1px 0 0 0;
+  border-color: rgba(255, 255, 255, 0.09);
+  border-radius: 0;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ── Weather: a bigger temperature and a taller scene ── */
+[data-home-root] #now .text-7xl,
+[data-home-root] #now .text-6xl {
+  font-size: clamp(4.5rem, 8.5vw, 8rem);
+}
+[data-home-root] #now [data-card] section.keep-dark-ink {
+  min-height: clamp(20rem, 46vh, 34rem);
+}

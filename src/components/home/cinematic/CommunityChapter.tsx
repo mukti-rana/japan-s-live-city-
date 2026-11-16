@@ -33,7 +33,7 @@ export default async function CommunityChapter() {
           </ScrollReveal>
         ) : (
           <ScrollReveal>
-            <div className="mx-auto max-w-3xl rounded-2xl border border-dashed border-white/25 bg-black/60 px-6 py-[clamp(32px,6vw,64px)] text-center backdrop-blur">
+            <div className="mx-auto max-w-3xl border-y border-white/10 px-6 py-[clamp(40px,8vh,96px)] text-center">
               <h3 className="font-[family-name:var(--font-home-serif)] text-[clamp(26px,3.4vw,38px)] font-normal leading-tight text-white">
                 <Tx en="Be the first to share an experience from Japan." />
               </h3>

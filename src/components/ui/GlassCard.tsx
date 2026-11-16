@@ -41,6 +41,7 @@ export default function GlassCard({
     <motion.div
       whileHover={reduceMotion || !lifts ? undefined : { y: -3 }}
       transition={{ type: "spring", stiffness: 300, damping: 24 }}
+      data-card={variant}
       className={`${SURFACE[variant]} ${className}`}
     >
       {children}
