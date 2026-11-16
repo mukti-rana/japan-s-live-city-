@@ -776,7 +776,7 @@ body:has([data-home-root]) [data-site-header] > header[data-compact="true"] {
   border-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(16px);
 }
-body:has([data-home-root]) > footer { background: #000000; border-color: rgba(255, 255, 255, 0.1); }
+body:has([data-home-root]) > footer { background: #000000; border-color: rgba(255, 255, 255, 0.1); font-size: 0.75rem; }
 
 /* Homepage hero: one slow zoom on the photograph, a soft fade when it changes. Both
    stop under reduced motion; the zoom also pauses while the tab is hidden. */
