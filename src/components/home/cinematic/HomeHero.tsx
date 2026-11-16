@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, LocateFixed, MapPin, Sparkles } from "lucide-react";
+import { useReducedMotion } from "motion/react";
+import { ArrowRight, LocateFixed, MapPin, Pause, Play, Sparkles } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
+import HeroSlides from "@/components/home/cinematic/HeroSlides";
 import PhotoCredit from "@/components/home/cinematic/PhotoCredit";
-import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
+import { type HomePhoto } from "@/lib/data/homePhotos";
+import { CITY_PHOTOS } from "@/lib/data/cityPhotos";
 import { DEFAULT_HERO_ATMOSPHERE, HERO_CITIES, findHeroCity, type HeroCityInfo } from "@/lib/data/heroCities";
 import { dateFormatter } from "@/lib/i18n/datetime";
 import { useTranslate, translate } from "@/lib/i18n/inline";
@@ -19,15 +21,10 @@ import { currentSeasonJST, isNightNow } from "@/lib/weather/time";
 import type { WeatherSnapshot } from "@/lib/services/weather";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
-// A real, high-resolution photograph exists for these cities. Any other city gets the
-// quiet gradient it always had — never another city's photo under its name.
-const CITY_PHOTO: Record<string, HomePhoto> = {
-  tokyo: HOME_PHOTOS.hero,
-  kyoto: HOME_PHOTOS.fushimi,
-  osaka: HOME_PHOTOS.dotonbori,
-  nara: HOME_PHOTOS.todaiji,
-  hiroshima: HOME_PHOTOS.itsukushima,
-};
+// Real, high-resolution photographs exist for some cities (src/lib/data/cityPhotos.ts); the hero
+// rotates through them. Any other city gets the quiet gradient it always had — never another
+// city's photo under its name.
+const NO_PHOTOS: readonly HomePhoto[] = [];
 
 function greetingKey(hour: number): TranslationKey {
   if (hour < 5) return "hero.goodNight";
@@ -46,7 +43,6 @@ function useJstNow() {
   return now;
 }
 
-const BLUR = "blur" as const;
 
 const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
@@ -64,6 +60,9 @@ export default function HomeHero() {
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
   const [question, setQuestion] = useState("");
+  const [paused, setPaused] = useState(false);
+  const [shown, setShown] = useState<HomePhoto | null>(null);
+  const reduceMotion = useReducedMotion();
   const now = useJstNow();
 
   function pickCity(city: HeroCityInfo) {
@@ -86,8 +85,10 @@ export default function HomeHero() {
   const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
   const season = currentSeasonJST();
 
-  // With no city decided yet, the page shows the Tokyo photograph as its default scene.
-  const photo = matchedCity ? CITY_PHOTO[matchedCity.slug] : needsPicker || isLoadingLocation ? HOME_PHOTOS.hero : undefined;
+  // With no city decided yet, the page shows Tokyo's photographs as its default scene.
+  const photos = matchedCity ? (CITY_PHOTOS[matchedCity.slug] ?? NO_PHOTOS) : needsPicker || isLoadingLocation ? CITY_PHOTOS.tokyo : NO_PHOTOS;
+  const credit = photos.find((p) => p.src === shown?.src) ?? photos[0];
+  const slideshow = photos.length > 1 && !reduceMotion;
   const atmosphere = matchedCity?.atmosphere ?? DEFAULT_HERO_ATMOSPHERE;
   const kanji = matchedCity?.nameJa ?? "日本";
 
@@ -105,15 +106,13 @@ export default function HomeHero() {
 
   return (
     <section id="top" aria-labelledby="home-h1" className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-black">
-      {/* Photograph (or, for a city without one, its gradient), then weather particles, then the scrim. */}
-      {photo ? (
-        <div key={photo.src} className="home-fade absolute inset-0 -z-30">
-          <div className="home-zoom absolute inset-0">
-            <Image src={photo.src} alt={photo.alt} fill preload sizes="100vw" placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[96%_50%] sm:object-[88%_50%] lg:object-center" />
-          </div>
+      {/* The gradient is always underneath: it is the whole scene for a city without photographs,
+          and what shows if a photograph cannot load. Then the photographs, the weather, the scrim. */}
+      <div aria-hidden="true" className={`absolute inset-0 -z-40 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
+      {photos.length > 0 && (
+        <div className="absolute inset-0 -z-30">
+          <HeroSlides photos={photos} paused={paused} onShow={setShown} />
         </div>
-      ) : (
-        <div aria-hidden="true" className={`absolute inset-0 -z-30 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
       )}
       <div aria-hidden="true" className="absolute inset-0 -z-20">
         <HeroAtmosphere condition={weather?.icon ?? "clear"} season={season} isNight={isNight} />
@@ -239,7 +238,20 @@ export default function HomeHero() {
         </div>
       </div>
 
-      {photo && <PhotoCredit photo={photo} className="absolute bottom-3 right-[clamp(16px,4vw,48px)] hidden sm:block" />}
+      <div className="absolute bottom-3 right-[clamp(16px,4vw,48px)] flex items-center gap-3">
+        {credit && <PhotoCredit photo={credit} className="hidden sm:block" />}
+        {slideshow && (
+          <button
+            type="button"
+            onClick={() => setPaused((p) => !p)}
+            aria-pressed={paused}
+            aria-label={paused ? tr("Play photo slideshow") : tr("Pause photo slideshow")}
+            className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white/85 backdrop-blur-sm transition-colors hover:border-white/55 hover:bg-white/15 hover:text-white ${ring}`}
+          >
+            {paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
+          </button>
+        )}
+      </div>
     </section>
   );
 }
