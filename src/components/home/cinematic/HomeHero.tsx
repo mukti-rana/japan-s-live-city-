@@ -123,7 +123,7 @@ export default function HomeHero() {
       <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,0,0,0)_62%)] sm:block" />
 
       <div className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32">
-        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium uppercase tracking-[0.2em] text-white/70">
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
           {isLoadingLocation ? (
             <span className="h-4 w-40 animate-pulse rounded bg-white/10" aria-hidden="true" />
           ) : displayName ? (
@@ -134,13 +134,13 @@ export default function HomeHero() {
                 {matchedCity?.region ? ` · ${name(matchedCity.region)}` : ""}
               </span>
               {isLive && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-mint/30 bg-mint/10 px-2.5 py-0.5 normal-case tracking-normal text-mint">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-mint/40 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-mint backdrop-blur-sm [text-shadow:none]">
                   <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-mint" />
                   {t("widget.live")}
                 </span>
               )}
               {isManual && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-2.5 py-0.5 normal-case tracking-normal text-gold">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-gold backdrop-blur-sm [text-shadow:none]">
                   <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold" />
                   {t("hero.selected")}
                 </span>
@@ -152,7 +152,7 @@ export default function HomeHero() {
                     setManualCity(null);
                     setManualWeather(null);
                   }}
-                  className={`min-h-8 rounded text-azure normal-case tracking-normal hover:underline ${ring}`}
+                  className={`inline-flex min-h-8 items-center rounded-full border border-white/35 bg-black/60 px-3 normal-case tracking-normal text-white backdrop-blur-sm transition-colors hover:border-white/60 hover:bg-white/15 [text-shadow:none] ${ring}`}
                 >
                   {t("hero.changeCity")}
                 </button>
@@ -171,7 +171,7 @@ export default function HomeHero() {
           {tr("Japan, right now.")}
         </h1>
 
-        <p className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px] text-white/75" suppressHydrationWarning>
+        <p className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px] text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]" suppressHydrationWarning>
           <span suppressHydrationWarning>
             <b className="font-medium tabular-nums text-white">
               {String(hour).padStart(2, "0")}:{minute}
@@ -193,7 +193,7 @@ export default function HomeHero() {
           ) : (isLive || isManual) && !isLoadingLocation ? (
             <span className="text-white/50">{isManual && !manualWeather ? "…" : ""}</span>
           ) : null}
-          <span suppressHydrationWarning className="text-white/60">
+          <span suppressHydrationWarning className="text-white/80">
             {t(greetingKey(hour))} · <span lang="ja" className="font-jp">今日もいい一日を</span>
           </span>
         </p>
@@ -218,7 +218,7 @@ export default function HomeHero() {
                   <LocateFixed size={16} aria-hidden="true" />
                   {tr("Use my location")}
                 </button>
-                <p className="mt-2 text-xs leading-relaxed text-white/60">{tr("Your browser will ask for permission. Your position is only used to find the weather and places near you.")}</p>
+                <p className="mt-2 text-xs leading-relaxed text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">{tr("Your browser will ask for permission. Your position is only used to find the weather and places near you.")}</p>
               </div>
             )}
           </div>
