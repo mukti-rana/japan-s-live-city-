@@ -64,3 +64,56 @@
 @media (prefers-reduced-motion: reduce), (scripting: none) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
+
+/* ── Quiet navigation ──
+   The "Explore Japan" link under Discover near you was a full-width blue-to-purple bar that never went
+   away. Here it is a quiet outlined pill, and the "Use my location" button matches the hero's white
+   primary button. Same links and buttons, same behaviour. */
+[data-home-root] a.bg-gradient-to-r[href="/explore"] {
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+  min-height: 2.75rem;
+  align-self: flex-start;
+  justify-content: flex-start;
+  padding-inline: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+[data-home-root] button.bg-gradient-to-r {
+  background: #ffffff;
+  background-image: none;
+  color: #000000;
+}
+
+/* ── Hover reaction ──
+   A light lift and a touch more brightness on anything you can press, on screens that can hover, and
+   never under reduced motion. Focus rings are untouched. Transform composes with Tailwind's own
+   translate/scale, so nothing that is positioned with them moves. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-home-root] :is(a, button, [role="tab"], summary),
+  [data-site-header] :is(a, button),
+  body:has([data-home-root]) > footer :is(a, button) {
+    transition:
+      transform 0.18s ease-out,
+      filter 0.18s ease-out,
+      background-color 0.2s ease-out,
+      border-color 0.2s ease-out,
+      color 0.2s ease-out,
+      opacity 0.2s ease-out;
+  }
+  /* A link that stretches its click area over a whole card with ::after (place cards, post cards)
+     must not move: a transform would turn it into the box that area is measured from. */
+  [data-home-root] :is(a, button, [role="tab"], summary):not(:disabled, [aria-disabled="true"], [class*="after:"], [class*="before:"]):hover,
+  [data-site-header] :is(a, button):not(:disabled):hover {
+    transform: translateY(-1px);
+    filter: brightness(1.14);
+  }
+  /* Photographs and large cards react with their own scale; a link wrapped around one must not also lift. */
+  [data-home-root] article a:hover,
+  [data-home-root] [data-reveal] a:has(> img):hover {
+    transform: none;
+    filter: none;
+  }
+}

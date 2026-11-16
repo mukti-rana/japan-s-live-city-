@@ -47,7 +47,7 @@ const TOOLS: {
 // hero's last control, [data-dock-clear], is above it, which matters on short screens) and at
 // the very end of the page, where there is nothing under it; everywhere else it is tucked away, and
 // comes up only when asked for: the pointer going to the bottom edge, or a keyboard user
-// tabbing into it. A thin line at the bottom edge shows it is there.
+// tabbing into it.
 export default function QuickDock() {
   const { t } = useLanguage();
   const [atEnds, setAtEnds] = useState(true);
@@ -100,8 +100,7 @@ export default function QuickDock() {
   }));
 
   return (
-    <>
-      <div
+    <div
         ref={wrap}
         data-away={!shown}
         onFocusCapture={() => setFocused(true)}
@@ -111,9 +110,6 @@ export default function QuickDock() {
         }`}
       >
         <MagneticDock items={items} label={t("quickaccess.title")} className="pointer-events-auto" />
-      </div>
-      {/* The "dock is down here" cue, only while the dock is tucked away. */}
-      <span aria-hidden="true" className={`pointer-events-none fixed bottom-1.5 left-1/2 z-30 hidden h-1 w-14 -translate-x-1/2 rounded-full bg-white/35 transition-opacity duration-300 motion-reduce:transition-none lg:block ${shown ? "opacity-0" : "opacity-100"}`} />
-    </>
+    </div>
   );
 }

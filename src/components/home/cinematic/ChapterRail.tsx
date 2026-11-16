@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { useTranslate } from "@/lib/i18n/inline";
 
-// A thin progress indicator down the right edge (wide screens only): one mark per
-// chapter, the current one lengthened. It is a real list of links, so it works with a
-// keyboard and a screen reader, and clicking one scrolls there (instantly with reduced motion).
+// Chapter dots down the right edge (wide screens only). Nothing is drawn while the page is at rest:
+// the dots appear while scrolling, when the pointer goes to the right edge, or when a keyboard user
+// tabs into them, then fade away again. The current chapter is a slightly larger white dot, never a bar.
+// It is a real list of links, so it works with a keyboard and a screen reader, and clicking one scrolls
+// there (instantly with reduced motion).
 export default function ChapterRail({ chapters }: { chapters: { id: string; label: string }[] }) {
   const tr = useTranslate();
   const reduce = useReducedMotion();
   const [active, setActive] = useState(chapters[0]?.id);
+  const [awake, setAwake] = useState(false);
+  const [near, setNear] = useState(false);
 
   useEffect(() => {
     const seen = new Map<string, number>();
@@ -36,8 +40,36 @@ export default function ChapterRail({ chapters }: { chapters: { id: string; labe
     return () => io.disconnect();
   }, [chapters]);
 
+  // Wake on scroll, sleep again a moment after it stops; wake when the pointer nears the right edge.
+  useEffect(() => {
+    let timer = 0;
+    const onScroll = () => {
+      setAwake(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setAwake(false), 1600);
+    };
+    const onPointer = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      const fromRight = window.innerWidth - event.clientX;
+      if (fromRight < 72) setNear(true);
+      else if (fromRight > 140) setNear(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointer);
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  const shown = awake || near;
+
   return (
-    <nav aria-label={tr("Chapters")} className="fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 xl:block">
+    <nav
+      aria-label={tr("Chapters")}
+      className={`fixed right-3 top-1/2 z-30 hidden -translate-y-1/2 transition-opacity duration-500 focus-within:opacity-100 motion-reduce:transition-none xl:block ${shown ? "opacity-100" : "opacity-0"}`}
+    >
       <ul className="flex flex-col items-end gap-1">
         {chapters.map((c) => {
           const on = active === c.id;
@@ -53,7 +85,7 @@ export default function ChapterRail({ chapters }: { chapters: { id: string; labe
                 className="group relative flex h-6 w-6 items-center justify-end focus-visible:outline-none"
               >
                 <span className="pointer-events-none absolute right-6 whitespace-nowrap rounded-full bg-black/80 px-2.5 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">{tr(c.label)}</span>
-                <span className={`block w-1.5 rounded-full transition-all duration-300 group-focus-visible:ring-2 group-focus-visible:ring-azure ${on ? "h-5 bg-white" : "h-1.5 bg-white/30 group-hover:bg-white/60"}`} />
+                <span className={`block h-1.5 w-1.5 rounded-full transition-all duration-300 group-hover:scale-150 group-hover:bg-white group-focus-visible:ring-2 group-focus-visible:ring-azure ${on ? "scale-150 bg-white" : "bg-white/40"}`} />
               </a>
             </li>
           );
