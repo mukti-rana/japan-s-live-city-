@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type PointerEvent, type ReactNode, type Ref } from "react";
+import { Fragment, useRef, useState, type PointerEvent, type ReactNode, type Ref } from "react";
 import {
   AnimatePresence,
   motion,
@@ -32,6 +32,8 @@ export interface DockItemData {
   badge?: number;
   /** Icon tint. Defaults to plain foreground. */
   accent?: DockAccent;
+  /** Draws a thin divider after this item, to set a group apart. */
+  dividerAfter?: boolean;
 }
 
 export interface MagneticDockProps {
@@ -230,17 +232,19 @@ export function MagneticDock({
       } ${className}`}
     >
       {items.map((item) => (
-        <DockItem
-          key={item.id}
-          item={item}
-          pointer={pointer}
-          iconSize={iconSize}
-          maxScale={maxScale}
-          magneticDistance={magneticDistance}
-          showLabels={showLabels}
-          position={position}
-          reducedMotion={reducedMotion}
-        />
+        <Fragment key={item.id}>
+          <DockItem
+            item={item}
+            pointer={pointer}
+            iconSize={iconSize}
+            maxScale={maxScale}
+            magneticDistance={magneticDistance}
+            showLabels={showLabels}
+            position={position}
+            reducedMotion={reducedMotion}
+          />
+          {item.dividerAfter && <span aria-hidden="true" className={isVertical ? "my-0.5 h-px self-stretch bg-white/15" : "mx-0.5 w-px self-stretch bg-white/15"} />}
+        </Fragment>
       ))}
     </nav>
   );

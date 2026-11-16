@@ -9,12 +9,13 @@ import {
   Home,
   Calculator,
   Activity,
+  Users,
 } from "lucide-react";
 import { MagneticDock, type DockItemData } from "@/components/ui/magnetic-dock";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
-// The tools that have no sidebar entry, kept one click away while the home
+// Community first, then the tools that have no sidebar entry, kept one click away while the home
 // page scrolls. Accents follow QuickAccessWidget: sakura for language & AI,
 // gold for money, azure for the rest.
 const TOOLS: {
@@ -22,7 +23,11 @@ const TOOLS: {
   href: string;
   icon: typeof Sparkles;
   accent: NonNullable<DockItemData["accent"]>;
+  dividerAfter?: boolean;
 }[] = [
+  // Community comes first, set apart from the tools by a divider. It links to the
+  // same /community page as the sidebar entry on the other pages.
+  { labelKey: "nav.community", href: "/community", icon: Users, accent: "azure", dividerAfter: true },
   { labelKey: "quickaccess.ai", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
   { labelKey: "quickaccess.explainJapanese", href: "/explain-japanese", icon: Languages, accent: "sakura" },
   { labelKey: "quickaccess.signAssistant", href: "/sign-assistant", icon: Camera, accent: "sakura" },
@@ -39,11 +44,12 @@ const TOOLS: {
 export default function QuickDock() {
   const { t } = useLanguage();
 
-  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, accent }) => ({
+  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, accent, dividerAfter }) => ({
     id: href,
     label: t(labelKey),
     href,
     accent,
+    dividerAfter,
     icon: <Icon size={20} />,
   }));
 
