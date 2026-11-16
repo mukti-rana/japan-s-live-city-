@@ -777,3 +777,12 @@ body:has([data-home-root]) [data-site-header] > header[data-compact="true"] {
   backdrop-filter: blur(16px);
 }
 body:has([data-home-root]) > footer { background: #000000; border-color: rgba(255, 255, 255, 0.1); }
+
+/* Homepage hero: one slow zoom on the photograph, a soft fade when it changes. Both
+   stop under reduced motion; the zoom also pauses while the tab is hidden. */
+@keyframes home-zoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes home-fade { from { opacity: 0; } to { opacity: 1; } }
+.home-zoom { animation: home-zoom 28s ease-in-out infinite alternate; will-change: transform; }
+.home-fade { animation: home-fade 0.7s ease-out both; }
+html[data-atm-paused="true"] .home-zoom { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .home-zoom, .home-fade { animation: none; } }
