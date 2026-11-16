@@ -71,7 +71,7 @@ export default function Home() {
 
         {/* 04 — the map and a real camera */}
         <BackdropBand photo={HOME_PHOTOS.hakodate}>
-          <Chapter id="live" number="04" label="Live" heading="A live window" intro="The map of Japan, and a real camera on Shibuya Crossing." href="/map" linkLabel="Open the map">
+          <Chapter id="live" number="04" label="Live" heading="A live window" intro="The map of Japan, and a real camera on Shibuya Crossing." href="/map" linkLabel="Open the map" flush>
             <ScrollReveal className="grid grid-cols-1 gap-4 md:grid-cols-[3fr_2fr] [&>*]:min-w-0">
               <JapanMapWidget />
               <LiveCityCamCard />

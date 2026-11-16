@@ -44,7 +44,7 @@ export default function WhereTo() {
   const half = "min-h-[max(440px,78svh)]";
   const halfSizes = "(min-width: 768px) 50vw, 100vw";
   return (
-    <section id="where" aria-labelledby="where-h" className="relative scroll-mt-16 py-[clamp(72px,12vh,160px)]">
+    <section id="where" aria-labelledby="where-h" className="relative scroll-mt-16 pb-[clamp(32px,5vh,56px)] pt-[clamp(72px,12vh,160px)]">
       <div className={CHAPTER_WIDTH}>
         <ChapterHeader id="where" number="03" label="Explore" heading="Where to?" intro="Five places to start. Open any of them in Explore." href="/explore" linkLabel="Explore all" className="mb-[clamp(32px,6vh,72px)]" />
       </div>
