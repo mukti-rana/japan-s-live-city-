@@ -24,7 +24,7 @@ export default async function CommunityChapter() {
 
   return (
     <BackdropBand photo={HOME_PHOTOS.kiyomizu}>
-      <Chapter id="community" number="07" label="Community" title="From the community" intro="Real photos and stories from people across Japan." href="/community" linkLabel="Open Community">
+      <Chapter id="community" number="07" label="Community" heading="From the community" intro="Real photos and stories from people across Japan." href="/community" linkLabel="Open Community">
         {result.state === "unavailable" ? (
           <Unavailable reason={result.reason} />
         ) : posts.length > 0 ? (

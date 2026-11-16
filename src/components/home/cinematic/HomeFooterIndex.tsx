@@ -26,7 +26,7 @@ export default function HomeFooterIndex() {
         <h2 id="home-index-h" className="sr-only">
           <Tx en="All destinations" />
         </h2>
-        <nav aria-label="Site index" className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+        <nav aria-labelledby="home-index-h" className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
           {COLUMNS.map((c) => (
             <div key={c.heading}>
               <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-text-tertiary">

@@ -50,6 +50,9 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
+  // The home page is a full-width scroll with its own dock; the fixed column is hidden there
+  // at desktop width. The phone menu button and drawer are unchanged on every page.
+  const isHome = pathname === "/";
 
   // SSR-safe default (expanded) corrected from localStorage post-mount —
   // same hydration-safe pattern as LanguageContext's stored preference.
@@ -98,7 +101,7 @@ export default function Sidebar() {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-[transform,width,top,height] duration-300 lg:sticky lg:top-[var(--header-h,3.5rem)] lg:z-0 lg:h-[calc(100vh-var(--header-h,3.5rem))] lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-[transform,width,top,height] duration-300 ${isHome ? "lg:hidden" : ""} lg:sticky lg:top-[var(--header-h,3.5rem)] lg:z-0 lg:h-[calc(100vh-var(--header-h,3.5rem))] lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         } ${collapsed ? "lg:w-[72px]" : "lg:w-60"}`}
       >

@@ -47,6 +47,8 @@ function useJstNow() {
   return now;
 }
 
+const BLUR = "blur" as const;
+
 const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 // The first screen. The same facts the old hero held — where you are (shared location,
@@ -103,12 +105,12 @@ export default function HomeHero() {
   }
 
   return (
-    <section aria-labelledby="home-h1" className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-black">
+    <section id="top" aria-labelledby="home-h1" className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-black">
       {/* Photograph (or, for a city without one, its gradient), then weather particles, then the scrim. */}
       {photo ? (
         <div key={photo.src} className="home-fade absolute inset-0 -z-30">
           <div className="home-zoom absolute inset-0">
-            <Image src={photo.src} alt={photo.alt} fill priority sizes="100vw" quality={78} placeholder="blur" blurDataURL={photo.blur} className="object-cover object-[68%_50%] sm:object-center" />
+            <Image src={photo.src} alt={photo.alt} fill priority sizes="100vw" quality={78} placeholder={BLUR} blurDataURL={photo.blur} className="object-cover object-[68%_50%] sm:object-center" />
           </div>
         </div>
       ) : (

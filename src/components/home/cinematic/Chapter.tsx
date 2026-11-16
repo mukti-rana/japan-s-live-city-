@@ -10,7 +10,7 @@ export default function Chapter({
   id,
   number,
   label,
-  title,
+  heading,
   intro,
   href,
   linkLabel,
@@ -21,7 +21,7 @@ export default function Chapter({
   id: string;
   number: string;
   label: string;
-  title: string;
+  heading: string;
   intro?: string;
   href?: string;
   linkLabel?: string;
@@ -39,7 +39,7 @@ export default function Chapter({
               <span className="tabular-nums">{number}</span> <span aria-hidden="true">·</span> <Tx en={label} />
             </p>
             <h2 id={`${id}-h`} className="mt-3 font-[family-name:var(--font-home-serif)] text-[clamp(34px,5.4vw,64px)] font-normal leading-[1.04] tracking-[-0.02em] text-foreground">
-              <Tx en={title} />
+              <Tx en={heading} />
             </h2>
             {intro && (
               <p className="mt-3 max-w-[52ch] text-base leading-relaxed text-text-secondary">
