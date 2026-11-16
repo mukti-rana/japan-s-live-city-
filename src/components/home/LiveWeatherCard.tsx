@@ -210,7 +210,9 @@ function CityPicker({
 
 // ── Card ──────────────────────────────────────────────────────────────────
 
-export default function LiveWeatherCard() {
+// headingLevel: 3 when the card sits under a page chapter that is already an h2.
+export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2 | 3 } = {}) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   const { t, language } = useLanguage();
   const text = useInline(TEXT);
   const { status, location, weather: liveWeather } = useLiveLocation();
@@ -266,7 +268,7 @@ export default function LiveWeatherCard() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-azure/15 text-azure">
             <CloudSun size={16} aria-hidden="true" />
           </span>
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">{t("weather.liveWeatherTitle")}</h2>
+          <Heading className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">{t("weather.liveWeatherTitle")}</Heading>
           {weather && isFresh && (
             <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
               <span className="h-1.5 w-1.5 rounded-full bg-mint" aria-hidden="true" />

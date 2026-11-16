@@ -83,7 +83,8 @@ function Slide({ topic, active, data, now }: { topic: RadarTopic; active: boolea
 // for reduced motion, and paused while they hover, focus, touch or drag), with
 // arrows, dots, swipe and drag. Data comes from the same Wikimedia source as
 // the Trending page; nothing here is made up.
-export default function TrendRadar({ initial }: { initial: TrendRadarData | null }) {
+export default function TrendRadar({ initial, headingLevel = 2 }: { initial: TrendRadarData | null; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   const tr = useTranslate();
   const reduced = useReducedMotion();
   const text = useTrendText();
@@ -168,7 +169,7 @@ export default function TrendRadar({ initial }: { initial: TrendRadarData | null
             <Flame size={17} aria-hidden="true" />
           </span>
           <div>
-            <h2 className="flex flex-wrap items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-foreground/90">
+            <Heading className="flex flex-wrap items-center gap-2 text-sm font-semibold uppercase tracking-[0.14em] text-foreground/90">
               {tr("Japan Trend Radar")}
               {data && !old && now > 0 && (
                 <span title={tr("Page views are counted per day, so this ranking changes once a day. The page checks for new data every 10 minutes.")} className="rounded-full bg-glass-bg-strong px-2 py-0.5 text-[10px] font-medium normal-case tracking-normal text-foreground/75">
@@ -176,7 +177,7 @@ export default function TrendRadar({ initial }: { initial: TrendRadarData | null
                 </span>
               )}
               {data && old && now > 0 && <span className="rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-medium normal-case tracking-normal text-gold">{tr("Older data")} · {ago(age, tr)}</span>}
-            </h2>
+            </Heading>
             <p className="text-xs text-muted">{tr("What's capturing Japan's attention right now?")} <span className="text-muted/80">· {tr("Most-viewed Japanese Wikipedia articles")}</span></p>
           </div>
         </div>

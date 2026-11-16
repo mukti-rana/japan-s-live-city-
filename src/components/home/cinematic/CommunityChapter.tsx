@@ -26,7 +26,7 @@ export default async function CommunityChapter() {
     <BackdropBand photo={HOME_PHOTOS.kiyomizu}>
       <Chapter id="community" number="07" label="Community" heading="From the community" intro="Real photos and stories from people across Japan." href="/community" linkLabel="Open Community">
         {result.state === "unavailable" ? (
-          <Unavailable reason={result.reason} />
+          <Unavailable reason={result.reason} headingLevel={3} />
         ) : posts.length > 0 ? (
           <ScrollReveal>
             <PostGrid posts={posts} />

@@ -16,7 +16,8 @@ import type { NewsItem } from "@/lib/news/query";
 // place logic, as the News tab's "Local News Near You" — so the two always
 // agree. Only the city name is used, from a city the visitor picked or the
 // location the browser already shared; it is never asked for again here.
-export default function LatestNewsNearYou() {
+export default function LatestNewsNearYou({ headingLevel = 2 }: { headingLevel?: 2 | 3 } = {}) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   const { t } = useLanguage();
   const placeInfo = useNewsPlace();
   const [openItem, setOpenItem] = useState<NewsItem | null>(null);
@@ -45,7 +46,7 @@ export default function LatestNewsNearYou() {
             <MapPin size={17} aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground/90">{t("news.home.title")}</h2>
+            <Heading className="text-sm font-semibold uppercase tracking-wide text-foreground/90">{t("news.home.title")}</Heading>
             <p className="text-xs text-muted">{t("news.home.subtitle")}</p>
           </div>
         </div>

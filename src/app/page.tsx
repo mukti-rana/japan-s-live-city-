@@ -56,7 +56,7 @@ export default function Home() {
         <Chapter id="now" number="02" label="Live" heading="Right now" intro="Weather, official alerts and what is on today." href="/weather" linkLabel="Weather">
           <div className="flex flex-col gap-4">
             <ScrollReveal>
-              <LiveWeatherCard />
+              <LiveWeatherCard headingLevel={3} />
             </ScrollReveal>
             <ScrollReveal className="grid grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
               <EmergencyPreview />
@@ -82,14 +82,14 @@ export default function Home() {
         <Chapter id="news" number="05" label="Read" heading="Today in Japan" intro="Stories from Japan's own publishers, and what people are reading." href="/news" linkLabel="All news">
           <div className="flex flex-col gap-4">
             <ScrollReveal>
-              <LatestNewsNearYou />
+              <LatestNewsNearYou headingLevel={3} />
             </ScrollReveal>
             <ScrollReveal className="grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_1fr] [&>*]:min-w-0">
               <HeadlinesMini />
               <JapanNowCard />
             </ScrollReveal>
             <ScrollReveal>
-              <TrendRadarSection />
+              <TrendRadarSection headingLevel={3} />
             </ScrollReveal>
           </div>
         </Chapter>

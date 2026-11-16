@@ -24,7 +24,8 @@ function jstMonth(): number {
 
 // Home's small taste of discovery: one featured place and two more near the
 // visitor, then a clear way into the full Explore Japan page.
-export default function NearbyDiscovery() {
+export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2 | 3 } = {}) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   const tr = useTranslate();
   const { language } = useLanguage();
   const explore = useExploreLocation();
@@ -70,7 +71,7 @@ export default function NearbyDiscovery() {
             <Compass size={18} aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <h2 className="text-lg font-semibold leading-tight text-foreground sm:text-xl">{tr("Discover near you")}</h2>
+            <Heading className="text-lg font-semibold leading-tight text-foreground sm:text-xl">{tr("Discover near you")}</Heading>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted">
               {loc ? (
                 <>

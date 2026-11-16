@@ -56,7 +56,7 @@ export default function WhereTo() {
       </div>
       <div className="mt-[clamp(32px,5vw,64px)]">
         <ScrollReveal>
-          <NearbyDiscovery />
+          <NearbyDiscovery headingLevel={3} />
         </ScrollReveal>
       </div>
     </Chapter>

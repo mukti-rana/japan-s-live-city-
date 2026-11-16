@@ -6,7 +6,8 @@ import type { FeedProblem } from "@/lib/community/queries";
 // The feed could not be read. The visitor gets a calm message and a Retry
 // button; the real cause is in the server log. In development only, a short
 // technical note says what to fix — it never appears on the live site.
-export default function Unavailable({ reason }: { reason: FeedProblem }) {
+export default function Unavailable({ reason, headingLevel = 2 }: { reason: FeedProblem; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   const note =
     reason === "not_configured"
       ? "Supabase is not configured here: add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local and restart the dev server."
@@ -16,9 +17,9 @@ export default function Unavailable({ reason }: { reason: FeedProblem }) {
   return (
     <div role="status" className="rounded-3xl border border-glass-border bg-glass-bg px-5 py-10 text-center">
       <WifiOff size={30} aria-hidden="true" className="mx-auto text-foreground/70" />
-      <h2 className="mt-3 text-lg font-semibold text-foreground">
+      <Heading className="mt-3 text-lg font-semibold text-foreground">
         <Tx en="We couldn't load the community right now" />
-      </h2>
+      </Heading>
       <p className="mx-auto mt-2 max-w-md text-sm text-foreground/85">
         <Tx en="This is a problem on our side, not yours. Please try again in a moment." />
       </p>
