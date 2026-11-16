@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Sparkles,
   Languages,
@@ -43,8 +43,9 @@ const TOOLS: {
 // owns the bottom edge. Sticky rather than fixed, so it centres on the content
 // column and comes to rest above the footer instead of covering it.
 //
-// It never sits over what is being read. It is shown on the opening screen and at the very
-// end of the page, where there is nothing under it; everywhere else it is tucked away, and
+// It never sits over what is being read. It is shown on the opening screen (only while the
+// hero's last control, [data-dock-clear], is above it, which matters on short screens) and at
+// the very end of the page, where there is nothing under it; everywhere else it is tucked away, and
 // comes up only when asked for: the pointer going to the bottom edge, or a keyboard user
 // tabbing into it. A thin line at the bottom edge shows it is there.
 export default function QuickDock() {
@@ -53,6 +54,7 @@ export default function QuickDock() {
   const [edge, setEdge] = useState(false);
   const [focused, setFocused] = useState(false);
   const shown = atEnds || edge || focused;
+  const wrap = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let frame = 0;
@@ -61,7 +63,10 @@ export default function QuickDock() {
       const y = window.scrollY;
       const nearTop = y < window.innerHeight * 0.6;
       const nearEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 160;
-      setAtEnds(nearTop || nearEnd);
+      // On the opening screen, only if the hero's last control is clear of where the dock sits.
+      const clear = document.querySelector("[data-dock-clear]")?.getBoundingClientRect().bottom ?? 0;
+      const dockTop = window.innerHeight - 16 - (wrap.current?.offsetHeight ?? 80) - 12;
+      setAtEnds(nearEnd || (nearTop && clear <= dockTop));
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(measure);
@@ -97,6 +102,7 @@ export default function QuickDock() {
   return (
     <>
       <div
+        ref={wrap}
         data-away={!shown}
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={() => setFocused(false)}

@@ -224,7 +224,7 @@ export default function HomeHero() {
           </div>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div data-dock-clear className="mt-8 flex flex-wrap items-center gap-3">
           <Link href="/explore" className={`inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[15px] font-semibold text-black transition-colors hover:bg-white/90 ${ring}`}>
             {tr("Explore Japan")}
             <ArrowRight size={16} aria-hidden="true" />
