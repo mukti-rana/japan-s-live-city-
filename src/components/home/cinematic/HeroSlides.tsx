@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { useReducedMotion } from "motion/react";
 import type { HomePhoto } from "@/lib/data/homePhotos";
@@ -43,7 +43,8 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
           blurDataURL={photo.blur}
           onLoad={done}
           onError={() => onFail(photo.src)}
-          className="object-cover object-[96%_50%] sm:object-[88%_50%] lg:object-center"
+          style={{ "--focus": photo.focus ?? "50% 50%" } as CSSProperties}
+          className="object-cover object-[var(--focus)] lg:object-center"
         />
       </div>
     </div>
