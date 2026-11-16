@@ -44,7 +44,7 @@ export default function TopBar() {
     <div data-site-header className="sticky top-0 z-30 h-14">
       <header
         data-compact={isCompact}
-        className="group absolute inset-x-0 top-0 flex h-[var(--header-h,3.5rem)] items-center gap-3 border-b border-glass-border bg-sidebar-bg/95 px-3 backdrop-blur-xl transition-[height,box-shadow] duration-300 ease-out motion-reduce:transition-none data-[compact=true]:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.8)] sm:gap-4 sm:px-5"
+        className="group absolute inset-x-0 top-0 flex h-[var(--header-h,3.5rem)] items-center gap-3 border-b border-glass-border bg-sidebar-bg/95 px-3 backdrop-blur-xl max-[359px]:gap-2 max-[359px]:px-2 transition-[height,box-shadow] duration-300 ease-out motion-reduce:transition-none data-[compact=true]:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.8)] sm:gap-4 sm:px-5"
       >
         <Link
           href="/"

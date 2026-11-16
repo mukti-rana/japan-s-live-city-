@@ -140,7 +140,7 @@ export default function HeaderSearch() {
   );
 
   return (
-    <div ref={ref} className={`${expanded ? "max-sm:absolute max-sm:inset-0 max-sm:z-40 max-sm:flex max-sm:items-center max-sm:gap-2 max-sm:bg-sidebar-bg max-sm:px-4" : ""} min-w-0 sm:relative sm:max-w-2xl sm:flex-1`}>
+    <div ref={ref} className={`${expanded ? "max-sm:absolute max-sm:inset-0 max-sm:z-40 max-sm:flex max-sm:items-center max-sm:gap-2 max-sm:bg-sidebar-bg max-sm:px-4" : ""} min-w-0 max-sm:shrink-0 sm:relative sm:max-w-2xl sm:flex-1`}>
       {/* Phones: a search icon that opens a full-width row. */}
       {!expanded && (
         <button type="button" onClick={() => setExpanded(true)} aria-label={text("search")} title={text("search")} className={`${ICON_BUTTON} ml-auto sm:hidden`}>
