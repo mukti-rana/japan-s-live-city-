@@ -734,3 +734,46 @@ html:not(.dark) .keep-dark-ink {
   --color-black: #000000;
   color: var(--foreground);
 }
+
+/* ═══ Homepage: pitch black in BOTH themes ═══════════════════════════════
+   The home page (marked by [data-home-root]) and the shell around it — top bar,
+   mobile menu drawer, footer — keep the dark palette whatever the theme toggle says;
+   every other page still follows the toggle. Pure CSS (:has), so there is no flash.
+   Override documented in design-system/live-city-japan/pages/home.md. */
+[data-home-root],
+body:has([data-home-root]) [data-site-header],
+body:has([data-home-root]) aside,
+body:has([data-home-root]) > footer {
+  color-scheme: dark;
+  --surface-0: #000000; --surface-1: #0b0b0c; --surface-2: #141416; --surface-3: #1c1c1f;
+  --line: rgba(255, 255, 255, 0.1); --line-strong: rgba(255, 255, 255, 0.18);
+  --text-primary: #f4f4f5; --text-secondary: #a1a1aa; --text-tertiary: #8b8b94;
+  --accent: #4da3ff; --accent-ink: #06080f; --accent-2: #a855f7; --accent-2-text: #c4b5fd;
+  --background: #000000; --foreground: #f4f4f5; --muted: #8b8fa3;
+  --panel: #0b0b0c; --sidebar-bg: #000000;
+  --glass-bg: rgba(255, 255, 255, 0.035); --glass-bg-strong: rgba(255, 255, 255, 0.07); --glass-border: rgba(255, 255, 255, 0.09);
+  --sakura: #ff6b9d; --gold: #f2c572; --azure: #4da3ff; --mint: #4ade80;
+  --neon-cyan: #22d3ee; --neon-purple: #a855f7; --lilac: #c4b5fd; --glow: rgba(77, 163, 255, 0.35);
+  --cm-surface: #151515; --cm-card: #111111; --cm-pop: #151515; --cm-pop-foot: #111111; --cm-input: #000000;
+  --color-white: #ffffff; --color-black: #000000;
+  color: var(--foreground);
+}
+body:has([data-home-root]) { background: #000000; }
+/* The page runs edge to edge; each chapter sets its own padding. */
+body:has([data-home-root]) main { padding: 0; }
+/* The page's own backdrop scene would only compete with the photographs. */
+body:has([data-home-root]) .atm-in { display: none; }
+/* The top bar floats over the hero, then settles into a blurred black bar. */
+body:has([data-home-root]) [data-site-header] { margin-bottom: -3.5rem; }
+body:has([data-home-root]) [data-site-header] > header {
+  background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0));
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+body:has([data-home-root]) [data-site-header] > header[data-compact="true"] {
+  background: rgba(0, 0, 0, 0.72);
+  border-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+}
+body:has([data-home-root]) > footer { background: #000000; border-color: rgba(255, 255, 255, 0.1); }
