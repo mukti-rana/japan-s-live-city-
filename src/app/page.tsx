@@ -1,6 +1,5 @@
 import "@/components/home/cinematic/cinematic.css";
 import Chapter from "@/components/home/cinematic/Chapter";
-import ChapterRail from "@/components/home/cinematic/ChapterRail";
 import BackdropBand from "@/components/home/cinematic/BackdropBand";
 import CommunityChapter from "@/components/home/cinematic/CommunityChapter";
 import HomeFooterIndex from "@/components/home/cinematic/HomeFooterIndex";
@@ -26,18 +25,6 @@ import WelcomeGate from "@/components/auth/WelcomeGate";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
-// The chapters, for the progress rail on wide screens.
-const CHAPTERS = [
-  { id: "top", label: "Japan, right now" },
-  { id: "now", label: "Right now" },
-  { id: "where", label: "Where to?" },
-  { id: "live", label: "A live window" },
-  { id: "news", label: "Today in Japan" },
-  { id: "trains", label: "Getting around" },
-  { id: "community", label: "Community" },
-  { id: "tools", label: "Tools & safety" },
-];
-
 // A pitch-black, vertically scrolling page of chapters. Every card on it is the same
 // working widget the old home page held — same data, same live / demo / empty / error
 // states — now set between large headings and photographs. [data-home-root] keeps the
@@ -47,8 +34,6 @@ export default function Home() {
     <LiveLocationProvider>
       <WelcomeGate />
       <div data-home-root className={`${homeFontVars} relative bg-black text-foreground`}>
-        <ChapterRail chapters={CHAPTERS} />
-
         {/* 01 — the first screen, then Your Day as a slim strip */}
         <HomeHero />
         <YourDayStrip />
