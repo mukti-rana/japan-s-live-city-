@@ -145,9 +145,9 @@ export default function Sidebar() {
           window.clearTimeout(timer.current);
         }}
         onPointerLeave={peekOut}
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 motion-reduce:transition-none lg:top-[var(--header-h,3.5rem)] lg:z-50 lg:duration-200 lg:shadow-[0_0_60px_rgba(0,0,0,0.55)] lg:focus-within:translate-x-0 ${
+        className={`group/rail fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 motion-reduce:transition-none lg:pointer-events-none lg:bottom-auto lg:left-3 lg:top-[calc(var(--header-h,3.5rem)+0.75rem)] lg:w-12 lg:translate-x-0 lg:border-0 lg:bg-transparent lg:transition-none ${
           open ? "translate-x-0" : "-translate-x-full"
-        } ${shown ? "lg:translate-x-0" : "lg:-translate-x-full lg:shadow-none"}`}
+        }`}
       >
         <button
           type="button"
@@ -158,8 +158,10 @@ export default function Sidebar() {
           <X size={18} />
         </button>
 
-        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pt-6 lg:pt-3">
-          {NAV_ITEMS.map(({ labelKey, href, icon: Icon, danger }) => {
+        {/* Desktop: no panel at all, only the icons. They float over the page, arriving one after another, with a soft
+            halo in the page's own colour so they read on a photograph and on a plain page alike. */}
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pt-6 lg:flex-none lg:gap-1.5 lg:overflow-visible lg:px-0 lg:pt-0 [@media(max-height:720px)]:lg:gap-0.5">
+          {NAV_ITEMS.map(({ labelKey, href, icon: Icon, danger }, index) => {
             const active =
               href === "/"
                 ? pathname === "/"
@@ -170,12 +172,19 @@ export default function Sidebar() {
                 key={labelKey}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
-                  active ? "bg-foreground/10 text-foreground" : "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
+                style={{ "--i": index } as React.CSSProperties}
+                className={`group/item flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure lg:relative lg:h-10 lg:w-10 lg:justify-center lg:rounded-full lg:bg-transparent lg:px-0 lg:transition-[opacity,transform,color] lg:duration-300 lg:ease-[cubic-bezier(0.22,1,0.36,1)] lg:hover:bg-transparent lg:hover:scale-110 lg:[filter:drop-shadow(0_0_2px_var(--background))_drop-shadow(0_0_7px_var(--background))_drop-shadow(0_0_14px_var(--background))] motion-reduce:lg:transition-none [@media(max-height:720px)]:lg:h-9 ${
+                  active ? "bg-foreground/10 text-foreground lg:before:absolute lg:before:-left-2 lg:before:h-1 lg:before:w-1 lg:before:rounded-full lg:before:bg-foreground" : "text-muted hover:bg-foreground/[0.06] hover:text-foreground lg:text-foreground/90 lg:hover:text-foreground"
+                } ${
+                  shown
+                    ? "lg:pointer-events-auto lg:translate-x-0 lg:scale-100 lg:opacity-100 lg:[transition-delay:calc(var(--i)*35ms)]"
+                    : "lg:pointer-events-none lg:-translate-x-4 lg:scale-75 lg:opacity-0 lg:group-focus-within/rail:pointer-events-auto lg:group-focus-within/rail:translate-x-0 lg:group-focus-within/rail:scale-100 lg:group-focus-within/rail:opacity-100"
                 }`}
               >
-                <Icon size={20} strokeWidth={1.75} className={`shrink-0 ${danger && !active ? "text-red-400" : ""}`} aria-hidden="true" />
-                <span className="truncate">{t(labelKey)}</span>
+                <Icon size={22} strokeWidth={1.75} className={`shrink-0 ${danger && !active ? "text-red-400" : ""}`} aria-hidden="true" />
+                <span className="truncate lg:pointer-events-none lg:absolute lg:left-full lg:ml-3 lg:-translate-x-1 lg:whitespace-nowrap lg:rounded-md lg:bg-background/90 lg:px-2.5 lg:py-1 lg:text-xs lg:font-medium lg:text-foreground lg:opacity-0 lg:shadow-lg lg:transition-[opacity,transform] lg:duration-150 lg:group-hover/item:translate-x-0 lg:group-hover/item:opacity-100 lg:group-focus-visible/item:translate-x-0 lg:group-focus-visible/item:opacity-100">
+                  {t(labelKey)}
+                </span>
               </a>
             );
           })}
