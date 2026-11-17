@@ -38,7 +38,6 @@ export default function SosButton() {
         }}
         aria-haspopup="dialog"
         aria-label={e("title")}
-        title={e("title")}
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-red-500 transition-colors duration-200 hover:bg-red-500/15 hover:text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:bg-red-500/25"
       >
         <ShieldAlert size={20} aria-hidden="true" />

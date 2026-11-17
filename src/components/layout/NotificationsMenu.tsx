@@ -96,7 +96,6 @@ export default function NotificationsMenu() {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={unread ? `${t("topbar.notifications")} (${count})` : t("topbar.notifications")}
-        title={t("topbar.notifications")}
         className={ICON_BUTTON}
       >
         <Bell size={18} aria-hidden="true" />

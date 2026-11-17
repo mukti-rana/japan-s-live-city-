@@ -58,7 +58,6 @@ export default function AccountMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("topbar.account")}
-        title={t("topbar.account")}
         className={ICON_BUTTON}
       >
         {email ? (
