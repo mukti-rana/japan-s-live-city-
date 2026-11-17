@@ -1,5 +1,5 @@
 // The photographs on the homepage, with who took them and under what licence.
-// Thirty are from Wikimedia Commons; the rest (ownTsutenkaku and the like) are the owner's own photographs. Twenty-four are CC0 (public-domain dedication), so no
+// Thirty are from Wikimedia Commons; the rest (ownOsakaSign and the like) are the owner's own photographs. Twenty-four are CC0 (public-domain dedication), so no
 // credit is legally required — it is shown anyway, as a courtesy. Six (Sapporo and Fukuoka) are
 // CC BY 2.0 / 4.0, which DO require credit: the photographer, licence and source link are on the /credits page (never on the home page itself), which also says they were resized and compressed. Each file was
 // resized to 2560 px wide and converted to WebP at quality 80; camera metadata was
@@ -295,24 +295,6 @@ export const HOME_PHOTOS = {
     credit: {"title": "Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg", "author": "Hirho", "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:%C5%8Chori_Park_The_W_shore_of_Matsushima_%C5%8Chori-k%C5%8Den_Ch%C5%AB%C5%8D-ku_Fukuoka_20260616_175108.jpg"},
   },
   // ── The owner's own photographs (no credit: they are not from Commons) ──
-  ownTsutenkaku: {
-    src: "/images/home/osaka-tsutenkaku-night.webp",
-    width: 2560,
-    height: 4551,
-    alt: "Tsutenkaku tower in Shinsekai, Osaka, lit pink and red against the night sky above the trees",
-    focus: "50% 55%",
-    deskFocus: "50% 55%",
-    blur: "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAADQBQCdASoYACsAPwVsqlArpiOitVgMAXAgiWMAyyxvVat/em8zl27rfKzzbJIp1UICWbc1oUHgAP70z68gHLonu7sYwQqGP+yOU8u0speyh1HuH3bQX1ZgnmQ4YfVtkbsPTyLrKDEzv6oEZtlorkXwgMBdVdYsQrza2JFT5pOa+HFxLF1b/lq5dvVy6VSIw/zszp+BgAA=",
-  },
-  ownAbenoHarukas: {
-    src: "/images/home/osaka-abeno-harukas-night.webp",
-    width: 2560,
-    height: 4551,
-    alt: "Abeno Harukas skyscraper in Tennoji, Osaka, lit up at night above a park of illuminated trees",
-    focus: "50% 60%",
-    deskFocus: "50% 62%",
-    blur: "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAABwBQCdASoYACsAPxFqrVEsJSSitVQMAYAiCWMAzcBtskI9dfGV/mRV6GZTNku5Ho7uaabgAP71X6ynd6DLpMcLWK8S6cD2pgTLcj0uRrJPpmbj5dtBW4e8SezvvXrTFR2y+wL39HUFmPHtojnwYdCsiFwqjUETDpEoyVRG3J+FUoaTBF/N1BenWdHkFJyIzVwRGR1TVlmQtQ4spZzijyXCrhND+X6945EH81Y6FLOqI5aOKh4o6kVLrO5HchfAAAA=",
-  },
   ownOsakaSign: {
     src: "/images/home/osaka-sign-night.webp",
     width: 2560,
@@ -346,15 +328,6 @@ export const HOME_PHOTOS = {
     focus: "46% 50%",
     deskFocus: "46% 52%",
     blur: "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAADQBACdASoYACAAPxF4sVKsJyQiqA1RgCIJYwDE2EUkAQKKwHyJP7EWGQJE2af4tAD+WcIuktAa6Hn5bpSbuandrfZcanlWxUxLfHht7HCJMQsLbvg5YiWL2QMH8rGiV+zEP3ySXb5dJ6K4IoGbIYXogZe6j2As4adZSAmobYs440BvgVLQZ+j1IHSqmkZWgAA=",
-  },
-  ownAbenoHarukasDusk: {
-    src: "/images/home/osaka-abeno-harukas-dusk.webp",
-    width: 2560,
-    height: 3413,
-    alt: "Abeno Harukas in golden evening light above a lawn and cherry blossom in Tennoji, Osaka",
-    focus: "72% 40%",
-    deskFocus: "50% 38%",
-    blur: "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAQBQCdASoYACAAPxFytFEsJqUiqA1RgCIJQBOmYTgRL4KkKyhMsOgXqQ8SeBBHmh+gAPxTDkfrigt58uSFCyxXwVwjbL3RSsPH/OuddajVFkhHj5RxOcE4EdPSXzUkkRZC34cBjRXi3xXa4YL5WRwuDRX9jRQvYlc6lY4l3Zdo33UdDVvogAAA",
   },
   ownNaraStag: {
     src: "/images/home/nara-stag-closeup.webp",
