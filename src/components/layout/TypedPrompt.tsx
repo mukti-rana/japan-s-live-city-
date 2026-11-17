@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
 // One or more short messages, typed out in the same spot, typed out one character at a time with a blinking caret, held for
-// a moment, then (when there is more than one) deleted backwards before the next one is typed; a single message stays on screen once typed (see .typed-msg in globals.css for the colour and the
+// a moment, then deleted backwards before the next one is typed (a lone message is typed again), forever (see .typed-msg in globals.css for the colour and the
 // plain monospace letters, which are easy to read in any language). It is only text: nothing here is clickable. Under
 // reduced motion it shows the first message, still. A screen reader gets the full text once, not the typing.
 export default function TypedPrompt({ messages, finale }: { messages: readonly string[]; finale?: string }) {
@@ -23,7 +23,6 @@ export default function TypedPrompt({ messages, finale }: { messages: readonly s
       if (count < letters.length) id = window.setTimeout(() => setCount((c) => c + 1), count === 0 ? 350 : 48);
       else id = window.setTimeout(() => setPhase("hold"), 0);
     } else if (phase === "hold") {
-      if (messages.length < 2) return; // a single message stays once it is typed
       id = window.setTimeout(() => setPhase("erase"), 2600);
     } else if (count > 0) {
       id = window.setTimeout(() => setCount((c) => c - 1), 22);
