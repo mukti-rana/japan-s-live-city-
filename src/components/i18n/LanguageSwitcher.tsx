@@ -13,7 +13,9 @@ const MENU_ORDER = ["ja", "en", "ne", "hi", "zh", "ko"] as const;
 const ENGLISH_NAME: Record<string, string> = { ja: "Japanese", en: "English", ne: "Nepali", hi: "Hindi", zh: "Chinese", ko: "Korean" };
 const MENU_LANGUAGES = MENU_ORDER.map((code) => LANGUAGES.find((l) => l.code === code)!);
 
-export default function LanguageSwitcher({ variant }: { variant: "topbar" | "settings" }) {
+// "sidebar" is the same menu opened from an icon in the sidebar: it opens beside the icon on desktop and as the
+// bottom sheet below 1024px (the sidebar is a drawer there).
+export default function LanguageSwitcher({ variant, triggerClassName, triggerLabel }: { variant: "topbar" | "settings" | "sidebar"; triggerClassName?: string; triggerLabel?: React.ReactNode }) {
   const { language, setLanguage, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -71,6 +73,7 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
   }
 
   const current = LANGUAGES.find((l) => l.code === language) ?? LANGUAGES[0];
+  const side = variant === "sidebar";
 
   return (
     <div ref={containerRef} className="relative">
@@ -81,19 +84,20 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
         aria-expanded={open}
         aria-label={`${t("languageSwitcher.label")}: ${current.label}`}
         title={t("languageSwitcher.label")}
-        className={ICON_BUTTON}
+        className={side ? triggerClassName : ICON_BUTTON}
       >
-        <Globe size={18} aria-hidden="true" />
+        <Globe size={side ? 22 : 18} strokeWidth={side ? 1.75 : 2} className="shrink-0" aria-hidden="true" />
+        {side && triggerLabel}
       </button>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            initial={{ opacity: 0, x: side ? -8 : 0, y: side ? 0 : -6, scale: 0.98 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: side ? -8 : 0, y: side ? 0 : -6, scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 32 }}
-            role="menu" className="absolute right-0 top-full z-50 mt-2 hidden w-60 rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] sm:block"
+            role="menu" className={`z-50 hidden w-60 rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] ${side ? "pointer-events-auto absolute bottom-0 left-full ml-4 lg:block" : "absolute right-0 top-full mt-2 sm:block"}`}
           >
             {MENU_LANGUAGES.map((lang) => {
               const active = lang.code === language;
@@ -136,14 +140,14 @@ export default function LanguageSwitcher({ variant }: { variant: "topbar" | "set
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm sm:hidden"
+                  className={`fixed inset-0 z-40 bg-black/60 backdrop-blur-sm ${side ? "lg:hidden" : "sm:hidden"}`}
                 />
                 <motion.div
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
                   exit={{ y: "100%" }}
                   transition={{ type: "spring", stiffness: 340, damping: 34 }}
-                  className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-glass-border bg-sidebar-bg/98 p-4 backdrop-blur-xl sm:hidden"
+                  className={`fixed inset-x-0 bottom-0 z-50 rounded-t-3xl border-t border-glass-border bg-sidebar-bg/98 p-4 backdrop-blur-xl ${side ? "lg:hidden" : "sm:hidden"}`}
                   style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
                 >
                   <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-glass-border" />

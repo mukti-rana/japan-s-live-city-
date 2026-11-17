@@ -17,7 +17,9 @@ function subscribe(callback: () => void) {
 }
 const read = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light");
 
-export default function ThemeToggle() {
+// `className` restyles the button (the sidebar uses its own item look); `labelClassName` shows the label as text
+// beside the icon, styled by it (otherwise the label is for screen readers only).
+export default function ThemeToggle({ className, labelClassName }: { className?: string; labelClassName?: string } = {}) {
   const tr = useTranslate();
   const reduce = useReducedMotion();
   const theme = useSyncExternalStore(subscribe, read, () => "dark" as Theme);
@@ -61,7 +63,8 @@ export default function ThemeToggle() {
       duration={reduce ? 1 : 450}
       aria-label={label}
       title={label}
-      className={`${ICON_BUTTON} [&>svg]:h-[18px] [&>svg]:w-[18px]`}
+      label={labelClassName ? <span className={labelClassName}>{label}</span> : undefined}
+      className={className ?? `${ICON_BUTTON} [&>svg]:h-[18px] [&>svg]:w-[18px]`}
     />
   );
 }
