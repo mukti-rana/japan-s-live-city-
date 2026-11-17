@@ -17,6 +17,9 @@ export interface HomePhoto {
   focus?: string;
   // The same, for wide screens (they centre by default). Needed for tall photographs, which a wide screen crops to a band.
   deskFocus?: string;
+  // Wide screens show the whole picture (no crop, no slow zoom) over a soft blurred copy of itself, instead of filling the screen.
+  // For a picture whose subject runs to the edge, where cropping it would cut the subject off.
+  whole?: boolean;
   // A 24 px blurred copy to show while the photo loads.
   blur: string;
   // Omitted for the owner's own photographs. Never shown on the home page either way (see /credits).
@@ -309,6 +312,7 @@ export const HOME_PHOTOS = {
     height: 1440,
     alt: "A curious deer looking up at the camera on a paved street in Nara",
     focus: "42% 40%",
+    whole: true,
     blur: "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBACdASoYAA0APxFysFAsJqSisAgBgCIJYgCdMoADNdTyWpOlsMjAAAD+VIRbdNk+mkW9N3KD4kcaZFafdKJGcsii1oEc+veWR18N3n1pod+gmT2O2nfecfK2ouY9tQJJgUZVXjxdkViNc8deYseW+XykV7n5ycxKrh3oZpf7wILKc41DTsWqEeSUQfFuAAA=",
   },
   ownOsakaCastleNight: {

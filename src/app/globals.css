@@ -786,6 +786,8 @@ body:has([data-home-root]) > footer { background: #000000; border-color: rgba(25
 .home-zoom { animation: home-zoom 28s ease-in-out infinite alternate; will-change: transform; }
 .home-fade { animation: home-fade 0.7s ease-out both; }
 html[data-atm-paused="true"] .home-zoom { animation-play-state: paused; }
+/* A photograph shown whole on wide screens (HomePhoto.whole) does not zoom: the zoom would crop it. */
+@media (min-width: 1024px) { .home-zoom.home-zoom--whole { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .home-zoom, .home-fade { animation: none; } }
 
 /* Homepage: nothing reads smaller than 12px. The widgets on this page are shared with other
