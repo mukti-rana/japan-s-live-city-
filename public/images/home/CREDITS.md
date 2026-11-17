@@ -57,6 +57,6 @@ Original sizes: Sapporo TV Tower 20180715.jpg 6000×4000 px; This is Sapporo (69
 
 Adding a photo? Use only images whose licence allows reuse (CC0, or plain CC BY with a visible credit), add a row to the right table here, add its entry to `src/lib/data/homePhotos.ts` and, for a hero slideshow, to `src/lib/data/cityPhotos.ts`. The footer lists photographers by licence automatically.
 
-## The owner's own photographs (4)
+## The owner's own photographs (9)
 
-`osaka-tsutenkaku-night`, `osaka-abeno-harukas-night`, `osaka-sign-night` and `nara-deer-closeup` were taken by the site's owner. No credit is needed or shown. Each was resized to 2560 px wide and saved as WebP at quality 80; all camera metadata, including location, was removed.
+`osaka-tsutenkaku-night`, `osaka-abeno-harukas-night`, `osaka-sign-night`, `osaka-castle-night`, `osaka-tsutenkaku-dusk`, `osaka-abeno-harukas-dusk`, `nara-deer-closeup`, `nara-stag-closeup` and `nara-wakakusa-view` were taken by the site's owner. No credit is needed or shown. Each was resized to 2560 px wide and saved as WebP; all camera metadata, including location, was removed.
