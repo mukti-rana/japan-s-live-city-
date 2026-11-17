@@ -347,6 +347,24 @@ export const HOME_PHOTOS = {
     deskFocus: "50% 70%",
     blur: "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAACQBACdASoYACAAPwlurVArpiQit/VYAXAhCWMAuwBRRyGrENQygVxI/m0XGRQA/u4C3Vl1CeXz9427sek07SwWxTyxo5BH4+2bs1d2e3yKK4BWt/Pbj72mt273Qzhu2jOxd6QxMkAAAA==",
   },
+  ownNaraDeerWithOwner: {
+    src: "/images/home/nara-deer-with-owner.webp",
+    width: 1800,
+    height: 2400,
+    alt: "A visitor crouching to pet a deer on a bright green lawn in Nara Park",
+    focus: "50% 45%",
+    deskFocus: "50% 42%",
+    blur: "data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAACQBQCdASoYACAAPxF2slAsJ6SisAgBgCIJbACdMoM3WEmUoI/bSFiHTW7BY5nXNATNcqxbAAD+rn+JXEX9S/S/UBmxT9oqebn0Cb3c1Jh/YF+DOESwaXeu9IDX4Y9wrVrYywD4Bpt3k0LISwIwGg2rmZt6gRUQuCEqI0lwI2qI0TGfdwMB5n6KjL8vIBvg3ODRZVlSMSQq9Y9H6Hjo3EFOAC0ntS688Z2O8OqW7V1utPi4b26FtUv8sXj6Bhz6h35yIIAA",
+  },
+  ownNaraWakakusaLying: {
+    src: "/images/home/nara-wakakusa-lying.webp",
+    width: 1800,
+    height: 2400,
+    alt: "Forested hills and the Nara plain from the grassy Mount Wakakusa summit, with a visitor resting on the grass",
+    focus: "50% 60%",
+    deskFocus: "50% 62%",
+    blur: "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwBACdASoYACAAPxFws1MsJaSisBgIAYAiCUAXYA0sAa9vt9Mr5CykPlooKlwgAP7xyrxwrw2jRRMTrAJxQ/irCoDMQTz2nAgz6ehHlX+8N8evzxA0SmqmF15BQPHfrNtc8fM8b6KpPxwO6gAAAA==",
+  },
 } as const satisfies Record<string, HomePhoto>;
 
 export type HomePhotoKey = keyof typeof HOME_PHOTOS;
