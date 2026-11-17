@@ -17,7 +17,7 @@ export interface HomePhoto {
   focus?: string;
   // The same, for wide screens (they centre by default). Needed for tall photographs, which a wide screen crops to a band.
   deskFocus?: string;
-  // Wide screens show the whole picture (no crop, no slow zoom) over a soft blurred copy of itself, instead of filling the screen.
+  // Wide screens show the whole picture (no crop, no slow zoom) on plain black, instead of filling the screen.
   // For a picture whose subject runs to the edge, where cropping it would cut the subject off.
   whole?: boolean;
   // A 24 px blurred copy to show while the photo loads.

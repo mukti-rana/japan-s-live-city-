@@ -30,10 +30,7 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
 
   return (
     <div aria-hidden={visible ? undefined : true} className={`absolute inset-0 transition-opacity ease-in-out motion-reduce:transition-none ${visible && ready ? "opacity-100" : "opacity-0"}`} style={{ transitionDuration: `${first ? 700 : FADE_MS}ms` }}>
-      <div className={`absolute inset-0 home-zoom ${photo.whole ? "home-zoom--whole" : ""}`}>
-        {photo.whole && (
-          <div aria-hidden="true" className="absolute inset-0 hidden scale-110 bg-cover bg-center blur-2xl brightness-75 lg:block" style={{ backgroundImage: `url(${photo.blur})` }} />
-        )}
+      <div className={`absolute inset-0 home-zoom ${photo.whole ? "home-zoom--whole lg:bg-black" : ""}`}>
         <Image
           ref={img}
           src={photo.src}
