@@ -66,7 +66,9 @@ export default function QuickDock() {
       // On the opening screen, only if the hero's last control is clear of where the dock sits.
       const clear = document.querySelector("[data-dock-clear]")?.getBoundingClientRect().bottom ?? 0;
       const dockTop = window.innerHeight - 16 - (wrap.current?.offsetHeight ?? 80) - 12;
-      setAtEnds(nearEnd || (nearTop && clear <= dockTop));
+      // ...and only while the Your Day strip under the hero has not come into view (it would sit under the dock).
+      const stripTop = document.getElementById("your-day")?.getBoundingClientRect().top ?? Infinity;
+      setAtEnds(nearEnd || (nearTop && clear <= dockTop && stripTop >= window.innerHeight - 2));
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(measure);

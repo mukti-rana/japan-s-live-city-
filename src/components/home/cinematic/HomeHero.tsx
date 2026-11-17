@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useReducedMotion } from "motion/react";
-import { ArrowRight, LocateFixed, MapPin, Pause, Play, Sparkles } from "lucide-react";
+import { ArrowRight, LocateFixed, MapPin, Sparkles } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
 import HeroSlides from "@/components/home/cinematic/HeroSlides";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
@@ -61,10 +60,20 @@ export default function HomeHero() {
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
   const [question, setQuestion] = useState("");
-  const [paused, setPaused] = useState(false);
+  // The slideshow holds still while the pointer is over the hero text or keyboard focus is inside the hero.
+  const [hover, setHover] = useState(false);
+  const [focus, setFocus] = useState(false);
+  const paused = hover || focus;
   const [shown, setShown] = useState<HomePhoto | null>(null);
-  const reduceMotion = useReducedMotion();
   const now = useJstNow();
+
+  useEffect(() => {
+    if (!focus) return;
+    const id = window.setInterval(() => {
+      if (!document.getElementById("top")?.contains(document.activeElement)) setFocus(false);
+    }, 800);
+    return () => window.clearInterval(id);
+  }, [focus]);
 
   function pickCity(city: HeroCityInfo) {
     setManualCity(city);
@@ -89,7 +98,6 @@ export default function HomeHero() {
   // With no city decided yet, the page shows Tokyo's photographs as its default scene.
   const photos = matchedCity ? (CITY_PHOTOS[matchedCity.slug] ?? NO_PHOTOS) : needsPicker || isLoadingLocation ? CITY_PHOTOS.tokyo : NO_PHOTOS;
   const credit = photos.find((p) => p.src === shown?.src) ?? photos[0];
-  const slideshow = photos.length > 1 && !reduceMotion;
   const atmosphere = matchedCity?.atmosphere ?? DEFAULT_HERO_ATMOSPHERE;
   const kanji = matchedCity?.nameJa ?? "日本";
 
@@ -123,7 +131,13 @@ export default function HomeHero() {
       <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,0,0,0)_62%)] sm:block" />
 
       <ScrollReveal from="scale" delay={0.1} className="w-full">
-      <div className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32">
+      <div
+        onPointerEnter={(e) => e.pointerType === "mouse" && setHover(true)}
+        onPointerLeave={() => setHover(false)}
+        onFocusCapture={() => setFocus(true)}
+        onBlurCapture={() => setFocus(false)}
+        className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32"
+      >
         <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
           {isLoadingLocation ? (
             <span className="h-4 w-40 animate-pulse rounded bg-white/10" aria-hidden="true" />
@@ -241,20 +255,12 @@ export default function HomeHero() {
       </div>
       </ScrollReveal>
 
-      <div className="absolute bottom-3 right-[clamp(16px,4vw,48px)] flex items-center gap-3">
-        {credit && <PhotoCredit photo={credit} className="hidden sm:block" />}
-        {slideshow && (
-          <button
-            type="button"
-            onClick={() => setPaused((p) => !p)}
-            aria-pressed={paused}
-            aria-label={paused ? tr("Play photo slideshow") : tr("Pause photo slideshow")}
-            className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white/85 backdrop-blur-sm transition-colors hover:border-white/55 hover:bg-white/15 hover:text-white ${ring}`}
-          >
-            {paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}
-          </button>
-        )}
-      </div>
+      {/* The on-photo credit stays only where the licence needs it (CC BY). CC0 photographers are credited in the footer. */}
+      {credit && credit.credit.license !== "CC0" && (
+        <div className="absolute bottom-3 right-[clamp(16px,4vw,48px)] max-w-[70vw] text-right">
+          <PhotoCredit photo={credit} />
+        </div>
+      )}
     </section>
   );
 }
