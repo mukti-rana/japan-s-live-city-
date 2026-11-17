@@ -854,3 +854,22 @@ body:has([data-home-root]) aside .text-\[11px\] {
   .lg-s { display: none; }
   .lg-art { animation: none; opacity: 1; }
 }
+
+/* ── The detected location's name ──
+   Wherever the site shows where you are (the hero, the weather cards, Discover near you), the name carries the same
+   sunset colours as the logo so it is easy to spot. Darker stops on light pages keep it readable. Add the class to
+   the text itself; it clears any text-shadow, which would show through the transparent fill. */
+.place-name {
+  --pn-a: #ffb056; --pn-b: #ff6aa8; --pn-c: #c58bff;
+  background-image: linear-gradient(90deg, var(--pn-a), var(--pn-b) 55%, var(--pn-c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-shadow: none;
+  font-weight: 700;
+}
+html:not(.dark) .place-name { --pn-a: #d9560b; --pn-b: #d42a78; --pn-c: #7a2fd6; }
+/* On panels that are always dark (the home page, the weather scene) the bright stops are used in either theme. */
+html [data-home-root] .place-name,
+html .keep-dark-ink .place-name { --pn-a: #ffb056; --pn-b: #ff6aa8; --pn-c: #c58bff; }

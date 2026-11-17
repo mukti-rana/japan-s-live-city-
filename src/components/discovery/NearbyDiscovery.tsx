@@ -77,7 +77,7 @@ export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2
                 <>
                   <span className="flex items-center gap-1">
                     <MapPin size={12} className="text-gold" aria-hidden="true" />
-                    {known(loc.label, language)}
+                    <span className={loc.mode === "gps" ? "place-name" : ""}>{known(loc.label, language)}</span>
                   </span>
                   <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${loc.mode === "gps" ? "bg-mint/15 text-mint" : "bg-gold/15 text-gold"}`}>
                     {loc.mode === "gps" ? tr("Your current location") : tr("Place you picked")}

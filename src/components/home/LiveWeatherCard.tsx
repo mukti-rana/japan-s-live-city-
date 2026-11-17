@@ -308,7 +308,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
               <div className="relative">
                 <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                   <MapPin size={14} className="text-gold" aria-hidden="true" />
-                  <span className="truncate">{cityName}</span>
+                  <span className={`truncate ${useOwnLocation && !prefecture ? "place-name" : ""}`}>{cityName}</span>
                 </p>
                 <p className="mt-0.5 pl-5 text-xs text-foreground/65">{country}</p>
               </div>

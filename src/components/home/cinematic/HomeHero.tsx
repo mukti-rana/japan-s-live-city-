@@ -145,8 +145,10 @@ export default function HomeHero() {
             <>
               <span className="inline-flex items-center gap-1.5">
                 <MapPin size={14} aria-hidden="true" className="text-sakura" />
-                {name(displayName)}
-                {matchedCity?.region ? ` · ${name(matchedCity.region)}` : ""}
+                <span className="place-name text-[15px] [filter:drop-shadow(0_1px_8px_rgba(0,0,0,0.7))]">
+                  {name(displayName)}
+                  {matchedCity?.region ? ` · ${name(matchedCity.region)}` : ""}
+                </span>
               </span>
               {isManual && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-gold backdrop-blur-sm [text-shadow:none]">

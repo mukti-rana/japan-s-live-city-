@@ -153,7 +153,7 @@ export default function HeroCard() {
               <>
                 <div className="mt-1 flex items-center gap-1.5">
                   <MapPin size={20} className="text-sakura" />
-                  <span className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                  <span className="place-name text-3xl tracking-tight sm:text-4xl">
                     {name(displayName)}
                   </span>
                   {isManual && (
