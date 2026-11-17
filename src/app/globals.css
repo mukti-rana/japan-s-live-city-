@@ -807,7 +807,6 @@ body:has([data-home-root]) aside .text-\[11px\] {
    Each letter (--i = its position) draws its outline, fills, holds, then draws itself away; the same 9s cycle
    with a 0.16s step per letter keeps the letters in step, so it always writes and erases left to right. */
 .hw-l {
-  stroke: currentColor;
   stroke-width: 0.9;
   stroke-linejoin: round;
   stroke-linecap: round;
