@@ -148,11 +148,6 @@ export default function HomeHero() {
                 {name(displayName)}
                 {matchedCity?.region ? ` · ${name(matchedCity.region)}` : ""}
               </span>
-              {isLive && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-mint/40 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-mint backdrop-blur-sm [text-shadow:none]">
-                  {t("widget.live")}
-                </span>
-              )}
               {isManual && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-gold backdrop-blur-sm [text-shadow:none]">
                   <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold" />

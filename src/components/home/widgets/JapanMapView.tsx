@@ -52,7 +52,7 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
   const hasReadings = cities.some((c) => c.tempC !== null);
 
   return (
-    <WidgetFrame icon={Globe2} labelKey="widget.japanMap" accent="azure" live={hasReadings} viewAll viewAllHref="/map">
+    <WidgetFrame icon={Globe2} labelKey="widget.japanMap" accent="azure" viewAll viewAllHref="/map">
       <Link
         href="/map"
         aria-label={t("widget.openFullMap")}

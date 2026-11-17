@@ -156,11 +156,6 @@ export default function HeroCard() {
                   <span className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                     {name(displayName)}
                   </span>
-                  {isLive && (
-                    <span className="flex items-center gap-1 rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-medium text-mint">
-                      {t("widget.live")}
-                    </span>
-                  )}
                   {isManual && (
                     <span className="flex items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-medium text-gold">
                       <span className="h-1.5 w-1.5 rounded-full bg-gold" />

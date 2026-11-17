@@ -40,7 +40,6 @@ const TEXT = {
   low: { en: "Low", ja: "最低" },
   now: { en: "Now", ja: "今" },
   japan: { en: "Japan", ja: "日本" },
-  live: { en: "Live", ja: "ライブ" },
   updatedAgo: { en: "Updated {n} min ago", ja: "{n}分前に更新" },
   updatedNow: { en: "Updated just now", ja: "たった今更新" },
   stale: { en: "Not live — last reading {n} min ago", ja: "ライブではありません（{n}分前の観測）" },
@@ -269,11 +268,6 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
             <CloudSun size={16} aria-hidden="true" />
           </span>
           <Heading className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">{t("weather.liveWeatherTitle")}</Heading>
-          {weather && isFresh && (
-            <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-              {text("live")}
-            </span>
-          )}
         </div>
         <div className="flex items-center gap-2.5">
           <CityPicker selected={prefecture ? selected : "auto"} onChange={choose} text={text} />

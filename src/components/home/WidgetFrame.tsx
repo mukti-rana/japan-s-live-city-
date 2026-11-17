@@ -21,7 +21,6 @@ export default function WidgetFrame({
   viewAll = false,
   viewAllHref,
   live = false,
-  liveDot = false,
   children,
   className = "",
 }: {
@@ -32,8 +31,7 @@ export default function WidgetFrame({
   viewAll?: boolean;
   viewAllHref?: string;
   live?: boolean;
-  /** The small green dot in the LIVE badge: only the Live City Cam shows it. */
-  liveDot?: boolean;
+  /** The green LIVE badge (dot and text): only the Live City Cam uses it. */
   children: ReactNode;
   className?: string;
 }) {
@@ -57,7 +55,7 @@ export default function WidgetFrame({
 
           {live && (
             <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-              {liveDot && <span className="h-1.5 w-1.5 rounded-full bg-mint" />}
+              <span className="h-1.5 w-1.5 rounded-full bg-mint" />
               <T k="widget.live" />
             </span>
           )}

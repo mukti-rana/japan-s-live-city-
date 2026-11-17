@@ -165,10 +165,7 @@ export default function WeatherExperience({
 
         <div className="relative z-10 flex min-h-[320px] flex-col justify-between gap-6 p-6 sm:p-8">
           <div className="flex items-center justify-between gap-3">
-            <span className="flex items-center gap-1.5 rounded-full bg-mint/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-mint">
-              <T k="widget.live" />
-            </span>
-            <span className={`text-xs ${isStale ? "text-gold" : "text-foreground/65"}`}>
+            <span className={`ml-auto text-xs ${isStale ? "text-gold" : "text-foreground/65"}`}>
               {minutesAgo === null
                 ? t("weather.v2.noData")
                 : t("weather.v2.updatedAgo").replace("{minutes}", String(minutesAgo))}
