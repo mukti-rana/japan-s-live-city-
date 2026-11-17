@@ -20,6 +20,8 @@ export interface HomePhoto {
   // Wide screens show the whole picture (no crop, no slow zoom) on plain black, instead of filling the screen.
   // For a picture whose subject runs to the edge, where cropping it would cut the subject off.
   whole?: boolean;
+  // No slow zoom on wide screens (the zoom crops a little more every second); the picture still fills the screen.
+  noZoom?: boolean;
   // A 24 px blurred copy to show while the photo loads.
   blur: string;
   // Omitted for the owner's own photographs. Never shown on the home page either way (see /credits).
@@ -357,8 +359,8 @@ export const HOME_PHOTOS = {
     height: 2400,
     alt: "A visitor crouching to pet a deer on a bright green lawn in Nara Park",
     focus: "50% 45%",
-    deskFocus: "82% 50%",
-    whole: true,
+    deskFocus: "50% 41%",
+    noZoom: true,
     blur: "data:image/webp;base64,UklGRtAAAABXRUJQVlA4IMQAAACQBQCdASoYACAAPxF2slAsJ6SisAgBgCIJbACdMoM3WEmUoI/bSFiHTW7BY5nXNATNcqxbAAD+rn+JXEX9S/S/UBmxT9oqebn0Cb3c1Jh/YF+DOESwaXeu9IDX4Y9wrVrYywD4Bpt3k0LISwIwGg2rmZt6gRUQuCEqI0lwI2qI0TGfdwMB5n6KjL8vIBvg3ODRZVlSMSQq9Y9H6Hjo3EFOAC0ntS688Z2O8OqW7V1utPi4b26FtUv8sXj6Bhz6h35yIIAA",
   },
   ownNaraWakakusaLying: {
