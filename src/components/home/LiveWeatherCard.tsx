@@ -271,7 +271,6 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
           <Heading className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">{t("weather.liveWeatherTitle")}</Heading>
           {weather && isFresh && (
             <span className="flex items-center gap-1.5 rounded-full bg-mint/10 px-2 py-0.5 text-[10px] font-medium text-mint">
-              <span className="h-1.5 w-1.5 rounded-full bg-mint" aria-hidden="true" />
               {text("live")}
             </span>
           )}

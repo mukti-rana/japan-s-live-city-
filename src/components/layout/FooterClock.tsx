@@ -29,7 +29,6 @@ export default function FooterClock({ timeZone }: { timeZone: string }) {
 
   return (
     <span className="flex items-center gap-2">
-      <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_1px_rgba(74,222,128,0.8)]" />
       <span className="tabular-nums text-foreground/80" suppressHydrationWarning>
         {time}
       </span>

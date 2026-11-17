@@ -158,7 +158,6 @@ export default function TrainAssistant() {
         </p>
         {disruptions.length === 0 ? (
           <GlassCard className="flex items-center gap-2 p-4">
-            <span className="h-2.5 w-2.5 rounded-full bg-mint" />
             <p className="text-sm text-foreground">
               <T k="trains.allNormal" />
             </p>

@@ -17,7 +17,7 @@ export default function LiveCityCamCard() {
   const location = tr(titleCase(cam.location)).toUpperCase();
 
   return (
-    <WidgetFrame icon={Video} labelKey="citycam.title" accent="mint" live>
+    <WidgetFrame icon={Video} labelKey="citycam.title" accent="mint" live liveDot>
       <div className="flex items-center gap-1.5">
         {CITIES.map((city) => (
           <button
