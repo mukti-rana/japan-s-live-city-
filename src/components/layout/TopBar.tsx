@@ -55,7 +55,7 @@ export default function TopBar() {
           className="flex shrink-0 items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
         >
           <span className="block h-8 w-8 transition-[width,height] duration-300 ease-out motion-reduce:transition-none group-data-[compact=true]:h-7 group-data-[compact=true]:w-7 [&>svg]:h-full [&>svg]:w-full">
-            <Logo size={32} />
+            <Logo size={32} drawing />
           </span>
           <div className="hidden whitespace-nowrap sm:block">
             <HandwrittenLogo className="origin-left transition-transform duration-300 group-data-[compact=true]:scale-90" />

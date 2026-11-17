@@ -826,3 +826,32 @@ body:has([data-home-root]) aside .text-\[11px\] {
 @media (prefers-reduced-motion: reduce) {
   .hw-l { animation: none; stroke-opacity: 0; fill-opacity: 1; }
 }
+
+/* ── The logo picture draws itself too (Logo with `drawing`, top bar only) ──
+   Same 9s cycle as the handwritten text: outlines draw one after another (--j), the artwork fades in over them,
+   holds, fades out, and the outlines draw themselves away. */
+.lg-s {
+  stroke-dasharray: 1;
+  animation: lg-line 9s cubic-bezier(0.4, 0, 0.2, 1) infinite both;
+  animation-delay: calc(var(--j, 0) * 0.12s);
+}
+.lg-art { animation: lg-art 9s ease-in-out infinite both; }
+@keyframes lg-line {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  14% { stroke-dashoffset: 0; opacity: 1; }
+  22% { stroke-dashoffset: 0; opacity: 1; }
+  32% { stroke-dashoffset: 0; opacity: 0; }
+  76% { stroke-dashoffset: 0; opacity: 0; }
+  82% { stroke-dashoffset: 0; opacity: 1; }
+  96% { stroke-dashoffset: -1; opacity: 1; }
+  100% { stroke-dashoffset: -1; opacity: 0; }
+}
+@keyframes lg-art {
+  0%, 22% { opacity: 0; }
+  32%, 76% { opacity: 1; }
+  88%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-s { display: none; }
+  .lg-art { animation: none; opacity: 1; }
+}
