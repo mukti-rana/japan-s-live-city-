@@ -9,7 +9,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { CommunityNotificationList, useCommunityNotifications } from "@/components/community/CommunityNotifications";
 import { useInline, type Table } from "@/lib/i18n/inline";
 import { useAuth } from "@/lib/supabase/AuthContext";
-import WrittenPrompt from "@/components/layout/WrittenPrompt";
+import TypedPrompt from "@/components/layout/TypedPrompt";
 import { ICON_BUTTON, MENU_PANEL, useDismiss, useHoverMenu } from "@/components/layout/usePopover";
 
 const TEXT = {
@@ -109,7 +109,7 @@ export default function NotificationsMenu() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
           {guest && (
             <div className="px-3 pb-2 pt-1">
-              <WrittenPrompt first={text("loginNotify")} second={text("loginExplore")} />
+              <TypedPrompt first={text("loginNotify")} second={text("loginExplore")} />
             </div>
           )}
           {community.items.length > 0 && (
