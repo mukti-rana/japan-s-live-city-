@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Logo from "@/components/ui/Logo";
+import MenuButton from "@/components/layout/MenuButton";
 import TopBarActions from "@/components/layout/TopBarActions";
 import Tx from "@/components/i18n/Tx";
 
@@ -46,6 +47,8 @@ export default function TopBar() {
         data-compact={isCompact}
         className="group absolute inset-x-0 top-0 flex h-[var(--header-h,3.5rem)] items-center gap-3 border-b border-glass-border bg-sidebar-bg/95 px-3 backdrop-blur-xl max-[359px]:gap-2 max-[359px]:px-2 transition-[height,box-shadow] duration-300 ease-out motion-reduce:transition-none data-[compact=true]:shadow-[0_8px_24px_-16px_rgba(0,0,0,0.8)] sm:gap-4 sm:px-5"
       >
+        <MenuButton />
+
         <Link
           href="/"
           aria-label="LIVE CITY JAPAN"

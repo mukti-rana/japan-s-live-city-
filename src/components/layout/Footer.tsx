@@ -8,7 +8,7 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-glass-border bg-sidebar-bg px-4 py-3 text-[11px] text-muted sm:px-6 lg:pl-[4.5rem]">
+    <footer className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-glass-border bg-sidebar-bg px-4 py-3 text-[11px] text-muted sm:px-6">
       <div className="flex items-center gap-2">
         <Logo size={18} />
         <span className="font-semibold text-foreground/80">LIVE CITY</span>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   Home,
@@ -18,8 +18,6 @@ import {
   ShieldAlert,
   Menu,
   X,
-  ChevronsLeft,
-  ChevronsRight,
 } from "lucide-react";
 import { CITIES } from "@/lib/data/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -27,9 +25,6 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import Tx from "@/components/i18n/Tx";
 
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
-// Whether the visitor has pinned the sidebar open (it is otherwise a slim icon rail that opens on hover).
-const SIDEBAR_PINNED_KEY = "livecity:sidebarPinned";
-
 const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home; danger?: boolean }[] = [
   { labelKey: "nav.home", href: "/", icon: Home },
   { labelKey: "nav.map", href: "/map", icon: Map },
@@ -48,41 +43,72 @@ const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home; da
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  // Desktop: the sidebar is hidden until it is needed. "hover" = peeked by moving to the left edge (closes when
+  // the pointer leaves); "click" = opened with the menu button (stays until Escape, a click elsewhere or a page is chosen).
+  const [peek, setPeek] = useState<null | "hover" | "click">(null);
+  const asideRef = useRef<HTMLElement>(null);
+  const timer = useRef(0);
   const pathname = usePathname();
   const { t } = useLanguage();
-  // On the home page the rail floats over the full-screen photograph and never pushes the page; on every
-  // other page it reserves its own slim column. The phone menu button and drawer are the same everywhere.
-  const isHome = pathname === "/";
-  // Pinned open (wide, pushes the page) only off the home page.
-  const wide = pinned && !isHome;
+  const shown = peek !== null;
 
-  // SSR-safe default (rail) corrected from localStorage post-mount.
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(SIDEBAR_PINNED_KEY) === "true") {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setPinned(true);
-      }
-    } catch {
-      // localStorage unavailable — keep default.
-    }
+  const close = useCallback(() => {
+    window.clearTimeout(timer.current);
+    setPeek(null);
   }, []);
 
-  function togglePinned() {
-    setPinned((prev) => {
-      const next = !prev;
-      try {
-        window.localStorage.setItem(SIDEBAR_PINNED_KEY, String(next));
-      } catch {
-        // Ignore write failures — the in-memory state still updates.
-      }
-      return next;
-    });
-  }
+  // Closes when a page is chosen.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    close();
+  }, [pathname, close]);
 
-  // Labels: always on the phone drawer; on desktop only while the rail is open (hover, keyboard focus or pinned).
-  const label = wide ? "" : "lg:hidden lg:group-hover/rail:inline lg:group-focus-within/rail:inline";
+  // The top-bar menu button, Escape and a click elsewhere.
+  useEffect(() => {
+    const toggle = () => setPeek((p) => (p ? null : "click"));
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      // If focus is inside the sidebar, hand it back to the menu button so a keyboard user is not lost.
+      if (asideRef.current?.contains(document.activeElement)) document.querySelector<HTMLElement>("[aria-controls='site-sidebar']")?.focus();
+      close();
+    };
+    const onDown = (e: PointerEvent) => {
+      const target = e.target as Node;
+      if (asideRef.current?.contains(target) || (target as HTMLElement).closest?.("[aria-controls='site-sidebar'], [data-menu-trigger]")) return;
+      close();
+    };
+    window.addEventListener("livecity:toggle-menu", toggle);
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onDown);
+    return () => {
+      window.removeEventListener("livecity:toggle-menu", toggle);
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onDown);
+    };
+  }, [close]);
+
+  // Opened with the menu button: move focus to its first link (the same for a keyboard or a mouse user, and
+  // a mouse click shows no focus ring), so Tab goes through the menu rather than the page behind it.
+  useEffect(() => {
+    if (peek !== "click") return;
+    const trigger = document.querySelector("[aria-controls='site-sidebar']");
+    if (document.activeElement === trigger) asideRef.current?.querySelector<HTMLElement>("nav a")?.focus({ preventScroll: true });
+  }, [peek]);
+
+  // Tell the top-bar button whether the sidebar is showing.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("livecity:menu-state", { detail: shown }));
+  }, [shown]);
+
+  // Moving to the left edge peeks it; leaving closes it again (unless it was opened with the button).
+  function peekIn() {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setPeek((p) => p ?? "hover"), 120);
+  }
+  function peekOut() {
+    window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setPeek((p) => (p === "hover" ? null : p)), 350);
+  }
 
   return (
     <>
@@ -104,14 +130,24 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Reserves the rail's column on every page but the home page, where the rail floats over the photograph. */}
-      {!isHome && <div aria-hidden="true" className={`hidden shrink-0 transition-[width] duration-200 motion-reduce:transition-none lg:block ${wide ? "w-60" : "w-14"}`} />}
+      {/* An invisible strip along the left edge: moving the mouse there brings the sidebar out. */}
+      <div
+        aria-hidden="true"
+        onPointerEnter={(e) => e.pointerType === "mouse" && peekIn()}
+        onPointerLeave={peekOut}
+        className="fixed bottom-0 left-0 top-[var(--header-h,3.5rem)] z-40 hidden w-2.5 lg:block"
+      />
 
       <aside
-        data-pinned={wide}
-        className={`group/rail fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 motion-reduce:transition-none lg:top-[var(--header-h,3.5rem)] lg:z-40 lg:translate-x-0 lg:transition-[width,background-color] lg:duration-200 ${
+        ref={asideRef}
+        id="site-sidebar"
+        onPointerEnter={() => {
+          window.clearTimeout(timer.current);
+        }}
+        onPointerLeave={peekOut}
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 motion-reduce:transition-none lg:top-[var(--header-h,3.5rem)] lg:z-50 lg:duration-200 lg:shadow-[0_0_60px_rgba(0,0,0,0.55)] lg:focus-within:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
-        } ${wide ? "lg:w-60" : "lg:w-14 lg:hover:w-60 lg:focus-within:w-60"} ${isHome ? "lg:border-transparent lg:bg-black/55 lg:backdrop-blur-sm lg:hover:border-glass-border lg:hover:bg-black/90 lg:focus-within:bg-black/90" : ""}`}
+        } ${shown ? "lg:translate-x-0" : "lg:-translate-x-full lg:shadow-none"}`}
       >
         <button
           type="button"
@@ -122,7 +158,7 @@ export default function Sidebar() {
           <X size={18} />
         </button>
 
-        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pt-6 lg:px-1.5 lg:pt-3">
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pt-6 lg:pt-3">
           {NAV_ITEMS.map(({ labelKey, href, icon: Icon, danger }) => {
             const active =
               href === "/"
@@ -133,33 +169,17 @@ export default function Sidebar() {
               <a
                 key={labelKey}
                 href={href}
-                aria-label={t(labelKey)}
                 aria-current={active ? "page" : undefined}
-                title={wide ? undefined : t(labelKey)}
                 className={`flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
                   active ? "bg-foreground/10 text-foreground" : "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
                 }`}
               >
                 <Icon size={20} strokeWidth={1.75} className={`shrink-0 ${danger && !active ? "text-red-400" : ""}`} aria-hidden="true" />
-                <span className={`truncate ${label}`}>{t(labelKey)}</span>
+                <span className="truncate">{t(labelKey)}</span>
               </a>
             );
           })}
         </nav>
-
-        {!isHome && (
-          <button
-            type="button"
-            onClick={togglePinned}
-            aria-label={t(wide ? "sidebar.collapse" : "sidebar.expand")}
-            aria-pressed={wide}
-            title={t(wide ? "sidebar.collapse" : "sidebar.expand")}
-            className="mx-1.5 mb-2 hidden h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-medium text-muted transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure lg:flex"
-          >
-            {wide ? <ChevronsLeft size={20} strokeWidth={1.75} className="shrink-0" aria-hidden="true" /> : <ChevronsRight size={20} strokeWidth={1.75} className="shrink-0" aria-hidden="true" />}
-            <span className={`truncate ${label}`}>{t(wide ? "sidebar.collapse" : "sidebar.expand")}</span>
-          </button>
-        )}
 
         <div className="relative h-44 overflow-hidden lg:hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-sakura/25 via-[#1a1330] to-transparent" />
