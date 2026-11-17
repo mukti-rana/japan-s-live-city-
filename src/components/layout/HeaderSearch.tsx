@@ -43,6 +43,11 @@ const PAGES: { href: string; key: string; kw: string; kwJa: string }[] = [
   { href: "/cities", key: "nav.cities", kw: "cities", kwJa: "都市" },
 ];
 
+// On tablets and desktops the search is just an icon. Pointing at it (or tabbing / tapping into it, or while there is
+// text or a list open) the field slides open to the right over the empty header, without moving anything else; it
+// slides shut again when you leave and it is empty. The width is one value, used by the field and its suggestion list.
+const WIDE = "sm:w-[min(26rem,calc(100vw_-_22rem))]";
+
 // The header's search. Typing offers: a news search, an events search (both
 // open those pages already filtered), and shortcuts to matching pages and
 // cities. Phones show a search icon that opens a full-width search row.
@@ -54,6 +59,7 @@ export default function HeaderSearch() {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [active, setActive] = useState(0);
+  const [hover, setHover] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const listId = useId();
   const mobileInput = useRef<HTMLInputElement>(null);
@@ -64,6 +70,8 @@ export default function HeaderSearch() {
   }, [expanded]);
 
   const q = query.trim();
+  // Wide while pointed at, focused (open), or holding text; just an icon otherwise (tablet and up).
+  const wide = hover || open || q !== "";
   const close = useCallback(() => {
     setOpen(false);
     setExpanded(false);
@@ -140,7 +148,7 @@ export default function HeaderSearch() {
   );
 
   return (
-    <div ref={ref} className={`${expanded ? "max-sm:absolute max-sm:inset-0 max-sm:z-40 max-sm:flex max-sm:items-center max-sm:gap-2 max-sm:bg-sidebar-bg max-sm:px-4" : ""} min-w-0 max-sm:shrink-0 sm:relative sm:max-w-2xl sm:flex-1`}>
+    <div ref={ref} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className={`${expanded ? "max-sm:absolute max-sm:inset-0 max-sm:z-40 max-sm:flex max-sm:items-center max-sm:gap-2 max-sm:bg-sidebar-bg max-sm:px-4" : ""} min-w-0 max-sm:shrink-0 sm:relative sm:h-9 sm:w-9 sm:shrink-0`}>
       {/* Phones: a search icon that opens a full-width row. */}
       {!expanded && (
         <button type="button" onClick={() => setExpanded(true)} aria-label={text("search")} title={text("search")} className={`${ICON_BUTTON} ml-auto sm:hidden`}>
@@ -148,9 +156,11 @@ export default function HeaderSearch() {
         </button>
       )}
 
-      <div className={`${expanded ? "relative flex-1" : "relative hidden sm:block"}`}>
-        <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-muted" aria-hidden="true" />
-        {input(`${listId}-input`, "", expanded)}
+      <div
+        className={`${expanded ? "relative flex-1" : "relative hidden sm:block"} sm:absolute sm:left-0 sm:top-0 sm:z-40 sm:h-9 sm:transition-[width] sm:duration-300 sm:ease-out motion-reduce:sm:transition-none ${wide ? WIDE : "sm:w-9"}`}
+      >
+        <Search size={15} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-muted sm:left-[10.5px]" aria-hidden="true" />
+        {input(`${listId}-input`, wide ? "" : "sm:px-0 sm:text-transparent sm:placeholder:text-transparent", expanded)}
       </div>
       {expanded && (
         <button type="button" onClick={close} aria-label={text("close")} className={`${ICON_BUTTON} sm:hidden`}>
@@ -160,7 +170,7 @@ export default function HeaderSearch() {
 
       {open && (
         <div
-          className={`z-50 overflow-hidden rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] max-sm:fixed max-sm:inset-x-3 max-sm:top-full max-sm:mt-2 sm:absolute sm:inset-x-0 sm:top-full sm:mt-2 ${expanded || "max-sm:hidden"}`}
+          className={`z-50 overflow-hidden rounded-2xl border border-glass-border bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)] max-sm:fixed max-sm:inset-x-3 max-sm:top-full max-sm:mt-2 sm:absolute sm:left-0 sm:top-full sm:mt-2 ${WIDE} ${expanded || "max-sm:hidden"}`}
         >
           <ul id={listId} role="listbox" className="max-h-80 overflow-y-auto">
             {suggestions.length === 0 && <li className="px-3 py-3 text-xs text-muted">{text("none")}</li>}
