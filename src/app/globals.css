@@ -993,3 +993,7 @@ html:not(.dark) .typed-caret { background: #0e7490; }
 .typed-finale { display: inline-block; margin-left: 0.4rem; font-size: 1rem; line-height: 1; vertical-align: middle; animation: typed-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 @keyframes typed-pop { from { opacity: 0; transform: scale(0.3) rotate(-15deg); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .typed-finale { animation: none; } }
+/* The typed message melts away in a blur (no transition when it comes back, so the next typing starts clean). */
+.typed-wrap { display: inline; }
+.typed-wrap[data-fading="true"] { filter: blur(10px); opacity: 0; transition: filter 0.8s ease-in, opacity 0.8s ease-in; }
+@media (prefers-reduced-motion: reduce) { .typed-wrap[data-fading="true"] { filter: none; opacity: 1; transition: none; } }
