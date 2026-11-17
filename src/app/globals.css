@@ -990,3 +990,6 @@ html:not(.dark) .typed-msg { --tm-a: #0369a1; --tm-b: #0e7490; --tm-c: #047857; 
 html:not(.dark) .typed-caret { background: #0e7490; }
 @keyframes typed-blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .typed-caret { display: none; } }
+.typed-finale { display: inline-block; margin-left: 0.4rem; font-size: 1rem; line-height: 1; vertical-align: middle; animation: typed-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+@keyframes typed-pop { from { opacity: 0; transform: scale(0.3) rotate(-15deg); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .typed-finale { animation: none; } }

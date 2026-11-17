@@ -105,10 +105,10 @@ export default function NotificationsMenu() {
 
       {open && (
         <div role="dialog" aria-label={text("title")} className={`${MENU_PANEL} hm-bell sm:w-80`}>
-          <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
+          <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-red-600 [html.dark_&]:text-red-400">{text("title")}</p>
           {guest && (
             <div className="px-3 pb-2 pt-1">
-              <TypedPrompt messages={[text("loginMore")]} />
+              <TypedPrompt messages={[text("loginMore")]} finale="😍" />
             </div>
           )}
           {community.items.length > 0 && (
