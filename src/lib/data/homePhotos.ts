@@ -22,6 +22,9 @@ export interface HomePhoto {
   whole?: boolean;
   // No slow zoom on wide screens (the zoom crops a little more every second); the picture still fills the screen.
   noZoom?: boolean;
+  // A short silent clip that plays over the picture (the picture is its poster and the fallback). It plays only while its slide
+  // is showing, never under reduced motion or data-saver, and it fades in once it is really playing.
+  video?: { src: string };
   // A 24 px blurred copy to show while the photo loads.
   blur: string;
   // Omitted for the owner's own photographs. Never shown on the home page either way (see /credits).
@@ -371,6 +374,17 @@ export const HOME_PHOTOS = {
     focus: "50% 60%",
     deskFocus: "50% 62%",
     blur: "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACwBACdASoYACAAPxFws1MsJaSisBgIAYAiCUAXYA0sAa9vt9Mr5CykPlooKlwgAP7xyrxwrw2jRRMTrAJxQ/irCoDMQTz2nAgz6ehHlX+8N8evzxA0SmqmF15BQPHfrNtc8fM8b6KpPxwO6gAAAA==",
+  },
+  ownNaraDeerHerd: {
+    src: "/images/home/nara-deer-herd.webp",
+    width: 900,
+    height: 1600,
+    alt: "A herd of deer resting and standing on the grass in Nara Park, with the green hillside behind",
+    focus: "50% 58%",
+    deskFocus: "50% 62%",
+    noZoom: true,
+    video: { src: "/images/home/nara-deer-herd.mp4" },
+    blur: "data:image/webp;base64,UklGRgwBAABXRUJQVlA4IAABAABwBgCdASoYACsAPxGCtlUsKKSjKrgIAYAiCWQAuwALgSXjzbDbQ61HteHOiYd4RR0lye2VU4rwSlU+gAAA/swD4ElA+UMVpARY3jB97xLcYnq5E18E+6A+dSMP1XCBZJvzmYYD+g7OSyb1VxfxIWOQITyJA2SOiMfyIHT0UxQWjNi7RNUqQIl2wm3ekMW6dED2ffpMbOL+IAJjjMoqnVAvX12oNRqXUGBDRoWUicM+SZCNPkJPezpwL7PygnS3qkwFJA7rdfSjVI6KKGMAJkdaOGSr+bS5gKi7vMZRcnlXokrIu3cyAFKqa0+RmPyIf/m9d9SUUJplMRoQImgW1cAA",
   },
 } as const satisfies Record<string, HomePhoto>;
 

@@ -13,9 +13,11 @@ const FADE_MS = 1600;
 
 // One photograph in the stack. It fades in only once it has really loaded, so a slow
 // picture never shows as a blank frame, and a hidden slide is invisible to screen readers.
-function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; visible: boolean; first: boolean; onReady: (src: string) => void; onFail: (src: string) => void }) {
+function Slide({ photo, visible, first, play, onReady, onFail }: { photo: HomePhoto; visible: boolean; first: boolean; play: boolean; onReady: (src: string) => void; onFail: (src: string) => void }) {
   const img = useRef<HTMLImageElement>(null);
+  const vid = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   const done = useCallback(() => {
     setReady(true);
@@ -27,6 +29,16 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
     const el = img.current;
     if (el?.complete && el.naturalWidth > 0) done();
   }, [done]);
+
+  // A clip plays only while its slide is showing and nothing says to hold still; otherwise its picture is all there is.
+  // (Data-saver visitors never download or play it.)
+  useEffect(() => {
+    const el = vid.current;
+    if (!el) return;
+    const saveData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
+    if (play && !saveData) void el.play().catch(() => {});
+    else el.pause();
+  }, [play]);
 
   return (
     <div aria-hidden={visible ? undefined : true} className={`absolute inset-0 transition-opacity ease-in-out motion-reduce:transition-none ${visible && ready ? "opacity-100" : "opacity-0"}`} style={{ transitionDuration: `${first ? 700 : FADE_MS}ms` }}>
@@ -46,6 +58,21 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
           style={{ "--focus": photo.focus ?? "50% 50%", "--focus-lg": photo.deskFocus ?? "50% 50%" } as CSSProperties}
           className={`object-cover object-[var(--focus)] ${photo.whole ? "lg:object-contain" : ""} lg:object-[var(--focus-lg)]`}
         />
+        {photo.video && (
+          <video
+            ref={vid}
+            src={photo.video.src}
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+            disablePictureInPicture
+            preload={visible ? "auto" : "none"}
+            onPlaying={() => setPlaying(true)}
+            style={{ "--focus": photo.focus ?? "50% 50%", "--focus-lg": photo.deskFocus ?? "50% 50%" } as CSSProperties}
+            className={`absolute inset-0 h-full w-full object-cover object-[var(--focus)] lg:object-[var(--focus-lg)] transition-opacity duration-700 motion-reduce:hidden ${playing ? "opacity-100" : "opacity-0"}`}
+          />
+        )}
       </div>
     </div>
   );
@@ -147,7 +174,7 @@ export default function HeroSlides({ photos, paused, onShow }: { photos: readonl
   return (
     <div ref={box} className="absolute inset-0">
       {layers.map((l) => (
-        <Slide key={l.photo.src} photo={l.photo} visible={l.visible} first={l.first} onReady={onReady} onFail={onFail} />
+        <Slide key={l.photo.src} photo={l.photo} visible={l.visible} first={l.first} play={l.visible && !reduce && !paused && !tabHidden && inView} onReady={onReady} onFail={onFail} />
       ))}
     </div>
   );

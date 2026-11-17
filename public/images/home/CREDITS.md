@@ -60,3 +60,5 @@ Adding a photo? Use only images whose licence allows reuse (CC0, or plain CC BY 
 ## The owner's own photographs (8)
 
 `osaka-sign-night`, `osaka-castle-night`, `osaka-tsutenkaku-dusk`, `nara-deer-closeup`, `nara-stag-closeup`, `nara-wakakusa-view`, `nara-deer-with-owner` and `nara-wakakusa-lying` were taken by the site's owner. No credit is needed or shown. Each was resized to 2560 px wide and saved as WebP; all camera metadata, including location, was removed.
+
+`nara-deer-herd.mp4` (with its still frame `nara-deer-herd.webp`) is a 2.8 s clip taken by the site's owner, played forward and then backward as a loop. It is silent, 900x1600, H.264, about 2 MB; the sound, the phone's location/metadata tracks and every other stream were removed. No credit is needed or shown.
