@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Noto_Sans_JP } from "next/font/google";
+import { Space_Grotesk, Noto_Sans_JP, Caveat } from "next/font/google";
 import TopBar from "@/components/layout/TopBar";
 import Sidebar from "@/components/layout/Sidebar";
 import Footer from "@/components/layout/Footer";
@@ -28,6 +28,13 @@ const notoSansJp = Noto_Sans_JP({
   weight: ["400", "500", "700"],
 });
 
+// The handwriting for the logo in the top bar ("Live City"). One weight, Latin letters only: a few KB.
+const caveat = Caveat({
+  variable: "--font-hand",
+  subsets: ["latin"],
+  weight: ["600"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: "Live City Japan",
@@ -42,7 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`dark ${spaceGrotesk.variable} ${notoSansJp.variable} antialiased`}
+      className={`dark ${spaceGrotesk.variable} ${notoSansJp.variable} ${caveat.variable} antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

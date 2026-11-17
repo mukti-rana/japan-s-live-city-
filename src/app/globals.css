@@ -802,3 +802,27 @@ body:has([data-home-root]) aside .text-\[10px\],
 body:has([data-home-root]) aside .text-\[11px\] {
   font-size: 0.75rem;
 }
+
+/* ── The handwritten logo (HandwrittenLogo): it writes itself, then un-writes, forever ──
+   Each letter (--i = its position) draws its outline, fills, holds, then draws itself away; the same 9s cycle
+   with a 0.16s step per letter keeps the letters in step, so it always writes and erases left to right. */
+.hw-l {
+  stroke: currentColor;
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  stroke-dasharray: 170;
+  animation: hw-write 9s cubic-bezier(0.4, 0, 0.2, 1) infinite both;
+  animation-delay: calc(var(--i, 0) * 0.16s);
+}
+@keyframes hw-write {
+  0% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }
+  14% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
+  22% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  78% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  90% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
+  100% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hw-l { animation: none; stroke-opacity: 0; fill-opacity: 1; }
+}
