@@ -759,8 +759,9 @@ body:has([data-home-root]) > footer {
   color: var(--foreground);
 }
 body:has([data-home-root]) { background: #000000; }
-/* The page runs edge to edge; each chapter sets its own padding. */
-body:has([data-home-root]) main { padding: 0; }
+/* The page runs edge to edge; each chapter sets its own padding. Only the page's own <main>: the welcome
+   screen over the home page has a <main> of its own whose padding keeps the panel off the screen edge. */
+body:has([data-home-root]) > div > main { padding: 0; }
 /* The page's own backdrop scene would only compete with the photographs. */
 body:has([data-home-root]) .atm-in { display: none; }
 /* The top bar floats over the hero, then settles into a blurred black bar. */
