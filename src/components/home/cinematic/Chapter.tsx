@@ -65,7 +65,7 @@ export function ChapterHeader({
 // One chapter of the homepage. It is at least a screen tall and its content sits in the
 // middle of that screen, so a short chapter is never a strip at the top of an empty page;
 // a tall one just runs on. `screen={false}` drops the minimum height.
-export const CHAPTER_WIDTH = "mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)]";
+export const CHAPTER_WIDTH = "mx-auto w-full max-w-[1480px] px-(--home-gutter)";
 
 export default function Chapter({
   id,

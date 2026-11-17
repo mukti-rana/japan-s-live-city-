@@ -16,6 +16,6 @@ These overrides apply to the homepage only; MASTER.md is unchanged.
 
 Layout rules for this page:
 
-- The **sidebar column is hidden on `/` at ≥ 1024px**. The top bar stays (SOS, search, language, theme, account). The phone menu button and drawer are unchanged. Each chapter heading links to its full page and the footer index lists every destination, so nothing becomes unreachable.
+- **Sidebar (updated 2026-11-17, approved):** one slim sidebar on every page. At ≥ 1024px it is a 56px black icon rail that opens to 240px on hover or keyboard focus as an overlay (it never pushes the page); off the home page a visitor can pin it open (remembered), which makes room for it. On `/` it floats, translucent, over the left edge of the photograph (the page keeps a 76px minimum side gutter so no text sits under it). No colour blocks, no permanent red Emergency block; the current page is a quiet highlight with `aria-current`. Below 1024px the phone menu button and drawer are unchanged. The earlier "hidden on `/`" rule is superseded.
 - The **dock is home-only and desktop-only**, with **Community first**, a divider, then the existing eight tools.
 - Chapters keep their reading order in the DOM with all motion off. Real data only; every live surface keeps its DEMO / Live / stale / empty / error state.

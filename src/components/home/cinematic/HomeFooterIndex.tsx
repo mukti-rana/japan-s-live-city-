@@ -27,7 +27,7 @@ export default function HomeFooterIndex() {
   const ccBy = photos.filter((p) => p.credit.license.startsWith("CC BY")).filter((p, i, all) => all.findIndex((q) => q.credit.author === p.credit.author && q.credit.license === p.credit.license) === i);
   return (
     <section aria-labelledby="home-index-h" className="border-t border-white/10 pb-[clamp(120px,14vw,160px)] pt-[clamp(48px,7vw,88px)]">
-      <div className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)]">
+      <div className="mx-auto w-full max-w-[1480px] px-(--home-gutter)">
         <h2 id="home-index-h" className="sr-only">
           <Tx en="All destinations" />
         </h2>

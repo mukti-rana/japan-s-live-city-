@@ -7,7 +7,7 @@ import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
 
 const BLUR = "blur" as const;
-const PAD = "px-[clamp(20px,5vw,72px)]";
+const PAD = "px-(--home-gutter)";
 
 // `place` is the place's own name (a proper noun), shown as it is written. The photographs
 // run edge to edge with only a hairline of black between them.

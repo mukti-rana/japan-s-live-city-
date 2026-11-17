@@ -27,7 +27,8 @@ import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import Tx from "@/components/i18n/Tx";
 
 const CITY_PATHS = CITIES.map((city) => `/${city.slug}`);
-const SIDEBAR_COLLAPSED_KEY = "livecity:sidebarCollapsed";
+// Whether the visitor has pinned the sidebar open (it is otherwise a slim icon rail that opens on hover).
+const SIDEBAR_PINNED_KEY = "livecity:sidebarPinned";
 
 const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home; danger?: boolean }[] = [
   { labelKey: "nav.home", href: "/", icon: Home },
@@ -47,38 +48,41 @@ const NAV_ITEMS: { labelKey: TranslationKey; href: string; icon: typeof Home; da
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
+  const [pinned, setPinned] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
-  // The home page is a full-width scroll with its own dock; the fixed column is hidden there
-  // at desktop width. The phone menu button and drawer are unchanged on every page.
+  // On the home page the rail floats over the full-screen photograph and never pushes the page; on every
+  // other page it reserves its own slim column. The phone menu button and drawer are the same everywhere.
   const isHome = pathname === "/";
+  // Pinned open (wide, pushes the page) only off the home page.
+  const wide = pinned && !isHome;
 
-  // SSR-safe default (expanded) corrected from localStorage post-mount —
-  // same hydration-safe pattern as LanguageContext's stored preference.
+  // SSR-safe default (rail) corrected from localStorage post-mount.
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-      if (stored === "true") {
+      if (window.localStorage.getItem(SIDEBAR_PINNED_KEY) === "true") {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setCollapsed(true);
+        setPinned(true);
       }
     } catch {
       // localStorage unavailable — keep default.
     }
   }, []);
 
-  function toggleCollapsed() {
-    setCollapsed((prev) => {
+  function togglePinned() {
+    setPinned((prev) => {
       const next = !prev;
       try {
-        window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(next));
+        window.localStorage.setItem(SIDEBAR_PINNED_KEY, String(next));
       } catch {
         // Ignore write failures — the in-memory state still updates.
       }
       return next;
     });
   }
+
+  // Labels: always on the phone drawer; on desktop only while the rail is open (hover, keyboard focus or pinned).
+  const label = wide ? "" : "lg:hidden lg:group-hover/rail:inline lg:group-focus-within/rail:inline";
 
   return (
     <>
@@ -100,10 +104,14 @@ export default function Sidebar() {
         />
       )}
 
+      {/* Reserves the rail's column on every page but the home page, where the rail floats over the photograph. */}
+      {!isHome && <div aria-hidden="true" className={`hidden shrink-0 transition-[width] duration-200 motion-reduce:transition-none lg:block ${wide ? "w-60" : "w-14"}`} />}
+
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-[transform,width,top,height] duration-300 ${isHome ? "lg:hidden" : ""} lg:sticky lg:top-[var(--header-h,3.5rem)] lg:z-0 lg:h-[calc(100vh-var(--header-h,3.5rem))] lg:translate-x-0 ${
+        data-pinned={wide}
+        className={`group/rail fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-glass-border bg-sidebar-bg transition-transform duration-300 motion-reduce:transition-none lg:top-[var(--header-h,3.5rem)] lg:z-40 lg:translate-x-0 lg:transition-[width,background-color] lg:duration-200 ${
           open ? "translate-x-0" : "-translate-x-full"
-        } ${collapsed ? "lg:w-[72px]" : "lg:w-60"}`}
+        } ${wide ? "lg:w-60" : "lg:w-14 lg:hover:w-60 lg:focus-within:w-60"} ${isHome ? "lg:border-transparent lg:bg-black/55 lg:backdrop-blur-sm lg:hover:border-glass-border lg:hover:bg-black/90 lg:focus-within:bg-black/90" : ""}`}
       >
         <button
           type="button"
@@ -114,7 +122,7 @@ export default function Sidebar() {
           <X size={18} />
         </button>
 
-        <nav className="flex flex-1 flex-col gap-1 px-3 pt-6 lg:pt-4">
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-3 pt-6 lg:px-1.5 lg:pt-3">
           {NAV_ITEMS.map(({ labelKey, href, icon: Icon, danger }) => {
             const active =
               href === "/"
@@ -125,44 +133,35 @@ export default function Sidebar() {
               <a
                 key={labelKey}
                 href={href}
-                title={collapsed ? t(labelKey) : undefined}
-                className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
-                  danger
-                    ? "border border-red-500/50 bg-red-600/15 font-bold text-red-100 hover:bg-red-600/30"
-                    : active
-                      ? "bg-azure/10 text-foreground"
-                      : "text-muted hover:bg-glass-bg hover:text-foreground"
+                aria-label={t(labelKey)}
+                aria-current={active ? "page" : undefined}
+                title={wide ? undefined : t(labelKey)}
+                className={`flex h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure ${
+                  active ? "bg-foreground/10 text-foreground" : "text-muted hover:bg-foreground/[0.06] hover:text-foreground"
                 }`}
               >
-                <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                    danger
-                      ? "bg-red-600 text-white"
-                      : active
-                        ? "bg-sakura/20 text-sakura"
-                        : "text-muted group-hover:text-azure"
-                  }`}
-                >
-                  <Icon size={16} />
-                </span>
-                <span className={`truncate ${collapsed ? "lg:hidden" : ""}`}>{t(labelKey)}</span>
+                <Icon size={20} strokeWidth={1.75} className={`shrink-0 ${danger && !active ? "text-red-400" : ""}`} aria-hidden="true" />
+                <span className={`truncate ${label}`}>{t(labelKey)}</span>
               </a>
             );
           })}
         </nav>
 
-        <button
-          type="button"
-          onClick={toggleCollapsed}
-          aria-label={t(collapsed ? "sidebar.expand" : "sidebar.collapse")}
-          title={t(collapsed ? "sidebar.expand" : "sidebar.collapse")}
-          className="mx-3 mb-2 hidden items-center justify-center gap-2 rounded-xl border border-glass-border px-3 py-2 text-xs font-medium text-muted transition-colors hover:bg-glass-bg hover:text-foreground lg:flex"
-        >
-          {collapsed ? <ChevronsRight size={15} /> : <ChevronsLeft size={15} />}
-          {!collapsed && t("sidebar.collapse")}
-        </button>
+        {!isHome && (
+          <button
+            type="button"
+            onClick={togglePinned}
+            aria-label={t(wide ? "sidebar.collapse" : "sidebar.expand")}
+            aria-pressed={wide}
+            title={t(wide ? "sidebar.collapse" : "sidebar.expand")}
+            className="mx-1.5 mb-2 hidden h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-medium text-muted transition-colors hover:bg-foreground/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure lg:flex"
+          >
+            {wide ? <ChevronsLeft size={20} strokeWidth={1.75} className="shrink-0" aria-hidden="true" /> : <ChevronsRight size={20} strokeWidth={1.75} className="shrink-0" aria-hidden="true" />}
+            <span className={`truncate ${label}`}>{t(wide ? "sidebar.collapse" : "sidebar.expand")}</span>
+          </button>
+        )}
 
-        <div className={`relative h-44 overflow-hidden ${collapsed ? "lg:hidden" : ""}`}>
+        <div className="relative h-44 overflow-hidden lg:hidden">
           <div className="absolute inset-0 bg-gradient-to-t from-sakura/25 via-[#1a1330] to-transparent" />
           <svg
             viewBox="0 0 240 180"

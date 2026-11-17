@@ -62,7 +62,7 @@ export default function YourDayStrip() {
   return (
     <section id="your-day" aria-labelledby="your-day-h" className="border-b border-white/10 bg-black">
       <ScrollReveal>
-      <div className="mx-auto flex w-full max-w-[1480px] flex-wrap items-center gap-x-6 gap-y-3 px-[clamp(20px,5vw,72px)] py-5">
+      <div className="mx-auto flex w-full max-w-[1480px] flex-wrap items-center gap-x-6 gap-y-3 px-(--home-gutter) py-5">
         <h2 id="your-day-h" className="font-[family-name:var(--font-home-serif)] text-xl font-normal text-foreground">
           {t("yourDay")}
         </h2>
@@ -86,7 +86,7 @@ export default function YourDayStrip() {
       </div>
       </ScrollReveal>
       {open && (
-        <div id="your-day-details" className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)] pb-6">
+        <div id="your-day-details" className="mx-auto w-full max-w-[1480px] px-(--home-gutter) pb-6">
           <div className="max-w-xl">
             <YourDay />
           </div>

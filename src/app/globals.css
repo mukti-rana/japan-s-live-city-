@@ -802,3 +802,8 @@ body:has([data-home-root]) aside .text-\[10px\],
 body:has([data-home-root]) aside .text-\[11px\] {
   font-size: 0.75rem;
 }
+
+/* The slim sidebar is a fixed rail; when it is pinned open, the footer bar makes room for it too. */
+@media (min-width: 1024px) {
+  body:has(aside[data-pinned="true"]) > footer { padding-left: 16rem; }
+}

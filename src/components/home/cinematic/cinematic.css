@@ -191,3 +191,12 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+/* ── Side gutter ──
+   The slim sidebar floats over the left edge of the home page (56px). Below 1024px there is no rail, so the
+   gutter is the usual 20–72px; from 1024px up it is never less than 76px, which keeps every line of text clear
+   of the rail while the photographs still run edge to edge underneath it. */
+[data-home-root] { --home-gutter: clamp(20px, 5vw, 72px); }
+@media (min-width: 1024px) {
+  [data-home-root] { --home-gutter: max(5vw, 4.75rem); }
+}
