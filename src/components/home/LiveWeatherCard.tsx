@@ -278,6 +278,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
         </div>
         <div className="flex items-center gap-2.5">
           <CityPicker selected={prefecture ? selected : "auto"} onChange={choose} text={text} />
+          {weather && <ViewAllButton href="/weather" label={text("viewForecast")} />}
         </div>
       </div>
 
@@ -420,9 +421,6 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
             {showingFallback && <span>{text("fallback")}</span>}
           </p>
 
-          <div className="flex justify-end">
-            <ViewAllButton href="/weather" label={text("viewForecast")} />
-          </div>
         </>
       )}
     </GlassCard>

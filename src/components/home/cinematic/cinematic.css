@@ -168,3 +168,26 @@
     filter: none;
   }
 }
+
+/* ── "View All →" ──
+   The shared ViewAllButton is a blue-filled, blue-bordered box made for the old dashboard cards. On the home
+   page, where each chapter heading already carries a link to the full page, it is a quiet text link: calm
+   white, no fill, no box, the arrow nudging forward on hover. Same links, same labels, same targets. */
+[data-home-root] a[class*="group/viewall"] {
+  height: auto;
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  border-color: transparent;
+  background-color: transparent;
+  border-radius: 0.375rem;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 500;
+  box-shadow: none;
+}
+[data-home-root] a[class*="group/viewall"]:hover {
+  border-color: transparent;
+  background-color: transparent;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
