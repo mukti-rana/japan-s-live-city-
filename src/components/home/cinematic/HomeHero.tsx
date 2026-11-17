@@ -136,7 +136,7 @@ export default function HomeHero() {
         onPointerLeave={() => setHover(false)}
         onFocusCapture={() => setFocus(true)}
         onBlurCapture={() => setFocus(false)}
-        className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32"
+        className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)] pb-[clamp(88px,12vh,128px)] pt-32"
       >
         <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
           {isLoadingLocation ? (
