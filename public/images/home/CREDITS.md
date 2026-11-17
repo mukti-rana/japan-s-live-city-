@@ -4,8 +4,8 @@ Thirty photographs from [Wikimedia Commons](https://commons.wikimedia.org/), use
 
 | Licence | Photos | Credit required? |
 |---|---|---|
-| **CC0 1.0** (public-domain dedication) | 24 — every city except Sapporo and Fukuoka, plus the Fuji and Hakodate photos | No. They are credited on the page anyway, as a courtesy. |
-| **CC BY 2.0 / 4.0** | 6 — Sapporo (3) and Fukuoka (3) | **Yes.** The photographer's name and the licence are shown with each photo (bottom-right of the hero) and in the footer, each linking to the photo's Commons page and the licence text. |
+| **CC0 1.0** (public-domain dedication) | 24 — every city except Sapporo and Fukuoka, plus the Fuji and Hakodate photos | No. They are listed on /credits anyway, as a courtesy. |
+| **CC BY 2.0 / 4.0** | 6 — Sapporo (3) and Fukuoka (3) | **Yes.** The photographer's name, the licence and the source link are on the site's /credits page (linked from the footer index), never on the home page itself. |
 
 **What was changed:** every photo was resized to 2560 px on its longest side and saved as WebP at quality 80, with camera metadata removed. The Chureito original (3000 px) was resized from its own file; the other photos were resized from Commons' 3840 px copy. Nothing else was altered. For the CC BY photographs this is the "indication of changes" the licence asks for.
 
@@ -56,3 +56,7 @@ Used under the Creative Commons Attribution licence shown in the table. Only pla
 Original sizes: Sapporo TV Tower 20180715.jpg 6000×4000 px; This is Sapporo (6960447275).jpg 5184×3456 px; Night view Sapporo Susukino.jpg 9610×6881 px; Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 47 115000.jpeg 6602×3902 px; Hakata skyline clouds buildings - 2024 September 23 24 various 09 29 33 995000.jpeg 5958×3910 px; Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg 7984×5984 px.
 
 Adding a photo? Use only images whose licence allows reuse (CC0, or plain CC BY with a visible credit), add a row to the right table here, add its entry to `src/lib/data/homePhotos.ts` and, for a hero slideshow, to `src/lib/data/cityPhotos.ts`. The footer lists photographers by licence automatically.
+
+## The owner's own photographs (4)
+
+`osaka-tsutenkaku-night`, `osaka-abeno-harukas-night`, `osaka-sign-night` and `nara-deer-closeup` were taken by the site's owner. No credit is needed or shown. Each was resized to 2560 px wide and saved as WebP at quality 80; all camera metadata, including location, was removed.

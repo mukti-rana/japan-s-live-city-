@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Tx from "@/components/i18n/Tx";
-import { HOME_PHOTOS } from "@/lib/data/homePhotos";
+import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
 
 export const metadata: Metadata = {
   title: "Photo credits — Live City Japan",
@@ -14,7 +14,7 @@ const link = "underline underline-offset-2 hover:text-foreground focus-visible:o
 // footer. CC BY credit requires the photographer, the licence and a link to the source, and says the picture was
 // changed: each is here.
 export default function CreditsPage() {
-  const photos = Object.values(HOME_PHOTOS);
+  const photos = Object.values<HomePhoto>(HOME_PHOTOS).filter((p): p is HomePhoto & { credit: NonNullable<HomePhoto["credit"]> } => Boolean(p.credit));
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <div>

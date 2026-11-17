@@ -1,5 +1,5 @@
 // The photographs on the homepage, with who took them and under what licence.
-// All thirty are from Wikimedia Commons. Twenty-four are CC0 (public-domain dedication), so no
+// Thirty are from Wikimedia Commons; the rest (ownTsutenkaku and the like) are the owner's own photographs. Twenty-four are CC0 (public-domain dedication), so no
 // credit is legally required — it is shown anyway, as a courtesy. Six (Sapporo and Fukuoka) are
 // CC BY 2.0 / 4.0, which DO require credit: the photographer, licence and source link are on the /credits page (never on the home page itself), which also says they were resized and compressed. Each file was
 // resized to 2560 px wide and converted to WebP at quality 80; camera metadata was
@@ -15,9 +15,12 @@ export interface HomePhoto {
   // Where to keep the subject when the picture is cropped narrow (CSS object-position, phones and
   // tablets); wide screens centre it. Omitted = the middle.
   focus?: string;
+  // The same, for wide screens (they centre by default). Needed for tall photographs, which a wide screen crops to a band.
+  deskFocus?: string;
   // A 24 px blurred copy to show while the photo loads.
   blur: string;
-  credit: { title: string; author: string; license: string; licenseUrl: string; sourceUrl: string };
+  // Omitted for the owner's own photographs. Never shown on the home page either way (see /credits).
+  credit?: { title: string; author: string; license: string; licenseUrl: string; sourceUrl: string };
 }
 
 export const HOME_PHOTOS = {
@@ -290,6 +293,41 @@ export const HOME_PHOTOS = {
     focus: "50% 50%",
     blur: "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAAAQBQCdASoYABIAPuVgp02pJaOiMAwBIByJZgDCgCBXjJifijlPS/06CxqoDyXIJUMAAP50HppfvqRGOsMMeEIqybAWYR+pGKcHDUzHvvUzvN+HFRfFiRDaBMK0BLwhJURR5I7+kpM7+l+K9jERqytLDTpuDW14cMfo8hm5U4C+gAAA",
     credit: {"title": "Ōhori Park The W shore of Matsushima Ōhori-kōen Chūō-ku Fukuoka 20260616 175108.jpg", "author": "Hirho", "license": "CC BY 4.0", "licenseUrl": "https://creativecommons.org/licenses/by/4.0", "sourceUrl": "https://commons.wikimedia.org/wiki/File:%C5%8Chori_Park_The_W_shore_of_Matsushima_%C5%8Chori-k%C5%8Den_Ch%C5%AB%C5%8D-ku_Fukuoka_20260616_175108.jpg"},
+  },
+  // ── The owner's own photographs (no credit: they are not from Commons) ──
+  ownTsutenkaku: {
+    src: "/images/home/osaka-tsutenkaku-night.webp",
+    width: 2560,
+    height: 4551,
+    alt: "Tsutenkaku tower in Shinsekai, Osaka, lit pink and red against the night sky above the trees",
+    focus: "50% 55%",
+    deskFocus: "50% 55%",
+    blur: "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAADQBQCdASoYACsAPwVsqlArpiOitVgMAXAgiWMAyyxvVat/em8zl27rfKzzbJIp1UICWbc1oUHgAP70z68gHLonu7sYwQqGP+yOU8u0speyh1HuH3bQX1ZgnmQ4YfVtkbsPTyLrKDEzv6oEZtlorkXwgMBdVdYsQrza2JFT5pOa+HFxLF1b/lq5dvVy6VSIw/zszp+BgAA=",
+  },
+  ownAbenoHarukas: {
+    src: "/images/home/osaka-abeno-harukas-night.webp",
+    width: 2560,
+    height: 4551,
+    alt: "Abeno Harukas skyscraper in Tennoji, Osaka, lit up at night above a park of illuminated trees",
+    focus: "50% 60%",
+    deskFocus: "50% 62%",
+    blur: "data:image/webp;base64,UklGRswAAABXRUJQVlA4IMAAAABwBQCdASoYACsAPxFqrVEsJSSitVQMAYAiCWMAzcBtskI9dfGV/mRV6GZTNku5Ho7uaabgAP71X6ynd6DLpMcLWK8S6cD2pgTLcj0uRrJPpmbj5dtBW4e8SezvvXrTFR2y+wL39HUFmPHtojnwYdCsiFwqjUETDpEoyVRG3J+FUoaTBF/N1BenWdHkFJyIzVwRGR1TVlmQtQ4spZzijyXCrhND+X6945EH81Y6FLOqI5aOKh4o6kVLrO5HchfAAAA=",
+  },
+  ownOsakaSign: {
+    src: "/images/home/osaka-sign-night.webp",
+    width: 2560,
+    height: 1440,
+    alt: "A large lit OSAKA sign at night with city buildings behind it",
+    focus: "50% 55%",
+    blur: "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABQBACdASoYAA0APxFysVCsJqSisAgBgCIJZgCdMoADgkLJMrxf3qy5O0AAAP5+cpZqDnNZ5E8n5q+h9x+C5wB6QEKAEIe2KBfNlqpM4oZA4aAS2EijyM1oHxqOE7ZbTOeu3hM+rJpJ6ciBHMRXib+2ATvkEcwAAAA=",
+  },
+  ownNaraDeer: {
+    src: "/images/home/nara-deer-closeup.webp",
+    width: 2560,
+    height: 1440,
+    alt: "A curious deer looking up at the camera on a paved street in Nara",
+    focus: "42% 40%",
+    blur: "data:image/webp;base64,UklGRpwAAABXRUJQVlA4IJAAAAAQBACdASoYAA0APxFysFAsJqSisAgBgCIJYgCdMoADNdTyWpOlsMjAAAD+VIRbdNk+mkW9N3KD4kcaZFafdKJGcsii1oEc+veWR18N3n1pod+gmT2O2nfecfK2ouY9tQJJgUZVXjxdkViNc8deYseW+XykV7n5ycxKrh3oZpf7wILKc41DTsWqEeSUQfFuAAA=",
   },
 } as const satisfies Record<string, HomePhoto>;
 
