@@ -908,3 +908,42 @@ html .keep-dark-ink .place-name { --pn-a: #f0a020; --pn-b: #ffd24a; --pn-hi: #ff
 @media (prefers-reduced-motion: reduce) {
   .place-name { animation: none; background-position: 20% 0; }
 }
+
+/* ── Header menus that open when you point at them (usePopover's useHoverMenu) ──
+   Each has its own entrance, all growing from the icon's corner (top right):
+     hm-bell     drops from the bell and settles with a small swing, like a bell being rung
+     hm-account  slides in from the right edge
+     hm-sos      pops out with a red glow, its three numbers arriving one after another
+   Opacity and transform only. Reduced motion: no movement, a plain fade. */
+.hm-bell, .hm-account, .hm-sos { transform-origin: top right; }
+.hm-bell { animation: hm-bell 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hm-account { animation: hm-account 0.38s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.hm-sos { animation: hm-sos 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both, hm-sos-glow 1.6s ease-out 0.1s both; }
+.hm-sos-row { animation: hm-sos-row 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(0.12s + var(--n, 0) * 0.08s); }
+@keyframes hm-bell {
+  0% { opacity: 0; transform: translateY(-12px) rotate(-4deg) scale(0.92); }
+  55% { opacity: 1; transform: translateY(3px) rotate(1.6deg) scale(1.01); }
+  80% { transform: translateY(-1px) rotate(-0.6deg); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes hm-account {
+  from { opacity: 0; transform: translateX(26px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hm-sos {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hm-sos-glow {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.55), 0 18px 50px -12px rgba(0, 0, 0, 0.7); }
+  100% { box-shadow: 0 0 0 14px rgba(239, 68, 68, 0), 0 18px 50px -12px rgba(0, 0, 0, 0.7); }
+}
+@keyframes hm-sos-row {
+  from { opacity: 0; transform: translateX(14px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-bell, .hm-account, .hm-sos { animation: hm-fade 0.2s ease-out both; }
+  .hm-sos-row { animation: none; }
+}
+@keyframes hm-fade { from { opacity: 0; } to { opacity: 1; } }

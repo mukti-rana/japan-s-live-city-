@@ -8,7 +8,7 @@ import { useCalendar } from "@/lib/calendar/store";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { CommunityNotificationList, useCommunityNotifications } from "@/components/community/CommunityNotifications";
 import { useInline, type Table } from "@/lib/i18n/inline";
-import { ICON_BUTTON, MENU_PANEL, useDismiss } from "@/components/layout/usePopover";
+import { ICON_BUTTON, MENU_PANEL, useDismiss, useHoverMenu } from "@/components/layout/usePopover";
 
 const TEXT = {
   title: { en: "Notifications", ja: "通知" },
@@ -62,6 +62,14 @@ export default function NotificationsMenu() {
   useDismiss(open, close, ref);
   const seen = Number(useSyncExternalStore(subscribe, seenSnapshot, () => "0"));
   const community = useCommunityNotifications();
+  // Opening (by pointing or by a click) marks what is there as seen and looks for anything new; what was unread is
+  // marked read once it has been on screen a moment.
+  const onOpen = useCallback(() => {
+    markSeen(Date.now());
+    void community.refresh();
+    if (community.unread > 0) window.setTimeout(() => void community.markAllRead(), 1500);
+  }, [community]);
+  const menu = useHoverMenu(open, setOpen, onOpen);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 30_000);
@@ -76,19 +84,10 @@ export default function NotificationsMenu() {
   const count = due.length + community.unread;
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" {...menu.hover}>
       <button
         type="button"
-        onClick={() => {
-          const opening = !open;
-          setOpen(opening);
-          markSeen(Date.now());
-          if (opening) {
-            // Look for anything new, then mark what is shown as read once it has been on screen a moment.
-            void community.refresh();
-            if (community.unread > 0) window.setTimeout(() => void community.markAllRead(), 1500);
-          }
-        }}
+        onClick={menu.toggle}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={unread ? `${t("topbar.notifications")} (${count})` : t("topbar.notifications")}
@@ -100,7 +99,7 @@ export default function NotificationsMenu() {
       </button>
 
       {open && (
-        <div role="dialog" aria-label={text("title")} className={`${MENU_PANEL} sm:w-80`}>
+        <div role="dialog" aria-label={text("title")} className={`${MENU_PANEL} hm-bell sm:w-80`}>
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
           {community.items.length > 0 && (
             <>

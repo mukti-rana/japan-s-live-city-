@@ -8,7 +8,7 @@ import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useInline, type Table } from "@/lib/i18n/inline";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/lib/supabase/AuthContext";
-import { ICON_BUTTON, MENU_PANEL, useDismiss } from "@/components/layout/usePopover";
+import { ICON_BUTTON, MENU_PANEL, useDismiss, useHoverMenu } from "@/components/layout/usePopover";
 
 const TEXT = {
   profile: { en: "Profile", ja: "プロフィール" },
@@ -37,6 +37,7 @@ export default function AccountMenu() {
   const ref = useRef<HTMLDivElement>(null);
   const close = useCallback(() => setOpen(false), []);
   useDismiss(open, close, ref);
+  const menu = useHoverMenu(open, setOpen);
 
   if (loading) return <span className="h-9 w-9 shrink-0" aria-hidden="true" />;
 
@@ -50,10 +51,10 @@ export default function AccountMenu() {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" {...menu.hover}>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={menu.toggle}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={t("topbar.account")}
@@ -70,7 +71,7 @@ export default function AccountMenu() {
       </button>
 
       {open && (
-        <div role="menu" className={`${MENU_PANEL} sm:w-64`}>
+        <div role="menu" className={`${MENU_PANEL} hm-account sm:w-64`}>
           {email ? (
             <>
               <Link href="/settings" role="menuitem" onClick={close} className={`${ITEM} h-auto min-h-12 py-2`}>
