@@ -805,27 +805,44 @@ body:has([data-home-root]) aside .text-\[11px\] {
   font-size: 0.75rem;
 }
 
-/* ── The handwritten logo (HandwrittenLogo): it writes itself, then un-writes, forever ──
-   Each letter (--i = its position) draws its outline, fills, holds, then draws itself away; the same 9s cycle
-   with a 0.16s step per letter keeps the letters in step, so it always writes and erases left to right. */
+/* ── The handwritten logo (HandwrittenLogo): two phrases take turns in the same place ──
+   "Live City" writes itself, holds, and draws itself away; then "Explore Japan" does the same in the very same
+   spot, and the whole thing repeats. 18s in all: the first half is phrase A (.hw-a), the second phrase B (.hw-b).
+   Each letter (--i = its position in its phrase) is offset by 0.1s so it always writes and erases left to right,
+   and a phrase has finished erasing before the other starts. The emblem beside it (lg-s / lg-art) repeats its 9s
+   drawing, so it writes and erases once per phrase, in step. */
 .hw-l {
   stroke-width: 0.9;
   stroke-linejoin: round;
   stroke-linecap: round;
   stroke-dasharray: 170;
-  animation: hw-write 9s cubic-bezier(0.4, 0, 0.2, 1) infinite both;
+  animation-duration: 18s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
   animation-delay: calc(var(--i, 0) * 0.1s);
 }
-@keyframes hw-write {
+.hw-a .hw-l { animation-name: hw-write-a; }
+.hw-b .hw-l { animation-name: hw-write-b; }
+@keyframes hw-write-a {
   0% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }
-  14% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
-  22% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
-  78% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
-  90% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
-  100% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
+  7% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
+  11% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  39% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  44.5%, 100% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
 }
+@keyframes hw-write-b {
+  0%, 49.9% { stroke-dashoffset: 170; stroke-opacity: 0; fill-opacity: 0; }
+  50% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }
+  57% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
+  61% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  89% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+  94.5%, 100% { stroke-dashoffset: -170; stroke-opacity: 0; fill-opacity: 0; }
+}
+/* Reduced motion: no writing, just the first phrase, finished and still. */
 @media (prefers-reduced-motion: reduce) {
   .hw-l { animation: none; stroke-opacity: 0; fill-opacity: 1; }
+  .hw-b { display: none; }
 }
 
 /* ── The logo picture draws itself too (Logo with `drawing`, top bar only) ──
