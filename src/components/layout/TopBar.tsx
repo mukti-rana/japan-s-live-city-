@@ -6,7 +6,6 @@ import Logo from "@/components/ui/Logo";
 import HandwrittenLogo from "@/components/layout/HandwrittenLogo";
 import MenuButton from "@/components/layout/MenuButton";
 import TopBarActions from "@/components/layout/TopBarActions";
-import Tx from "@/components/i18n/Tx";
 
 // The header stays pinned while the page scrolls. Past a short distance it
 // eases down to a compact height (and a smaller logo), and returns to full
@@ -60,7 +59,6 @@ export default function TopBar() {
           </span>
           <div className="hidden whitespace-nowrap sm:block">
             <HandwrittenLogo className="origin-left transition-transform duration-300 group-data-[compact=true]:scale-90" />
-            <p className="mt-0.5 text-[9px] font-medium leading-none tracking-[0.18em] text-muted"><Tx en="JAPAN — REAL TIME" /></p>
           </div>
         </Link>
 

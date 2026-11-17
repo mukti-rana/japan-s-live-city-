@@ -8,7 +8,7 @@ export default function HandwrittenLogo({ className = "" }: { className?: string
   let written = 0;
   return (
     <svg aria-hidden="true" viewBox="0 0 112 32" className={`h-8 w-28 overflow-visible text-foreground ${className}`} style={{ fontFamily: "var(--font-hand), cursive", fontSize: 30 }}>
-      <text x="1" y="21" fill="currentColor">
+      <text x="1" y="24" fill="currentColor">
         {LETTERS.map((ch, i) =>
           ch === " " ? (
             " "
