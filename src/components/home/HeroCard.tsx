@@ -152,7 +152,7 @@ export default function HeroCard() {
             {(isLive || isManual) && (
               <>
                 <div className="mt-1 flex items-center gap-1.5">
-                  <MapPin size={20} className="text-sakura" />
+                  <MapPin size={20} className="text-gold" />
                   <span className="place-name text-3xl tracking-tight sm:text-4xl">
                     {name(displayName)}
                   </span>

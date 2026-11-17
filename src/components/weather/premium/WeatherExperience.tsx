@@ -174,7 +174,7 @@ export default function WeatherExperience({
 
           <div>
             <p className="flex items-center gap-1.5 text-sm text-foreground/80">
-              <MapPin size={15} className="text-sakura" />
+              <MapPin size={15} className="text-gold" />
               <span className={isLocationMode ? "place-name" : ""}>{cityDisplay}</span>
             </p>
             {isLocationMode && (

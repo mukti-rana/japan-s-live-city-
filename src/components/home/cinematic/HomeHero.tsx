@@ -144,8 +144,8 @@ export default function HomeHero() {
           ) : displayName ? (
             <>
               <span className="inline-flex items-center gap-1.5">
-                <MapPin size={14} aria-hidden="true" className="text-sakura" />
-                <span className="place-name text-[15px] [filter:drop-shadow(0_1px_8px_rgba(0,0,0,0.7))]">
+                <MapPin size={14} aria-hidden="true" className="text-gold" />
+                <span className="place-name text-[15px]">
                   {name(displayName)}
                   {matchedCity?.region ? ` · ${name(matchedCity.region)}` : ""}
                 </span>

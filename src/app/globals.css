@@ -856,20 +856,36 @@ body:has([data-home-root]) aside .text-\[11px\] {
 }
 
 /* ── The detected location's name ──
-   Wherever the site shows where you are (the hero, the weather cards, Discover near you), the name carries the same
-   sunset colours as the logo so it is easy to spot. Darker stops on light pages keep it readable. Add the class to
-   the text itself; it clears any text-shadow, which would show through the transparent fill. */
+   Wherever the site shows where you are (the hero, the weather cards, Discover near you), the name is shining gold:
+   a gold gradient with a bright band that sweeps across it, and a soft golden glow that slowly breathes. Deliberately
+   not the logo's pink and violet, so the place and the brand never read the same. Darker gold on light pages keeps it
+   readable. Add the class to the text itself; it clears any text-shadow, which would show through the transparent fill. */
 .place-name {
-  --pn-a: #ffb056; --pn-b: #ff6aa8; --pn-c: #c58bff;
-  background-image: linear-gradient(90deg, var(--pn-a), var(--pn-b) 55%, var(--pn-c));
+  --pn-a: #f0a020; --pn-b: #ffd24a; --pn-hi: #fffbe0; --pn-glow: 255, 196, 64;
+  background-image: linear-gradient(100deg, var(--pn-a) 0%, var(--pn-b) 38%, var(--pn-hi) 50%, var(--pn-b) 62%, var(--pn-a) 100%);
+  background-size: 260% 100%;
+  background-position: 100% 0;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
   text-shadow: none;
   font-weight: 700;
+  filter: drop-shadow(0 0 6px rgba(var(--pn-glow), 0.55));
+  animation: place-shine 4.5s ease-in-out infinite, place-glow 3s ease-in-out infinite alternate;
 }
-html:not(.dark) .place-name { --pn-a: #d9560b; --pn-b: #d42a78; --pn-c: #7a2fd6; }
-/* On panels that are always dark (the home page, the weather scene) the bright stops are used in either theme. */
+html:not(.dark) .place-name { --pn-a: #9a5b00; --pn-b: #c98600; --pn-hi: #f2b63a; --pn-glow: 217, 150, 0; }
+/* On panels that are always dark (the home page, the weather scene) the bright gold is used in either theme. */
 html [data-home-root] .place-name,
-html .keep-dark-ink .place-name { --pn-a: #ffb056; --pn-b: #ff6aa8; --pn-c: #c58bff; }
+html .keep-dark-ink .place-name { --pn-a: #f0a020; --pn-b: #ffd24a; --pn-hi: #fffbe0; --pn-glow: 255, 196, 64; }
+@keyframes place-shine {
+  0% { background-position: 100% 0; }
+  60%, 100% { background-position: -60% 0; }
+}
+@keyframes place-glow {
+  from { filter: drop-shadow(0 0 3px rgba(var(--pn-glow), 0.35)); }
+  to { filter: drop-shadow(0 0 9px rgba(var(--pn-glow), 0.8)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .place-name { animation: none; background-position: 20% 0; }
+}
