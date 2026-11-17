@@ -110,7 +110,7 @@ export default function NotificationsMenu() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
           {guest && (
             <div className="px-3 pb-2 pt-1">
-              <TypedPrompt messages={[text("loginNotify"), text("loginExplore"), text("loginMore")]} />
+              <TypedPrompt messages={[text("loginMore"), text("loginNotify"), text("loginExplore")]} />
             </div>
           )}
           {community.items.length > 0 && (
