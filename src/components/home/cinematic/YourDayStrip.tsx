@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import { ChevronDown } from "lucide-react";
 import YourDay from "@/components/calendar/YourDay";
 import { allOccurrences } from "@/lib/calendar/recurrence";
@@ -60,6 +61,7 @@ export default function YourDayStrip() {
 
   return (
     <section id="your-day" aria-labelledby="your-day-h" className="border-b border-white/10 bg-black">
+      <ScrollReveal>
       <div className="mx-auto flex w-full max-w-[1480px] flex-wrap items-center gap-x-6 gap-y-3 px-[clamp(20px,5vw,72px)] py-5">
         <h2 id="your-day-h" className="font-[family-name:var(--font-home-serif)] text-xl font-normal text-foreground">
           {t("yourDay")}
@@ -82,6 +84,7 @@ export default function YourDayStrip() {
           {tr("Open calendar")} →
         </Link>
       </div>
+      </ScrollReveal>
       {open && (
         <div id="your-day-details" className="mx-auto w-full max-w-[1480px] px-[clamp(20px,5vw,72px)] pb-6">
           <div className="max-w-xl">

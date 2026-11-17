@@ -13,7 +13,7 @@ const PAD = "px-[clamp(20px,5vw,72px)]";
 // run edge to edge with only a hairline of black between them.
 function PlaceCard({ photo, kanji, place, href, sizes, className, delay = 0 }: { photo: HomePhoto; kanji: string; place: string; href: string; sizes: string; className: string; delay?: number }) {
   return (
-    <ScrollReveal className="h-full" delay={delay}>
+    <ScrollReveal from="image" className="h-full" delay={delay}>
       <article className={`group relative isolate flex h-full items-end overflow-hidden ${className}`}>
         <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />

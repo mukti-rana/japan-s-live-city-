@@ -60,10 +60,10 @@ export default function Home() {
               <LiveWeatherCard headingLevel={3} />
             </ScrollReveal>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 [&>*]:min-w-0">
-              <ScrollReveal from="left" className="h-full">
+              <ScrollReveal className="h-full">
                 <EmergencyPreview />
               </ScrollReveal>
-              <ScrollReveal from="right" delay={0.08} className="h-full">
+              <ScrollReveal delay={0.1} className="h-full">
                 <EventsNearYou />
               </ScrollReveal>
             </div>
@@ -90,18 +90,18 @@ export default function Home() {
         {/* 05 — news, the season, what Japan is reading */}
         <Chapter id="news" number="05" label="Read" heading="Today in Japan" intro="Stories from Japan's own publishers, and what people are reading." href="/news" linkLabel="All news">
           <div className="flex flex-col gap-4">
-            <ScrollReveal>
+            <ScrollReveal from="slide-left">
               <LatestNewsNearYou headingLevel={3} />
             </ScrollReveal>
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.25fr_1fr] [&>*]:min-w-0">
-              <ScrollReveal from="left" className="h-full">
+              <ScrollReveal from="slide-right" className="h-full">
                 <HeadlinesMini />
               </ScrollReveal>
-              <ScrollReveal from="right" delay={0.1} className="h-full">
+              <ScrollReveal from="slide-left" delay={0.1} className="h-full">
                 <JapanNowCard />
               </ScrollReveal>
             </div>
-            <ScrollReveal>
+            <ScrollReveal from="slide-right">
               <TrendRadarSection headingLevel={3} />
             </ScrollReveal>
           </div>
@@ -122,7 +122,7 @@ export default function Home() {
         {/* 08 — tools and the emergency numbers */}
         <Chapter id="tools" number="08" label="Tools" heading="Tools & safety" intro="Calculators, language help and the emergency numbers.">
           <div className="flex flex-col gap-8">
-            <ScrollReveal>
+            <ScrollReveal from="stagger">
               <QuickAccessWidget />
             </ScrollReveal>
             <ScrollReveal>

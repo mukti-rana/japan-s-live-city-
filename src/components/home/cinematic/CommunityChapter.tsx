@@ -28,7 +28,7 @@ export default async function CommunityChapter() {
         {result.state === "unavailable" ? (
           <Unavailable reason={result.reason} headingLevel={3} />
         ) : posts.length > 0 ? (
-          <ScrollReveal>
+          <ScrollReveal from="stagger">
             <PostGrid posts={posts} />
           </ScrollReveal>
         ) : (
@@ -43,7 +43,7 @@ export default async function CommunityChapter() {
             </div>
           </ScrollReveal>
         )}
-        <ScrollReveal className="mt-8 flex flex-wrap justify-center gap-3">
+        <ScrollReveal from="pop" delay={0.15} className="mt-8 flex flex-wrap justify-center gap-3">
           <Link href="/community/new" className={primary}>
             <Camera size={16} aria-hidden="true" />
             <Tx en="Share your experience" />

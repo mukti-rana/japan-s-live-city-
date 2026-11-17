@@ -19,7 +19,7 @@ export default function SafetyStrip() {
       <ul className="grid border-t border-white/10 sm:grid-cols-3 sm:divide-x sm:divide-white/10 max-sm:divide-y max-sm:divide-white/10">
         {QUICK_NUMBERS.map((q, i) => (
           <li key={q.id}>
-            <ScrollReveal delay={i * 0.1}>
+            <ScrollReveal from="pop" delay={i * 0.12}>
             <a href={`tel:${q.number}`} aria-label={`${tr("Call")}: ${q.number} — ${pickJaEn(q.label, language)}`} className={`flex min-h-32 flex-col items-center justify-center gap-2 px-4 py-6 text-center transition-colors hover:bg-white/[0.03] ${ring}`}>
               <span className="flex items-center gap-2 font-[family-name:var(--font-home-serif)] text-[clamp(40px,5vw,72px)] leading-none text-white tabular-nums">
                 <PhoneCall size={18} aria-hidden="true" className="text-danger" />

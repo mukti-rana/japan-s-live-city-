@@ -40,29 +40,80 @@
   min-height: clamp(20rem, 46vh, 34rem);
 }
 
-/* ── Scroll reveals (ScrollReveal): opacity and transform only, once per block ──
-   On a phone everything rises a little; from tablet width, side-by-side blocks slide in
-   from their own side. A 40px slide is the most any block travels. */
+/* ── Scroll reveals (ScrollReveal): opacity and transform only, replayed every time ──
+   A block is revealed when it scrolls into view and re-armed once it is completely off screen, so it
+   plays again on the way back, in either direction, and the reset itself is never seen. Each section
+   picks its own style with data-reveal:
+     up          a small rise (the default; every style falls back to it on a phone)
+     left/right  a 40px slide from the block's own side (tablet and up)
+     slide-left/slide-right  a longer 72px editorial slide (tablet and up)
+     image       a photograph rising 40px while settling from 103% (staggered by delay)
+     scale       the hero: a slow fade with a very slight settle from 98.5%
+     pop         a small settle from 94% (numbers, buttons)
+     stagger     the container stays put; the cards in its grid arrive one after another
+     line        a hairline that draws itself
+     fade        opacity only
+   Arriving from above (scrolling up) mirrors the vertical travel (data-side="top"). Reduced motion
+   or no scripting shows everything in place. */
 [data-home-root] { overflow-x: clip; }
 
 [data-reveal] {
+  --ryb: 24px; --rx: 0px; --rs: 1; --rdur: 0.7s;
+  --ry: var(--ryb);
   opacity: 0;
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+  transform: translate3d(var(--rx), var(--ry), 0) scale(var(--rs));
 }
-[data-reveal="up"],
-[data-reveal="left"],
-[data-reveal="right"] { transform: translate3d(0, 24px, 0); }
-[data-reveal="line"] { transform: scaleX(0); transform-origin: left center; transition-duration: 1.1s; }
+[data-reveal][data-side="top"] { --ry: calc(var(--ryb) * -1); }
+[data-reveal="fade"] { --ryb: 0px; }
+[data-reveal="scale"] { --ryb: 0px; --rs: 0.985; --rdur: 1.4s; }
+[data-reveal="image"] { --ryb: 40px; --rs: 1.03; --rdur: 1.1s; }
+[data-reveal="pop"] { --ryb: 12px; --rs: 0.94; --rdur: 0.8s; }
+[data-reveal="line"] { --rdur: 1.1s; transform: scaleX(0); transform-origin: left center; }
 @media (min-width: 768px) {
-  [data-reveal="left"] { transform: translate3d(-40px, 0, 0); }
-  [data-reveal="right"] { transform: translate3d(40px, 0, 0); }
+  [data-reveal="left"] { --ryb: 0px; --rx: -40px; }
+  [data-reveal="right"] { --ryb: 0px; --rx: 40px; }
+  [data-reveal="slide-left"] { --ryb: 0px; --rx: -72px; --rdur: 0.95s; }
+  [data-reveal="slide-right"] { --ryb: 0px; --rx: 72px; --rdur: 0.95s; }
 }
-[data-reveal][data-in="true"] { opacity: 1; transform: none; }
+/* The reset (no transition here) is instant and happens off screen; only the way in is animated. */
+[data-reveal][data-in="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--rdur) cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s),
+    transform var(--rdur) cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0s);
+}
+
+/* stagger: the cards of the grid inside arrive one after another (up to eight steps of 90ms) */
+[data-reveal="stagger"] { opacity: 1; transform: none; }
+[data-reveal="stagger"] .grid > * { opacity: 0; transform: translate3d(0, 28px, 0) scale(0.985); }
+[data-reveal="stagger"][data-side="top"] .grid > * { transform: translate3d(0, -28px, 0) scale(0.985); }
+[data-reveal="stagger"][data-in="true"] .grid > * {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--reveal-delay, 0s) + var(--si, 0) * 0.09s),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--reveal-delay, 0s) + var(--si, 0) * 0.09s),
+    background-color 0.2s ease, border-color 0.2s ease, filter 0.18s ease-out;
+}
+[data-reveal="stagger"] .grid > *:nth-child(1) { --si: 0; }
+[data-reveal="stagger"] .grid > *:nth-child(2) { --si: 1; }
+[data-reveal="stagger"] .grid > *:nth-child(3) { --si: 2; }
+[data-reveal="stagger"] .grid > *:nth-child(4) { --si: 3; }
+[data-reveal="stagger"] .grid > *:nth-child(5) { --si: 4; }
+[data-reveal="stagger"] .grid > *:nth-child(6) { --si: 5; }
+[data-reveal="stagger"] .grid > *:nth-child(7) { --si: 6; }
+[data-reveal="stagger"] .grid > *:nth-child(8) { --si: 7; }
+[data-reveal="stagger"] .grid > *:nth-child(9) { --si: 7; }
+[data-reveal="stagger"] .grid > *:nth-child(10) { --si: 7; }
+[data-reveal="stagger"] .grid > *:nth-child(11) { --si: 7; }
+[data-reveal="stagger"] .grid > *:nth-child(12) { --si: 7; }
 
 @media (prefers-reduced-motion: reduce), (scripting: none) {
   [data-reveal] { opacity: 1; transform: none; transition: none; }
+  [data-reveal="stagger"] .grid > *,
+  [data-reveal="stagger"][data-side="top"] .grid > *,
+  [data-reveal="stagger"][data-in="true"] .grid > * { opacity: 1; transform: none; transition: none; }
 }
 
 /* ── Quiet navigation ──

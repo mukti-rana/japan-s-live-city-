@@ -7,6 +7,7 @@ import { useReducedMotion } from "motion/react";
 import { ArrowRight, LocateFixed, MapPin, Pause, Play, Sparkles } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
 import HeroSlides from "@/components/home/cinematic/HeroSlides";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import PhotoCredit from "@/components/home/cinematic/PhotoCredit";
 import { type HomePhoto } from "@/lib/data/homePhotos";
 import { CITY_PHOTOS } from "@/lib/data/cityPhotos";
@@ -121,6 +122,7 @@ export default function HomeHero() {
       {/* A side shade for the text column, wide screens only (on a phone the text sits over the lower part). */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(90deg,rgba(0,0,0,0.6),rgba(0,0,0,0)_62%)] sm:block" />
 
+      <ScrollReveal from="scale" delay={0.1} className="w-full">
       <div className="mx-auto w-full max-w-[1240px] px-[clamp(16px,4vw,48px)] pb-[clamp(88px,12vh,128px)] pt-32">
         <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-medium uppercase tracking-[0.2em] text-white/90 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
           {isLoadingLocation ? (
@@ -237,6 +239,7 @@ export default function HomeHero() {
           </form>
         </div>
       </div>
+      </ScrollReveal>
 
       <div className="absolute bottom-3 right-[clamp(16px,4vw,48px)] flex items-center gap-3">
         {credit && <PhotoCredit photo={credit} className="hidden sm:block" />}
