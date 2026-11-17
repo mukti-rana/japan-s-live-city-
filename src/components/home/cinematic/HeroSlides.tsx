@@ -47,7 +47,7 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
           onLoad={done}
           onError={() => onFail(photo.src)}
           style={{ "--focus": photo.focus ?? "50% 50%", "--focus-lg": photo.deskFocus ?? "50% 50%" } as CSSProperties}
-          className={`object-cover object-[var(--focus)] ${photo.whole ? "lg:object-contain" : "lg:object-[var(--focus-lg)]"}`}
+          className={`object-cover object-[var(--focus)] ${photo.whole ? "lg:object-contain" : ""} lg:object-[var(--focus-lg)]`}
         />
       </div>
     </div>
