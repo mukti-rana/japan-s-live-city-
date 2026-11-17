@@ -24,6 +24,7 @@ const TEXT = {
   open: { en: "Open calendar", ja: "カレンダーを開く" },
   loginNotify: { en: "Log in to get notifications about Japan", ja: "ログインして日本の通知を受け取ろう" },
   loginExplore: { en: "Log in to explore Japan", ja: "ログインして日本を探検しよう" },
+  loginMore: { en: "If you want to explore more and get alert notifications about Japan, please log in.", ja: "もっと日本を探検して、日本のアラート通知を受け取りたい方は、ログインしてください。" },
 } satisfies Table;
 
 const SEEN_KEY = "livecity:notificationsSeen";
@@ -109,7 +110,7 @@ export default function NotificationsMenu() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
           {guest && (
             <div className="px-3 pb-2 pt-1">
-              <TypedPrompt first={text("loginNotify")} second={text("loginExplore")} />
+              <TypedPrompt messages={[text("loginNotify"), text("loginExplore"), text("loginMore")]} />
             </div>
           )}
           {community.items.length > 0 && (
@@ -119,7 +120,7 @@ export default function NotificationsMenu() {
             </>
           )}
           {community.items.length > 0 && due.length > 0 && <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{text("reminders")}</p>}
-          {due.length === 0 && community.items.length > 0 ? null : due.length === 0 ? (
+          {due.length === 0 && (community.items.length > 0 || guest) ? null : due.length === 0 ? (
             <div className="px-3 pb-3 pt-1">
               <p className="text-sm font-medium text-foreground">{text("empty")}</p>
               <p className="mt-1 text-xs leading-snug text-muted">{text("emptyNote")}</p>
@@ -147,15 +148,18 @@ export default function NotificationsMenu() {
               ))}
             </ul>
           )}
-          <div className="mt-1 border-t border-glass-border pt-1">
-            <Link
-              href="/calendar"
-              onClick={close}
-              className="flex min-h-10 items-center justify-center rounded-xl text-sm font-medium text-azure transition-colors hover:bg-azure/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
-            >
-              {text("open")}
-            </Link>
-          </div>
+          {/* A guest with nothing due sees only the typed message: no "all caught up" text and no calendar link. */}
+          {!(guest && due.length === 0) && (
+            <div className="mt-1 border-t border-glass-border pt-1">
+              <Link
+                href="/calendar"
+                onClick={close}
+                className="flex min-h-10 items-center justify-center rounded-xl text-sm font-medium text-azure transition-colors hover:bg-azure/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+              >
+                {text("open")}
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </div>
