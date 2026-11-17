@@ -22,8 +22,6 @@ const TEXT = {
     ja: "カレンダーで設定したリマインダーが、サイトを開いている間ここに表示されます。",
   },
   open: { en: "Open calendar", ja: "カレンダーを開く" },
-  loginNotify: { en: "Log in to get notifications about Japan", ja: "ログインして日本の通知を受け取ろう" },
-  loginExplore: { en: "Log in to explore Japan", ja: "ログインして日本を探検しよう" },
   loginMore: { en: "If you want to explore more and get alert notifications about Japan, please log in.", ja: "もっと日本を探検して、日本のアラート通知を受け取りたい方は、ログインしてください。" },
 } satisfies Table;
 
@@ -110,7 +108,7 @@ export default function NotificationsMenu() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
           {guest && (
             <div className="px-3 pb-2 pt-1">
-              <TypedPrompt messages={[text("loginMore"), text("loginNotify"), text("loginExplore")]} />
+              <TypedPrompt messages={[text("loginMore")]} />
             </div>
           )}
           {community.items.length > 0 && (
