@@ -55,6 +55,7 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
     <WidgetFrame icon={Globe2} labelKey="widget.japanMap" accent="azure" viewAll viewAllHref="/map">
       <Link
         href="/map"
+        data-japan-map
         aria-label={t("widget.openFullMap")}
         className="group relative block min-h-[19rem] flex-1 overflow-hidden rounded-xl border border-glass-border bg-[#080d20] transition-colors hover:border-azure/40"
       >

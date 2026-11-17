@@ -194,3 +194,28 @@
 
 /* ── Side gutter ── the page's left and right margin, one value for the hero, the chapters and the footer index. */
 [data-home-root] { --home-gutter: clamp(20px, 5vw, 72px); }
+
+/* ── Discover near you: the featured place ──
+   On the other pages it is a framed card with a blue-purple wash, a blue border and a violet glow. Here it is
+   just the photograph and the text on the black page: no frame, no wash, no glow. */
+[data-home-root] [data-featured] {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+[data-home-root] [data-featured] .pointer-events-none.absolute.inset-0 {
+  --tw-gradient-from: rgba(0, 0, 0, 0.85);
+  --tw-gradient-to: rgba(0, 0, 0, 0.3);
+}
+
+/* ── Japan map: no navy panel ──
+   The map card is a navy box with a blue border, blue and violet lighting and a faint grid. Here the islands and
+   their labels sit straight on the black page: no box, no border, no lighting, no grid. */
+[data-home-root] [data-japan-map] {
+  background: transparent;
+  border-color: transparent;
+}
+[data-home-root] [data-japan-map] > div[aria-hidden="true"] {
+  display: none;
+}

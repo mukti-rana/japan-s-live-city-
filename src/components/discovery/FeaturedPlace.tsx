@@ -26,7 +26,7 @@ export default function FeaturedPlace({ place, approximate, month }: { place: De
   const seasons = typicalSeasons(place, language);
 
   return (
-    <article className="grid overflow-hidden rounded-2xl border border-azure/30 bg-gradient-to-br from-azure/10 via-glass-bg to-neon-purple/10 shadow-[0_0_40px_-18px_rgba(124,92,255,0.6)] lg:grid-cols-[1.25fr_1fr]">
+    <article data-featured className="grid overflow-hidden rounded-2xl border border-azure/30 bg-gradient-to-br from-azure/10 via-glass-bg to-neon-purple/10 shadow-[0_0_40px_-18px_rgba(124,92,255,0.6)] lg:grid-cols-[1.25fr_1fr]">
       <div className="relative min-h-64 lg:min-h-[22rem]">
         <Link href={`/explore/${place.id}`} aria-label={`${tr("View details")}: ${name}`} className="absolute inset-0 block">
           <PlaceImage image={place.image} category={place.category} alt={place.image ? name : ""} className="h-full w-full" />
