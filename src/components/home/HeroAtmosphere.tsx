@@ -5,13 +5,13 @@ import { useReducedMotion } from "motion/react";
 import type { WeatherIconKind } from "@/lib/services/weather";
 import type { Season } from "@/lib/weather/time";
 
-type ParticleMode = "sakura" | "rain" | "snow" | "glow" | "none";
+type ParticleMode = "sakura" | "rain" | "snow" | "none";
 
-function particleModeFor(condition: WeatherIconKind, season: Season, isNight: boolean): ParticleMode {
+function particleModeFor(condition: WeatherIconKind, season: Season): ParticleMode {
   if (season === "spring" && (condition === "clear" || condition === "partly")) return "sakura";
   if (condition === "rain" || condition === "drizzle" || condition === "storm") return "rain";
   if (condition === "snow") return "snow";
-  if (isNight) return "glow";
+  // A clear night has no particles: the little twinkling dots that used to float over the photograph are gone.
   return "none";
 }
 
@@ -28,7 +28,7 @@ interface Particle {
 }
 
 function makeParticles(mode: ParticleMode, width: number, height: number): Particle[] {
-  const count = mode === "sakura" ? 20 : mode === "rain" ? 50 : mode === "snow" ? 28 : mode === "glow" ? 16 : 0;
+  const count = mode === "sakura" ? 20 : mode === "rain" ? 50 : mode === "snow" ? 28 : 0;
   return Array.from({ length: count }, () => ({
     x: Math.random() * width,
     y: Math.random() * height,
@@ -41,7 +41,7 @@ function makeParticles(mode: ParticleMode, width: number, height: number): Parti
           : mode === "snow"
             ? 0.4 + Math.random() * 0.5
             : 0,
-    size: mode === "sakura" ? 4 + Math.random() * 3 : mode === "snow" ? 1.5 + Math.random() * 2 : mode === "glow" ? 1.5 + Math.random() * 2 : 0,
+    size: mode === "sakura" ? 4 + Math.random() * 3 : mode === "snow" ? 1.5 + Math.random() * 2 : 0,
     rotation: Math.random() * Math.PI * 2,
     vr: (Math.random() - 0.5) * 0.02,
     opacity: 0.4 + Math.random() * 0.4,
@@ -57,17 +57,15 @@ function makeParticles(mode: ParticleMode, width: number, height: number): Parti
 export default function HeroAtmosphere({
   condition,
   season,
-  isNight,
   className = "",
 }: {
   condition: WeatherIconKind;
   season: Season;
-  isNight: boolean;
   className?: string;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduceMotion = useReducedMotion();
-  const mode = particleModeFor(condition, season, isNight);
+  const mode = particleModeFor(condition, season);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -128,12 +126,6 @@ export default function HeroAtmosphere({
           ctx!.stroke();
         } else if (mode === "snow") {
           ctx!.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
-          ctx!.beginPath();
-          ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx!.fill();
-        } else if (mode === "glow") {
-          const twinkle = 0.3 + Math.abs(Math.sin(p.phase)) * 0.5;
-          ctx!.fillStyle = `rgba(200, 220, 255, ${twinkle})`;
           ctx!.beginPath();
           ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx!.fill();

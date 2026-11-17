@@ -121,7 +121,7 @@ export default function HomeHero() {
         </div>
       )}
       <div aria-hidden="true" className="absolute inset-0 -z-20">
-        <HeroAtmosphere condition={weather?.icon ?? "clear"} season={season} isNight={isNight} />
+        <HeroAtmosphere condition={weather?.icon ?? "clear"} season={season} />
       </div>
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_26%,rgba(0,0,0,0.5)_62%,#000_100%)]" />
       {/* A side shade for the text column, wide screens only (on a phone the text sits over the lower part). */}

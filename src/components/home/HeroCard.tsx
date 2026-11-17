@@ -104,7 +104,7 @@ export default function HeroCard() {
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
         )}
-        <HeroAtmosphere condition={sceneIcon} season={season} isNight={isNight} />
+        <HeroAtmosphere condition={sceneIcon} season={season} />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0b]/90 via-[#0a0a0b]/55 to-[#0a0a0b]/20" />
 
         <div className="relative">
