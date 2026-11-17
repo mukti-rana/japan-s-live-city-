@@ -2,12 +2,13 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { Bell, BellRing } from "lucide-react";
+import { Bell, BellRing, Sparkles } from "lucide-react";
 import { dueReminders, reminderLabel } from "@/lib/calendar/reminders";
 import { useCalendar } from "@/lib/calendar/store";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { CommunityNotificationList, useCommunityNotifications } from "@/components/community/CommunityNotifications";
 import { useInline, type Table } from "@/lib/i18n/inline";
+import { useAuth } from "@/lib/supabase/AuthContext";
 import { ICON_BUTTON, MENU_PANEL, useDismiss, useHoverMenu } from "@/components/layout/usePopover";
 
 const TEXT = {
@@ -20,6 +21,8 @@ const TEXT = {
     ja: "カレンダーで設定したリマインダーが、サイトを開いている間ここに表示されます。",
   },
   open: { en: "Open calendar", ja: "カレンダーを開く" },
+  promoTitle: { en: "Get the full experience", ja: "すべての機能を使うには" },
+  promoBody: { en: "Sign in to save places, join the Community and keep your language.", ja: "ログインすると、場所の保存、コミュニティへの参加、言語設定の保持ができます。" },
 } satisfies Table;
 
 const SEEN_KEY = "livecity:notificationsSeen";
@@ -62,6 +65,8 @@ export default function NotificationsMenu() {
   useDismiss(open, close, ref);
   const seen = Number(useSyncExternalStore(subscribe, seenSnapshot, () => "0"));
   const community = useCommunityNotifications();
+  const { user, loading: authLoading } = useAuth();
+  const guest = !authLoading && !user;
   // Opening (by pointing or by a click) marks what is there as seen and looks for anything new; what was unread is
   // marked read once it has been on screen a moment.
   const onOpen = useCallback(() => {
@@ -101,6 +106,31 @@ export default function NotificationsMenu() {
       {open && (
         <div role="dialog" aria-label={text("title")} className={`${MENU_PANEL} hm-bell sm:w-80`}>
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-muted">{text("title")}</p>
+          {guest && (
+            <div className="mx-1.5 mb-2 mt-1 rounded-xl border border-azure/30 bg-gradient-to-br from-azure/12 to-neon-purple/12 p-3">
+              <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                <Sparkles size={15} className="shrink-0 text-azure" aria-hidden="true" />
+                {text("promoTitle")}
+              </p>
+              <p className="mt-1 text-xs leading-snug text-foreground/80">{text("promoBody")}</p>
+              <div className="mt-2.5 flex gap-2">
+                <Link
+                  href="/login?form=1"
+                  onClick={close}
+                  className="flex min-h-9 flex-1 items-center justify-center rounded-lg bg-gradient-to-r from-azure to-neon-purple px-3 text-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+                >
+                  {t("auth.signIn")}
+                </Link>
+                <Link
+                  href="/signup?form=1"
+                  onClick={close}
+                  className="flex min-h-9 flex-1 items-center justify-center rounded-lg border border-azure/40 px-3 text-sm font-semibold text-azure transition-colors hover:bg-azure/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure"
+                >
+                  {t("auth.createAccount")}
+                </Link>
+              </div>
+            </div>
+          )}
           {community.items.length > 0 && (
             <>
               <p className="px-3 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted">{text("community")}</p>
