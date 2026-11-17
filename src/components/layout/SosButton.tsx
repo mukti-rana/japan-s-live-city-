@@ -45,7 +45,7 @@ export default function SosButton() {
       </button>
 
       {flyout && (
-        <div role="group" aria-label={e("title")} className={`${MENU_PANEL} hm-sos hidden sm:block sm:w-72`}>
+        <div role="group" aria-label={e("title")} className={`${MENU_PANEL} hm-sos hm-clear hidden sm:block sm:w-72`}>
           <p className="px-3 pb-1.5 pt-2 text-xs font-semibold uppercase tracking-wide text-red-300">{e("title")}</p>
           <ul>
             {QUICK_NUMBERS.map((n, i) => (

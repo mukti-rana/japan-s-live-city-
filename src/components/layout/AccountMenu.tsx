@@ -70,7 +70,7 @@ export default function AccountMenu() {
       </button>
 
       {open && (
-        <div role="menu" className={`${MENU_PANEL} hm-account sm:w-64`}>
+        <div role="menu" className={`${MENU_PANEL} hm-account hm-clear sm:w-64`}>
           {email ? (
             <>
               <Link href="/settings" role="menuitem" onClick={close} className={`${ITEM} h-auto min-h-12 py-2`}>

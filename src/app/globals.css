@@ -997,3 +997,11 @@ html:not(.dark) .typed-caret { background: #0e7490; }
 .typed-wrap { display: inline; }
 .typed-wrap[data-fading="true"] { filter: blur(10px); opacity: 0; transition: filter 0.8s ease-in, opacity 0.8s ease-in; }
 @media (prefers-reduced-motion: reduce) { .typed-wrap[data-fading="true"] { filter: none; opacity: 1; transition: none; } }
+
+/* The emergency flyout and the account menu are 90% see-through (only 10% of the panel colour), with the page behind
+   them softly blurred so the text stays readable. The other header menus keep their solid panel. */
+.hm-clear {
+  background-color: color-mix(in srgb, var(--panel) 10%, transparent) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  backdrop-filter: blur(18px) saturate(1.15);
+}
