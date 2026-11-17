@@ -814,7 +814,7 @@ body:has([data-home-root]) aside .text-\[11px\] {
   stroke-linecap: round;
   stroke-dasharray: 170;
   animation: hw-write 9s cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-  animation-delay: calc(var(--i, 0) * 0.16s);
+  animation-delay: calc(var(--i, 0) * 0.1s);
 }
 @keyframes hw-write {
   0% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }

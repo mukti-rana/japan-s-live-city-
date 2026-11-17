@@ -46,7 +46,8 @@ const PAGES: { href: string; key: string; kw: string; kwJa: string }[] = [
 // On tablets and desktops the search is just an icon. Pointing at it (or tabbing / tapping into it, or while there is
 // text or a list open) the field slides open to the right over the empty header, without moving anything else; it
 // slides shut again when you leave and it is empty. The width is one value, used by the field and its suggestion list.
-const WIDE = "sm:w-[min(26rem,calc(100vw_-_22rem))]";
+// 33rem is what the logo before it and the buttons after it take, so an opened field never covers SOS.
+const WIDE = "sm:w-[max(10rem,min(26rem,calc(100vw_-_33rem)))]";
 
 // The header's search. Typing offers: a news search, an events search (both
 // open those pages already filtered), and shortcuts to matching pages and
