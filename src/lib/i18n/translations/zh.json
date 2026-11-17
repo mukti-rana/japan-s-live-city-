@@ -2049,5 +2049,8 @@
   "Pause photo slideshow": "暂停照片幻灯片",
   "Play photo slideshow": "播放照片幻灯片",
   "CC0 photographs from Wikimedia Commons:": "来自维基共享资源的 CC0 照片：",
-  "CC BY photographs from Wikimedia Commons, resized and compressed:": "来自维基共享资源的 CC BY 照片（已调整尺寸并压缩）："
+  "CC BY photographs from Wikimedia Commons, resized and compressed:": "来自维基共享资源的 CC BY 照片（已调整尺寸并压缩）：",
+  "Photo credits": "图片署名",
+  "The photographs on the home page are from Wikimedia Commons. Each was resized to 2560 px wide and compressed to WebP, and its camera data was removed. CC0 photographs need no credit and are listed as a courtesy; CC BY photographs are used with credit under their licence.": "首页的照片来自维基共享资源。每张照片都已调整为 2560 像素宽并压缩为 WebP，相机数据已移除。CC0 照片无需署名，此处仅作礼貌列出；CC BY 照片按其许可协议署名使用。",
+  "Photographs of places in Explore and Discover near you carry their own credit on each place's page.": "“探索”和“发现身边”中的地点照片，其署名见各地点页面。"
 }

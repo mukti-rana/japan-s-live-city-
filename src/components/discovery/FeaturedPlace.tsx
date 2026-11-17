@@ -39,6 +39,7 @@ export default function FeaturedPlace({ place, approximate, month }: { place: De
         <FavoriteButton kind="place" itemKey={`wd:${place.id}`} className="absolute right-3 top-3" />
         {place.image && (
           <a
+            data-photo-credit
             href={place.image.page}
             target="_blank"
             rel="noopener noreferrer"

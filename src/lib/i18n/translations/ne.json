@@ -2078,5 +2078,8 @@
   "Pause photo slideshow": "फोटो स्लाइडशो रोक्नुहोस्",
   "Play photo slideshow": "फोटो स्लाइडशो चलाउनुहोस्",
   "CC0 photographs from Wikimedia Commons:": "विकिमिडिया कमन्सका CC0 फोटोहरू:",
-  "CC BY photographs from Wikimedia Commons, resized and compressed:": "विकिमिडिया कमन्सका CC BY फोटोहरू, आकार घटाइएको र कम्प्रेस गरिएको:"
+  "CC BY photographs from Wikimedia Commons, resized and compressed:": "विकिमिडिया कमन्सका CC BY फोटोहरू, आकार घटाइएको र कम्प्रेस गरिएको:",
+  "Photo credits": "फोटो श्रेय",
+  "The photographs on the home page are from Wikimedia Commons. Each was resized to 2560 px wide and compressed to WebP, and its camera data was removed. CC0 photographs need no credit and are listed as a courtesy; CC BY photographs are used with credit under their licence.": "गृहपृष्ठका तस्बिरहरू विकिमिडिया कमन्सबाट लिइएका हुन्। प्रत्येकलाई २५६० px चौडाइमा सानो बनाइएको, WebP मा कम्प्रेस गरिएको र क्यामेरा डेटा हटाइएको छ। CC0 तस्बिरहरूलाई श्रेय आवश्यक छैन, शिष्टाचारका रूपमा सूचीबद्ध गरिएको हो; CC BY तस्बिरहरू इजाजतपत्र अनुसार श्रेयसहित प्रयोग गरिएका छन्।",
+  "Photographs of places in Explore and Discover near you carry their own credit on each place's page.": "Explore र तपाईंको नजिकै पत्ता लगाउनुहोस् का स्थानका तस्बिरहरूको श्रेय प्रत्येक स्थानको पृष्ठमा छ।"
 }

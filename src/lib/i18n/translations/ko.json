@@ -2049,5 +2049,8 @@
   "Pause photo slideshow": "사진 슬라이드쇼 일시정지",
   "Play photo slideshow": "사진 슬라이드쇼 재생",
   "CC0 photographs from Wikimedia Commons:": "위키미디어 공용의 CC0 사진:",
-  "CC BY photographs from Wikimedia Commons, resized and compressed:": "위키미디어 공용의 CC BY 사진(크기 조정 및 압축):"
+  "CC BY photographs from Wikimedia Commons, resized and compressed:": "위키미디어 공용의 CC BY 사진(크기 조정 및 압축):",
+  "Photo credits": "사진 출처",
+  "The photographs on the home page are from Wikimedia Commons. Each was resized to 2560 px wide and compressed to WebP, and its camera data was removed. CC0 photographs need no credit and are listed as a courtesy; CC BY photographs are used with credit under their licence.": "홈 페이지의 사진은 위키미디어 커먼즈에서 가져왔습니다. 모든 사진은 가로 2560px로 크기를 조정해 WebP로 압축했고 카메라 정보는 제거했습니다. CC0 사진은 출처 표기가 필요 없지만 예의상 표기하며, CC BY 사진은 라이선스에 따라 출처를 밝혀 사용합니다.",
+  "Photographs of places in Explore and Discover near you carry their own credit on each place's page.": "탐색과 내 주변 발견의 장소 사진 출처는 각 장소 페이지에 있습니다."
 }

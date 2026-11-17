@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ChapterHeader, CHAPTER_WIDTH } from "@/components/home/cinematic/Chapter";
 import ParallaxImage from "@/components/home/cinematic/ParallaxImage";
-import PhotoCredit from "@/components/home/cinematic/PhotoCredit";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
@@ -29,7 +28,6 @@ function PlaceCard({ photo, kanji, place, href, sizes, className, delay = 0 }: {
               </Link>
             </h3>
           </div>
-          <PhotoCredit photo={photo} className="relative z-10 hidden shrink-0 sm:block xl:text-right" />
         </div>
       </article>
     </ScrollReveal>

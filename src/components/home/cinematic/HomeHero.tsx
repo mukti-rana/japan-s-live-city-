@@ -7,7 +7,6 @@ import { ArrowRight, LocateFixed, MapPin, Sparkles } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
 import HeroSlides from "@/components/home/cinematic/HeroSlides";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
-import PhotoCredit from "@/components/home/cinematic/PhotoCredit";
 import { type HomePhoto } from "@/lib/data/homePhotos";
 import { CITY_PHOTOS } from "@/lib/data/cityPhotos";
 import { DEFAULT_HERO_ATMOSPHERE, HERO_CITIES, findHeroCity, type HeroCityInfo } from "@/lib/data/heroCities";
@@ -64,7 +63,6 @@ export default function HomeHero() {
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const paused = hover || focus;
-  const [shown, setShown] = useState<HomePhoto | null>(null);
   const now = useJstNow();
 
   useEffect(() => {
@@ -97,7 +95,6 @@ export default function HomeHero() {
 
   // With no city decided yet, the page shows Tokyo's photographs as its default scene.
   const photos = matchedCity ? (CITY_PHOTOS[matchedCity.slug] ?? NO_PHOTOS) : needsPicker || isLoadingLocation ? CITY_PHOTOS.tokyo : NO_PHOTOS;
-  const credit = photos.find((p) => p.src === shown?.src) ?? photos[0];
   const atmosphere = matchedCity?.atmosphere ?? DEFAULT_HERO_ATMOSPHERE;
   const kanji = matchedCity?.nameJa ?? "日本";
 
@@ -120,7 +117,7 @@ export default function HomeHero() {
       <div aria-hidden="true" className={`absolute inset-0 -z-40 bg-gradient-to-br ${isNight ? atmosphere.night : atmosphere.day}`} />
       {photos.length > 0 && (
         <div className="absolute inset-0 -z-30">
-          <HeroSlides photos={photos} paused={paused} onShow={setShown} />
+          <HeroSlides photos={photos} paused={paused} />
         </div>
       )}
       <div aria-hidden="true" className="absolute inset-0 -z-20">
@@ -250,13 +247,6 @@ export default function HomeHero() {
         </div>
       </div>
       </ScrollReveal>
-
-      {/* The on-photo credit stays only where the licence needs it (CC BY). CC0 photographers are credited in the footer. */}
-      {credit && credit.credit.license !== "CC0" && (
-        <div className="absolute bottom-3 right-[clamp(16px,4vw,48px)] max-w-[70vw] text-right">
-          <PhotoCredit photo={credit} />
-        </div>
-      )}
     </section>
   );
 }

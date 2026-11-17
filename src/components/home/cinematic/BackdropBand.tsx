@@ -1,13 +1,12 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import PhotoCredit from "@/components/home/cinematic/PhotoCredit";
 import type { HomePhoto } from "@/lib/data/homePhotos";
 
 const BLUR = "blur" as const;
 
 // A full-width band with a photograph behind it, fading to pure black at the top and
 // bottom so it melts into the chapters either side (no border, no edge). The picture is
-// decoration (the credit is the visible text); every block of text on top sits on a
+// decoration, and its credit is on the Photo credits page, never on the homepage; every block of text on top sits on a
 // black scrim. `side="right"` keeps the left, where the text is, darker and lets the
 // photograph show on the right on wide screens.
 export default function BackdropBand({ photo, children, side, className = "" }: { photo: HomePhoto; children: ReactNode; side?: "right"; className?: string }) {
@@ -19,7 +18,6 @@ export default function BackdropBand({ photo, children, side, className = "" }: 
         <div aria-hidden="true" className="absolute inset-0 -z-10 hidden bg-[linear-gradient(#000,transparent_22%,transparent_78%,#000),linear-gradient(90deg,#000_0%,rgba(0,0,0,0.9)_38%,rgba(0,0,0,0.3)_100%)] xl:block" />
       )}
       {children}
-      <PhotoCredit photo={photo} className="absolute bottom-3 right-[clamp(20px,5vw,72px)] hidden sm:block" />
     </div>
   );
 }

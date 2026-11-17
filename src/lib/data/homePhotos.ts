@@ -1,8 +1,7 @@
 // The photographs on the homepage, with who took them and under what licence.
 // All thirty are from Wikimedia Commons. Twenty-four are CC0 (public-domain dedication), so no
 // credit is legally required — it is shown anyway, as a courtesy. Six (Sapporo and Fukuoka) are
-// CC BY 2.0 / 4.0, which DO require credit: the photographer and licence are shown with the photo
-// and in the footer, each linking to its source, and the footer says they were resized and compressed. Each file was
+// CC BY 2.0 / 4.0, which DO require credit: the photographer, licence and source link are on the /credits page (never on the home page itself), which also says they were resized and compressed. Each file was
 // resized to 2560 px wide and converted to WebP at quality 80; camera metadata was
 // removed. The full record (source pages, originals) is in
 // public/images/home/CREDITS.md.

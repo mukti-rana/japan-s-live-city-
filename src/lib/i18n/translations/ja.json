@@ -1413,5 +1413,8 @@
   "Pause photo slideshow": "写真のスライドショーを一時停止",
   "Play photo slideshow": "写真のスライドショーを再生",
   "CC0 photographs from Wikimedia Commons:": "ウィキメディア・コモンズのCC0写真：",
-  "CC BY photographs from Wikimedia Commons, resized and compressed:": "ウィキメディア・コモンズのCC BY写真（サイズ変更・圧縮済み）："
+  "CC BY photographs from Wikimedia Commons, resized and compressed:": "ウィキメディア・コモンズのCC BY写真（サイズ変更・圧縮済み）：",
+  "Photo credits": "写真クレジット",
+  "The photographs on the home page are from Wikimedia Commons. Each was resized to 2560 px wide and compressed to WebP, and its camera data was removed. CC0 photographs need no credit and are listed as a courtesy; CC BY photographs are used with credit under their licence.": "ホームページの写真はウィキメディア・コモンズのものです。いずれも幅2560pxにリサイズしてWebPに圧縮し、カメラ情報を削除しています。CC0の写真はクレジット不要ですが礼儀として掲載しています。CC BYの写真はライセンスに従いクレジットを付けて使用しています。",
+  "Photographs of places in Explore and Discover near you carry their own credit on each place's page.": "「探す」と「近くを発見」の場所の写真には、各場所のページにそれぞれのクレジットがあります。"
 }

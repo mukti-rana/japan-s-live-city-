@@ -60,7 +60,7 @@ function Slide({ photo, visible, first, onReady, onFail }: { photo: HomePhoto; v
 //    paused it, and never moves at all under reduced motion (a single still photograph);
 //  - when the city changes, the new city's first picture crossfades over the old one;
 //  - a picture that fails to load is skipped; with none left, the hero's gradient shows.
-export default function HeroSlides({ photos, paused, onShow }: { photos: readonly HomePhoto[]; paused: boolean; onShow: (photo: HomePhoto) => void }) {
+export default function HeroSlides({ photos, paused, onShow }: { photos: readonly HomePhoto[]; paused: boolean; onShow?: (photo: HomePhoto) => void }) {
   const reduce = useReducedMotion();
   const box = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -91,11 +91,11 @@ export default function HeroSlides({ photos, paused, onShow }: { photos: readonl
     setArmed(false);
   }, [setKey]);
 
-  // Tell the hero which picture is up (its credit follows it).
+  // Tell the parent which picture is up, if it asks.
   useEffect(() => {
     if (!current) return;
     shown.current = current;
-    onShow(current);
+    onShow?.(current);
   }, [current, onShow]);
 
   // Let the next picture start loading a moment after the current one is on screen.

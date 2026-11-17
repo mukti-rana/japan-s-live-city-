@@ -219,3 +219,11 @@
 [data-home-root] [data-japan-map] > div[aria-hidden="true"] {
   display: none;
 }
+
+/* ── No photo credits on the home page ──
+   The home page is pictures and type on black. Credits live on /credits (linked from the footer index). Anything
+   that prints a photographer's name over or beside a picture must carry data-photo-credit; on this page it is
+   never shown, so a photo from someone else can be added without a name appearing on the main page. */
+[data-home-root] [data-photo-credit] {
+  display: none !important;
+}
