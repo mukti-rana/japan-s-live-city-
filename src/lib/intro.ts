@@ -2,40 +2,18 @@
 
 import { useSyncExternalStore } from "react";
 
-// When the cinematic welcome plays: every time the site is opened, before the main site shows.
-//  - the first time in a browser session (a new tab or a new visit): the full intro;
-//  - every later load of the home page in that same session (a reload, say): the short one;
-//  - never again while moving around the site without reloading it (that is one visit).
-// It holds no personal data, only that this session has seen the full intro. Add ?intro=full to the home page's address to
-// force the full version whenever you like.
-const PLAYED = "livecity:introPlayed"; // sessionStorage: the full intro has already played in this session
+// The cinematic welcome plays every time the site is opened (every full load of the home page, before the main site shows),
+// and never again while moving around inside the site without reloading it. This file holds that one fact for the page, and
+// the few things the intro does to the page around it:
+//   - while it waits or plays, the home page is kept invisible (data-intro="hold") and the top-bar logo hidden;
+//   - when the logo starts to fly, the page arrives (data-intro="reveal": see cinematic.css);
+//   - when the logo lands, the top-bar logo is shown and set to the same moment of its own drawing, so it matches.
 const EVENT = "livecity:intro";
 
-export type IntroMode = "full" | "short";
+let current: "playing" | "done" | null = null;
 
-// The intro that is playing (or has just finished) in this page; it must not change underneath itself while it runs.
-let current: IntroMode | "done" | null = null;
-
-function forcedFull(): boolean {
-  try {
-    return new URLSearchParams(window.location.search).get("intro") === "full";
-  } catch {
-    return false;
-  }
-}
-
-function freshMode(): IntroMode {
-  if (forcedFull()) return "full";
-  try {
-    return window.sessionStorage.getItem(PLAYED) === "1" ? "short" : "full";
-  } catch {
-    return "short"; // storage unavailable: the lighter one
-  }
-}
-
-function getSnapshot(): IntroMode | "none" {
-  if (current === "done") return "none";
-  return current ?? freshMode();
+function getSnapshot(): "play" | "none" {
+  return current === "done" ? "none" : "play";
 }
 
 function subscribe(cb: () => void) {
@@ -44,24 +22,51 @@ function subscribe(cb: () => void) {
 }
 
 // "unknown" on the server and during hydration, so the server's page never contains the intro.
-export function useIntroMode(): "unknown" | IntroMode | "none" {
+export function useIntroMode(): "unknown" | "play" | "none" {
   return useSyncExternalStore(subscribe, getSnapshot, () => "unknown" as const);
 }
 
-export function beginIntro(mode: IntroMode) {
+export function beginIntro() {
   if (current) return;
-  current = mode;
-  if (mode === "full") {
-    try {
-      window.sessionStorage.setItem(PLAYED, "1");
-    } catch {
-      // Storage unavailable — later loads just show the full one again.
-    }
-  }
+  current = "playing";
   window.dispatchEvent(new Event(EVENT));
 }
 
 export function finishIntro() {
   current = "done";
   window.dispatchEvent(new Event(EVENT));
+}
+
+const root = () => document.documentElement;
+
+// Keep the page itself out of sight while the intro is waiting or playing (it sits behind the intro anyway).
+export function holdPage(on: boolean) {
+  if (on) {
+    root().dataset.intro = "hold";
+    root().setAttribute("data-intro-fly", "");
+  } else if (root().dataset.intro === "hold") {
+    delete root().dataset.intro;
+    root().removeAttribute("data-intro-fly");
+  }
+}
+
+// The page arrives (cinematic.css animates it); the attribute is cleared once those animations are over.
+let revealTimer: number | undefined;
+export function revealPage() {
+  root().dataset.intro = "reveal";
+  window.clearTimeout(revealTimer);
+  revealTimer = window.setTimeout(() => delete root().dataset.intro, 2400);
+}
+
+// The flying logo has landed (or the intro was skipped): show the top-bar logo, and start its drawing from the moment where
+// the emblem is complete and its name is still to be written, so what lands is exactly what is there.
+export function settleHeaderLogo() {
+  root().removeAttribute("data-intro-fly");
+  const link = document.querySelector('[data-site-header] a[aria-label="LIVE CITY JAPAN"]');
+  if (!link || typeof link.getAnimations !== "function") return;
+  for (const a of link.getAnimations({ subtree: true })) {
+    const name = (a as CSSAnimation).animationName ?? "";
+    if (name === "lg-line" || name === "lg-art") a.currentTime = 3300;
+    else if (name.startsWith("hw-write")) a.currentTime = 0;
+  }
 }

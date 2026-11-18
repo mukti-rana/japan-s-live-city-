@@ -1024,6 +1024,15 @@ html:not(.dark) {
   --btn-ink: rgba(15, 23, 42, 0.76);
   --btn-wash: rgba(15, 23, 42, 0.05);
 }
+/* The home page, its top bar and its footer are always black, in either theme, so their buttons use the light-on-dark values. */
+[data-home-root],
+body:has([data-home-root]) [data-site-header],
+body:has([data-home-root]) > footer {
+  --btn-line: rgba(255, 255, 255, 0.2);
+  --btn-line-hover: rgba(255, 255, 255, 0.45);
+  --btn-ink: rgba(255, 255, 255, 0.74);
+  --btn-wash: rgba(255, 255, 255, 0.05);
+}
 :is(a, button, summary, label, [role="button"]):is(
   [class~="bg-azure"],
   [class~="bg-sakura"],
@@ -1403,8 +1412,8 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   padding-inline: 1.1rem;
 }
 
-/* ── Draw it once (Logo drawing="once", and the welcome intro's handwriting) ──
-   The same pen as the top bar, but it writes a single time and then stays finished. */
+/* ── Draw it once (Logo drawing="once", used by the welcome intro) ──
+   The same pen as the top bar, but it draws a single time and then stays finished. */
 .lg-s.lg-once { animation: lg-line-once 3.4s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--j, 0) * 0.14s); }
 .lg-art.lg-once { animation: lg-art-once 3.4s ease-in-out both; animation-iteration-count: 1; }
 @keyframes lg-line-once {
@@ -1417,14 +1426,7 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   0%, 40% { opacity: 0; }
   82%, 100% { opacity: 1; }
 }
-.hw-once .hw-l { animation: hw-write-once 2.3s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--base, 0s) + var(--i, 0) * 0.1s); }
-@keyframes hw-write-once {
-  0% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }
-  55% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
-  85%, 100% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
-}
 @media (prefers-reduced-motion: reduce) {
   .lg-s.lg-once { display: none; }
   .lg-art.lg-once { animation: none; opacity: 1; }
-  .hw-once .hw-l { animation: none; stroke-opacity: 0; fill-opacity: 1; }
 }

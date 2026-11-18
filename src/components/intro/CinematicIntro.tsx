@@ -4,28 +4,24 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SplittingText } from "@animate-ui/react/primitives/texts/splitting";
-import { TypingText, TypingTextCursor } from "@animate-ui/react/primitives/texts/typing";
 import Logo from "@/components/ui/Logo";
-import WrittenWordmark from "@/components/intro/WrittenWordmark";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
-import type { IntroMode } from "@/lib/intro";
+import { revealPage, settleHeaderLogo } from "@/lib/intro";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useTranslate } from "@/lib/i18n/inline";
 
-// The cinematic welcome: a pitch-black screen that slowly opens onto dark, still photographs of Japan. Four lines gather on
-// screen one after another and stay together, each arriving in its own way (Animate UI text primitives on Motion):
-//   Discover Japan.            letters rise out of a blur one after another (a cascade, SplittingText by characters)
-//   Experience every moment.   words settle out of a soft zoom and blur (SplittingText by words)
-//   Stay connected.            typed out with a blinking caret (TypingText)
-//   Welcome to Japan.          the largest line: every letter slides in from the right at the same moment (stagger 0)
-// Then the words melt away and the LIVE CITY JAPAN logo is drawn large, stroke by stroke, the way the top bar draws it, with
-// the name written beneath it in handwriting; then everything fades into the real home page.
-//  - Nothing of the site shows while it runs: the overlay is solid black underneath the pictures.
-//  - The photographs are Kyoto at night, Tokyo after dark and Mount Fuji at first light, graded darker and quieter and
-//    drifting very slowly. If one cannot load, its scene is simply black.
-//  - A new visit: the full intro. A reload in the same session, and anyone who asks the browser for less motion: a short
-//    one (just "Welcome to Japan." and the logo) with no drifting photographs. Skip intro (or Escape) is there from the
-//    first second.
+// The cinematic welcome, in four beats:
+//   1. A pitch-black screen opens onto a dark photograph of Kyoto at night.
+//   2. "Welcome to Japan." — every letter slides in from the right at the same moment (Animate UI SplittingText, stagger 0).
+//   3. The words melt away and the LIVE CITY JAPAN logo is drawn large, stroke by stroke, the way the top bar draws it,
+//      over Mount Fuji at first light.
+//   4. The finished logo flies up to the logo in the top bar and settles exactly on it, while the black and the photograph
+//      fade away and the home page arrives (the page's own entrance is in cinematic.css). The top-bar logo is hidden until
+//      the flying one lands, then shown, so the two are one.
+// Nothing of the site shows while it runs: the overlay is solid black underneath the pictures. If a photograph cannot load,
+// its scene is simply black. Skip intro (or Escape) is there from the first second and goes straight to step 4's fade.
+// Anyone who asks the browser for less motion gets no drifting photographs and no flight: the logo is drawn already
+// finished and the overlay just fades into the page.
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 // Mount Fuji over Lake Kawaguchi: the photograph the sign-in page already uses (Wikimedia Commons, CC0), loaded from there.
@@ -33,79 +29,73 @@ const FUJI = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Fuji_Kaw
 
 const SCENES = [
   { src: HOME_PHOTOS.kiyomizu.src, pos: "72% 50%", remote: false }, // Kyoto at night
-  { src: HOME_PHOTOS.hero.src, pos: "84% 50%", remote: false }, // Tokyo after dark
   { src: FUJI, pos: "50% 50%", remote: true }, // Mount Fuji at first light
 ] as const;
 
-// `n` is how many of the four lines are on screen during a "lines" step (they stay once they have arrived); `only` shows
-// just the last line (the short version).
-type Step = { kind: "gap" | "lines" | "logo"; n?: number; only?: boolean; scene: number; ms: number };
-
-const FULL: Step[] = [
+type Step = { kind: "gap" | "words" | "logo"; scene: number; ms: number };
+const STEPS: Step[] = [
   { kind: "gap", scene: 0, ms: 1000 },
-  { kind: "lines", n: 1, scene: 0, ms: 1250 },
-  { kind: "lines", n: 2, scene: 0, ms: 1350 },
-  { kind: "lines", n: 3, scene: 1, ms: 1500 },
-  { kind: "lines", n: 4, scene: 2, ms: 2900 },
-  { kind: "logo", scene: 2, ms: 4900 },
-];
-const SHORT: Step[] = [
-  { kind: "gap", scene: 0, ms: 500 },
-  { kind: "lines", n: 4, only: true, scene: 0, ms: 2100 },
-  { kind: "logo", scene: 0, ms: 4300 },
+  { kind: "words", scene: 0, ms: 2600 },
+  { kind: "logo", scene: 1, ms: 3900 },
 ];
 
 const SHADE = "brightness-[0.58] saturate-[0.82] contrast-[1.06]";
+const FLY = 1.25; // seconds the logo takes to fly to the top bar
 
-// One line of the poem. Until it arrives, an invisible copy holds its place, so lines arriving never push the ones above
-// them; then the animated text takes that place in the normal flow (so it wraps like any text).
-function Line({ text, shown, big = false, children }: { text: string; shown: boolean; big?: boolean; children: React.ReactNode }) {
-  return (
-    <div className={`${big ? "mt-[clamp(10px,2.4vh,26px)] text-[clamp(42px,7.4vw,108px)]" : "text-[clamp(28px,4.3vw,62px)]"} leading-[1.1] tracking-[-0.02em]`}>
-      {shown ? (
-        <div>{children}</div>
-      ) : (
-        <span aria-hidden="true" className="invisible block">
-          {text}
-        </span>
-      )}
-    </div>
-  );
-}
+type Phase = "play" | "fly" | "fade";
 
-export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDone: () => void }) {
+export default function CinematicIntro({ onDone }: { onDone: () => void }) {
   const tr = useTranslate();
   const { language } = useLanguage();
   const reduced = useReducedMotion();
-  const short = mode === "short" || Boolean(reduced);
-  const steps = short ? SHORT : FULL;
   const [i, setI] = useState(0);
-  const [leave, setLeave] = useState<null | number>(null); // fade-out length in seconds once it is leaving
+  const [phase, setPhase] = useState<Phase>("play");
+  const [fadeSecs, setFadeSecs] = useState(0.9);
+  const [flight, setFlight] = useState({ x: 0, y: 0, s: 1 });
   const [fujiFailed, setFujiFailed] = useState(false);
+  const logoRef = useRef<HTMLDivElement>(null);
   const skipRef = useRef<HTMLButtonElement>(null);
   const done = useRef(false);
 
-  const finish = useCallback(() => {
+  // The intro is over: show the top-bar logo (matching the one that landed) and hand the page over.
+  const land = useCallback(() => {
     if (done.current) return;
     done.current = true;
+    settleHeaderLogo();
     onDone();
   }, [onDone]);
 
-  const skip = useCallback(() => setLeave((l) => l ?? 0.7), []);
+  const fade = useCallback((secs: number) => {
+    revealPage();
+    setFadeSecs(secs);
+    setPhase((p) => (p === "play" ? "fade" : p));
+  }, []);
 
-  // Move through the steps; after the last one, fade out slowly.
+  // Fly the logo from where it is to where the top-bar logo is; if that logo can't be found, just fade.
+  const fly = useCallback(() => {
+    const from = logoRef.current?.getBoundingClientRect();
+    const to = document.querySelector('[data-site-header] a[aria-label="LIVE CITY JAPAN"] > span')?.getBoundingClientRect();
+    if (reduced || !from || !to || to.width === 0) return fade(0.9);
+    setFlight({ x: to.left + to.width / 2 - (from.left + from.width / 2), y: to.top + to.height / 2 - (from.top + from.height / 2), s: to.width / from.width });
+    revealPage();
+    setPhase("fly");
+  }, [fade, reduced]);
+
+  const skip = useCallback(() => fade(0.7), [fade]);
+
+  // Move through the beats; after the last one, the logo flies.
   useEffect(() => {
-    if (leave !== null) return;
-    const id = window.setTimeout(() => (i + 1 < steps.length ? setI(i + 1) : setLeave(short ? 0.9 : 1.3)), steps[i].ms);
+    if (phase !== "play") return;
+    const id = window.setTimeout(() => (i + 1 < STEPS.length ? setI(i + 1) : fly()), STEPS[i].ms);
     return () => window.clearTimeout(id);
-  }, [i, leave, steps, short]);
+  }, [i, phase, fly]);
 
   // Safety net: if the browser never reports the fade as finished (a hidden tab, say), still hand the page over.
   useEffect(() => {
-    if (leave === null) return;
-    const id = window.setTimeout(finish, leave * 1000 + 1600);
+    if (phase === "play") return;
+    const id = window.setTimeout(land, (phase === "fly" ? FLY + 0.4 : fadeSecs) * 1000 + 1500);
     return () => window.clearTimeout(id);
-  }, [leave, finish]);
+  }, [phase, fadeSecs, land]);
 
   // The page behind stays put, the keyboard lands on Skip, and Escape skips.
   useEffect(() => {
@@ -122,108 +112,83 @@ export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDo
     };
   }, [skip]);
 
-  const step = steps[i];
-  const scene = step.scene;
-  const n = step.kind === "lines" ? (step.n ?? 0) : 0; // how many of the four lines are on screen
-  const lineTexts = [tr("Discover Japan."), tr("Experience every moment."), tr("Stay connected."), tr("Welcome to Japan.")];
+  const step = STEPS[i];
+  const words = tr("Welcome to Japan.");
   const serif = language === "ja" ? "font-jp" : "font-[family-name:var(--font-home-serif)]";
+  const playing = phase === "play";
 
   return (
-    <motion.div
-      role="dialog"
-      aria-modal="true"
-      aria-label={tr("LIVE CITY JAPAN")}
-      className="fixed inset-0 z-[90] overflow-hidden bg-black text-white"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: leave === null ? 1 : 0 }}
-      // Leaving: the words or logo melt away first, then the black and the photograph fade into the page behind.
-      transition={{ duration: leave === null ? 0.5 : leave, delay: leave === null ? 0 : 0.4, ease: "easeInOut" }}
-      onAnimationComplete={() => {
-        if (leave !== null) finish();
-      }}
-    >
-      {/* The photographs: one at a time, each fading up out of the black and drifting very slowly. */}
-      {SCENES.map((s, n) => {
-        if (short && n > 0) return null;
-        if (s.remote && (fujiFailed || i < 1)) return null;
-        const active = n === scene;
-        const seen = n <= scene;
-        return (
-          <motion.div
-            key={n}
-            aria-hidden="true"
-            className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: active && step.kind !== "gap" ? 1 : active ? 0.55 : 0, scale: reduced ? 1.04 : seen ? 1.15 : 1.04 }}
-            transition={{ opacity: { duration: 2, ease: "easeInOut" }, scale: { duration: 14, ease: "linear" } }}
-          >
-            {s.remote ? (
-              // eslint-disable-next-line @next/next/no-img-element -- a remote photograph; if it cannot load the scene stays black
-              <img src={s.src} alt="" decoding="async" onError={() => setFujiFailed(true)} className={`h-full w-full object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
-            ) : (
-              <Image src={s.src} alt="" fill sizes="100vw" quality={70} priority={n === 0} className={`object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
-            )}
-          </motion.div>
-        );
-      })}
+    <div role="dialog" aria-modal="true" aria-label={tr("LIVE CITY JAPAN")} className={`fixed inset-0 z-[90] ${playing ? "" : "pointer-events-none"}`}>
+      {/* The black and the photographs: fade up out of the dark at the start, and away when the page arrives. */}
+      <motion.div
+        className="absolute inset-0 overflow-hidden bg-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: playing ? 1 : 0 }}
+        transition={playing ? { duration: 0.5, ease: "easeInOut" } : { duration: phase === "fly" ? FLY : fadeSecs, delay: phase === "fly" ? 0.1 : 0, ease: "easeInOut" }}
+        onAnimationComplete={() => {
+          if (!playing) land();
+        }}
+      >
+        {SCENES.map((s, n) => {
+          if (s.remote && (fujiFailed || i < 1)) return null;
+          const active = n === step.scene;
+          const seen = n <= step.scene;
+          return (
+            <motion.div
+              key={n}
+              aria-hidden="true"
+              className="absolute inset-0"
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: active && step.kind !== "gap" ? 1 : active ? 0.55 : 0, scale: reduced ? 1.04 : seen ? 1.15 : 1.04 }}
+              transition={{ opacity: { duration: 2, ease: "easeInOut" }, scale: { duration: 14, ease: "linear" } }}
+            >
+              {s.remote ? (
+                // eslint-disable-next-line @next/next/no-img-element -- a remote photograph; if it cannot load the scene stays black
+                <img src={s.src} alt="" decoding="async" onError={() => setFujiFailed(true)} className={`h-full w-full object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
+              ) : (
+                <Image src={s.src} alt="" fill sizes="100vw" quality={70} priority={n === 0} className={`object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
+              )}
+            </motion.div>
+          );
+        })}
+        {/* Vignette: brightest in the middle, falling away to black at the edges, top and bottom. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.7)_85%),linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.05)_30%,rgba(0,0,0,0.05)_70%,rgba(0,0,0,0.7))]" />
+      </motion.div>
 
-      {/* Vignette: the picture is brightest in the middle and falls away to black at the edges, top and bottom. */}
-      <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.7)_85%),linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.05)_30%,rgba(0,0,0,0.05)_70%,rgba(0,0,0,0.7))]" />
-
-      <motion.div className="absolute inset-0 flex items-center justify-center px-6 text-center" animate={{ opacity: leave === null ? 1 : 0 }} transition={{ duration: 0.45, ease: "easeOut" }}>
+      {/* The words, then the logo (which is what flies). */}
+      <motion.div className="absolute inset-0 flex items-center justify-center px-6 text-center" animate={{ opacity: phase === "fade" ? 0 : 1 }} transition={{ duration: 0.45, ease: "easeOut" }}>
         <p className="sr-only" aria-live="polite">
-          {step.kind === "lines" ? lineTexts.filter((_, n) => (step.only ? n === 3 : n < (step.n ?? 0))).join(" ") : step.kind === "logo" ? "LIVE CITY JAPAN" : ""}
+          {step.kind === "words" ? words : step.kind === "logo" ? "LIVE CITY JAPAN" : ""}
         </p>
         <AnimatePresence mode="wait">
           {step.kind !== "logo" && (
             <motion.div
-              key="poem"
+              key="words"
               aria-hidden="true"
               exit={{ opacity: 0, transition: { duration: 0.55, ease: "easeIn" } }}
-              className={`${serif} mx-auto flex w-full max-w-[min(92vw,1100px)] flex-col items-center font-normal [text-shadow:0_2px_44px_rgba(0,0,0,0.7)]`}
+              className={`${serif} mx-auto max-w-[min(92vw,1100px)] text-[clamp(46px,8.4vw,120px)] font-normal leading-[1.08] tracking-[-0.02em] [text-shadow:0_2px_44px_rgba(0,0,0,0.7)]`}
             >
-              {!step.only && (
-                <Line text={lineTexts[0]} shown={n >= 1}>
-                  <SplittingText type="chars" text={lineTexts[0]} stagger={0.045} initial={{ opacity: 0, y: "0.4em", filter: "blur(14px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.95, ease: EASE }} />
-                </Line>
-              )}
-              {!step.only && (
-                <Line text={lineTexts[1]} shown={n >= 2}>
-                  <SplittingText type="words" text={lineTexts[1]} stagger={0.2} initial={{ opacity: 0, scale: 1.35, filter: "blur(12px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} transition={{ duration: 1.05, ease: EASE }} />
-                </Line>
-              )}
-              {!step.only && (
-                <Line text={lineTexts[2]} shown={n >= 3}>
-                  <TypingText text={lineTexts[2]} duration={75}>
-                    <TypingTextCursor style={{ height: "0.85em", width: "2px", marginLeft: "0.12em", transform: "translateY(0.08em)" }} />
-                  </TypingText>
-                </Line>
-              )}
-              <Line text={lineTexts[3]} shown={n >= 4} big>
-                <SplittingText type="chars" text={lineTexts[3]} stagger={0} initial={{ x: "0.5em", opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 1.05, ease: EASE }} />
-              </Line>
+              {step.kind === "words" && <SplittingText type="chars" text={words} stagger={0} initial={{ x: "0.5em", opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 1.05, ease: EASE }} />}
+              {step.kind === "gap" && <span className="invisible block">{words}</span>}
             </motion.div>
           )}
           {step.kind === "logo" && (
-            <motion.div
-              key="logo"
-              aria-hidden="true"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="flex flex-col items-center gap-[clamp(8px,2vh,22px)]"
-            >
-              <div className="h-[clamp(160px,27vmin,290px)] w-[clamp(160px,27vmin,290px)] [&>svg]:h-full [&>svg]:w-full">
-                <Logo size={290} drawing="once" />
-              </div>
-              <WrittenWordmark delay={1.1} className="w-[clamp(220px,36vmin,440px)]" />
+            <motion.div key="logo" aria-hidden="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}>
+              {/* Drawn once, large; then it travels (a curved path: the sideways and upward moves ease differently) and shrinks onto the top-bar logo. */}
+              <motion.div
+                ref={logoRef}
+                className="h-[clamp(180px,30vmin,320px)] w-[clamp(180px,30vmin,320px)] [&>svg]:h-full [&>svg]:w-full"
+                animate={phase === "fly" ? { x: flight.x, y: flight.y, scale: flight.s } : { x: 0, y: 0, scale: 1 }}
+                transition={{ x: { duration: FLY, ease: [0.35, 0, 0.15, 1] }, y: { duration: FLY, ease: [0.75, 0, 0.3, 1] }, scale: { duration: FLY, ease: [0.5, 0, 0.2, 1] } }}
+              >
+                <Logo size={320} drawing="once" />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {leave === null && (
+      {playing && (
         <motion.button
           ref={skipRef}
           type="button"
@@ -237,6 +202,6 @@ export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDo
           <span aria-hidden="true">→</span>
         </motion.button>
       )}
-    </motion.div>
+    </div>
   );
 }

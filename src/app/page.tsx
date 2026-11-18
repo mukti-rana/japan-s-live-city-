@@ -34,9 +34,11 @@ export default function Home() {
   return (
     <LiveLocationProvider>
       <WelcomeGate />
-      <div data-home-root className={`${homeFontVars} relative bg-black text-foreground`}>
-        {/* The cinematic welcome: plays once the visitor is past the entrance above (see IntroGate). */}
+      {/* The cinematic welcome: plays every time the site is opened, once the visitor is past the entrance above (see IntroGate). */}
+      <div className={homeFontVars}>
         <IntroGate />
+      </div>
+      <div data-home-root className={`${homeFontVars} relative bg-black text-foreground`}>
         {/* 01 — the first screen, then Your Day as a slim strip */}
         <HomeHero />
         <YourDayStrip />
