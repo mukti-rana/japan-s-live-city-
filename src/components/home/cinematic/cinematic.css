@@ -241,8 +241,8 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   html[data-intro="reveal"] [data-hero-content] { animation: none; }
 }
 
-/* The hero's AI spark: just the sparkle icon, no circle and no border, with a soft light that breathes slowly on the icon itself
-   (the glow stays close to the shape, nothing spills out). Still under reduced motion. */
+/* The hero's AI spark: just the sparkle icon, no circle and no border, shining in the wordmark's colours (amber, pink, violet)
+   with a soft light that stays close to the shape. Pointing at it opens .hero-ask, a pill that blooms out of the icon. */
 .hero-ai {
   display: inline-flex;
   height: 56px;
@@ -254,17 +254,88 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   transition: transform 0.35s ease;
 }
 .hero-ai:hover,
-.hero-ai:focus-visible {
-  transform: scale(1.08);
+.hero-ai:focus-visible,
+.hero-ai[aria-expanded="true"] {
+  transform: scale(1.1);
 }
 .hero-ai__icon {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55)) drop-shadow(0 0 8px rgba(190, 150, 255, 0.5));
-  animation: hero-ai-shine 4s ease-in-out infinite;
+  color: #ffe2bd;
+  filter: drop-shadow(0 0 3px rgba(255, 176, 86, 0.7)) drop-shadow(0 0 9px rgba(255, 176, 86, 0.55));
+  animation: hero-ai-shine 7s ease-in-out infinite;
 }
 @keyframes hero-ai-shine {
-  0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 6px rgba(190, 150, 255, 0.35)); }
-  50% { filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 10px rgba(190, 150, 255, 0.65)); }
+  0%, 100% { color: #ffe2bd; filter: drop-shadow(0 0 3px rgba(255, 176, 86, 0.7)) drop-shadow(0 0 9px rgba(255, 176, 86, 0.5)); }
+  33% { color: #ffc6e2; filter: drop-shadow(0 0 4px rgba(255, 95, 160, 0.8)) drop-shadow(0 0 11px rgba(255, 95, 160, 0.6)); }
+  66% { color: #dccbff; filter: drop-shadow(0 0 4px rgba(165, 107, 255, 0.85)) drop-shadow(0 0 11px rgba(165, 107, 255, 0.65)); }
 }
+
+/* The question bar. Closed: a point of light at the icon (clipped to nothing, blurred, small). Open: a circle of light widens to
+   the right, the bar sharpens out of the blur and settles with a small overshoot, then the arrow pops in. It sits beside the icon
+   without moving anything. Under reduced motion it only fades. */
+.hero-ask {
+  position: absolute;
+  left: calc(100% + 4px);
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  height: 52px;
+  width: min(22rem, calc(100vw - 7.5rem));
+  align-items: center;
+  gap: 6px;
+  padding: 0 6px 0 20px;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(rgba(12, 8, 26, 0.78), rgba(12, 8, 26, 0.78)) padding-box, linear-gradient(110deg, #ffb056, #ff5fa0, #a56bff) border-box;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 40px -10px rgba(165, 107, 255, 0.55);
+  transform-origin: left center;
+  visibility: hidden;
+  opacity: 0;
+  filter: blur(10px);
+  clip-path: circle(0% at 0% 50%);
+  transform: translateY(-50%) scale(0.55);
+  transition: clip-path 0.55s cubic-bezier(0.55, 0, 0.7, 0.3), opacity 0.3s ease, filter 0.4s ease, transform 0.5s ease, visibility 0s linear 0.55s;
+}
+.hero-ask[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  filter: blur(0);
+  clip-path: circle(150% at 0% 50%);
+  transform: translateY(-50%) scale(1);
+  transition: clip-path 0.85s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, filter 0.6s ease, transform 0.8s cubic-bezier(0.34, 1.45, 0.64, 1), visibility 0s;
+}
+.hero-ask__field {
+  min-width: 0;
+  flex: 1;
+  background: transparent;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.hero-ask__field::placeholder { color: rgba(255, 255, 255, 0.6); }
+.hero-ask__go {
+  display: flex;
+  height: 38px;
+  width: 38px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #ff9a3d, #ff4f9a 55%, #a56bff);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.3) rotate(-90deg);
+  transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+}
+.hero-ask__go:hover { filter: brightness(1.15); }
+.hero-ask[data-open="true"] .hero-ask__field { opacity: 1; transform: none; transition: opacity 0.45s ease 0.28s, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.28s; }
+.hero-ask[data-open="true"] .hero-ask__go { opacity: 1; transform: none; transition: opacity 0.3s ease 0.4s, transform 0.55s cubic-bezier(0.34, 1.6, 0.64, 1) 0.4s, filter 0.2s ease; }
 @media (prefers-reduced-motion: reduce) {
   .hero-ai__icon { animation: none; }
+  .hero-ask, .hero-ask[data-open="true"] { clip-path: none; filter: none; transform: translateY(-50%); transition: opacity 0.2s ease, visibility 0s; }
+  .hero-ask__field, .hero-ask__go, .hero-ask[data-open="true"] .hero-ask__field, .hero-ask[data-open="true"] .hero-ask__go { transform: none; transition: none; }
 }

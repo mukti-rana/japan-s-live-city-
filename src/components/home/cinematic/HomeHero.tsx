@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { LocateFixed, MapPin, Sparkles } from "lucide-react";
+import { LocateFixed, MapPin } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
+import HeroAskAI from "@/components/home/cinematic/HeroAskAI";
 import HeroSlides from "@/components/home/cinematic/HeroSlides";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import { type HomePhoto } from "@/lib/data/homePhotos";
@@ -224,11 +224,9 @@ export default function HomeHero() {
           </div>
         )}
 
-        {/* Only the AI spark: bigger, glowing and shining. It opens the assistant. */}
+        {/* Only the AI spark; pointing at it opens a question bar (HeroAskAI). */}
         <div data-dock-clear className="mt-8 flex items-center">
-          <Link href="/ai-assistant" aria-label={tr("Ask LIVE CITY AI")} title={tr("Ask LIVE CITY AI")} className={`hero-ai ${ring}`}>
-            <Sparkles size={36} strokeWidth={1.9} aria-hidden="true" className="hero-ai__icon" />
-          </Link>
+          <HeroAskAI />
         </div>
       </div>
       </ScrollReveal>
