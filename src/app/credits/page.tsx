@@ -44,6 +44,12 @@ export default function CreditsPage() {
       <p className="text-xs leading-relaxed text-muted">
         <Tx en="Photographs of places in Explore and Discover near you carry their own credit on each place's page." />
       </p>
+      <p className="text-xs leading-relaxed text-muted">
+        <Tx en="The welcome introduction also shows Mount Fuji over Lake Kawaguchi, by Marion & Christoph Aistl (CC0), from Wikimedia Commons." />{" "}
+        <a href="https://commons.wikimedia.org/wiki/File:Fuji_Kawaguchi_475.JPG" target="_blank" rel="noopener noreferrer" className={link}>
+          Fuji_Kawaguchi_475.JPG
+        </a>
+      </p>
     </div>
   );
 }

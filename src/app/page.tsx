@@ -22,6 +22,7 @@ import LatestNewsNearYou from "@/components/news/LatestNewsNearYou";
 import EmergencyPreview from "@/components/emergency/EmergencyPreview";
 import EventsNearYou from "@/components/events/EventsNearYou";
 import WelcomeGate from "@/components/auth/WelcomeGate";
+import IntroGate from "@/components/intro/IntroGate";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 
@@ -34,6 +35,8 @@ export default function Home() {
     <LiveLocationProvider>
       <WelcomeGate />
       <div data-home-root className={`${homeFontVars} relative bg-black text-foreground`}>
+        {/* The cinematic welcome: plays once the visitor is past the entrance above (see IntroGate). */}
+        <IntroGate />
         {/* 01 — the first screen, then Your Day as a slim strip */}
         <HomeHero />
         <YourDayStrip />
