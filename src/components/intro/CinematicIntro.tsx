@@ -159,7 +159,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
               {/* Drawn once, large; then it travels (a curved path: the sideways and upward moves ease differently) and shrinks onto the top-bar logo. */}
               <motion.div
                 ref={logoRef}
-                className="h-[clamp(240px,42vmin,460px)] w-[clamp(240px,42vmin,460px)] [&>svg]:h-full [&>svg]:w-full"
+                className="h-[clamp(260px,68vmin,760px)] w-[clamp(260px,68vmin,760px)] [&>svg]:h-full [&>svg]:w-full"
                 animate={phase === "fly" ? { x: flight.x, y: flight.y, scale: flight.s } : { x: 0, y: 0, scale: 1 }}
                 transition={{ x: { duration: FLY, ease: [0.35, 0, 0.15, 1] }, y: { duration: FLY, ease: [0.75, 0, 0.3, 1] }, scale: { duration: FLY, ease: [0.5, 0, 0.2, 1] } }}
               >
