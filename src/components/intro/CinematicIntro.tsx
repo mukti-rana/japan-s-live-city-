@@ -19,7 +19,7 @@ import { useTranslate } from "@/lib/i18n/inline";
 //      home page arrives (the page's own entrance is in cinematic.css). The top-bar logo is hidden until the flying one
 //      lands, then shown, so the two are one.
 // Nothing of the site shows while it runs: the overlay is solid black underneath the picture. If the photograph cannot load,
-// that scene is simply black. Skip intro is offered while the words are on screen (and Escape skips at any time); it goes
+// that scene is simply black. There is no on-screen button: Escape skips at any time, going
 // straight to the fade of step 4. Anyone who asks the browser for less motion gets no drifting photograph and no flight: the
 // logo is drawn already finished and the overlay just fades into the page.
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -47,7 +47,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
   const [fadeSecs, setFadeSecs] = useState(0.9);
   const [flight, setFlight] = useState({ x: 0, y: 0, s: 1 });
   const logoRef = useRef<HTMLDivElement>(null);
-  const skipRef = useRef<HTMLButtonElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const done = useRef(false);
 
   // The intro is over: show the top-bar logo (matching the one that landed) and hand the page over.
@@ -90,11 +90,11 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
     return () => window.clearTimeout(id);
   }, [phase, fadeSecs, land]);
 
-  // The page behind stays put, the keyboard lands on Skip, and Escape skips.
+  // The page behind stays put, the keyboard stays on the intro (so Tab cannot wander into the hidden page), and Escape skips.
   useEffect(() => {
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
-    skipRef.current?.focus({ preventScroll: true });
+    rootRef.current?.focus({ preventScroll: true });
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") skip();
     };
@@ -111,7 +111,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
   const playing = phase === "play";
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={tr("LIVE CITY JAPAN")} className={`keep-dark-ink fixed inset-0 z-[90] ${playing ? "" : "pointer-events-none"}`} style={{ color: "#fff" }}>
+    <div ref={rootRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={tr("LIVE CITY JAPAN")} className={`keep-dark-ink fixed inset-0 z-[90] outline-none ${playing ? "" : "pointer-events-none"}`} style={{ color: "#fff" }}>
       {/* The black and the photographs: fade up out of the dark at the start, and away when the page arrives. */}
       <motion.div
         className="absolute inset-0 overflow-hidden"
@@ -169,21 +169,6 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
           )}
         </AnimatePresence>
       </motion.div>
-
-      {playing && step.kind !== "logo" && (
-        <motion.button
-          ref={skipRef}
-          type="button"
-          onClick={skip}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.8 }}
-          className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 inline-flex h-9 items-center gap-2 rounded-full border border-white/15 px-4 text-[11px] font-medium uppercase tracking-[0.22em] text-white/55 transition-colors duration-300 hover:border-white/40 hover:text-white focus-visible:border-white/50 focus-visible:text-white focus-visible:outline-none sm:right-8"
-        >
-          {tr("Skip intro")}
-          <span aria-hidden="true">→</span>
-        </motion.button>
-      )}
     </div>
   );
 }
