@@ -241,57 +241,30 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   html[data-intro="reveal"] [data-hero-content] { animation: none; }
 }
 
-/* The hero's AI spark: a round dark glass button holding one bright sparkle, with a slow glow that breathes and a sheen that
-   sweeps across it. Colour and light only (no layout), and still under reduced motion. */
+/* The hero's AI spark: just the sparkle icon, no circle and no border, with a soft light that breathes slowly on the icon itself
+   (the glow stays close to the shape, nothing spills out). Still under reduced motion. */
 .hero-ai {
-  position: relative;
   display: inline-flex;
-  height: 68px;
-  width: 68px;
+  height: 56px;
+  width: 56px;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  isolation: isolate;
   border-radius: 9999px;
-  border: 1px solid rgba(214, 190, 255, 0.55);
-  background: radial-gradient(circle at 50% 38%, rgba(150, 110, 255, 0.55), rgba(40, 20, 90, 0.78) 62%, rgba(10, 6, 30, 0.9));
   color: #fff;
-  box-shadow: 0 0 22px 3px rgba(168, 120, 255, 0.55), 0 0 60px 10px rgba(255, 120, 200, 0.25), inset 0 0 18px rgba(255, 255, 255, 0.18);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  animation: hero-ai-glow 3.2s ease-in-out infinite;
-}
-.hero-ai::after {
-  content: "";
-  position: absolute;
-  inset: -20% auto -20% -60%;
-  z-index: -1;
-  width: 45%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: skewX(-18deg);
-  animation: hero-ai-sheen 4.2s ease-in-out infinite;
+  transition: transform 0.35s ease;
 }
 .hero-ai:hover,
 .hero-ai:focus-visible {
   transform: scale(1.08);
-  box-shadow: 0 0 30px 6px rgba(190, 150, 255, 0.75), 0 0 80px 16px rgba(255, 120, 200, 0.38), inset 0 0 22px rgba(255, 255, 255, 0.28);
 }
 .hero-ai__icon {
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px rgba(190, 150, 255, 0.95));
-  animation: hero-ai-twinkle 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55)) drop-shadow(0 0 8px rgba(190, 150, 255, 0.5));
+  animation: hero-ai-shine 4s ease-in-out infinite;
 }
-@keyframes hero-ai-glow {
-  0%, 100% { box-shadow: 0 0 20px 2px rgba(168, 120, 255, 0.5), 0 0 54px 8px rgba(255, 120, 200, 0.2), inset 0 0 16px rgba(255, 255, 255, 0.16); }
-  50% { box-shadow: 0 0 30px 6px rgba(190, 150, 255, 0.8), 0 0 80px 16px rgba(255, 120, 200, 0.38), inset 0 0 22px rgba(255, 255, 255, 0.28); }
-}
-@keyframes hero-ai-sheen {
-  0%, 55% { left: -60%; }
-  100% { left: 130%; }
-}
-@keyframes hero-ai-twinkle {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50% { transform: scale(1.12) rotate(8deg); }
+@keyframes hero-ai-shine {
+  0%, 100% { filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 6px rgba(190, 150, 255, 0.35)); }
+  50% { filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 10px rgba(190, 150, 255, 0.65)); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-ai, .hero-ai::after, .hero-ai__icon { animation: none; }
-  .hero-ai::after { display: none; }
+  .hero-ai__icon { animation: none; }
 }

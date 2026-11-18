@@ -227,7 +227,7 @@ export default function HomeHero() {
         {/* Only the AI spark: bigger, glowing and shining. It opens the assistant. */}
         <div data-dock-clear className="mt-8 flex items-center">
           <Link href="/ai-assistant" aria-label={tr("Ask LIVE CITY AI")} title={tr("Ask LIVE CITY AI")} className={`hero-ai ${ring}`}>
-            <Sparkles size={30} strokeWidth={1.9} aria-hidden="true" className="hero-ai__icon" />
+            <Sparkles size={36} strokeWidth={1.9} aria-hidden="true" className="hero-ai__icon" />
           </Link>
         </div>
       </div>
