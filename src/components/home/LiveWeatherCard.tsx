@@ -301,7 +301,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
         </div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 xl:grid-cols-2">
             {/* Left: place, temperature, condition */}
             <section className="keep-dark-ink relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
               <WeatherAtmosphere icon={weather.icon} isNight={night} />
@@ -330,75 +330,73 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
               </div>
             </section>
 
-            {/* Right: the metrics */}
-            <div className="min-w-0">
-              <div className="grid h-full auto-rows-fr grid-cols-2 gap-3">
-                  <Tile
-                    icon={<Droplets size={17} aria-hidden="true" />}
-                    label={text("humidity")}
-                    value={
-                      <>
-                        {weather.humidity}
-                        <Unit>%</Unit>
-                      </>
-                    }
-                    bar={weather.humidity}
-                  />
-                  <Tile
-                    icon={<Wind size={17} aria-hidden="true" />}
-                    label={text("wind")}
-                    value={
-                      <>
-                        {weather.windKmh}
-                        <Unit>km/h</Unit>
-                      </>
-                    }
-                  />
-                  <Tile
-                    icon={<Droplets size={17} aria-hidden="true" />}
-                    label={text("rain")}
-                    value={
-                      <>
-                        {weather.todayPrecipProbability}
-                        <Unit>%</Unit>
-                      </>
-                    }
-                    bar={weather.todayPrecipProbability}
-                  />
-                  <Tile
-                    icon={<SunIcon size={17} aria-hidden="true" />}
-                    label={text("uv")}
-                    value={weather.todayUvIndex}
-                    note={text(uvKey(weather.todayUvIndex))}
-                    bar={(weather.todayUvIndex / 11) * 100}
-                  />
-                  {weather.visibilityKm !== null && (
-                    <Tile
-                      icon={<Eye size={17} aria-hidden="true" />}
-                      label={text("visibility")}
-                      value={
-                        <>
-                          {weather.visibilityKm}
-                          <Unit>km</Unit>
-                        </>
-                      }
-                    />
-                  )}
-                  <Tile
-                    icon={<Sunrise size={17} aria-hidden="true" />}
-                    label={text("sun")}
-                    value={
-                      <span className="whitespace-nowrap text-base">
-                        {weather.sunrise} · {weather.sunset}
-                      </span>
-                    }
-                    className={weather.visibilityKm === null ? "col-span-2" : ""}
-                  />
-                </div>
-            </div>
+            {/* Right: the Weather Advisor */}
+            <WeatherAdvisor weather={weather} isNight={night} uvLabel={text(uvKey(weather.todayUvIndex))} />
           </div>
 
-          <WeatherAdvisor weather={weather} isNight={night} uvLabel={text(uvKey(weather.todayUvIndex))} />
+          {/* Below: the measurements the advice is built from */}
+          <div className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${weather.visibilityKm === null ? "lg:grid-cols-5" : "lg:grid-cols-6"}`}>
+            <Tile
+              icon={<Droplets size={17} aria-hidden="true" />}
+              label={text("humidity")}
+              value={
+                <>
+                  {weather.humidity}
+                  <Unit>%</Unit>
+                </>
+              }
+              bar={weather.humidity}
+            />
+            <Tile
+              icon={<Wind size={17} aria-hidden="true" />}
+              label={text("wind")}
+              value={
+                <>
+                  {weather.windKmh}
+                  <Unit>km/h</Unit>
+                </>
+              }
+            />
+            <Tile
+              icon={<Droplets size={17} aria-hidden="true" />}
+              label={text("rain")}
+              value={
+                <>
+                  {weather.todayPrecipProbability}
+                  <Unit>%</Unit>
+                </>
+              }
+              bar={weather.todayPrecipProbability}
+            />
+            <Tile
+              icon={<SunIcon size={17} aria-hidden="true" />}
+              label={text("uv")}
+              value={weather.todayUvIndex}
+              note={text(uvKey(weather.todayUvIndex))}
+              bar={(weather.todayUvIndex / 11) * 100}
+            />
+            {weather.visibilityKm !== null && (
+              <Tile
+                icon={<Eye size={17} aria-hidden="true" />}
+                label={text("visibility")}
+                value={
+                  <>
+                    {weather.visibilityKm}
+                    <Unit>km</Unit>
+                  </>
+                }
+              />
+            )}
+            <Tile
+              icon={<Sunrise size={17} aria-hidden="true" />}
+              label={text("sun")}
+              value={
+                <span className="whitespace-nowrap text-base">
+                  {weather.sunrise} · {weather.sunset}
+                </span>
+              }
+            />
+          </div>
 
           {/* Freshness, stated plainly */}
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted" role="status">

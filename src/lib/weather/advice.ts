@@ -9,6 +9,7 @@ import type { WeatherSnapshot } from "@/lib/services/weather";
 export type WearBand = "freezing" | "cold" | "cool" | "mild" | "comfortable" | "warm" | "hot";
 export type UmbrellaLevel = "none" | "umbrella" | "raincoat" | "heavy";
 export type SunLevel = "night" | "low" | "moderate" | "high" | "veryHigh";
+export type OutdoorLevel = "great" | "good" | "caution" | "indoor";
 
 export interface Advice {
   wear: {
@@ -31,6 +32,21 @@ export interface Advice {
     windy: boolean;
   };
   sun: { level: SunLevel; headline: string; items: string[]; uv: number; sunrise: string };
+  // Whether it is a good time to be outside, from the same real figures.
+  outdoor: {
+    level: OutdoorLevel;
+    headline: string;
+    items: string[];
+    // The first dry stretch of the next 12 hours, in whole hours (0 when it is already wet), or null if all 12 are dry.
+    dryHours: number | null;
+    // How many hours of forecast were looked at (normally 12).
+    hoursChecked: number;
+    rainFrom: string | null;
+    feelsLikeC: number;
+    windKmh: number;
+    // Set only when visibility is poor (under 5 km).
+    visibilityKm: number | null;
+  };
 }
 
 const WEAR: Record<WearBand, { headline: string; items: string[] }> = {
@@ -104,6 +120,45 @@ export function buildAdvice(w: WeatherSnapshot, isNight: boolean): Advice {
     veryHigh: { headline: "Strong sun — SPF 50+, hat, sunglasses and shade", items: ["Sunscreen SPF 50+", "Sunglasses", "Hat", "Shade at midday"] },
   };
 
+  // ── Outdoor plans, from the same real figures ──────────────────────────
+  // Dry means a low chance and almost no expected rain in that hour; count the dry hours in a row from now.
+  const isDry = (h: (typeof window)[number]) => h.precipProbability < 40 && (h.precipMm ?? 0) < 0.5;
+  let dry = 0;
+  while (dry < window.length && isDry(window[dry])) dry++;
+  const firstWet = window.find((h) => !isDry(h));
+  const dryHours = dry >= window.length ? null : dry;
+  const foggy = w.visibilityKm !== null && w.visibilityKm < 5;
+  const extreme = w.feelsLikeC <= 0 || w.feelsLikeC >= 33;
+  const veryWindy = w.windKmh >= 45;
+  let outdoorLevel: OutdoorLevel;
+  if (level === "heavy" || level === "raincoat") outdoorLevel = "indoor";
+  else if (dry === 0 || extreme || veryWindy || foggy) outdoorLevel = "caution"; // dry === 0: it is wet right now
+  else if (dry >= 6 && w.feelsLikeC >= 8 && w.feelsLikeC <= 28 && w.windKmh < 30 && uv < 8) outdoorLevel = "great";
+  else outdoorLevel = "good";
+  let outdoorHeadline: string;
+  let outdoorItems: string[];
+  if (outdoorLevel === "indoor") {
+    outdoorHeadline = "Better for indoor plans";
+    outdoorItems = ["Museums and galleries", "Shopping arcades and cafés", "Aquariums and indoor attractions"];
+  } else if (outdoorLevel === "caution") {
+    if (dry === 0) {
+      outdoorHeadline = "Wet outside — keep outdoor plans short";
+      outdoorItems = ["Covered arcades and shopping streets", "Short walks with an umbrella"];
+    } else {
+      outdoorHeadline = "Take it easy outdoors";
+      outdoorItems = w.feelsLikeC >= 33 ? ["Shaded sights and indoor breaks"] : w.feelsLikeC <= 0 ? ["Short walks and warm indoor stops"] : veryWindy ? ["Sheltered streets over open spaces"] : ["Cafés, museums and indoor sights"];
+    }
+  } else if (isNight && dry >= 3) {
+    outdoorHeadline = "Calm evening for a walk";
+    outdoorItems = ["Lit-up streets and bridges", "A relaxed evening stroll"];
+  } else if (outdoorLevel === "great") {
+    outdoorHeadline = "Great conditions to be outside";
+    outdoorItems = ["A walk in a park or by the river", "Temples, shrines and sightseeing", "Cycling or exploring on foot"];
+  } else {
+    outdoorHeadline = "Good for a walk, with a little care";
+    outdoorItems = dryHours !== null ? ["Short walks and sightseeing", "Plan outdoor stops before the rain"] : ["Short walks and sightseeing"];
+  }
+
   return {
     wear: { band, headline: WEAR[band].headline, items, feelsLikeC: w.feelsLikeC, cooling, swing },
     umbrella: {
@@ -117,5 +172,6 @@ export function buildAdvice(w: WeatherSnapshot, isNight: boolean): Advice {
       windy,
     },
     sun: { level: sunLevel, headline: SUN[sunLevel].headline, items: SUN[sunLevel].items, uv, sunrise: w.sunrise },
+    outdoor: { level: outdoorLevel, headline: outdoorHeadline, items: outdoorItems, dryHours, hoursChecked: window.length, rainFrom: firstWet ? hhmm(firstWet.time) : null, feelsLikeC: w.feelsLikeC, windKmh: w.windKmh, visibilityKm: foggy ? w.visibilityKm : null },
   };
 }

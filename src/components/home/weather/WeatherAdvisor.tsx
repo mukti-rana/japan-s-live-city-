@@ -1,29 +1,33 @@
 "use client";
 
-import { Shirt, Sun, Umbrella, Sparkles } from "lucide-react";
+import type { ReactNode } from "react";
+import { Footprints, Shirt, Sparkles, Sun, Umbrella } from "lucide-react";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import { buildAdvice } from "@/lib/weather/advice";
 import type { WeatherSnapshot } from "@/lib/services/weather";
 import { useTranslate } from "@/lib/i18n/inline";
 
-function Card({ icon, title, headline, items, details, tone }: { icon: React.ReactNode; title: string; headline: string; items: string[]; details: string[]; tone: string }) {
+// One piece of advice: a quiet monochrome icon, what it is about, the advice itself in a clear line, a few chips for the
+// concrete things to bring or do, and the real figures behind it in small print.
+function Card({ icon, title, headline, items, details }: { icon: ReactNode; title: string; headline: string; items: string[]; details: string[] }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2 rounded-2xl border border-glass-border bg-glass-bg p-3.5 transition-colors hover:border-azure/30">
-      <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
-        <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone}`}>{icon}</span>
+    <div className="flex min-w-0 flex-col gap-2.5 rounded-2xl border border-glass-border bg-glass-bg p-4 transition-colors duration-300 hover:border-foreground/25 hover:bg-glass-bg-strong">
+      <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.07] text-foreground">{icon}</span>
         {title}
       </p>
-      <p className="text-sm font-semibold leading-snug text-foreground">{headline}</p>
+      <p className="text-[15px] font-semibold leading-snug text-foreground">{headline}</p>
       {items.length > 0 && (
         <ul className="flex flex-wrap gap-1.5">
           {items.map((i) => (
-            <li key={i} className="rounded-full bg-glass-bg-strong px-2.5 py-1 text-[11px] text-foreground/85">
+            <li key={i} className="rounded-full border border-glass-border px-2.5 py-1 text-[11px] text-foreground/85">
               {i}
             </li>
           ))}
         </ul>
       )}
       {details.map((d) => (
-        <p key={d} className="text-[11px] leading-relaxed text-muted">
+        <p key={d} className="text-xs leading-relaxed text-muted">
           {d}
         </p>
       ))}
@@ -31,9 +35,9 @@ function Card({ icon, title, headline, items, details, tone }: { icon: React.Rea
   );
 }
 
-// "What should I prepare before going out?" — clothing, umbrella and sun
-// advice worked out from the live forecast above it, and one line that sums
-// it up. It recalculates whenever the weather reading refreshes.
+// "What should I prepare before going out?" — what to wear, whether to take an umbrella, sun protection and whether it is a
+// good time to be outside, all worked out from the live forecast on the page, with the day's advice in one line up front.
+// It recalculates whenever the weather reading refreshes. Every figure is the real reading; none is invented.
 export default function WeatherAdvisor({ weather, isNight, uvLabel }: { weather: WeatherSnapshot; isNight: boolean; uvLabel: string }) {
   const tr = useTranslate();
   const a = buildAdvice(weather, isNight);
@@ -58,28 +62,41 @@ export default function WeatherAdvisor({ weather, isNight, uvLabel }: { weather:
       : tr("UV index {n} ({level}) at its peak today.").replace("{n}", String(s.uv)).replace("{level}", uvLabel),
   ];
 
-  // One short line: the three headlines, leaving out sun when none is needed.
+  const o = a.outdoor;
+  const outdoorDetails: string[] = [];
+  if (o.dryHours === null) outdoorDetails.push(tr("Dry for the next {n} hours.").replace("{n}", String(o.hoursChecked)));
+  else {
+    if (o.dryHours > 0) outdoorDetails.push(tr("Dry for the next {n} hours.").replace("{n}", String(o.dryHours)));
+    if (o.rainFrom) outdoorDetails.push(tr("Rain expected from about {time}.").replace("{time}", o.rainFrom));
+  }
+  outdoorDetails.push(tr("Feels like {t}°C with {w} km/h wind.").replace("{t}", String(o.feelsLikeC)).replace("{w}", String(o.windKmh)));
+  if (o.visibilityKm !== null) outdoorDetails.push(tr("Visibility is only {v} km.").replace("{v}", String(o.visibilityKm)));
+
+  // One short line: the headlines that matter, leaving out sun when none is needed.
   const parts = [tr(a.wear.headline), tr(a.umbrella.headline)];
   if (s.level !== "low" && s.level !== "night") parts.push(tr(s.headline));
 
   return (
-    <section aria-label={tr("Weather Advisor")} className="flex flex-col gap-3">
+    <section aria-label={tr("Weather Advisor")} className="flex h-full min-w-0 flex-col gap-4">
       <div>
-        <h3 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/90">
-          <Sparkles size={14} className="text-[#c4b5fd]" aria-hidden="true" />
-          {tr("Weather Advisor")}
-        </h3>
-        <p className="mt-0.5 text-sm text-foreground/75">{tr("What should I prepare before going out?")}</p>
+        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
+          <Sparkles size={13} aria-hidden="true" />
+          {tr("Today's advice")}
+        </p>
+        <h3 className="mt-2 text-xl font-semibold leading-tight tracking-tight text-foreground sm:text-2xl">{tr("Weather Advisor")}</h3>
+        <p className="mt-1 text-sm text-foreground/70">{tr("What should I prepare before going out?")}</p>
       </div>
-      <div className="grid gap-3 md:grid-cols-3">
-        <Card icon={<Shirt size={14} aria-hidden="true" />} tone="bg-azure/15 text-azure" title={tr("What to wear")} headline={tr(a.wear.headline)} items={a.wear.items.map((i) => tr(i))} details={wearDetails} />
-        <Card icon={<Umbrella size={14} aria-hidden="true" />} tone="bg-neon-purple/15 text-[#c4b5fd]" title={tr("Umbrella advice")} headline={tr(a.umbrella.headline)} items={[]} details={rainDetails} />
-        <Card icon={<Sun size={14} aria-hidden="true" />} tone="bg-gold/15 text-gold" title={tr("Sun protection")} headline={tr(s.headline)} items={s.items.map((i) => tr(i))} details={sunDetails} />
-      </div>
-      <p className="rounded-2xl border border-glass-border bg-glass-bg px-4 py-3 text-sm leading-relaxed text-foreground">
-        <span className="mr-2 text-[11px] font-semibold uppercase tracking-wide text-[#c4b5fd]">{tr("Today's advice")}</span>
-        {parts.join(". ")}.
-      </p>
+
+      <p className="border-l-2 border-foreground/30 pl-3.5 text-sm leading-relaxed text-foreground">{parts.join(". ")}.</p>
+
+      <ScrollReveal from="stagger">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Card icon={<Shirt size={16} aria-hidden="true" />} title={tr("What to wear")} headline={tr(a.wear.headline)} items={a.wear.items.map((i) => tr(i))} details={wearDetails} />
+          <Card icon={<Umbrella size={16} aria-hidden="true" />} title={tr("Umbrella advice")} headline={tr(a.umbrella.headline)} items={[]} details={rainDetails} />
+          <Card icon={<Sun size={16} aria-hidden="true" />} title={tr("Sun protection")} headline={tr(s.headline)} items={s.items.map((i) => tr(i))} details={sunDetails} />
+          <Card icon={<Footprints size={16} aria-hidden="true" />} title={tr("Outdoor activities")} headline={tr(o.headline)} items={o.items.map((i) => tr(i))} details={outdoorDetails} />
+        </div>
+      </ScrollReveal>
     </section>
   );
 }
