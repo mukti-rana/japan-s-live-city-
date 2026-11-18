@@ -2,14 +2,13 @@
 
 import { useSyncExternalStore } from "react";
 
-// Remembers what the cinematic welcome has already done, so it is shown in the right amount:
-//  - the first time a visitor gets past the entrance (Login, Create Account or Explore as Guest): the full intro;
-//  - every later visit (this browser remembers it): a short version;
-//  - once per browser session at most, so moving around the site never replays it.
-// It holds no personal data, only that the intro was shown. Add ?intro=full to the home page's address to see the
-// full version again whenever you like (handy while testing).
-const PLAYED = "livecity:introPlayed"; // sessionStorage: already shown in this tab's session
-const VISITS = "livecity:introVisits"; // localStorage: how many times this browser has started it
+// When the cinematic welcome plays: every time the site is opened, before the main site shows.
+//  - the first time in a browser session (a new tab or a new visit): the full intro;
+//  - every later load of the home page in that same session (a reload, say): the short one;
+//  - never again while moving around the site without reloading it (that is one visit).
+// It holds no personal data, only that this session has seen the full intro. Add ?intro=full to the home page's address to
+// force the full version whenever you like.
+const PLAYED = "livecity:introPlayed"; // sessionStorage: the full intro has already played in this session
 const EVENT = "livecity:intro";
 
 export type IntroMode = "full" | "short";
@@ -25,20 +24,13 @@ function forcedFull(): boolean {
   }
 }
 
-function freshMode(): IntroMode | "none" {
+function freshMode(): IntroMode {
   if (forcedFull()) return "full";
   try {
-    if (window.sessionStorage.getItem(PLAYED) === "1") return "none";
+    return window.sessionStorage.getItem(PLAYED) === "1" ? "short" : "full";
   } catch {
-    return "none"; // storage unavailable: never nag
+    return "short"; // storage unavailable: the lighter one
   }
-  let visits = 0;
-  try {
-    visits = Number(window.localStorage.getItem(VISITS) ?? 0) || 0;
-  } catch {
-    // Treated as a first visit.
-  }
-  return visits > 0 ? "short" : "full";
 }
 
 function getSnapshot(): IntroMode | "none" {
@@ -59,11 +51,12 @@ export function useIntroMode(): "unknown" | IntroMode | "none" {
 export function beginIntro(mode: IntroMode) {
   if (current) return;
   current = mode;
-  try {
-    window.sessionStorage.setItem(PLAYED, "1");
-    window.localStorage.setItem(VISITS, String((Number(window.localStorage.getItem(VISITS) ?? 0) || 0) + 1));
-  } catch {
-    // Storage unavailable — it just may be shown again.
+  if (mode === "full") {
+    try {
+      window.sessionStorage.setItem(PLAYED, "1");
+    } catch {
+      // Storage unavailable — later loads just show the full one again.
+    }
   }
   window.dispatchEvent(new Event(EVENT));
 }

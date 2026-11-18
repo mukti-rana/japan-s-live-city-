@@ -6,9 +6,10 @@ import { beginIntro, finishIntro, useIntroMode } from "@/lib/intro";
 import { useAuth } from "@/lib/supabase/AuthContext";
 import { useWelcomeState } from "@/lib/welcome";
 
-// Decides when the cinematic welcome plays. It does not touch sign-in: the existing entrance (WelcomeGate, the login
-// and sign-up pages, the guest link and the server actions) works exactly as before. The intro simply plays on the home
-// page once the visitor has got past that entrance:
+// Decides when the cinematic welcome plays: every time the home page is opened, before the main site shows (see
+// lib/intro.ts for full versus short). It does not touch sign-in: the existing entrance (WelcomeGate, the login and sign-up
+// pages, the guest link and the server actions) works exactly as before. A visitor who has not yet chosen Login, Create
+// Account or Guest sees that entrance first; the intro plays once they are past it:
 //   - signed in (after Login, or after confirming a new account by email), or
 //   - chose Explore as Guest (or pressed Escape on the welcome), or
 //   - accounts aren't set up here, so there is no entrance to pass.

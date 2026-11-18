@@ -17,8 +17,8 @@ import { useTranslate } from "@/lib/i18n/inline";
 //    delay) while it fades up: Animate UI's SplittingText with stagger 0, on Motion. No bounce, no rotation.
 //  - The photographs are Kyoto at night, Tokyo after dark and Mount Fuji at first light, graded darker and quieter and
 //    drifting very slowly. If one cannot load, its scene is simply black.
-//  - First visit: the full intro (about 13 seconds). Returning visits, and anyone who asks the browser for less motion:
-//    a short one (about 5 seconds) with no drifting photographs. Skip intro (or Escape) is there from the first second.
+//  - A new visit: the full intro (about 13 seconds). A reload in the same session, and anyone who asks the browser for
+//    less motion: a short one (about 5 seconds) with no drifting photographs. Skip intro (or Escape) is there from the first second.
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 // Mount Fuji over Lake Kawaguchi: the photograph the sign-in page already uses (Wikimedia Commons, CC0), loaded from there.
