@@ -1402,3 +1402,29 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   border-radius: 9999px;
   padding-inline: 1.1rem;
 }
+
+/* ── Draw it once (Logo drawing="once", and the welcome intro's handwriting) ──
+   The same pen as the top bar, but it writes a single time and then stays finished. */
+.lg-s.lg-once { animation: lg-line-once 3.4s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--j, 0) * 0.14s); }
+.lg-art.lg-once { animation: lg-art-once 3.4s ease-in-out both; animation-iteration-count: 1; }
+@keyframes lg-line-once {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  42% { stroke-dashoffset: 0; opacity: 1; }
+  62% { stroke-dashoffset: 0; opacity: 1; }
+  88%, 100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes lg-art-once {
+  0%, 40% { opacity: 0; }
+  82%, 100% { opacity: 1; }
+}
+.hw-once .hw-l { animation: hw-write-once 2.3s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--base, 0s) + var(--i, 0) * 0.1s); }
+@keyframes hw-write-once {
+  0% { stroke-dashoffset: 170; stroke-opacity: 1; fill-opacity: 0; }
+  55% { stroke-dashoffset: 0; stroke-opacity: 1; fill-opacity: 0; }
+  85%, 100% { stroke-dashoffset: 0; stroke-opacity: 0.3; fill-opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lg-s.lg-once { display: none; }
+  .lg-art.lg-once { animation: none; opacity: 1; }
+  .hw-once .hw-l { animation: none; stroke-opacity: 0; fill-opacity: 1; }
+}

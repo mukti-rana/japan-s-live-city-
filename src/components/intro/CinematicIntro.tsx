@@ -4,21 +4,28 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { SplittingText } from "@animate-ui/react/primitives/texts/splitting";
+import { TypingText, TypingTextCursor } from "@animate-ui/react/primitives/texts/typing";
 import Logo from "@/components/ui/Logo";
+import WrittenWordmark from "@/components/intro/WrittenWordmark";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
 import type { IntroMode } from "@/lib/intro";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useTranslate } from "@/lib/i18n/inline";
 
-// The cinematic welcome: a pitch-black screen that slowly opens onto dark, still photographs of Japan while four short
-// lines are spoken in turn, then the LIVE CITY JAPAN logo, then it fades into the real home page.
+// The cinematic welcome: a pitch-black screen that slowly opens onto dark, still photographs of Japan. Four lines gather on
+// screen one after another and stay together, each arriving in its own way (Animate UI text primitives on Motion):
+//   Discover Japan.            letters rise out of a blur one after another (a cascade, SplittingText by characters)
+//   Experience every moment.   words settle out of a soft zoom and blur (SplittingText by words)
+//   Stay connected.            typed out with a blinking caret (TypingText)
+//   Welcome to Japan.          the largest line: every letter slides in from the right at the same moment (stagger 0)
+// Then the words melt away and the LIVE CITY JAPAN logo is drawn large, stroke by stroke, the way the top bar draws it, with
+// the name written beneath it in handwriting; then everything fades into the real home page.
 //  - Nothing of the site shows while it runs: the overlay is solid black underneath the pictures.
-//  - Each line is split into its letters, and every letter slides in from the right at the same moment (no stagger, no
-//    delay) while it fades up: Animate UI's SplittingText with stagger 0, on Motion. No bounce, no rotation.
 //  - The photographs are Kyoto at night, Tokyo after dark and Mount Fuji at first light, graded darker and quieter and
 //    drifting very slowly. If one cannot load, its scene is simply black.
-//  - A new visit: the full intro (about 13 seconds). A reload in the same session, and anyone who asks the browser for
-//    less motion: a short one (about 5 seconds) with no drifting photographs. Skip intro (or Escape) is there from the first second.
+//  - A new visit: the full intro. A reload in the same session, and anyone who asks the browser for less motion: a short
+//    one (just "Welcome to Japan." and the logo) with no drifting photographs. Skip intro (or Escape) is there from the
+//    first second.
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 // Mount Fuji over Lake Kawaguchi: the photograph the sign-in page already uses (Wikimedia Commons, CC0), loaded from there.
@@ -30,23 +37,41 @@ const SCENES = [
   { src: FUJI, pos: "50% 50%", remote: true }, // Mount Fuji at first light
 ] as const;
 
-type Step = { kind: "gap" | "line" | "logo"; text?: string; scene: number; ms: number };
+// `n` is how many of the four lines are on screen during a "lines" step (they stay once they have arrived); `only` shows
+// just the last line (the short version).
+type Step = { kind: "gap" | "lines" | "logo"; n?: number; only?: boolean; scene: number; ms: number };
 
 const FULL: Step[] = [
-  { kind: "gap", scene: 0, ms: 1300 },
-  { kind: "line", text: "Discover Japan.", scene: 0, ms: 2100 },
-  { kind: "line", text: "Experience every moment.", scene: 1, ms: 2100 },
-  { kind: "line", text: "Stay connected.", scene: 1, ms: 2100 },
-  { kind: "line", text: "Japan is waiting.", scene: 2, ms: 2300 },
-  { kind: "logo", scene: 2, ms: 2300 },
+  { kind: "gap", scene: 0, ms: 1000 },
+  { kind: "lines", n: 1, scene: 0, ms: 1250 },
+  { kind: "lines", n: 2, scene: 0, ms: 1350 },
+  { kind: "lines", n: 3, scene: 1, ms: 1500 },
+  { kind: "lines", n: 4, scene: 2, ms: 2900 },
+  { kind: "logo", scene: 2, ms: 4900 },
 ];
 const SHORT: Step[] = [
   { kind: "gap", scene: 0, ms: 500 },
-  { kind: "line", text: "Japan is waiting.", scene: 0, ms: 2000 },
-  { kind: "logo", scene: 0, ms: 1700 },
+  { kind: "lines", n: 4, only: true, scene: 0, ms: 2100 },
+  { kind: "logo", scene: 0, ms: 4300 },
 ];
 
 const SHADE = "brightness-[0.58] saturate-[0.82] contrast-[1.06]";
+
+// One line of the poem. Until it arrives, an invisible copy holds its place, so lines arriving never push the ones above
+// them; then the animated text takes that place in the normal flow (so it wraps like any text).
+function Line({ text, shown, big = false, children }: { text: string; shown: boolean; big?: boolean; children: React.ReactNode }) {
+  return (
+    <div className={`${big ? "mt-[clamp(10px,2.4vh,26px)] text-[clamp(42px,7.4vw,108px)]" : "text-[clamp(28px,4.3vw,62px)]"} leading-[1.1] tracking-[-0.02em]`}>
+      {shown ? (
+        <div>{children}</div>
+      ) : (
+        <span aria-hidden="true" className="invisible block">
+          {text}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDone: () => void }) {
   const tr = useTranslate();
@@ -99,6 +124,8 @@ export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDo
 
   const step = steps[i];
   const scene = step.scene;
+  const n = step.kind === "lines" ? (step.n ?? 0) : 0; // how many of the four lines are on screen
+  const lineTexts = [tr("Discover Japan."), tr("Experience every moment."), tr("Stay connected."), tr("Welcome to Japan.")];
   const serif = language === "ja" ? "font-jp" : "font-[family-name:var(--font-home-serif)]";
 
   return (
@@ -145,31 +172,52 @@ export default function CinematicIntro({ mode, onDone }: { mode: IntroMode; onDo
 
       <motion.div className="absolute inset-0 flex items-center justify-center px-6 text-center" animate={{ opacity: leave === null ? 1 : 0 }} transition={{ duration: 0.45, ease: "easeOut" }}>
         <p className="sr-only" aria-live="polite">
-          {step.kind === "line" ? tr(step.text ?? "") : step.kind === "logo" ? "LIVE CITY JAPAN" : ""}
+          {step.kind === "lines" ? lineTexts.filter((_, n) => (step.only ? n === 3 : n < (step.n ?? 0))).join(" ") : step.kind === "logo" ? "LIVE CITY JAPAN" : ""}
         </p>
         <AnimatePresence mode="wait">
-          {step.kind === "line" && (
+          {step.kind !== "logo" && (
             <motion.div
-              key={`line-${i}`}
+              key="poem"
               aria-hidden="true"
-              exit={{ opacity: 0, transition: { duration: 0.45, ease: "easeIn" } }}
-              className={`${serif} max-w-[16ch] text-[clamp(36px,7.2vw,104px)] font-normal leading-[1.06] tracking-[-0.02em] [text-shadow:0_2px_44px_rgba(0,0,0,0.65)] sm:max-w-[22ch]`}
+              exit={{ opacity: 0, transition: { duration: 0.55, ease: "easeIn" } }}
+              className={`${serif} mx-auto flex w-full max-w-[min(92vw,1100px)] flex-col items-center font-normal [text-shadow:0_2px_44px_rgba(0,0,0,0.7)]`}
             >
-              <SplittingText type="chars" text={tr(step.text ?? "")} stagger={0} initial={{ x: "0.5em", opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.95, ease: EASE }} />
+              {!step.only && (
+                <Line text={lineTexts[0]} shown={n >= 1}>
+                  <SplittingText type="chars" text={lineTexts[0]} stagger={0.045} initial={{ opacity: 0, y: "0.4em", filter: "blur(14px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.95, ease: EASE }} />
+                </Line>
+              )}
+              {!step.only && (
+                <Line text={lineTexts[1]} shown={n >= 2}>
+                  <SplittingText type="words" text={lineTexts[1]} stagger={0.2} initial={{ opacity: 0, scale: 1.35, filter: "blur(12px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} transition={{ duration: 1.05, ease: EASE }} />
+                </Line>
+              )}
+              {!step.only && (
+                <Line text={lineTexts[2]} shown={n >= 3}>
+                  <TypingText text={lineTexts[2]} duration={75}>
+                    <TypingTextCursor style={{ height: "0.85em", width: "2px", marginLeft: "0.12em", transform: "translateY(0.08em)" }} />
+                  </TypingText>
+                </Line>
+              )}
+              <Line text={lineTexts[3]} shown={n >= 4} big>
+                <SplittingText type="chars" text={lineTexts[3]} stagger={0} initial={{ x: "0.5em", opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 1.05, ease: EASE }} />
+              </Line>
             </motion.div>
           )}
           {step.kind === "logo" && (
             <motion.div
               key="logo"
               aria-hidden="true"
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: EASE }}
-              className="flex flex-col items-center gap-5"
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="flex flex-col items-center gap-[clamp(8px,2vh,22px)]"
             >
-              <Logo size={84} />
-              <p className="text-xs font-semibold tracking-[0.42em] text-white/90 sm:text-sm">LIVE CITY JAPAN</p>
+              <div className="h-[clamp(160px,27vmin,290px)] w-[clamp(160px,27vmin,290px)] [&>svg]:h-full [&>svg]:w-full">
+                <Logo size={290} drawing="once" />
+              </div>
+              <WrittenWordmark delay={1.1} className="w-[clamp(220px,36vmin,440px)]" />
             </motion.div>
           )}
         </AnimatePresence>

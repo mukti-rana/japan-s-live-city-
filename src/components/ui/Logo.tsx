@@ -9,7 +9,9 @@ import { useId } from "react";
 // white outlines trace the ring, sun, mountain, snow cap, torii gate and sparkle one after another, the coloured
 // artwork fades in over them, holds, then fades out while the outlines draw themselves away (see .lg-s / .lg-art in
 // globals.css). Under reduced motion it is just the finished picture.
-export default function Logo({ size = 36, drawing = false }: { size?: number; drawing?: boolean }) {
+export default function Logo({ size = 36, drawing = false }: { size?: number; drawing?: boolean | "once" }) {
+  // "once": draw it a single time and keep the finished picture (the welcome intro); true: draw, hold, erase, forever (the top bar).
+  const once = drawing === "once" ? " lg-once" : "";
   const id = useId();
   const u = (name: string) => `${id}-${name}`;
   const ref = (name: string) => `url(#${u(name)})`;
@@ -39,7 +41,7 @@ export default function Logo({ size = 36, drawing = false }: { size?: number; dr
           <circle r="0.9" fill="#ff5c9a" />
         </g>
       </defs>
-      <g className={drawing ? "lg-art" : undefined}>
+      <g className={drawing ? `lg-art${once}` : undefined}>
         <circle cx="32" cy="32" r="31" fill="#1d1a4d" />
         <g clipPath={ref("round")}>
           <rect width="64" height="64" fill={ref("sky")} />
@@ -67,18 +69,18 @@ export default function Logo({ size = 36, drawing = false }: { size?: number; dr
       </g>
       {drawing && (
         <g fill="none" stroke="#fff" strokeWidth="1.3" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-          <circle className="lg-s" style={{ "--j": 0 } as React.CSSProperties} pathLength={1} cx="32" cy="32" r="30.4" />
-          <circle className="lg-s" style={{ "--j": 1 } as React.CSSProperties} pathLength={1} cx="20" cy="25" r="11" />
-          <path className="lg-s" style={{ "--j": 2 } as React.CSSProperties} pathLength={1} d="M12 52 L30 20 Q35 11 40 20 L60 52 Z" />
-          <path className="lg-s" style={{ "--j": 3 } as React.CSSProperties} pathLength={1} d="M30 20 Q35 11 40 20 L37.8 22.4 L35.4 19.6 L33 23 L31.6 21.4 Z" />
+          <circle className={`lg-s${once}`} style={{ "--j": 0 } as React.CSSProperties} pathLength={1} cx="32" cy="32" r="30.4" />
+          <circle className={`lg-s${once}`} style={{ "--j": 1 } as React.CSSProperties} pathLength={1} cx="20" cy="25" r="11" />
+          <path className={`lg-s${once}`} style={{ "--j": 2 } as React.CSSProperties} pathLength={1} d="M12 52 L30 20 Q35 11 40 20 L60 52 Z" />
+          <path className={`lg-s${once}`} style={{ "--j": 3 } as React.CSSProperties} pathLength={1} d="M30 20 Q35 11 40 20 L37.8 22.4 L35.4 19.6 L33 23 L31.6 21.4 Z" />
           <g clipPath={ref("round")}>
-            <path className="lg-s" style={{ "--j": 4 } as React.CSSProperties} pathLength={1} d="M0 50 Q16 46 32 50 T64 49" />
+            <path className={`lg-s${once}`} style={{ "--j": 4 } as React.CSSProperties} pathLength={1} d="M0 50 Q16 46 32 50 T64 49" />
           </g>
-          <rect className="lg-s" style={{ "--j": 5 } as React.CSSProperties} pathLength={1} x="21.5" y="38" width="3.6" height="19" />
-          <rect className="lg-s" style={{ "--j": 6 } as React.CSSProperties} pathLength={1} x="38.9" y="38" width="3.6" height="19" />
-          <rect className="lg-s" style={{ "--j": 7 } as React.CSSProperties} pathLength={1} x="23" y="43.5" width="18" height="3" />
-          <path className="lg-s" style={{ "--j": 8 } as React.CSSProperties} pathLength={1} d="M16 37.5 Q32 41 48 37.5 L47 34.2 Q32 37.4 17 34.2 Z" />
-          <path className="lg-s" style={{ "--j": 9 } as React.CSSProperties} pathLength={1} d="M49 8 L50.2 11.8 L54 13 L50.2 14.2 L49 18 L47.8 14.2 L44 13 L47.8 11.8 Z" />
+          <rect className={`lg-s${once}`} style={{ "--j": 5 } as React.CSSProperties} pathLength={1} x="21.5" y="38" width="3.6" height="19" />
+          <rect className={`lg-s${once}`} style={{ "--j": 6 } as React.CSSProperties} pathLength={1} x="38.9" y="38" width="3.6" height="19" />
+          <rect className={`lg-s${once}`} style={{ "--j": 7 } as React.CSSProperties} pathLength={1} x="23" y="43.5" width="18" height="3" />
+          <path className={`lg-s${once}`} style={{ "--j": 8 } as React.CSSProperties} pathLength={1} d="M16 37.5 Q32 41 48 37.5 L47 34.2 Q32 37.4 17 34.2 Z" />
+          <path className={`lg-s${once}`} style={{ "--j": 9 } as React.CSSProperties} pathLength={1} d="M49 8 L50.2 11.8 L54 13 L50.2 14.2 L49 18 L47.8 14.2 L44 13 L47.8 11.8 Z" />
         </g>
       )}
     </svg>
