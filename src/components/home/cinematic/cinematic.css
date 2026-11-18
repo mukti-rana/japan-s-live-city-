@@ -118,8 +118,8 @@
 
 /* ── Quiet navigation ──
    The "Explore Japan" link under Discover near you was a full-width blue-to-purple bar that never went
-   away. Here it is a quiet outlined pill, and the "Use my location" button matches the hero's white
-   primary button. Same links and buttons, same behaviour. */
+   away. Here it is a quiet outlined pill, like every button on the site (the shared look is in globals.css).
+   Same links and buttons, same behaviour. */
 [data-home-root] a.bg-gradient-to-r[href="/explore"] {
   background: transparent;
   background-image: none;
@@ -131,11 +131,6 @@
   justify-content: flex-start;
   padding-inline: 1.25rem;
   color: rgba(255, 255, 255, 0.9);
-}
-[data-home-root] button.bg-gradient-to-r {
-  background: #ffffff;
-  background-image: none;
-  color: #000000;
 }
 
 /* ── Hover reaction ──
