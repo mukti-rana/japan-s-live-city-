@@ -5,8 +5,8 @@ import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
 
 // The chapter's opening: a hairline, a small numbered label, a large serif heading, an
-// optional one-line introduction and a link to the full page. The heading is a real <h2> that glides in
-// from the right as one piece (SlideInHeading), so the page keeps a clean outline with all motion off.
+// optional one-line introduction and a link to the full page. The heading is a real <h2> whose letters all
+// glide in together from just to the right (SlideInHeading), so the page keeps a clean outline with all motion off.
 export function ChapterHeader({
   id,
   number,
@@ -38,9 +38,7 @@ export function ChapterHeader({
             </p>
           </ScrollReveal>
           <h2 id={`${id}-h`} className="mt-[clamp(14px,2.4vh,28px)] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,116px)] font-normal leading-[0.98] tracking-[-0.025em] text-foreground">
-            <SlideInHeading>
-              <Tx en={heading} />
-            </SlideInHeading>
+            <SlideInHeading en={heading} />
           </h2>
           {intro && (
             <ScrollReveal delay={0.3}>
