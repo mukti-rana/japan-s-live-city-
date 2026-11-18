@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight, LocateFixed, MapPin, Sparkles } from "lucide-react";
+import { LocateFixed, MapPin, Sparkles } from "lucide-react";
 import HeroAtmosphere from "@/components/home/HeroAtmosphere";
 import HeroSlides from "@/components/home/cinematic/HeroSlides";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
@@ -52,13 +51,11 @@ const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring
 export default function HomeHero() {
   const { t, language } = useLanguage();
   const tr = useTranslate();
-  const router = useRouter();
   const name = (en: string | undefined) => (en ? (lookup(en, language) ?? en) : en);
   useAmbientLighting();
   const { status, location, weather: liveWeather, requestLocation } = useLiveLocation();
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
-  const [question, setQuestion] = useState("");
   // The slideshow holds still while the pointer is over the hero text or keyboard focus is inside the hero.
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
@@ -102,13 +99,6 @@ export default function HomeHero() {
   const hour = Number(parts.find((p) => p.type === "hour")?.value ?? 0) % 24;
   const minute = parts.find((p) => p.type === "minute")?.value ?? "00";
   const dateLabel = dateFormatter(language, { timeZone: "Asia/Tokyo", month: "long", day: "numeric", weekday: "long" }).format(now);
-
-  function ask(e: React.FormEvent) {
-    e.preventDefault();
-    const q = question.trim();
-    if (!q) return router.push("/ai-assistant");
-    router.push(`/ai-assistant?q=${encodeURIComponent(q)}`);
-  }
 
   return (
     <section id="top" aria-labelledby="home-h1" className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-black">
@@ -176,7 +166,8 @@ export default function HomeHero() {
           {kanji}
         </p>
 
-        <h1 id="home-h1" className="max-w-[16ch] font-[family-name:var(--font-home-serif)] text-[clamp(32px,4.8vw,66px)] font-normal leading-[1.04] tracking-[-0.02em] text-white">
+        {/* The page title stays for screen readers and search; the picture and the kanji carry the look. */}
+        <h1 id="home-h1" className="sr-only">
           {tr("Japan, right now.")}
         </h1>
 
@@ -233,18 +224,11 @@ export default function HomeHero() {
           </div>
         )}
 
-        <div data-dock-clear className="mt-8 flex flex-wrap items-center gap-3">
-          <Link href="/explore" className={`inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[15px] font-semibold text-black transition-colors hover:bg-white/90 ${ring}`}>
-            {tr("Explore Japan")}
-            <ArrowRight size={16} aria-hidden="true" />
+        {/* Only the AI spark: bigger, glowing and shining. It opens the assistant. */}
+        <div data-dock-clear className="mt-8 flex items-center">
+          <Link href="/ai-assistant" aria-label={tr("Ask LIVE CITY AI")} title={tr("Ask LIVE CITY AI")} className={`hero-ai ${ring}`}>
+            <Sparkles size={30} strokeWidth={1.9} aria-hidden="true" className="hero-ai__icon" />
           </Link>
-          <form onSubmit={ask} role="search" aria-label={tr("Ask LIVE CITY AI")} className="flex h-12 w-full max-w-[22rem] items-center gap-2 rounded-xl border border-white/25 bg-black/40 pl-4 pr-1.5 backdrop-blur transition-colors focus-within:border-white/60 hover:border-white/45 sm:w-[22rem]">
-            <Sparkles size={16} aria-hidden="true" className="shrink-0 text-lilac" />
-            <input value={question} onChange={(e) => setQuestion(e.target.value)} aria-label={tr("Ask LIVE CITY AI")} placeholder={t("ai.askPlaceholder")} className="min-w-0 flex-1 bg-transparent text-sm text-white outline-none placeholder:text-white/55" />
-            <button type="submit" aria-label={t("ai.askButton")} className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white transition-colors hover:bg-white/20 ${ring}`}>
-              <ArrowRight size={16} aria-hidden="true" />
-            </button>
-          </form>
         </div>
       </div>
       </ScrollReveal>
