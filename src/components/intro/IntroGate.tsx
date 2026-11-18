@@ -37,7 +37,7 @@ export default function IntroGate() {
 
   return (
     <>
-      {hold && <div aria-hidden="true" className="fixed inset-0 z-[60] bg-black" />}
+      {hold && <div aria-hidden="true" className="fixed inset-0 z-[60]" style={{ backgroundColor: "#000" }} />}
       {play && <CinematicIntro onDone={finishIntro} />}
     </>
   );

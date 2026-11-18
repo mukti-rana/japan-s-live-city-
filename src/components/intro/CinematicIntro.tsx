@@ -13,30 +13,24 @@ import { useTranslate } from "@/lib/i18n/inline";
 // The cinematic welcome, in four beats:
 //   1. A pitch-black screen opens onto a dark photograph of Kyoto at night.
 //   2. "Welcome to Japan." — every letter slides in from the right at the same moment (Animate UI SplittingText, stagger 0).
-//   3. The words melt away and the LIVE CITY JAPAN logo is drawn large, stroke by stroke, the way the top bar draws it,
-//      over Mount Fuji at first light.
-//   4. The finished logo flies up to the logo in the top bar and settles exactly on it, while the black and the photograph
-//      fade away and the home page arrives (the page's own entrance is in cinematic.css). The top-bar logo is hidden until
-//      the flying one lands, then shown, so the two are one.
-// Nothing of the site shows while it runs: the overlay is solid black underneath the pictures. If a photograph cannot load,
-// its scene is simply black. Skip intro (or Escape) is there from the first second and goes straight to step 4's fade.
-// Anyone who asks the browser for less motion gets no drifting photographs and no flight: the logo is drawn already
-// finished and the overlay just fades into the page.
+//   3. The words and the photograph fade away into complete black, and the LIVE CITY JAPAN logo is drawn large, stroke by
+//      stroke, the way the top bar draws it, on that pitch-black screen.
+//   4. The finished logo flies up to the logo in the top bar and settles exactly on it, while the black fades away and the
+//      home page arrives (the page's own entrance is in cinematic.css). The top-bar logo is hidden until the flying one
+//      lands, then shown, so the two are one.
+// Nothing of the site shows while it runs: the overlay is solid black underneath the picture. If the photograph cannot load,
+// that scene is simply black. Skip intro is offered while the words are on screen (and Escape skips at any time); it goes
+// straight to the fade of step 4. Anyone who asks the browser for less motion gets no drifting photograph and no flight: the
+// logo is drawn already finished and the overlay just fades into the page.
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-// Mount Fuji over Lake Kawaguchi: the photograph the sign-in page already uses (Wikimedia Commons, CC0), loaded from there.
-const FUJI = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Fuji_Kawaguchi_475.JPG/1920px-Fuji_Kawaguchi_475.JPG";
+const SCENE = { src: HOME_PHOTOS.kiyomizu.src, pos: "72% 50%" }; // Kyoto at night
 
-const SCENES = [
-  { src: HOME_PHOTOS.kiyomizu.src, pos: "72% 50%", remote: false }, // Kyoto at night
-  { src: FUJI, pos: "50% 50%", remote: true }, // Mount Fuji at first light
-] as const;
-
-type Step = { kind: "gap" | "words" | "logo"; scene: number; ms: number };
+type Step = { kind: "gap" | "words" | "logo"; ms: number };
 const STEPS: Step[] = [
-  { kind: "gap", scene: 0, ms: 1000 },
-  { kind: "words", scene: 0, ms: 2600 },
-  { kind: "logo", scene: 1, ms: 3900 },
+  { kind: "gap", ms: 1000 },
+  { kind: "words", ms: 2600 },
+  { kind: "logo", ms: 4000 },
 ];
 
 const SHADE = "brightness-[0.58] saturate-[0.82] contrast-[1.06]";
@@ -52,7 +46,6 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
   const [phase, setPhase] = useState<Phase>("play");
   const [fadeSecs, setFadeSecs] = useState(0.9);
   const [flight, setFlight] = useState({ x: 0, y: 0, s: 1 });
-  const [fujiFailed, setFujiFailed] = useState(false);
   const logoRef = useRef<HTMLDivElement>(null);
   const skipRef = useRef<HTMLButtonElement>(null);
   const done = useRef(false);
@@ -118,10 +111,11 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
   const playing = phase === "play";
 
   return (
-    <div role="dialog" aria-modal="true" aria-label={tr("LIVE CITY JAPAN")} className={`fixed inset-0 z-[90] ${playing ? "" : "pointer-events-none"}`}>
+    <div role="dialog" aria-modal="true" aria-label={tr("LIVE CITY JAPAN")} className={`keep-dark-ink fixed inset-0 z-[90] ${playing ? "" : "pointer-events-none"}`} style={{ color: "#fff" }}>
       {/* The black and the photographs: fade up out of the dark at the start, and away when the page arrives. */}
       <motion.div
-        className="absolute inset-0 overflow-hidden bg-black"
+        className="absolute inset-0 overflow-hidden"
+        style={{ backgroundColor: "#000" }} // not bg-black: the site turns black to ink in the light theme, and this must be black in both
         initial={{ opacity: 0 }}
         animate={{ opacity: playing ? 1 : 0 }}
         transition={playing ? { duration: 0.5, ease: "easeInOut" } : { duration: phase === "fly" ? FLY : fadeSecs, delay: phase === "fly" ? 0.1 : 0, ease: "easeInOut" }}
@@ -129,28 +123,16 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
           if (!playing) land();
         }}
       >
-        {SCENES.map((s, n) => {
-          if (s.remote && (fujiFailed || i < 1)) return null;
-          const active = n === step.scene;
-          const seen = n <= step.scene;
-          return (
-            <motion.div
-              key={n}
-              aria-hidden="true"
-              className="absolute inset-0"
-              initial={{ opacity: 0, scale: 1.04 }}
-              animate={{ opacity: active && step.kind !== "gap" ? 1 : active ? 0.55 : 0, scale: reduced ? 1.04 : seen ? 1.15 : 1.04 }}
-              transition={{ opacity: { duration: 2, ease: "easeInOut" }, scale: { duration: 14, ease: "linear" } }}
-            >
-              {s.remote ? (
-                // eslint-disable-next-line @next/next/no-img-element -- a remote photograph; if it cannot load the scene stays black
-                <img src={s.src} alt="" decoding="async" onError={() => setFujiFailed(true)} className={`h-full w-full object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
-              ) : (
-                <Image src={s.src} alt="" fill sizes="100vw" quality={70} priority={n === 0} className={`object-cover ${SHADE}`} style={{ objectPosition: s.pos }} />
-              )}
-            </motion.div>
-          );
-        })}
+        {/* The photograph fades up out of the black for the words, and back into complete black before the logo is drawn. */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={{ opacity: step.kind === "words" ? 1 : step.kind === "gap" ? 0.55 : 0, scale: reduced ? 1.04 : 1.15 }}
+          transition={{ opacity: { duration: step.kind === "logo" ? 1.1 : 2, ease: "easeInOut" }, scale: { duration: 14, ease: "linear" } }}
+        >
+          <Image src={SCENE.src} alt="" fill sizes="100vw" quality={70} priority className={`object-cover ${SHADE}`} style={{ objectPosition: SCENE.pos }} />
+        </motion.div>
         {/* Vignette: brightest in the middle, falling away to black at the edges, top and bottom. */}
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.7)_85%),linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.05)_30%,rgba(0,0,0,0.05)_70%,rgba(0,0,0,0.7))]" />
       </motion.div>
@@ -177,18 +159,18 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
               {/* Drawn once, large; then it travels (a curved path: the sideways and upward moves ease differently) and shrinks onto the top-bar logo. */}
               <motion.div
                 ref={logoRef}
-                className="h-[clamp(180px,30vmin,320px)] w-[clamp(180px,30vmin,320px)] [&>svg]:h-full [&>svg]:w-full"
+                className="h-[clamp(240px,42vmin,460px)] w-[clamp(240px,42vmin,460px)] [&>svg]:h-full [&>svg]:w-full"
                 animate={phase === "fly" ? { x: flight.x, y: flight.y, scale: flight.s } : { x: 0, y: 0, scale: 1 }}
                 transition={{ x: { duration: FLY, ease: [0.35, 0, 0.15, 1] }, y: { duration: FLY, ease: [0.75, 0, 0.3, 1] }, scale: { duration: FLY, ease: [0.5, 0, 0.2, 1] } }}
               >
-                <Logo size={320} drawing="once" />
+                <Logo size={460} drawing="once" />
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
 
-      {playing && (
+      {playing && step.kind !== "logo" && (
         <motion.button
           ref={skipRef}
           type="button"
