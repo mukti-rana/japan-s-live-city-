@@ -34,7 +34,7 @@ const STEPS: Step[] = [
   { kind: "gap", ms: 900 },
   { kind: "words", ms: 3300 }, // the reveal (about 2.2s), then a held beat
   { kind: "zoom", ms: 2100 }, // the expansion (ZOOM_SECS) plus a breath of black
-  { kind: "logo", ms: 4000 },
+  { kind: "logo", ms: 2800 }, // the logo is drawn in 2s, then rests a moment before it flies
 ];
 const ZOOM_SECS = 2;
 
