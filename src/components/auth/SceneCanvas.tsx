@@ -98,17 +98,37 @@ vec3 cloudsAt(vec2 u, vec3 fallback, float t){
   float mist = m.b;
   float k = max(sky, mist);
   if (k < 0.004) return fallback;
-  float spd = mix(mix(1.3, 0.65, smoothstep(0.04, 0.46, u.y)), 0.4, mist);
-  float T = 80.0;
+  float spd = mix(mix(1.3, 0.65, smoothstep(0.04, 0.46, u.y)), 0.45, mist);
+  float T = 45.0;
   float a = fract(t / T);
   float b = fract(t / T + 0.5);
   float w0 = 1.0 - abs(2.0 * a - 1.0);
   vec2 dir = vec2(1.0, 0.025);
-  float D = 0.13 * spd;
-  vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.012, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.014))) - 0.5) * 0.024;
+  float D = 0.19 * spd;
+  vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.016, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.018))) - 0.5) * 0.03;
   vec3 d0 = (texture2D(uCloud, clamp(u - dir * D * a + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
   vec3 d1 = (texture2D(uCloud, clamp(u - dir * D * b + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
-  vec3 col = texture2D(uBase, u).rgb + mix(d1, d0, w0);
+  vec3 base = texture2D(uBase, u).rgb;
+  // The picture's own clouds, with their contrast raised so they stand out from the sky.
+  vec3 col = base + mix(d1, d0, w0) * mix(1.9, 1.5, mist);
+
+  // Thicker, softer cloud added on top: billowing banks that drift and slowly change shape, lit warm on the side toward the sunset and
+  // shaded cool underneath, so they read as real volume. Strongest in the sunset side of the sky, fainter in the deep blue.
+  float x = u.x * IA;
+  vec2 q = vec2(x * 2.1 - t * 0.011 * spd, u.y * 5.2);
+  float c1 = fbm(q + vec2(3.0, 1.0) + 0.35 * vec2(fbm(q * 0.6 + t * 0.004), fbm(q * 0.6 + 9.0 - t * 0.004)));
+  float c2 = fbm(vec2(x * 4.4 - t * 0.017 * spd, u.y * 10.0) + vec2(11.0, 5.0));
+  float dens = smoothstep(0.46, 0.74, c1) * (0.65 + 0.55 * c2);
+  float lit = fbm(q + vec2(3.0, 1.0) + vec2(-0.06, 0.1)) - c1;
+  float high = 1.0 - smoothstep(0.05, 0.4, u.y);
+  vec3 lightC = mix(vec3(1.0, 0.86, 0.9), vec3(1.0, 0.93, 0.95), high);
+  vec3 shadeC = mix(vec3(0.5, 0.42, 0.7), vec3(0.4, 0.4, 0.72), high);
+  vec3 cc = mix(shadeC, lightC, clamp(0.55 + lit * 5.0, 0.0, 1.0));
+  float amt = dens * mix(0.5, 0.7, smoothstep(0.35, 0.8, u.x)) * (0.45 + 0.55 * (1.0 - smoothstep(0.0, 0.5, u.y)));
+  col = mix(col, cc, clamp(amt * 0.78, 0.0, 0.85) * sky);
+  // The mist round the mountain's foot: fuller, whiter, flowing.
+  float mc = fbm(vec2(x * 3.0 - t * 0.008 * spd, u.y * 14.0) + vec2(2.0, 7.0));
+  col = mix(col, vec3(0.97, 0.86, 0.94), smoothstep(0.4, 0.7, mc) * 0.42 * mist);
   return mix(fallback, col, k);
 }
 

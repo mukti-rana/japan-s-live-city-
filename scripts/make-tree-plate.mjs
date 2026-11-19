@@ -185,6 +185,9 @@ function rasterPoly(poly) {
 const SKYLINE = [[0, 455], [380, 451], [428, 445], [476, 433], [524, 422], [572, 408], [620, 391], [668, 374], [716, 359], [764, 336], [812, 305], [860, 280], [908, 259], [956, 253], [1004, 261], [1052, 281], [1060, 283], [1148, 318], [1244, 364], [1340, 391], [1388, 400], [1436, 411], [1484, 420], [1532, 427], [1580, 428], [1672, 437]];
 const skyPoly = [[0, 0], [W, 0], ...[...SKYLINE].reverse().map(([x, y]) => [x, y - 14])];
 const skyRaw = blur(rasterPoly(skyPoly), 4, 2);
+// The cloud detail is taken only well clear of the mountain's outline (about 55 px): the picture's own dark haze hugging the slope would
+// otherwise be carried along with the clouds as a ghost band.
+const skyDetail = blur(rasterPoly([[0, 0], [W, 0], ...[...SKYLINE].reverse().map(([x, y]) => [x, y - 55])]), 12, 2);
 const sun = new Float32Array(N);
 for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) sun[y * W + x] = 1 - smooth(70, 150, Math.hypot(x - 388, y - 428));
 // The mist: a band across the mountain's flank, below its skyline.
@@ -197,7 +200,7 @@ const mistM = new Float32Array(N);
 const treeNear = blur(tree, 6, 2);
 for (let i = 0; i < N; i++) {
   const x = i % W;
-  const away = smooth(0.4 * W, 0.5 * W, x);
+  const away = smooth(0.42 * W, 0.66 * W, x);
   const notTree = 1 - smooth(0.01, 0.2, treeNear[i]);
   skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away;
   mistM[i] = mistRaw[i] * notTree * away;
@@ -228,7 +231,8 @@ for (let i = 0; i < N; i++) {
     const b = skyC[i] > mistC[i] ? baseSky[j] : baseMist[j];
     const m = Math.max(skyM[i], mistM[i]);
     const bb = rgb[j] * (1 - m) + b * m;
-    const d = (rgb[j] - b) * m;
+    const dm = Math.max(skyDetail[i] * (skyM[i] > mistM[i] ? 1 : 0), mistM[i] * (mistM[i] >= skyM[i] ? 1 : 0)) * (skyM[i] > 0 || mistM[i] > 0 ? 1 : 0);
+    const d = (rgb[j] - b) * dm;
     baseOut[j] = Math.round(255 * Math.min(1, Math.max(0, bb)));
     detOut[j] = Math.round(255 * Math.min(1, Math.max(0, 0.5 + d / RANGE)));
   }
