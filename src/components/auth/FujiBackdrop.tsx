@@ -2,6 +2,7 @@
 
 import { useId } from "react";
 import SceneLife from "@/components/auth/SceneLife";
+import WaterCanvas from "@/components/auth/WaterCanvas";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
@@ -36,6 +37,14 @@ const PETALS = [
   { x: 71, size: 11, dur: 27, delay: -22, dx: 50, flutter: 6.1 },
   { x: 83, size: 16, dur: 20, delay: -11, dx: 110, flutter: 4.4 },
   { x: 93, size: 12, dur: 25, delay: -16, dx: 80, flutter: 5.5 },
+];
+
+// Petals blown off the foreground branch (start as a percentage of the screen, travel in hundredths of its width).
+const BRANCH_PETALS = [
+  { x: 14, y: 34, dx: 40, dy: 22, dur: 17, delay: -4, size: 13 },
+  { x: 26, y: 40, dx: 34, dy: 26, dur: 21, delay: -11, size: 11 },
+  { x: 32, y: 24, dx: 38, dy: 20, dur: 19, delay: -7, size: 12 },
+  { x: 8, y: 28, dx: 44, dy: 30, dur: 23, delay: -15, size: 10 },
 ];
 
 function Illustration() {
@@ -120,9 +129,11 @@ export default function FujiBackdrop() {
             }}
             className="block h-full w-full opacity-0 brightness-[1.28] contrast-[1.22] transition-opacity duration-1000 data-[ready]:opacity-100"
           />
-          {/* The trees, water and mist belong to the photograph, so they appear with it (and never without it). */}
-          <div className="absolute inset-0 opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100 [container-type:size]">
-            <SceneLife id={petalFill} />
+          {/* The water, clouds and mist (a shader over the photograph) and the cherry trees belong to the photograph, so they
+              appear with it (and never without it). */}
+          <div className="absolute inset-0 opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100">
+            <WaterCanvas src={thumb(1920)} />
+            <SceneLife />
           </div>
         </div>
       </div>
@@ -141,15 +152,31 @@ export default function FujiBackdrop() {
         className="pointer-events-none absolute inset-0 bg-[rgba(150,135,190,0.22)] [-webkit-backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [-webkit-mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)] [mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)]"
       />
 
+      {/* The foreground: a blossoming branch reaching in from the left edge, as in a photograph taken from under the tree. Its wood
+          and its flowers are separate pictures that sway about the root on different beats, so the flowers flutter on the wood. */}
+      <div aria-hidden="true" className="auth-branch opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100">
+        <div className="auth-branch__sway">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/sakura/sakura-hero-wood.webp" alt="" draggable={false} decoding="async" className="auth-branch__img" />
+          <div className="auth-branch__bloom">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/sakura/sakura-hero-bloom.webp" alt="" draggable={false} decoding="async" className="auth-branch__img" />
+          </div>
+        </div>
+      </div>
+
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
-        <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
-        {PETALS.filter((_, i) => i % 3 !== 1).map((p, i) => (
+        {PETALS.filter((_, i) => i % 3 === 0).map((p, i) => (
           <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size * 1.25, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
             <svg viewBox="-4 -9 8 10" className="petal-flutter block h-full w-full" style={{ animationDuration: `${p.flutter}s`, animationDelay: `${p.delay}s` }}>
               <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />
               <path d="M0 -0.6 L0 -5.4" stroke="#e8749f" strokeWidth="0.14" opacity="0.4" fill="none" />
             </svg>
           </span>
+        ))}
+        {/* A few petals the wind lifts off the branch and carries across the scene. */}
+        {BRANCH_PETALS.map((p, i) => (
+          <span key={i} className="auth-wind-petal" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size * 1.25, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s`, ["--dx" as string]: `${p.dx}cqw`, ["--dy" as string]: `${p.dy}cqw` }} />
         ))}
       </div>
 
