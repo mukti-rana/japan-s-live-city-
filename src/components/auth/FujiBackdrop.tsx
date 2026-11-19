@@ -1,50 +1,47 @@
 "use client";
 
 import { useId } from "react";
-import SceneLife from "@/components/auth/SceneLife";
-import WaterCanvas from "@/components/auth/WaterCanvas";
-import { useTranslate } from "@/lib/i18n/inline";
+import SceneCanvas from "@/components/auth/SceneCanvas";
 
-// Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
+// The sign-in page's background: Mount Fuji at dusk behind cherry blossom, over a lake with the lights of a bridge and shore.
 //
 // Layers, bottom to top:
-//   1. An illustration drawn here in SVG (sky, Fuji, lake with its reflection).
-//      It is always there, so the page looks right with no network and while
-//      the photograph loads.
-//   2. A real photograph of Fuji reflected in Lake Kawaguchi, fading in once it
-//      has loaded. It is loaded from Wikimedia Commons (CC0 — public domain
-//      dedication, by Marion & Christoph Aistl), not copied into this project.
-//      If it can't load, the illustration simply stays.
-//   3. Dusk colour (navy → lavender → pink), a soft glow at the horizon, clouds
-//      drifting across the sky and over the mountain, and a few sakura petals.
-// Nothing here takes clicks, and the movement stops for people who ask for
-// less motion and while the tab is hidden.
+//   1. An illustration drawn here in SVG (sky, Fuji, lake). It is always there, so the page looks right with no network and
+//      while the picture loads.
+//   2. The picture (public/images/login/fuji-sakura-dusk.webp), shown exactly as supplied: no colour overlay, no zoom, no
+//      crop beyond what "cover" needs. It stays underneath as the still version.
+//   3. SceneCanvas: the same picture drawn by a small shader that moves the lake and its reflections, sways the cherry branches
+//      and drifts the clouds and mist (nothing about the picture's look changes; it only moves). Not started for visitors who
+//      ask for less motion.
+//   4. A few petals and leaves drifting across the screen on the wind, each tumbling and swaying at its own pace.
+// Nothing here takes clicks; the movement stops for people who ask for less motion and while the tab is hidden.
 
-const FILE = "Fuji_Kawaguchi_475.JPG";
-const BASE = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d";
-const thumb = (w: number) => `${BASE}/${FILE}/${w}px-${FILE}`;
-const FILE_PAGE = `https://commons.wikimedia.org/wiki/File:${FILE}`;
+const IMAGE = "/images/login/fuji-sakura-dusk.webp";
+// Which part of the picture stays in view on a screen narrower than the picture: 40% across (keeps the blossom and the mountain).
+const ANCHOR: [number, number] = [0.4, 0.5];
 
-// A handful of single petals (not a blizzard): different sizes, speeds and
-// sideways drift, falling and turning at their own pace.
 const PETAL = "M0 0 C -2.6 -1 -4.6 -4.6 -3.3 -7.1 C -2.6 -8.4 -1.1 -8.4 0 -7.2 C 1.1 -8.4 2.6 -8.4 3.3 -7.1 C 4.6 -4.6 2.6 -1 0 0 Z";
-const PETALS = [
-  { x: 6, size: 14, dur: 21, delay: -3, dx: 90, flutter: 4.6 },
-  { x: 17, size: 11, dur: 26, delay: -14, dx: 60, flutter: 5.8 },
-  { x: 31, size: 17, dur: 19, delay: -8, dx: 120, flutter: 4.1 },
-  { x: 44, size: 12, dur: 24, delay: -19, dx: 70, flutter: 5.2 },
-  { x: 58, size: 15, dur: 22, delay: -5, dx: 100, flutter: 4.8 },
-  { x: 71, size: 11, dur: 27, delay: -22, dx: 50, flutter: 6.1 },
-  { x: 83, size: 16, dur: 20, delay: -11, dx: 110, flutter: 4.4 },
-  { x: 93, size: 12, dur: 25, delay: -16, dx: 80, flutter: 5.5 },
-];
+const LEAF = "M0 0 C -2.6 -2.2 -2.8 -6.8 0 -10 C 2.8 -6.8 2.6 -2.2 0 0 Z";
 
-// Petals blown off the foreground branch (start as a percentage of the screen, travel in hundredths of its width).
-const BRANCH_PETALS = [
-  { x: 14, y: 34, dx: 40, dy: 22, dur: 17, delay: -4, size: 13 },
-  { x: 26, y: 40, dx: 34, dy: 26, dur: 21, delay: -11, size: 11 },
-  { x: 32, y: 24, dx: 38, dy: 20, dur: 19, delay: -7, size: 12 },
-  { x: 8, y: 28, dx: 44, dy: 30, dur: 23, delay: -15, size: 10 },
+// Petals and leaves: x (% across, where they start at the top, mostly under the blossom at the left), size in px, how long the
+// fall takes, a negative delay (so they are already in the air when the page opens), the drift to the right in vw, the sideways
+// sway in px, the blur of the near ones, and what it is. Fixed numbers, so the server and the browser agree.
+type Bit = { x: number; size: number; fall: number; delay: number; dx: number; sw: number; blur: number; leaf?: boolean };
+const BITS: Bit[] = [
+  { x: 4, size: 15, fall: 26, delay: -3, dx: 34, sw: 38, blur: 0 },
+  { x: 11, size: 11, fall: 31, delay: -19, dx: 28, sw: 30, blur: 0 },
+  { x: 18, size: 19, fall: 23, delay: -9, dx: 40, sw: 46, blur: 0 },
+  { x: 26, size: 12, fall: 33, delay: -26, dx: 30, sw: 34, blur: 0.4 },
+  { x: 33, size: 16, fall: 27, delay: -14, dx: 36, sw: 42, blur: 0 },
+  { x: 41, size: 10, fall: 36, delay: -31, dx: 26, sw: 28, blur: 0.5 },
+  { x: 49, size: 14, fall: 29, delay: -6, dx: 32, sw: 36, blur: 0 },
+  { x: 8, size: 13, fall: 30, delay: -22, dx: 26, sw: 32, blur: 0, leaf: true },
+  { x: 22, size: 12, fall: 34, delay: -11, dx: 30, sw: 40, blur: 0, leaf: true },
+  { x: 37, size: 11, fall: 38, delay: -29, dx: 24, sw: 30, blur: 0, leaf: true },
+  { x: 14, size: 46, fall: 21, delay: -7, dx: 22, sw: 60, blur: 3 }, // a near petal, out of focus
+  { x: 31, size: 58, fall: 24, delay: -17, dx: 18, sw: 70, blur: 4 },
+  { x: 56, size: 40, fall: 28, delay: -12, dx: 16, sw: 50, blur: 3 },
+  { x: 62, size: 13, fall: 32, delay: -23, dx: 22, sw: 30, blur: 0 },
 ];
 
 function Illustration() {
@@ -87,11 +84,15 @@ function Illustration() {
 }
 
 export default function FujiBackdrop() {
-  const tr = useTranslate();
   const petalFill = useId();
+  const leafFill = useId();
   return (
-    <div className="auth-backdrop group pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
+    <div className="auth-backdrop pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
       <Illustration />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={IMAGE} alt="" decoding="async" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${ANCHOR[0] * 100}% ${ANCHOR[1] * 100}%` }} />
+      <SceneCanvas src={IMAGE} anchor={ANCHOR} />
+
       <svg width="0" height="0" className="absolute" aria-hidden="true">
         <defs>
           <radialGradient id={petalFill} cx="0.5" cy="1" r="1.05">
@@ -100,93 +101,34 @@ export default function FujiBackdrop() {
             <stop offset="0.65" stopColor="#fbd7e5" />
             <stop offset="1" stopColor="#fdf4f8" />
           </radialGradient>
+          <linearGradient id={leafFill} x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stopColor="#8e3b3a" />
+            <stop offset="1" stopColor="#c8644a" />
+          </linearGradient>
         </defs>
       </svg>
 
-      {/* The photograph. It starts invisible; the load handler (or the ref, if
-          it finished loading before this page woke up) reveals it. */}
-      {/* The scene: a box exactly the photograph's size and place (it fills the screen the way the picture did, "cover", centred
-          across and 42% down), with the slow zoom on the whole of it. Everything alive in the scenery is placed inside this box so
-          it stays on the same spot of the picture at any screen size. */}
-      <div className="auth-zoom absolute inset-0">
-        <div className="auth-scene">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            ref={(el) => {
-              if (el && el.complete && el.naturalWidth > 0) el.dataset.ready = "1";
-            }}
-            src={thumb(1920)}
-            srcSet={`${thumb(1280)} 1280w, ${thumb(1920)} 1920w`}
-            sizes="100vw"
-            alt=""
-            decoding="async"
-            referrerPolicy="no-referrer"
-            onLoad={(e) => {
-              e.currentTarget.dataset.ready = "1";
-            }}
-            onError={(e) => {
-              e.currentTarget.hidden = true;
-            }}
-            className="block h-full w-full opacity-0 brightness-[1.28] contrast-[1.22] transition-opacity duration-1000 data-[ready]:opacity-100"
-          />
-          {/* The water, clouds and mist (a shader over the photograph) and the cherry trees belong to the photograph, so they
-              appear with it (and never without it). */}
-          <div className="absolute inset-0 opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100">
-            <WaterCanvas src={thumb(1920)} />
-            <SceneLife />
-          </div>
-        </div>
-      </div>
-
-      {/* Dusk colour over everything: deep navy above, lavender and pink at the
-          horizon, navy again at the bottom edge. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0b0e1a]/32 via-[#3a2f72]/12 to-[#0b0e1a]/46" />
-      <div className="absolute inset-0 bg-[radial-gradient(70%_38%_at_50%_58%,rgba(255,150,190,0.28),transparent_70%)]" />
-
-      {/* The dark wooded hillside on the left, softened: a slight blur, a little
-          less contrast, a gentle lift and a faint lavender haze over the darkest parts, faded out toward its edges so it blends
-          into the rest of the photograph. Nothing is drawn or added — it is the
-          same photo, just calmer in that one area. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[rgba(150,135,190,0.22)] [-webkit-backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [backdrop-filter:blur(2.5px)_contrast(0.82)_brightness(1.18)_saturate(0.9)] [-webkit-mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)] [mask-image:radial-gradient(ellipse_36%_19%_at_14%_49%,#000_35%,transparent_100%)]"
-      />
-
-      {/* The foreground: a blossoming branch reaching in from the left edge, as in a photograph taken from under the tree. Its wood
-          and its flowers are separate pictures that sway about the root on different beats, so the flowers flutter on the wood. */}
-      <div aria-hidden="true" className="auth-branch opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100">
-        <div className="auth-branch__sway">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/sakura/sakura-hero-wood.webp" alt="" draggable={false} decoding="async" className="auth-branch__img" />
-          <div className="auth-branch__bloom">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/sakura/sakura-hero-bloom.webp" alt="" draggable={false} decoding="async" className="auth-branch__img" />
-          </div>
-        </div>
-      </div>
-
-      <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
-        {PETALS.filter((_, i) => i % 3 === 0).map((p, i) => (
-          <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size * 1.25, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
-            <svg viewBox="-4 -9 8 10" className="petal-flutter block h-full w-full" style={{ animationDuration: `${p.flutter}s`, animationDelay: `${p.delay}s` }}>
-              <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />
-              <path d="M0 -0.6 L0 -5.4" stroke="#e8749f" strokeWidth="0.14" opacity="0.4" fill="none" />
-            </svg>
+      <div aria-hidden="true" className="auth-petals absolute inset-0 overflow-hidden">
+        {BITS.map((b, i) => (
+          <span key={i} className="auth-petal" style={{ left: `${b.x}%`, width: b.size, height: b.size * 1.25, animationDuration: `${b.fall}s`, animationDelay: `${b.delay}s`, ["--dx" as string]: `${b.dx}vw` }}>
+            <span className="auth-petal__sway" style={{ animationDuration: `${b.fall / 4.2}s`, animationDelay: `${b.delay / 3}s`, ["--sw" as string]: `${b.sw}px` }}>
+              <svg viewBox="-4 -10 8 11" className="auth-petal__spin block h-full w-full" style={{ animationDuration: `${3.4 + (i % 5) * 0.9}s`, animationDelay: `${i * -0.7}s`, filter: b.blur ? `blur(${b.blur}px)` : undefined }}>
+                {b.leaf ? (
+                  <>
+                    <path d={LEAF} fill={`url(#${leafFill})`} />
+                    <path d="M0 -0.6 L0 -8.6" stroke="#e9a37f" strokeWidth="0.18" opacity="0.7" fill="none" />
+                  </>
+                ) : (
+                  <>
+                    <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />
+                    <path d="M0 -0.6 L0 -5.4" stroke="#e8749f" strokeWidth="0.14" opacity="0.4" fill="none" />
+                  </>
+                )}
+              </svg>
+            </span>
           </span>
         ))}
-        {/* A few petals the wind lifts off the branch and carries across the scene. */}
-        {BRANCH_PETALS.map((p, i) => (
-          <span key={i} className="auth-wind-petal" style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size * 1.25, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s`, ["--dx" as string]: `${p.dx}cqw`, ["--dy" as string]: `${p.dy}cqw` }} />
-        ))}
       </div>
-
-      {/* Credit — shown only while the photograph is the one on screen. */}
-      <p className="pointer-events-auto absolute bottom-2 left-4 text-[11px] text-white/75 opacity-0 transition-opacity group-has-[img[data-ready]]:opacity-100 sm:left-8">
-        {tr("Photo: {name}").replace("{name}", "Marion & Christoph Aistl")} ·{" "}
-        <a href={FILE_PAGE} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac">
-          {tr("CC0, Wikimedia Commons")}
-        </a>
-      </p>
     </div>
   );
 }

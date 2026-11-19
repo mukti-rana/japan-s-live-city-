@@ -58,7 +58,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         <header className="pointer-events-none flex items-center justify-between gap-3 px-4 py-4 sm:px-8 sm:py-5">
           <div className="pointer-events-auto flex items-center gap-2.5">
             <Logo size={36} />
-            <p className="text-xs font-bold tracking-[0.28em] text-foreground">LIVE CITY JAPAN</p>
+            <p className="text-xs font-bold tracking-[0.28em] text-foreground [text-shadow:0_1px_3px_rgba(24,10,50,0.85),0_0_14px_rgba(24,10,50,0.7)]">LIVE CITY JAPAN</p>
           </div>
           <div className="pointer-events-auto">
             <AuthLanguageMenu />

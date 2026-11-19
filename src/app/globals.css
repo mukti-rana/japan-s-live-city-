@@ -1431,67 +1431,32 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   .lg-art.lg-once { animation: none; opacity: 1; }
 }
 
-/* ── Sign-in scenery (FujiBackdrop, SceneLife, WaterCanvas) ──────────────────────────────────────────────────────────────────
-   .auth-scene is a box with the photograph's own proportions (1600 x 1066), sized and placed the way `object-fit: cover` with
-   `object-position: 50% 42%` places the picture, so fractions of it land on fixed spots of the photograph. The cherry trees stand
-   on the hillside; the lake, sky and mist are the WaterCanvas shader. Only transform and opacity animate. */
-.auth-backdrop { container-type: size; }
-.auth-scene {
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: max(100cqw, 150.09cqh);
-  aspect-ratio: 1600 / 1066;
-  translate: -50% -42%;
+/* ── Sign-in scenery (FujiBackdrop, SceneCanvas) ──────────────────────────────────────────────────────────────────────────────
+   The lake, branches and sky are moved by the SceneCanvas shader. The petals and leaves are plain elements, each in three nested
+   layers so its motion never repeats in step: the outer one falls and drifts to the right on the wind, the middle one sways from
+   side to side, the inner one tumbles in 3D. Only transform and opacity animate. */
+.auth-petals { perspective: 700px; }
+.auth-petal { position: absolute; top: 0; opacity: 0; animation: auth-petal-fall linear infinite; will-change: transform, opacity; }
+.auth-petal__sway { display: block; width: 100%; height: 100%; animation: auth-petal-sway ease-in-out infinite alternate; }
+.auth-petal__spin { animation: auth-petal-spin linear infinite; transform-style: preserve-3d; }
+@keyframes auth-petal-fall {
+  0% { opacity: 0; transform: translate3d(0, -8vh, 0); }
+  6% { opacity: 0.95; }
+  94% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate3d(var(--dx), 108vh, 0); }
 }
-/* A hillside tree: its foot is at the position given, and it sways about the foot. The wood moves a little; the flowers move a
-   little more and out of step, so they flutter on the branches. */
-.auth-tree { position: absolute; translate: -50% -100%; }
-.auth-tree__sway, .auth-tree__bloom { position: absolute; inset: 0; transform-origin: 50% 100%; will-change: transform; }
-.auth-tree__sway { animation: auth-tree-sway ease-in-out infinite alternate; }
-.auth-tree__bloom { animation: auth-bloom-flutter ease-in-out infinite alternate; }
-.auth-tree__img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; user-select: none; }
-@keyframes auth-tree-sway {
-  from { transform: rotate(calc(var(--amp, 1) * -1.7deg)); }
-  to { transform: rotate(calc(var(--amp, 1) * 2deg)); }
+@keyframes auth-petal-sway {
+  from { transform: translateX(calc(var(--sw) * -1)) rotate(-14deg); }
+  to { transform: translateX(var(--sw)) rotate(14deg); }
 }
-@keyframes auth-bloom-flutter {
-  from { transform: rotate(calc(var(--amp, 1) * 0.9deg)) translate(-0.5%, 0.2%); }
-  to { transform: rotate(calc(var(--amp, 1) * -1.1deg)) translate(0.6%, -0.3%); }
+@keyframes auth-petal-spin {
+  from { transform: rotate3d(1, 0.45, 0.2, 0deg) rotate(0deg); }
+  to { transform: rotate3d(1, 0.45, 0.2, 360deg) rotate(30deg); }
 }
-/* The foreground branch, rooted off the left edge of the screen. */
-.auth-branch { position: absolute; left: 0; top: 9svh; width: clamp(300px, 42vw, 700px); aspect-ratio: 1400 / 880; pointer-events: none; }
-.auth-branch__sway, .auth-branch__bloom { position: absolute; inset: 0; transform-origin: 0% 26%; will-change: transform; }
-.auth-branch__sway { animation: auth-branch-sway 11s ease-in-out infinite alternate; }
-.auth-branch__bloom { animation: auth-branch-flutter 6.8s ease-in-out infinite alternate; }
-.auth-branch__img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; max-width: none; user-select: none; }
-@keyframes auth-branch-sway { from { transform: rotate(-0.9deg); } to { transform: rotate(1.5deg); } }
-@keyframes auth-branch-flutter {
-  from { transform: rotate(0.8deg) translate(-0.3%, -0.2%); }
-  to { transform: rotate(-1deg) translate(0.4%, 0.3%); }
-}
-/* Petals lifted off the branches and carried out across the scene (start and travel in container units). */
-.auth-wind-petal {
-  position: absolute;
-  background: radial-gradient(circle at 30% 30%, #fff1f6, #ffb3cf);
-  border-radius: 80% 0 80% 0;
-  opacity: 0;
-  animation: auth-wind-petal linear infinite;
-  will-change: transform, opacity;
-}
-@keyframes auth-wind-petal {
-  0% { opacity: 0; transform: translate(0, 0) rotate(0deg) rotateX(0deg); }
-  10% { opacity: 0.92; }
-  30% { transform: translate(calc(var(--dx) * 0.3), calc(var(--dy) * 0.12)) rotate(120deg) rotateX(160deg); }
-  60% { transform: translate(calc(var(--dx) * 0.62), calc(var(--dy) * 0.5)) rotate(250deg) rotateX(380deg); }
-  85% { opacity: 0.85; }
-  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(420deg) rotateX(560deg); }
-}
-html[data-atm-paused="true"] .auth-scene *,
-html[data-atm-paused="true"] .auth-branch * { animation-play-state: paused !important; }
+html[data-atm-paused="true"] .auth-petals * { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) {
-  .auth-scene *, .auth-branch * { animation: none !important; }
-  .auth-wind-petal { display: none; }
+  .auth-petal, .auth-petal__sway, .auth-petal__spin { animation: none !important; }
+  .auth-petal { opacity: 0; }
 }
 
 /* ── Sign-in panel and the guest button ───────────────────────────────────────────────────────────────────────────────────────── */
