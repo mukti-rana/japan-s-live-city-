@@ -37,6 +37,7 @@ precision highp float;
 varying vec2 vS;
 uniform sampler2D uImg;
 uniform sampler2D uPlate; // the picture with the trees taken out and the sky behind them filled in
+uniform sampler2D uFg;    // the tree layer: the picture with the rim of old sky colour at every petal's edge replaced by petal colour
 uniform sampler2D uTree;  // masks: R = tree (branch or blossom), G = sky above the skyline (where the clouds drift)
 uniform float uT;
 uniform vec4 uMap;   // screen -> picture: offset x, offset y, scale x, scale y
@@ -234,7 +235,7 @@ void main(){
     // Behind the tree: the still sky plate, with the drifting clouds in it where there are clouds.
     vec2 q = clamp(u + dTree, 0.0, 1.0);
     float a = texture2D(uTree, q).r;
-    rgb = mix(cloudsAt(u, texture2D(uPlate, u).rgb, t), texture2D(uImg, q).rgb, a);
+    rgb = mix(cloudsAt(u, texture2D(uPlate, u).rgb, t), texture2D(uFg, q).rgb, a);
   } else if (!lake) {
     rgb = cloudsAt(u, rgb, t);
   }
@@ -300,7 +301,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       const vs = compile(gl, gl.VERTEX_SHADER, VERT);
       const lite = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
       // The skeleton needs three vectors per bone; a device with fewer uniforms than that keeps the still picture.
-      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 3) return;
+      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 4) return;
       const fsh = compile(gl, gl.FRAGMENT_SHADER, lite ? FRAG.replace("#define OCT 4", "#define OCT 3") : FRAG);
       if (!vs || !fsh) return;
       const prog = gl.createProgram();
@@ -321,7 +322,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       let imgs: HTMLImageElement[];
       try {
         const base = src.replace(/\.webp$/, "");
-        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-masks.webp`)]);
+        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-masks.webp`), loadImage(`${base}-treefg.webp`)]);
       } catch {
         return;
       }
@@ -338,6 +339,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       gl.uniform1i(gl.getUniformLocation(prog, "uImg"), 0);
       gl.uniform1i(gl.getUniformLocation(prog, "uPlate"), 1);
       gl.uniform1i(gl.getUniformLocation(prog, "uTree"), 2);
+      gl.uniform1i(gl.getUniformLocation(prog, "uFg"), 3);
       const uT = gl.getUniformLocation(prog, "uT");
       const uMap = gl.getUniformLocation(prog, "uMap");
       // The skeleton: where each bone starts and ends and how far its influence reaches never change; how it is moving does.

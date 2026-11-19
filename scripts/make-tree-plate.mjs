@@ -26,8 +26,7 @@ import path from "node:path";
 const SRC = path.resolve("public/images/login/fuji-sakura-dusk.webp");
 const OUT = path.resolve("public/images/login/fuji-sakura-dusk-plate.webp");
 const OUT_MASK = path.resolve("public/images/login/fuji-sakura-dusk-masks.webp");
-const OUT_BASE = path.resolve("public/images/login/fuji-sakura-dusk-skybase.webp");
-const OUT_DETAIL = path.resolve("public/images/login/fuji-sakura-dusk-clouds.webp");
+const OUT_FG = path.resolve("public/images/login/fuji-sakura-dusk-treefg.webp");
 const DEBUG = process.argv.includes("--debug");
 
 const { data, info } = await sharp(SRC).removeAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -132,12 +131,15 @@ for (let y = 0; y < H; y++) {
 }
 // Close small gaps inside blossom (so petals are solid), then a little growth so the edge fringe goes with the tree.
 tree = blur(tree, 2, 2);
-for (let i = 0; i < N; i++) tree[i] = smooth(0.12, 0.42, tree[i]);
+for (let i = 0; i < N; i++) tree[i] = smooth(0.5, 0.78, tree[i]);
 
 // The sky behind: fill the gaps from the known sky, at wider and wider scales. Each pass blurs what is known so far (the real sky plus
 // what earlier passes filled in) into the neighbouring gap; the passes run until even the middle of the canopy is filled.
 const known = new Float32Array(N);
-for (let i = 0; i < N; i++) known[i] = 1 - smooth(0.04, 0.2, tree[i]);
+// (the picture has a soft pale glow baked in round every petal; sky within about 10 px of the tree is not trusted, so the plate is
+// rebuilt there from sky further out and a drifting cloud meets no glow)
+const treeWide = blur(tree, 8, 2);
+for (let i = 0; i < N; i++) known[i] = 1 - smooth(0.015, 0.1, Math.max(tree[i], treeWide[i]));
 const plate = new Float32Array(N * 3);
 for (let i = 0; i < N; i++) if (known[i] > 0) for (let c = 0; c < 3; c++) plate[i * 3 + c] = rgb[i * 3 + c];
 const have = Float32Array.from(known); // how much of each pixel is filled so far (0..1)
@@ -197,15 +199,11 @@ const skyM = new Float32Array(N);
 const mistM = new Float32Array(N);
 // The clouds near the trees stay as they are (the picture round a blossom has its own glow and fringe, and a drifting cloud cut off by a
 // swaying branch would show as a halo); they only begin to drift from about 40% of the way across, well clear of the trees.
-const treeNear = blur(tree, 6, 2);
 for (let i = 0; i < N; i++) {
   const x = i % W;
-  const y = Math.floor(i / W);
-  // clouds start 22-42% across, but beside the upper blossom tips (top left, to about 50% across) not until 52-64%
-  const away = smooth(0.22 * W, 0.42 * W, x) * (1 - (1 - smooth(0.5 * W, 0.58 * W, x)) * (1 - smooth(0.4 * H, 0.5 * H, y)));
-  const notTree = 1 - smooth(0.01, 0.2, treeNear[i]);
-  skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away; // (kept clear of the trees: their edges carry the picture's own sky colour)
-  mistM[i] = mistRaw[i] * notTree * smooth(0.28 * W, 0.4 * W, x);
+  // clouds cover the whole sky, from the left edge across (the trees are drawn over them, with a tight edge so no halo shows)
+  skyM[i] = skyRaw[i] * (1 - sun[i]);
+  mistM[i] = mistRaw[i]; // (the mist is no longer moved; this mask is kept only so the picture of masks stays complete)
 }
 // The smooth base: the picture blurred (only using pixels that belong to the same region), so what is left over is the cloud detail.
 function base(mask, r) {
@@ -242,6 +240,33 @@ for (let i = 0; i < N; i++) {
   maskOut[i * 3 + 1] = Math.round(255 * skyM[i]);
   maskOut[i * 3 + 2] = Math.round(255 * mistM[i]);
 }
+// The tree layer: the picture, but with the thin rim of old sky colour at the edge of every branch and petal replaced by the colour of the
+// wood or blossom just inside it (grown outward from the solid tree pixels), so a petal edge laid over a new cloud has no bluish halo.
+const solid = new Float32Array(N);
+for (let i = 0; i < N; i++) solid[i] = smooth(0.82, 0.97, tree[i]);
+const fg = new Float32Array(N * 3);
+for (let i = 0; i < N; i++) if (solid[i] > 0) for (let c = 0; c < 3; c++) fg[i * 3 + c] = rgb[i * 3 + c];
+const haveFg = Float32Array.from(solid);
+for (const r of [2, 3, 5, 8, 13]) {
+  const w = blur(haveFg, r, 2);
+  const chans = [0, 1, 2].map((c) => {
+    const pm = new Float32Array(N);
+    for (let i = 0; i < N; i++) pm[i] = fg[i * 3 + c] * haveFg[i];
+    return blur(pm, r, 2);
+  });
+  for (let i = 0; i < N; i++) {
+    if (haveFg[i] >= 0.999 || w[i] < 0.01) continue;
+    const take = (1 - haveFg[i]) * Math.min(1, w[i] * 2.5);
+    for (let c = 0; c < 3; c++) fg[i * 3 + c] = (fg[i * 3 + c] * haveFg[i] + (chans[c][i] / w[i]) * take) / (haveFg[i] + take);
+    haveFg[i] += take;
+  }
+}
+const fgOut = Buffer.alloc(N * 3);
+for (let i = 0; i < N; i++) for (let c = 0; c < 3; c++) {
+  const v = tree[i] > 0.01 ? fg[i * 3 + c] * haveFg[i] + rgb[i * 3 + c] * (1 - haveFg[i]) : rgb[i * 3 + c];
+  fgOut[i * 3 + c] = Math.round(255 * Math.min(1, Math.max(0, v)));
+}
+await sharp(fgOut, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 90, effort: 5 }).toFile(OUT_FG);
 await sharp(out, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 90, effort: 5 }).toFile(OUT);
 await sharp(maskOut, { raw: { width: W, height: H, channels: 3 } }).webp({ lossless: true, effort: 5 }).toFile(OUT_MASK);
 console.log("plate, masks, sky base and cloud detail written");
