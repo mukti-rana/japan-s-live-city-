@@ -13,6 +13,7 @@ import JapanNowCard from "@/components/home/JapanNowCard";
 import LiveCityCamCard from "@/components/home/LiveCityCamCard";
 import LiveWeatherCard from "@/components/home/LiveWeatherCard";
 import QuickDock from "@/components/home/QuickDock";
+import ApproachingTrain from "@/components/home/cinematic/ApproachingTrain";
 import TrendRadarSection from "@/components/home/TrendRadarSection";
 import JapanMapWidget from "@/components/home/widgets/JapanMapWidget";
 import QuickAccessWidget from "@/components/home/widgets/QuickAccessWidget";
@@ -99,6 +100,8 @@ export default function Home() {
 
         {/* 06 — trains (still labelled DEMO until a live feed is connected) */}
         <BackdropBand photo={HOME_PHOTOS.dotonbori} side="right">
+          {/* A bullet train that comes toward you as this chapter scrolls into view. */}
+          <ApproachingTrain />
           <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status">
             <ScrollReveal from="left" className="max-w-2xl">
               <TrainListWidget />

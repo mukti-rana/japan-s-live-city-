@@ -99,7 +99,7 @@ function DockItem({
 
   // Signed distance from the pointer to this tile's centre along the dock.
   const distance = useTransform(pointer, (value: number) => {
-    if (!ref.current) return magneticDistance + 1;
+    if (!ref.current) return Infinity; // not measured yet: no swell (the server and the first client render agree)
     const rect = ref.current.getBoundingClientRect();
     const centre = isVertical ? rect.top + rect.height / 2 : rect.left + rect.width / 2;
     return value - centre;
@@ -249,10 +249,10 @@ export function MagneticDock({
         <Fragment key={item.id}>
           <motion.span
             className="relative flex"
-            style={{ "--i": index, "--gc": (item.glow ?? [190, 200, 255]).join(","), "--ic": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 62%, #ffffff)`, "--ic-hot": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 38%, #ffffff)` } as CSSProperties}
-            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.85 }}
+            style={{ "--i": String(index), "--gc": (item.glow ?? [190, 200, 255]).join(","), "--ic": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 62%, #ffffff)`, "--ic-hot": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 38%, #ffffff)` } as CSSProperties}
+            initial={{ opacity: 0, y: 16, scale: 0.85 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.15 + index * 0.05, type: "spring", stiffness: 260, damping: 20 }}
+            transition={reducedMotion ? { duration: 0 } : { delay: 0.15 + index * 0.05, type: "spring", stiffness: 260, damping: 20 }}
           >
           <DockItem
             item={item}

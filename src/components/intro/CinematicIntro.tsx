@@ -167,7 +167,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
           animate={{ opacity: step.kind === "words" ? 1 : step.kind === "gap" ? 0.55 : 0, scale: reduced ? 1.04 : 1.15 }}
           transition={{ opacity: step.kind === "zoom" ? { duration: 0.7, delay: ZOOM_SECS * 0.62, ease: "easeIn" } : { duration: step.kind === "logo" ? 1.1 : 2, ease: "easeInOut" }, scale: { duration: 14, ease: "linear" } }}
         >
-          <Image src={SCENE.src} alt="" fill sizes="100vw" quality={70} priority className={`object-cover ${SHADE}`} style={{ objectPosition: SCENE.pos }} />
+          <Image src={SCENE.src} alt="" fill sizes="100vw" quality={75} priority className={`object-cover ${SHADE}`} style={{ objectPosition: SCENE.pos }} />
         </motion.div>
         {/* Vignette: brightest in the middle, falling away to black at the edges, top and bottom. */}
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.12)_0%,rgba(0,0,0,0.7)_85%),linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.05)_30%,rgba(0,0,0,0.05)_70%,rgba(0,0,0,0.7))]" />
