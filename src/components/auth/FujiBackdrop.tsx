@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import SceneCanvas from "@/components/auth/SceneCanvas";
 
 // The sign-in page's background: Mount Fuji at dusk behind cherry blossom, over a lake with the lights of a bridge and shore.
@@ -42,6 +42,22 @@ const BITS: Bit[] = [
   { x: 31, size: 58, fall: 24, delay: -17, dx: 18, sw: 70, blur: 4 },
   { x: 56, size: 40, fall: 28, delay: -12, dx: 16, sw: 50, blur: 3 },
   { x: 62, size: 13, fall: 32, delay: -23, dx: 22, sw: 30, blur: 0 },
+];
+
+// Petals that come loose from the blossom now and then: where on the picture each one is shaken off (x across, y down), how big it is,
+// how long its whole cycle lasts (most of it is spent waiting on the branch; the flight is the last ~55%), a negative delay so some
+// are already in the air, and how far the wind carries it (vw, vh).
+const IMAGE_ASPECT = 1672 / 941;
+type Shed = { ux: number; uy: number; size: number; cycle: number; delay: number; dx: number; dy: number; sw: number };
+const SHED: Shed[] = [
+  { ux: 0.07, uy: 0.09, size: 15, cycle: 31, delay: -19, dx: 30, dy: 38, sw: 34 },
+  { ux: 0.16, uy: 0.2, size: 12, cycle: 37, delay: -4, dx: 26, dy: 32, sw: 28 },
+  { ux: 0.25, uy: 0.11, size: 14, cycle: 29, delay: -27, dx: 32, dy: 40, sw: 36 },
+  { ux: 0.33, uy: 0.22, size: 11, cycle: 41, delay: -13, dx: 24, dy: 30, sw: 30 },
+  { ux: 0.41, uy: 0.31, size: 13, cycle: 34, delay: -31, dx: 22, dy: 28, sw: 32 },
+  { ux: 0.12, uy: 0.4, size: 12, cycle: 39, delay: -8, dx: 28, dy: 22, sw: 26 },
+  { ux: 0.22, uy: 0.48, size: 11, cycle: 33, delay: -22, dx: 26, dy: 20, sw: 24 },
+  { ux: 0.3, uy: 0.52, size: 13, cycle: 43, delay: -35, dx: 22, dy: 18, sw: 28 },
 ];
 
 function Illustration() {
@@ -86,8 +102,25 @@ function Illustration() {
 export default function FujiBackdrop() {
   const petalFill = useId();
   const leafFill = useId();
+  const root = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<{ w: number; h: number } | null>(null);
+  // The size of the screen, to put each shed petal on its own spot of the picture (the same "cover" placement the picture uses).
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    const read = () => setBox({ w: el.clientWidth, h: el.clientHeight });
+    read();
+    const ro = new ResizeObserver(read);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const va = box ? box.w / Math.max(box.h, 1) : IMAGE_ASPECT;
+  const sx = va < IMAGE_ASPECT ? va / IMAGE_ASPECT : 1;
+  const sy = va < IMAGE_ASPECT ? 1 : IMAGE_ASPECT / va;
+  const offX = ANCHOR[0] * (1 - sx);
+  const offY = ANCHOR[1] * (1 - sy);
   return (
-    <div className="auth-backdrop pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
+    <div ref={root} className="auth-backdrop pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
       <Illustration />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={IMAGE} alt="" decoding="async" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${ANCHOR[0] * 100}% ${ANCHOR[1] * 100}%` }} />
@@ -128,6 +161,23 @@ export default function FujiBackdrop() {
             </span>
           </span>
         ))}
+        {/* Petals shaken loose from the blossom, one now and then, each from its own spot on the branches. */}
+        {box &&
+          SHED.map((b, i) => {
+            const left = ((b.ux - offX) / sx) * 100;
+            const top = ((b.uy - offY) / sy) * 100;
+            if (left < -2 || left > 102 || top < -2 || top > 102) return null;
+            return (
+              <span key={`s${i}`} className="auth-petal auth-shed" style={{ left: `${left}%`, top: `${top}%`, width: b.size, height: b.size * 1.25, animationDuration: `${b.cycle}s`, animationDelay: `${b.delay}s`, ["--dx" as string]: `${b.dx}vw`, ["--dy" as string]: `${b.dy}vh` }}>
+                <span className="auth-petal__sway" style={{ animationDuration: `${b.cycle / 8}s`, animationDelay: `${b.delay / 5}s`, ["--sw" as string]: `${b.sw}px` }}>
+                  <svg viewBox="-4 -10 8 11" className="auth-petal__spin block h-full w-full" style={{ animationDuration: `${3 + (i % 4) * 0.8}s`, animationDelay: `${i * -0.9}s` }}>
+                    <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />
+                    <path d="M0 -0.6 L0 -5.4" stroke="#e8749f" strokeWidth="0.14" opacity="0.4" fill="none" />
+                  </svg>
+                </span>
+              </span>
+            );
+          })}
       </div>
     </div>
   );
