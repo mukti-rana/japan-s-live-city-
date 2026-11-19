@@ -4,12 +4,14 @@ import { Fragment, useRef, useState, type PointerEvent, type ReactNode, type Ref
 import {
   AnimatePresence,
   motion,
+  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
+import ShineBorder from "@/components/ui/ShineBorder";
 
 // A macOS-style dock: icons swell and lift as the pointer nears them. Adapted from the
 // @componentry/magnetic-dock registry item to this project's design system —
@@ -38,6 +40,8 @@ export interface DockItemData {
   badge?: number;
   /** Ignored: every icon is silver, and only the current page is accented. */
   accent?: DockAccent;
+  /** The quiet colour (r, g, b) of the soft glow that rises behind this icon when it is pointed at. */
+  glow?: [number, number, number];
   /** Draws a thin divider after this item, to set a group apart. */
   dividerAfter?: boolean;
 }
@@ -141,7 +145,14 @@ function DockItem({
             : "text-[#c9ccd4] group-hover:text-white group-hover:[filter:drop-shadow(0_0_7px_rgba(255,255,255,0.35))] group-focus-visible:text-white"
         }`}
       >
-        {item.icon}
+        {/* On hover: a frosted disc and a soft coloured glow rise behind the icon. */}
+        <span aria-hidden="true" className="pointer-events-none absolute inset-[3px] rounded-full bg-white/[0.07] opacity-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" />
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -inset-1 rounded-full opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100"
+          style={{ background: `radial-gradient(circle, rgba(${(item.glow ?? [190, 200, 255]).join(",")},0.8), transparent 70%)` }}
+        />
+        <span className="relative transition-transform duration-150 group-active:scale-[0.86]">{item.icon}</span>
         {item.badge !== undefined && item.badge > 0 && (
           <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-xs font-semibold text-black">
             {item.badge > 99 ? "99+" : item.badge}
@@ -220,26 +231,48 @@ export function MagneticDock({
   const pointer = useMotionValue(Infinity);
   const reducedMotion = useReducedMotion() ?? false;
   const isVertical = position === "left" || position === "right";
+  // A soft spotlight in the glass that follows the pointer along the dock, and fades away when it leaves.
+  const spotX = useSpring(useMotionValue(0), { damping: 30, stiffness: 220, mass: 0.6 });
+  const spotY = useSpring(useMotionValue(0), { damping: 30, stiffness: 220, mass: 0.6 });
+  const spotOn = useSpring(useMotionValue(0), { damping: 26, stiffness: 160 });
+  const spot = useMotionTemplate`radial-gradient(150px circle at ${spotX}px ${spotY}px, rgba(255,255,255,0.13), rgba(170,190,255,0.05) 45%, transparent 72%)`;
 
-  function handlePointerMove(event: PointerEvent) {
+  function handlePointerMove(event: PointerEvent<HTMLElement>) {
     // Touch has no hover, and a swelling tile under a finger shifts the target.
     if (event.pointerType === "touch") return;
     pointer.set(isVertical ? event.clientY : event.clientX);
+    const r = event.currentTarget.getBoundingClientRect();
+    spotX.set(event.clientX - r.left);
+    spotY.set(event.clientY - r.top);
+    spotOn.set(1);
   }
 
   return (
     <nav
       aria-label={label}
       onPointerMove={reducedMotion ? undefined : handlePointerMove}
-      onPointerLeave={() => pointer.set(Infinity)}
+      onPointerLeave={() => {
+        pointer.set(Infinity);
+        spotOn.set(0);
+      }}
       // Black glass: a deep, see-through black tint over a strong blur, a hair-thin dark-grey edge, and soft layered shadows that lift it off
       // the page. The blur keeps what is behind it from fighting with the icons.
-      className={`inline-flex items-center gap-1.5 rounded-[1.4rem] border border-white/[0.08] bg-[rgba(6,6,8,0.58)] p-2 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.9),0_6px_18px_-6px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-2xl backdrop-saturate-150 ${
+      className={`inline-flex items-center gap-1.5 rounded-[1.4rem] border border-white/[0.08] bg-[rgba(6,6,8,0.58)] p-2 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.9),0_6px_18px_-6px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.07)] relative backdrop-blur-2xl backdrop-saturate-150 ${
         isVertical ? "flex-col" : "flex-row"
       } ${className}`}
     >
-      {items.map((item) => (
+      {/* A thin light that travels slowly round the glass edge, and the pointer's spotlight; both stay behind the icons. */}
+      {!reducedMotion && <ShineBorder colors={["#8fa6ff", "#d3b4ff", "#9ce6ff"]} duration={9} width={1} />}
+      {!reducedMotion && <motion.span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit]" style={{ background: spot, opacity: spotOn }} />}
+      <span aria-hidden="true" className="dock-sheen pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]" />
+      {items.map((item, index) => (
         <Fragment key={item.id}>
+          <motion.span
+            className="relative flex"
+            initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.85 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.15 + index * 0.05, type: "spring", stiffness: 260, damping: 20 }}
+          >
           <DockItem
             item={item}
             pointer={pointer}
@@ -250,6 +283,7 @@ export function MagneticDock({
             position={position}
             reducedMotion={reducedMotion}
           />
+          </motion.span>
           {item.dividerAfter && <span aria-hidden="true" className={isVertical ? "my-1 h-px self-stretch bg-white/[0.1]" : "mx-1.5 h-6 w-px self-center bg-white/[0.1]"} />}
         </Fragment>
       ))}

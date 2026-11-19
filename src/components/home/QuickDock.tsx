@@ -13,19 +13,20 @@ const TOOLS: {
   labelKey: TranslationKey;
   href: string;
   icon: typeof Sparkles;
+  glow: [number, number, number];
   dividerAfter?: boolean;
 }[] = [
   // Community comes first, set apart from the tools by a divider. It links to the
   // same /community page as the sidebar entry on the other pages.
-  { labelKey: "nav.community", href: "/community", icon: Users, dividerAfter: true },
-  { labelKey: "quickaccess.ai", href: "/ai-assistant", icon: Sparkles },
-  { labelKey: "quickaccess.explainJapanese", href: "/explain-japanese", icon: Languages },
-  { labelKey: "quickaccess.signAssistant", href: "/sign-assistant", icon: ScanText },
-  { labelKey: "quickaccess.jlpt", href: "/jlpt", icon: GraduationCap },
-  { labelKey: "quickaccess.yen", href: "/yen-converter", icon: JapaneseYen },
-  { labelKey: "quickaccess.salary", href: "/salary-calculator", icon: Banknote },
-  { labelKey: "quickaccess.rent", href: "/rent-calculator", icon: House },
-  { labelKey: "quickaccess.earthquakes", href: "/earthquakes", icon: Activity },
+  { labelKey: "nav.community", href: "/community", glow: [130, 180, 255], icon: Users, dividerAfter: true },
+  { labelKey: "quickaccess.ai", href: "/ai-assistant", glow: [200, 160, 255], icon: Sparkles },
+  { labelKey: "quickaccess.explainJapanese", href: "/explain-japanese", glow: [255, 160, 200], icon: Languages },
+  { labelKey: "quickaccess.signAssistant", href: "/sign-assistant", glow: [120, 220, 220], icon: ScanText },
+  { labelKey: "quickaccess.jlpt", href: "/jlpt", glow: [255, 200, 120], icon: GraduationCap },
+  { labelKey: "quickaccess.yen", href: "/yen-converter", glow: [255, 215, 130], icon: JapaneseYen },
+  { labelKey: "quickaccess.salary", href: "/salary-calculator", glow: [140, 220, 170], icon: Banknote },
+  { labelKey: "quickaccess.rent", href: "/rent-calculator", glow: [255, 175, 140], icon: House },
+  { labelKey: "quickaccess.earthquakes", href: "/earthquakes", glow: [255, 140, 140], icon: Activity },
 ];
 
 // Larger tiles on a desktop, slightly smaller on a tablet, so the row always fits.
@@ -97,10 +98,11 @@ export default function QuickDock() {
     };
   }, []);
 
-  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, dividerAfter }) => ({
+  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, glow, dividerAfter }) => ({
     id: href,
     label: t(labelKey),
     href,
+    glow,
     dividerAfter,
     isActive: pathname === href || pathname.startsWith(`${href}/`),
     icon: <Icon size={roomy ? 23 : 21} strokeWidth={1.6} />,
