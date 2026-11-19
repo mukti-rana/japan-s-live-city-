@@ -345,3 +345,14 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   .hero-ask, .hero-ask[data-open="true"] { clip-path: none; filter: none; transform: translateY(-50%); transition: opacity 0.2s ease, visibility 0s; }
   .hero-ask__field, .hero-ask__go, .hero-ask[data-open="true"] .hero-ask__field, .hero-ask[data-open="true"] .hero-ask__go { transform: none; transition: none; }
 }
+
+/* The welcome's expansion (CinematicIntro): the letters turn from white to black, so they read as windows onto the black screen
+   beyond, with a fine light edge that is gone before they grow large; the glow and shadow go with the white. */
+@keyframes intro-ink {
+  0% { color: #fff; -webkit-text-stroke: 0 rgba(255, 255, 255, 0); text-shadow: 0 0 38px rgba(255, 190, 140, 0.28), 0 2px 44px rgba(0, 0, 0, 0.7); }
+  20% { color: #000; -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.9); text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
+  34% { -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.6); }
+  56% { -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0); }
+  100% { color: #000; -webkit-text-stroke: 0 rgba(255, 255, 255, 0); text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
+}
+.intro-ink { animation: intro-ink 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
