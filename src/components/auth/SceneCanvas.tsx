@@ -19,7 +19,9 @@ import { BONES, BONE_COUNT, sharedSim } from "@/components/auth/treeRig";
 //    wind simulation (breeze, random gusts sweeping in from the left, springs that lean, overshoot and settle), and every pixel near a
 //    branch moves with that branch. Thick limbs stay almost still; thin branches give; twigs swing most and a little late; the blossom
 //    and leaves go wherever their twig goes and shiver as it moves.
-//  - The CLOUDS travel. The sky and the band of mist over the mountain are split (scripts/make-tree-plate.mjs) into a smooth, still base and the
+//  - The CLOUDS are drawn here as three layers of broad, soft, lit-and-shaded banks moving at different speeds over the base sky colour (the
+//    picture's own small pink wisps look like flying leaves once they drift, so they are not drifted in the sky; only the mist band keeps its
+//    detail). Earlier note: The CLOUDS travel. The sky and the band of mist over the mountain are split (scripts/make-tree-plate.mjs) into a smooth, still base and the
 //    cloud detail; the detail drifts through the base along the wind (higher clouds faster, mist slowest, reshaping as it goes, passing behind
 //    the mountain's outline) while the sunset glow and the blue stay put.
 //  - The LIGHT breathes, very slowly.
@@ -92,43 +94,62 @@ vec2 skin(vec2 P, out float act, out float cover){
 // clouds travel, as real ones do. Two copies of the detail, half a cycle apart, slide along the wind and cross-fade so the loop never
 // shows; the high sky travels a little faster than the low sky, the mist more slowly still, and a slow noise reshapes the clouds as
 // they go. Clouds are cut off by the mountain's outline (they pass behind it) because the mask is the sky only.
+// One layer of real-looking cloud: broad, soft banks stretched along the wind, shaped by a slow domain warp, with density, a lit side
+// toward the sunset and a shaded side away from it. Returns the cloud's opacity (x) and how lit it is (y).
+vec2 cloudLayer(vec2 uv, float t, vec2 scale, float speed, float seed, float lo, float hi){
+  vec2 p = vec2(uv.x * IA * scale.x - t * speed, uv.y * scale.y);
+  vec2 w = vec2(vnoise(p * 0.7 + seed + t * 0.01), vnoise(p * 0.7 + seed + 13.0 - t * 0.012)) - 0.5;
+  vec2 q = p + w * 0.6 + seed;
+  float n = fbm(q);
+  // the neighbour toward the sun (left and below): if it is denser, this point sits in its shade
+  float ns = fbm(q + vec2(-0.1, 0.12));
+  float a = smoothstep(lo, hi, n);
+  return vec2(a, clamp(0.6 + (n - ns) * 4.5, 0.0, 1.0));
+}
+
 vec3 cloudsAt(vec2 u, vec3 fallback, float t){
   vec3 m = texture2D(uTree, u).rgb;
   float sky = m.g;
   float mist = m.b;
   float k = max(sky, mist);
   if (k < 0.004) return fallback;
-  float spd = mix(mix(1.3, 0.65, smoothstep(0.04, 0.46, u.y)), 0.45, mist);
-  float T = 45.0;
-  float a = fract(t / T);
-  float b = fract(t / T + 0.5);
-  float w0 = 1.0 - abs(2.0 * a - 1.0);
-  vec2 dir = vec2(1.0, 0.025);
-  float D = 0.19 * spd;
-  vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.016, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.018))) - 0.5) * 0.03;
-  vec3 d0 = (texture2D(uCloud, clamp(u - dir * D * a + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
-  vec3 d1 = (texture2D(uCloud, clamp(u - dir * D * b + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
   vec3 base = texture2D(uBase, u).rgb;
-  // The picture's own clouds, with their contrast raised so they stand out from the sky.
-  vec3 col = base + mix(d1, d0, w0) * mix(1.9, 1.5, mist);
+  // In the sky the clouds are laid over the picture's own sky as it is; only the mist band is rebuilt from base and detail.
+  vec3 col = fallback;
 
-  // Thicker, softer cloud added on top: billowing banks that drift and slowly change shape, lit warm on the side toward the sunset and
-  // shaded cool underneath, so they read as real volume. Strongest in the sunset side of the sky, fainter in the deep blue.
-  float x = u.x * IA;
-  vec2 q = vec2(x * 2.1 - t * 0.011 * spd, u.y * 5.2);
-  float c1 = fbm(q + vec2(3.0, 1.0) + 0.35 * vec2(fbm(q * 0.6 + t * 0.004), fbm(q * 0.6 + 9.0 - t * 0.004)));
-  float c2 = fbm(vec2(x * 4.4 - t * 0.017 * spd, u.y * 10.0) + vec2(11.0, 5.0));
-  float dens = smoothstep(0.46, 0.74, c1) * (0.65 + 0.55 * c2);
-  float lit = fbm(q + vec2(3.0, 1.0) + vec2(-0.06, 0.1)) - c1;
-  float high = 1.0 - smoothstep(0.05, 0.4, u.y);
-  vec3 lightC = mix(vec3(1.0, 0.86, 0.9), vec3(1.0, 0.93, 0.95), high);
-  vec3 shadeC = mix(vec3(0.5, 0.42, 0.7), vec3(0.4, 0.4, 0.72), high);
-  vec3 cc = mix(shadeC, lightC, clamp(0.55 + lit * 5.0, 0.0, 1.0));
-  float amt = dens * mix(0.5, 0.7, smoothstep(0.35, 0.8, u.x)) * (0.45 + 0.55 * (1.0 - smoothstep(0.0, 0.5, u.y)));
-  col = mix(col, cc, clamp(amt * 0.78, 0.0, 0.85) * sky);
-  // The mist round the mountain's foot: fuller, whiter, flowing.
-  float mc = fbm(vec2(x * 3.0 - t * 0.008 * spd, u.y * 14.0) + vec2(2.0, 7.0));
-  col = mix(col, vec3(0.97, 0.86, 0.94), smoothstep(0.4, 0.7, mc) * 0.42 * mist);
+  // The picture's small pink wisps are not drifted in the sky (they read as flying leaves); they only travel in the mist band.
+  if (mist > 0.01) {
+    float T = 45.0;
+    float a = fract(t / T);
+    float b = fract(t / T + 0.5);
+    float w0 = 1.0 - abs(2.0 * a - 1.0);
+    float D = 0.19 * 0.8;
+    vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.02, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.022))) - 0.5) * 0.03;
+    vec3 d0 = (texture2D(uCloud, clamp(u - vec2(1.0, 0.02) * D * a + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
+    vec3 d1 = (texture2D(uCloud, clamp(u - vec2(1.0, 0.02) * D * b + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
+    vec3 mcol = base + mix(d1, d0, w0) * 1.5;
+    float mc = fbm(vec2(u.x * IA * 3.0 - t * 0.02, u.y * 14.0) + vec2(2.0, 7.0));
+    mcol = mix(mcol, vec3(0.97, 0.86, 0.94), smoothstep(0.4, 0.7, mc) * 0.42);
+    col = mix(col, mcol, mist);
+  }
+
+  // Clouds in three layers that move at different speeds (the high, small, distant ones slowest; the broad, near ones over the mountain
+  // fastest), each lit warm on the side toward the sunset and shaded violet on the far side, so they read as real volume.
+  float warm = 1.0 - smoothstep(0.15, 0.85, u.x);
+  float low = 1.0 - smoothstep(0.02, 0.46, u.y);
+  vec3 bodyC = mix(vec3(0.9, 0.84, 0.99), vec3(1.0, 0.8, 0.84), clamp(warm * 0.8 + low * 0.5, 0.0, 1.0));
+  vec3 litC = mix(vec3(1.0, 0.93, 0.97), vec3(1.0, 0.86, 0.78), clamp(warm + low * 0.4, 0.0, 1.0));
+  vec3 shadeC = mix(vec3(0.38, 0.38, 0.7), vec3(0.55, 0.4, 0.66), clamp(warm * 0.7 + low * 0.4, 0.0, 1.0));
+  for (int i = 0; i < 3; i++) {
+    float fi = float(i);
+    vec2 sc = vec2(mix(1.15, 2.4, fi / 2.0), mix(5.0, 9.0, fi / 2.0));
+    float spd = mix(0.075, 0.03, fi / 2.0);
+    vec2 cl = cloudLayer(u, t, sc, spd, 7.0 + fi * 17.0, mix(0.5, 0.56, fi / 2.0), mix(0.72, 0.8, fi / 2.0));
+    float cover = mix(0.88, 0.62, fi / 2.0) * (0.5 + 0.5 * (1.0 - smoothstep(0.0, 0.5, u.y)));
+    vec3 c = mix(shadeC, bodyC, smoothstep(0.1, 0.6, cl.y));
+    c = mix(c, litC, smoothstep(0.55, 1.0, cl.y) * 0.9);
+    col = mix(col, c, clamp(cl.x * cover, 0.0, 0.92) * sky);
+  }
   return mix(fallback, col, k);
 }
 

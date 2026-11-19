@@ -200,10 +200,12 @@ const mistM = new Float32Array(N);
 const treeNear = blur(tree, 6, 2);
 for (let i = 0; i < N; i++) {
   const x = i % W;
-  const away = smooth(0.42 * W, 0.66 * W, x);
+  const y = Math.floor(i / W);
+  // clouds start 22-42% across, but beside the upper blossom tips (top left, to about 50% across) not until 52-64%
+  const away = smooth(0.22 * W, 0.42 * W, x) * (1 - (1 - smooth(0.52 * W, 0.64 * W, x)) * (1 - smooth(0.4 * H, 0.5 * H, y)));
   const notTree = 1 - smooth(0.01, 0.2, treeNear[i]);
-  skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away;
-  mistM[i] = mistRaw[i] * notTree * away;
+  skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away; // (kept clear of the trees: their edges carry the picture's own sky colour)
+  mistM[i] = mistRaw[i] * notTree * smooth(0.28 * W, 0.4 * W, x);
 }
 // The smooth base: the picture blurred (only using pixels that belong to the same region), so what is left over is the cloud detail.
 function base(mask, r) {
