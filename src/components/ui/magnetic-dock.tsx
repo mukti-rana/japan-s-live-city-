@@ -11,10 +11,16 @@ import {
   type MotionValue,
 } from "motion/react";
 
-// A macOS-style dock: icons swell as the pointer nears them. Adapted from the
+// A macOS-style dock: icons swell and lift as the pointer nears them. Adapted from the
 // @componentry/magnetic-dock registry item to this project's design system —
 // dark-only tokens, glass over a scrim, and transform-only motion (the
 // original animated width/height, which reflows the row on every frame).
+//
+// The look is a floating pane of black glass (a deep, see-through black tint over a strong blur, a hair-thin dark-grey edge, soft
+// layered shadows) holding bare silver line icons with no boxes round them. Pointing at the dock swells the icons nearest the pointer
+// with a smooth bell-shaped falloff, and each one also rises as it grows, so the icons come up out of the glass like a macOS dock; the
+// icon under the pointer turns white and gets a faint glow, and a quiet label rises above it. The current page is shown by a white icon
+// on a faint tile with a small light dot beneath: the only accent. Reduced motion turns the swelling and lifting off.
 
 type DockPosition = "bottom" | "top" | "left" | "right";
 type DockAccent = "azure" | "sakura" | "gold";
@@ -30,7 +36,7 @@ export interface DockItemData {
   onClick?: () => void;
   isActive?: boolean;
   badge?: number;
-  /** Icon tint. Defaults to plain foreground. */
+  /** Ignored: every icon is silver, and only the current page is accented. */
   accent?: DockAccent;
   /** Draws a thin divider after this item, to set a group apart. */
   dividerAfter?: boolean;
@@ -52,11 +58,7 @@ export interface MagneticDockProps {
   className?: string;
 }
 
-const ACCENT_CLASS: Record<DockAccent, string> = {
-  azure: "text-azure",
-  sakura: "text-sakura",
-  gold: "text-gold",
-};
+// Icons are all silver now; the accent prop is kept so existing callers still type-check, and is ignored.
 
 // Tiles grow away from the edge the dock is anchored to.
 const ORIGIN: Record<DockPosition, string> = {
@@ -66,8 +68,8 @@ const ORIGIN: Record<DockPosition, string> = {
   right: "100% 50%",
 };
 
-const SPRING = { damping: 20, stiffness: 300, mass: 0.5 };
-const LABEL_GAP = 8;
+const SPRING = { damping: 22, stiffness: 260, mass: 0.55 };
+const LABEL_GAP = 12;
 
 function DockItem({
   item,
@@ -100,10 +102,14 @@ function DockItem({
     const centre = isVertical ? rect.top + rect.height / 2 : rect.left + rect.width / 2;
     return value - centre;
   });
-  const scale = useSpring(
-    useTransform(distance, [-magneticDistance, 0, magneticDistance], [1, maxScale, 1]),
-    SPRING,
-  );
+  // A smooth bell: the icon under the pointer grows most, its neighbours less, and the swelling dies away without a visible edge.
+  const swell = useTransform(distance, (d: number) => {
+    const sigma = magneticDistance * 0.5;
+    return 1 + (maxScale - 1) * Math.exp(-(d * d) / (2 * sigma * sigma));
+  });
+  const scale = useSpring(swell, SPRING);
+  // ...and it rises as it grows, up out of the glass.
+  const lift = useTransform(scale, [1, maxScale], [0, -iconSize * 0.3]);
 
   // The label sits past the tile at full swell so it never overlaps it.
   const labelOffset = iconSize * (maxScale - 1) + LABEL_GAP;
@@ -115,7 +121,7 @@ function DockItem({
   }[position];
 
   const className =
-    "group relative flex shrink-0 items-center justify-center rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-panel";
+    "group relative flex shrink-0 items-center justify-center rounded-2xl focus:outline-none focus-visible:ring-1 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
   const handlers = {
     onPointerEnter: () => setHovered(true),
     onPointerLeave: () => setHovered(false),
@@ -128,22 +134,22 @@ function DockItem({
     <>
       <motion.span
         aria-hidden="true"
-        style={{ scale: reducedMotion ? 1 : scale, transformOrigin: ORIGIN[position] }}
-        className={`flex h-full w-full items-center justify-center rounded-xl border backdrop-blur-sm transition-colors duration-200 ${
+        style={{ scale: reducedMotion ? 1 : scale, y: reducedMotion ? 0 : lift, transformOrigin: ORIGIN[position] }}
+        className={`relative flex h-full w-full items-center justify-center rounded-2xl transition-[color,background-color,filter] duration-300 ${
           item.isActive
-            ? "border-sakura/40 bg-sakura/20 text-sakura"
-            : `border-white/10 bg-black/15 group-hover:border-azure/40 group-hover:bg-black/10 ${
-                item.accent ? ACCENT_CLASS[item.accent] : "text-foreground"
-              }`
+            ? "bg-white/[0.09] text-white [filter:drop-shadow(0_0_8px_rgba(190,215,255,0.45))]"
+            : "text-[#c9ccd4] group-hover:text-white group-hover:[filter:drop-shadow(0_0_7px_rgba(255,255,255,0.35))] group-focus-visible:text-white"
         }`}
       >
         {item.icon}
         {item.badge !== undefined && item.badge > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-sakura px-1.5 text-xs font-semibold text-background">
+          <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1.5 text-xs font-semibold text-black">
             {item.badge > 99 ? "99+" : item.badge}
           </span>
         )}
       </motion.span>
+      {/* The current page: a small light dot beneath the icon. */}
+      <span aria-hidden="true" className={`pointer-events-none absolute -bottom-[7px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#bcd6ff] shadow-[0_0_8px_2px_rgba(160,200,255,0.55)] transition-[opacity,transform] duration-300 ${item.isActive ? "scale-100 opacity-100" : "scale-0 opacity-0"}`} />
 
       {item.badge !== undefined && item.badge > 0 && (
         <span className="sr-only">({item.badge})</span>
@@ -153,14 +159,15 @@ function DockItem({
         {showLabels && (hovered || focused) && (
           <motion.span
             aria-hidden="true"
-            initial={reducedMotion ? false : { opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={reducedMotion ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, scale: 0.94 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
+            initial={reducedMotion ? false : { opacity: 0, y: 6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={reducedMotion ? { opacity: 0, transition: { duration: 0 } } : { opacity: 0, y: 4, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             style={labelStyle}
-            className="pointer-events-none absolute z-50 whitespace-nowrap rounded-lg border border-white/10 bg-black/80 px-2.5 py-1 text-xs font-medium text-foreground shadow-lg shadow-black/40 backdrop-blur-md"
+            className="pointer-events-none absolute z-50 whitespace-nowrap rounded-xl border border-white/[0.12] bg-[#0a0a0c]/90 px-3 py-1.5 text-[12.5px] font-medium tracking-wide text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.85)] backdrop-blur-xl"
           >
             {item.label}
+            <span aria-hidden="true" className="absolute left-1/2 top-full -mt-[3px] h-1.5 w-1.5 -translate-x-1/2 rotate-45 border-b border-r border-white/[0.12] bg-[#0a0a0c]" />
           </motion.span>
         )}
       </AnimatePresence>
@@ -203,9 +210,9 @@ function DockItem({
 export function MagneticDock({
   items,
   label,
-  iconSize = 48,
-  maxScale = 1.3,
-  magneticDistance = 120,
+  iconSize = 46,
+  maxScale = 1.6,
+  magneticDistance = 130,
   showLabels = true,
   position = "bottom",
   className = "",
@@ -225,9 +232,9 @@ export function MagneticDock({
       aria-label={label}
       onPointerMove={reducedMotion ? undefined : handlePointerMove}
       onPointerLeave={() => pointer.set(Infinity)}
-      // Black glass: a very see-through black tint over a strong blur, with a hair-thin
-      // light edge. The blur keeps what is behind it from fighting with the icons.
-      className={`inline-flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-2 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl backdrop-saturate-150 ${
+      // Black glass: a deep, see-through black tint over a strong blur, a hair-thin dark-grey edge, and soft layered shadows that lift it off
+      // the page. The blur keeps what is behind it from fighting with the icons.
+      className={`inline-flex items-center gap-1.5 rounded-[1.4rem] border border-white/[0.08] bg-[rgba(6,6,8,0.58)] p-2 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.9),0_6px_18px_-6px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-2xl backdrop-saturate-150 ${
         isVertical ? "flex-col" : "flex-row"
       } ${className}`}
     >
@@ -243,7 +250,7 @@ export function MagneticDock({
             position={position}
             reducedMotion={reducedMotion}
           />
-          {item.dividerAfter && <span aria-hidden="true" className={isVertical ? "my-0.5 h-px self-stretch bg-white/15" : "mx-0.5 w-px self-stretch bg-white/15"} />}
+          {item.dividerAfter && <span aria-hidden="true" className={isVertical ? "my-1 h-px self-stretch bg-white/[0.1]" : "mx-1.5 h-6 w-px self-center bg-white/[0.1]"} />}
         </Fragment>
       ))}
     </nav>

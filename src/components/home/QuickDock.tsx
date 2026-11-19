@@ -1,46 +1,49 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import {
-  Sparkles,
-  Languages,
-  Camera,
-  GraduationCap,
-  Coins,
-  Home,
-  Calculator,
-  Activity,
-  Users,
-} from "lucide-react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import { Activity, Banknote, GraduationCap, House, JapaneseYen, Languages, ScanText, Sparkles, Users } from "lucide-react";
 import { MagneticDock, type DockItemData } from "@/components/ui/magnetic-dock";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 
-// Community first, then the tools that have no sidebar entry, kept one click away while the home
-// page scrolls. Accents follow QuickAccessWidget: sakura for language & AI,
-// gold for money, azure for the rest.
+// Community first, then the tools that have no sidebar entry, kept one click away while the home page scrolls. The icons are
+// all Lucide, one stroke weight, all silver (only the current page is accented, see MagneticDock).
 const TOOLS: {
   labelKey: TranslationKey;
   href: string;
   icon: typeof Sparkles;
-  accent: NonNullable<DockItemData["accent"]>;
   dividerAfter?: boolean;
 }[] = [
   // Community comes first, set apart from the tools by a divider. It links to the
   // same /community page as the sidebar entry on the other pages.
-  { labelKey: "nav.community", href: "/community", icon: Users, accent: "azure", dividerAfter: true },
-  { labelKey: "quickaccess.ai", href: "/ai-assistant", icon: Sparkles, accent: "sakura" },
-  { labelKey: "quickaccess.explainJapanese", href: "/explain-japanese", icon: Languages, accent: "sakura" },
-  { labelKey: "quickaccess.signAssistant", href: "/sign-assistant", icon: Camera, accent: "sakura" },
-  { labelKey: "quickaccess.jlpt", href: "/jlpt", icon: GraduationCap, accent: "sakura" },
-  { labelKey: "quickaccess.yen", href: "/yen-converter", icon: Coins, accent: "gold" },
-  { labelKey: "quickaccess.salary", href: "/salary-calculator", icon: Calculator, accent: "gold" },
-  { labelKey: "quickaccess.rent", href: "/rent-calculator", icon: Home, accent: "azure" },
-  { labelKey: "quickaccess.earthquakes", href: "/earthquakes", icon: Activity, accent: "azure" },
+  { labelKey: "nav.community", href: "/community", icon: Users, dividerAfter: true },
+  { labelKey: "quickaccess.ai", href: "/ai-assistant", icon: Sparkles },
+  { labelKey: "quickaccess.explainJapanese", href: "/explain-japanese", icon: Languages },
+  { labelKey: "quickaccess.signAssistant", href: "/sign-assistant", icon: ScanText },
+  { labelKey: "quickaccess.jlpt", href: "/jlpt", icon: GraduationCap },
+  { labelKey: "quickaccess.yen", href: "/yen-converter", icon: JapaneseYen },
+  { labelKey: "quickaccess.salary", href: "/salary-calculator", icon: Banknote },
+  { labelKey: "quickaccess.rent", href: "/rent-calculator", icon: House },
+  { labelKey: "quickaccess.earthquakes", href: "/earthquakes", icon: Activity },
 ];
 
-// Pointer-driven, so it is desktop-only; below lg the floating menu button
-// owns the bottom edge. Sticky rather than fixed, so it centres on the content
+// Larger tiles on a desktop, slightly smaller on a tablet, so the row always fits.
+const wide = "(min-width: 1024px)";
+function useWide() {
+  return useSyncExternalStore(
+    (notify) => {
+      const mq = window.matchMedia(wide);
+      mq.addEventListener("change", notify);
+      return () => mq.removeEventListener("change", notify);
+    },
+    () => window.matchMedia(wide).matches,
+    () => true,
+  );
+}
+
+// Shown on tablets and desktops; on a phone the floating menu button
+// owns the bottom edge (and the drawer holds every one of these links). Sticky rather than fixed, so it centres on the content
 // column and comes to rest above the footer instead of covering it.
 //
 // It never sits over what is being read. It is shown on the opening screen (only while the
@@ -50,6 +53,8 @@ const TOOLS: {
 // tabbing into it.
 export default function QuickDock() {
   const { t } = useLanguage();
+  const pathname = usePathname();
+  const roomy = useWide();
   const [atEnds, setAtEnds] = useState(true);
   const [edge, setEdge] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -92,13 +97,13 @@ export default function QuickDock() {
     };
   }, []);
 
-  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, accent, dividerAfter }) => ({
+  const items: DockItemData[] = TOOLS.map(({ labelKey, href, icon: Icon, dividerAfter }) => ({
     id: href,
     label: t(labelKey),
     href,
-    accent,
     dividerAfter,
-    icon: <Icon size={20} />,
+    isActive: pathname === href || pathname.startsWith(`${href}/`),
+    icon: <Icon size={roomy ? 23 : 21} strokeWidth={1.6} />,
   }));
 
   return (
@@ -107,11 +112,11 @@ export default function QuickDock() {
         data-away={!shown}
         onFocusCapture={() => setFocused(true)}
         onBlurCapture={() => setFocused(false)}
-        className={`pointer-events-none sticky bottom-4 z-30 hidden justify-center transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none lg:flex ${
+        className={`pointer-events-none sticky bottom-4 z-30 hidden justify-center transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none md:flex ${
           shown ? "" : "translate-y-[calc(100%+1.5rem)] opacity-0 [&>nav]:pointer-events-none"
         }`}
       >
-        <MagneticDock items={items} label={t("quickaccess.title")} className="pointer-events-auto" />
+        <MagneticDock items={items} label={t("quickaccess.title")} iconSize={roomy ? 46 : 40} className="pointer-events-auto" />
     </div>
   );
 }
