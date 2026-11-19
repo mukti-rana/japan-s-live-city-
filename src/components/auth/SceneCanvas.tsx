@@ -37,9 +37,7 @@ precision highp float;
 varying vec2 vS;
 uniform sampler2D uImg;
 uniform sampler2D uPlate; // the picture with the trees taken out and the sky behind them filled in
-uniform sampler2D uTree;  // masks: R = tree (branch or blossom), G = sky above the skyline, B = the band of mist over the mountain
-uniform sampler2D uBase;  // the still, smooth colour of the sky and of the mist band, with the cloud detail blurred away
-uniform sampler2D uCloud; // the cloud detail itself (0.5 = none), which is slid across the base
+uniform sampler2D uTree;  // masks: R = tree (branch or blossom), G = sky above the skyline (where the clouds drift)
 uniform float uT;
 uniform vec4 uMap;   // screen -> picture: offset x, offset y, scale x, scale y
 uniform vec4 uSeg[NB];  // bones, in picture-height units with x scaled by the aspect: base x,y and tip x,y
@@ -110,28 +108,13 @@ vec2 cloudLayer(vec2 uv, float t, vec2 scale, float speed, float seed, float lo,
 vec3 cloudsAt(vec2 u, vec3 fallback, float t){
   vec3 m = texture2D(uTree, u).rgb;
   float sky = m.g;
-  float mist = m.b;
-  float k = max(sky, mist);
+  float k = sky;
   if (k < 0.004) return fallback;
-  vec3 base = texture2D(uBase, u).rgb;
   // In the sky the clouds are laid over the picture's own sky as it is; only the mist band is rebuilt from base and detail.
   vec3 col = fallback;
 
-  // The picture's small pink wisps are not drifted in the sky (they read as flying leaves); they only travel in the mist band.
-  if (mist > 0.01) {
-    float T = 45.0;
-    float a = fract(t / T);
-    float b = fract(t / T + 0.5);
-    float w0 = 1.0 - abs(2.0 * a - 1.0);
-    float D = 0.19 * 0.8;
-    vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.02, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.022))) - 0.5) * 0.03;
-    vec3 d0 = (texture2D(uCloud, clamp(u - vec2(1.0, 0.02) * D * a + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
-    vec3 d1 = (texture2D(uCloud, clamp(u - vec2(1.0, 0.02) * D * b + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
-    vec3 mcol = base + mix(d1, d0, w0) * 1.5;
-    float mc = fbm(vec2(u.x * IA * 3.0 - t * 0.02, u.y * 14.0) + vec2(2.0, 7.0));
-    mcol = mix(mcol, vec3(0.97, 0.86, 0.94), smoothstep(0.4, 0.7, mc) * 0.42);
-    col = mix(col, mcol, mist);
-  }
+  // The mist at the mountain's foot is left exactly as it is in the picture (it hugs the slope and looks wrong if it slides); only the
+  // sky above the mountain has moving clouds.
 
   // Clouds in three layers that move at different speeds (the high, small, distant ones slowest; the broad, near ones over the mountain
   // fastest), each lit warm on the side toward the sunset and shaded violet on the far side, so they read as real volume.
@@ -317,7 +300,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       const vs = compile(gl, gl.VERTEX_SHADER, VERT);
       const lite = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
       // The skeleton needs three vectors per bone; a device with fewer uniforms than that keeps the still picture.
-      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 5) return;
+      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 3) return;
       const fsh = compile(gl, gl.FRAGMENT_SHADER, lite ? FRAG.replace("#define OCT 4", "#define OCT 3") : FRAG);
       if (!vs || !fsh) return;
       const prog = gl.createProgram();
@@ -338,7 +321,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       let imgs: HTMLImageElement[];
       try {
         const base = src.replace(/\.webp$/, "");
-        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-masks.webp`), loadImage(`${base}-skybase.webp`), loadImage(`${base}-clouds.webp`)]);
+        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-masks.webp`)]);
       } catch {
         return;
       }
@@ -355,8 +338,6 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       gl.uniform1i(gl.getUniformLocation(prog, "uImg"), 0);
       gl.uniform1i(gl.getUniformLocation(prog, "uPlate"), 1);
       gl.uniform1i(gl.getUniformLocation(prog, "uTree"), 2);
-      gl.uniform1i(gl.getUniformLocation(prog, "uBase"), 3);
-      gl.uniform1i(gl.getUniformLocation(prog, "uCloud"), 4);
       const uT = gl.getUniformLocation(prog, "uT");
       const uMap = gl.getUniformLocation(prog, "uMap");
       // The skeleton: where each bone starts and ends and how far its influence reaches never change; how it is moving does.

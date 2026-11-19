@@ -202,7 +202,7 @@ for (let i = 0; i < N; i++) {
   const x = i % W;
   const y = Math.floor(i / W);
   // clouds start 22-42% across, but beside the upper blossom tips (top left, to about 50% across) not until 52-64%
-  const away = smooth(0.22 * W, 0.42 * W, x) * (1 - (1 - smooth(0.52 * W, 0.64 * W, x)) * (1 - smooth(0.4 * H, 0.5 * H, y)));
+  const away = smooth(0.22 * W, 0.42 * W, x) * (1 - (1 - smooth(0.5 * W, 0.58 * W, x)) * (1 - smooth(0.4 * H, 0.5 * H, y)));
   const notTree = 1 - smooth(0.01, 0.2, treeNear[i]);
   skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away; // (kept clear of the trees: their edges carry the picture's own sky colour)
   mistM[i] = mistRaw[i] * notTree * smooth(0.28 * W, 0.4 * W, x);
@@ -244,8 +244,6 @@ for (let i = 0; i < N; i++) {
 }
 await sharp(out, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 90, effort: 5 }).toFile(OUT);
 await sharp(maskOut, { raw: { width: W, height: H, channels: 3 } }).webp({ lossless: true, effort: 5 }).toFile(OUT_MASK);
-await sharp(baseOut, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 92, effort: 5 }).toFile(OUT_BASE);
-await sharp(detOut, { raw: { width: W, height: H, channels: 3 } }).webp({ lossless: true, effort: 5 }).toFile(OUT_DETAIL);
 console.log("plate, masks, sky base and cloud detail written");
 if (DEBUG) {
   const dm = Buffer.alloc(N * 3);
