@@ -1568,15 +1568,12 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   .wx-card:hover, .wx-card:hover .wx-chip-icon { transform: none; }
 }
 
-/* The dock's sheen (MagneticDock): every so often a faint band of light sweeps across the glass, like light catching a polished surface. */
-.dock-sheen::before {
-  content: "";
-  position: absolute;
-  inset: -20% auto -20% 0;
-  width: 28%;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.09), transparent);
-  transform: translateX(-140%) skewX(-18deg);
-  animation: dock-sheen 8s ease-in-out infinite;
+/* The dock's icons shine (MagneticDock): each icon carries a soft white glow that swells and fades on a slow beat, every icon a little
+   out of step with its neighbour (--i), so a glint seems to travel along the row. Only the icons glow; the glass itself is plain. */
+.dock-glint { animation: dock-glint 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.55s); }
+@keyframes dock-glint {
+  0%, 100% { filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 5px rgba(200, 215, 255, 0.18)); }
+  45% { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 11px rgba(200, 215, 255, 0.75)); }
 }
-@keyframes dock-sheen { 0%, 62% { transform: translateX(-140%) skewX(-18deg); } 100% { transform: translateX(460%) skewX(-18deg); } }
-@media (prefers-reduced-motion: reduce) { .dock-sheen::before { animation: none; display: none; } }
+.group:hover .dock-glint, .group:focus-visible .dock-glint { animation: none; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 13px rgba(220, 230, 255, 0.85)); }
+@media (prefers-reduced-motion: reduce) { .dock-glint { animation: none; filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4)); } }
