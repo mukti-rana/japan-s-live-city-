@@ -2082,5 +2082,16 @@
   "Cycling or exploring on foot": "자전거 타기나 도보 탐방",
   "Short walks and sightseeing": "짧은 산책과 관광",
   "Plan outdoor stops before the rain": "비 오기 전에 야외 일정을 마치세요",
-  "Welcome to Japan.": "일본에 오신 것을 환영합니다."
+  "Welcome to Japan.": "일본에 오신 것을 환영합니다.",
+  "Cold weather": "추운 날씨",
+  "Freezing — cover up and mind the ice": "영하 — 따뜻하게 입고 빙판을 조심하세요",
+  "Cold — keep your hands and neck warm": "추움 — 손과 목을 따뜻하게",
+  "Feels like {t}°C, with the air at {a}°C.": "체감 {t}°C, 기온은 {a}°C입니다.",
+  "Wind of {w} km/h makes it feel colder.": "시속 {w}km의 바람 때문에 더 춥게 느껴집니다.",
+  "Gloves": "장갑",
+  "Warm drink": "따뜻한 음료",
+  "Watch for icy ground": "빙판길 주의",
+  "Rain chance": "강수 확률",
+  "Dry hours": "맑은 시간",
+  "Lowest today": "오늘 최저"
 }

@@ -2111,5 +2111,16 @@
   "Cycling or exploring on foot": "साइकिल चलाना या पैदल घूमना",
   "Short walks and sightseeing": "छोटी सैर और दर्शनीय स्थल",
   "Plan outdoor stops before the rain": "बारिश से पहले बाहर की जगहें घूम लें",
-  "Welcome to Japan.": "जापान में आपका स्वागत है।"
+  "Welcome to Japan.": "जापान में आपका स्वागत है।",
+  "Cold weather": "ठंडा मौसम",
+  "Freezing — cover up and mind the ice": "शून्य से नीचे — अच्छी तरह ढकें और बर्फ से सावधान रहें",
+  "Cold — keep your hands and neck warm": "ठंड — हाथ और गर्दन को गर्म रखें",
+  "Feels like {t}°C, with the air at {a}°C.": "महसूस {t}°C, हवा का तापमान {a}°C।",
+  "Wind of {w} km/h makes it feel colder.": "{w} km/h की हवा से और ठंड लगती है।",
+  "Gloves": "दस्ताने",
+  "Warm drink": "गर्म पेय",
+  "Watch for icy ground": "बर्फीली ज़मीन से सावधान",
+  "Rain chance": "बारिश की संभावना",
+  "Dry hours": "सूखे घंटे",
+  "Lowest today": "आज का न्यूनतम"
 }

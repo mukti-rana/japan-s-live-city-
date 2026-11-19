@@ -2082,5 +2082,16 @@
   "Cycling or exploring on foot": "骑行或徒步游览",
   "Short walks and sightseeing": "短途散步和观光",
   "Plan outdoor stops before the rain": "趁下雨前安排好户外行程",
-  "Welcome to Japan.": "欢迎来到日本。"
+  "Welcome to Japan.": "欢迎来到日本。",
+  "Cold weather": "寒冷天气",
+  "Freezing — cover up and mind the ice": "冰点以下——穿暖些，小心结冰",
+  "Cold — keep your hands and neck warm": "寒冷——注意手和颈部保暖",
+  "Feels like {t}°C, with the air at {a}°C.": "体感{t}°C，气温{a}°C。",
+  "Wind of {w} km/h makes it feel colder.": "{w} km/h的风让人感觉更冷。",
+  "Gloves": "手套",
+  "Warm drink": "热饮",
+  "Watch for icy ground": "小心路面结冰",
+  "Rain chance": "降雨概率",
+  "Dry hours": "无雨小时",
+  "Lowest today": "今日最低"
 }
