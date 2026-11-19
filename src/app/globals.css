@@ -1431,43 +1431,14 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   .lg-art.lg-once { animation: none; opacity: 1; }
 }
 
-/* ── Sign-in scenery (FujiBackdrop, SceneCanvas) ──────────────────────────────────────────────────────────────────────────────
-   The lake, branches and sky are moved by the SceneCanvas shader. The petals and leaves are plain elements, each in three nested
-   layers so its motion never repeats in step: the outer one falls and drifts to the right on the wind, the middle one sways from
-   side to side, the inner one tumbles in 3D. Only transform and opacity animate. */
+/* ── Sign-in scenery (FujiBackdrop, SceneCanvas, PetalField) ────────────────────────────────────────────────────────────────────
+   The lake, trees and sky are moved by the SceneCanvas shader. Petals and leaves are a fixed pool of elements that PetalField moves
+   (transform and opacity only) according to the wind simulation; here is only how one looks. */
 .auth-petals { perspective: 700px; }
-.auth-petal { position: absolute; top: 0; opacity: 0; animation: auth-petal-fall linear infinite; will-change: transform, opacity; }
-.auth-petal.auth-shed { top: auto; animation-name: auth-shed; }
-.auth-petal__sway { display: block; width: 100%; height: 100%; animation: auth-petal-sway ease-in-out infinite alternate; }
-.auth-petal__spin { animation: auth-petal-spin linear infinite; transform-style: preserve-3d; }
-@keyframes auth-petal-fall {
-  0% { opacity: 0; transform: translate3d(0, -8vh, 0); }
-  6% { opacity: 0.95; }
-  94% { opacity: 0.95; }
-  100% { opacity: 0; transform: translate3d(var(--dx), 108vh, 0); }
-}
-@keyframes auth-petal-sway {
-  from { transform: translateX(calc(var(--sw) * -1)) rotate(-14deg); }
-  to { transform: translateX(var(--sw)) rotate(14deg); }
-}
-@keyframes auth-petal-spin {
-  from { transform: rotate3d(1, 0.45, 0.2, 0deg) rotate(0deg); }
-  to { transform: rotate3d(1, 0.45, 0.2, 360deg) rotate(30deg); }
-}
-/* A shed petal waits (unseen) on its branch for most of its cycle, comes loose, and is carried off on the wind in a long, sinking arc. */
-@keyframes auth-shed {
-  0%, 44% { opacity: 0; transform: translate3d(0, 0, 0); }
-  46% { opacity: 0.95; transform: translate3d(0, 0, 0); }
-  62% { transform: translate3d(calc(var(--dx) * 0.28), calc(var(--dy) * 0.06), 0); }
-  80% { transform: translate3d(calc(var(--dx) * 0.62), calc(var(--dy) * 0.38), 0); }
-  94% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate3d(var(--dx), var(--dy), 0); }
-}
-html[data-atm-paused="true"] .auth-petals * { animation-play-state: paused !important; }
-@media (prefers-reduced-motion: reduce) {
-  .auth-petal, .auth-petal__sway, .auth-petal__spin { animation: none !important; }
-  .auth-petal { opacity: 0; }
-}
+.auth-petal { position: absolute; left: 0; top: 0; will-change: transform, opacity; transform-style: preserve-3d; }
+.auth-petal .auth-bit-leaf { display: none; }
+.auth-petal[data-kind="leaf"] .auth-bit-leaf { display: inline; }
+.auth-petal[data-kind="leaf"] .auth-bit-petal { display: none; }
 
 /* ── Sign-in panel and the guest button ───────────────────────────────────────────────────────────────────────────────────────── */
 /* A clear, calm glass: a faint deep-blue tint behind the text keeps it easy to read over the photograph, with a soft light along
