@@ -1,24 +1,16 @@
 import type { Metadata } from "next";
-import { Activity, Waves } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
-import GlassCard from "@/components/ui/GlassCard";
-import { getRecentEarthquakes, type EarthquakeEvent } from "@/lib/services/earthquake";
-import JstTime from "@/components/i18n/JstTime";
+import { getEarthquakeFeed, type QuakeDetail } from "@/lib/services/earthquake";
 import Tx from "@/components/i18n/Tx";
+import EarthquakeDashboard from "@/components/earthquakes/EarthquakeDashboard";
 
 export const metadata: Metadata = {
   title: "Earthquakes — Live City Japan",
-  description: "Recent earthquake activity in Japan, from the JMA via P2P Quake.",
+  description: "Recent earthquake activity in Japan, from the JMA via P2P Quake: a live map, every earthquake's details, and what to do.",
 };
 
-function severity(maxIntensity: string): "mint" | "gold" | "sakura" {
-  if (["5-", "5+", "6-", "6+", "7"].includes(maxIntensity)) return "sakura";
-  if (["3", "4"].includes(maxIntensity)) return "gold";
-  return "mint";
-}
-
 export default async function EarthquakesPage() {
-  const earthquakes = await getRecentEarthquakes(10).catch<EarthquakeEvent[] | null>(() => null);
+  const quakes = await getEarthquakeFeed().catch<QuakeDetail[] | null>(() => null);
 
   return (
     <div className="flex flex-col gap-5">
@@ -36,71 +28,19 @@ export default async function EarthquakesPage() {
         </div>
       </Reveal>
 
-      <Reveal delay={0.08}>
-        <GlassCard className="p-5">
-          {!earthquakes ? (
-            <p className="text-sm text-sakura">
-              <Tx en="Live earthquake data couldn't be loaded right now. Please try again shortly." />
-            </p>
-          ) : earthquakes.length === 0 ? (
-            <p className="text-sm text-muted">
-              <Tx en="No recent significant earthquakes." />
-            </p>
-          ) : (
-            <ul className="flex flex-col">
-              {earthquakes.map((quake) => {
-                const accent = severity(quake.maxIntensity);
-                return (
-                  <li
-                    key={quake.id}
-                    className="flex items-center gap-4 border-b border-glass-border py-3.5 last:border-0"
-                  >
-                    <div
-                      className={`flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl text-center ${
-                        accent === "sakura"
-                          ? "bg-sakura/15 text-sakura"
-                          : accent === "gold"
-                            ? "bg-gold/15 text-gold"
-                            : "bg-mint/15 text-mint"
-                      }`}
-                    >
-                      <span className="text-xs leading-none"><Tx en="Shindo" /></span>
-                      <span className="text-sm font-bold leading-tight">
-                        {quake.maxIntensity}
-                      </span>
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-jp text-sm font-medium text-foreground">
-                        {quake.location}
-                      </p>
-                      <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted">
-                        <span className="flex items-center gap-1">
-                          <Activity size={11} />
-                          M{quake.magnitude.toFixed(1)}
-                        </span>
-                        <span><Tx en="Depth" /> {quake.depthKm} km</span>
-                        <span className="flex items-center gap-1">
-                          <Waves size={11} />
-                          <Tx en={quake.tsunami} />
-                        </span>
-                      </p>
-                    </div>
-
-                    <span className="shrink-0 text-xs text-muted">
-                      <JstTime raw={quake.time} />
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-
-          <p className="mt-4 text-xs text-muted">
-            <Tx en="Source: P2P Quake (relaying JMA data). Updated every few minutes." />
-          </p>
-        </GlassCard>
-      </Reveal>
+      {!quakes ? (
+        <p className="text-sm text-sakura">
+          <Tx en="Live earthquake data couldn't be loaded right now. Please try again shortly." />
+        </p>
+      ) : quakes.length === 0 ? (
+        <p className="text-sm text-muted">
+          <Tx en="No recent significant earthquakes." />
+        </p>
+      ) : (
+        <Reveal delay={0.08}>
+          <EarthquakeDashboard initial={quakes} />
+        </Reveal>
+      )}
     </div>
   );
 }

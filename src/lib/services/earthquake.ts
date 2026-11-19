@@ -163,3 +163,78 @@ export async function getQuakeFeed(opts: { prefJa?: string | null; lat?: number 
   }
   return { mine, latest: items[0] ? toEvent(items[0]) : null };
 }
+
+// ── The full earthquake feed (the Earthquakes page) ─────────────────────────
+// Everything the JMA bulletin says about each recent earthquake: where it began (with coordinates), how strong and how deep, the tsunami
+// status, who issued the report and when, any remark, and every place it was felt with the shindo there. Two pages of 100 reach back about
+// two weeks. Nothing is estimated or invented.
+
+export interface FeltPlace {
+  pref: string;
+  addr: string;
+  scale: string; // shindo label ("1".."7")
+  scaleCode: number; // P2P Quake's scale code (10..70)
+}
+
+export interface QuakeDetail extends EarthquakeEvent {
+  latitude: number | null;
+  longitude: number | null;
+  scaleCode: number; // the strongest shindo, as P2P Quake's code (10..70)
+  foreignTsunami: string;
+  issuedAt: string; // when the bulletin was issued, JMA's format
+  issuedBy: string; // "JMA" for 気象庁
+  reportType: string; // P2P Quake's report type: ScalePrompt, Destination, ScaleAndDestination, DetailScale, Foreign, Other
+  comment: string;
+  felt: FeltPlace[];
+}
+
+interface P2PDetail {
+  id: string;
+  comments?: { freeFormComment?: string };
+  earthquake: { hypocenter: { name: string; magnitude: number; depth: number; latitude?: number; longitude?: number }; maxScale: number; domesticTsunami: string; foreignTsunami?: string; time: string };
+  issue?: { source?: string; time?: string; type?: string };
+  points?: { pref: string; addr: string; scale: number }[];
+}
+
+export async function getEarthquakeFeed(): Promise<QuakeDetail[]> {
+  const pages = await Promise.all(
+    [0, 100].map((offset) =>
+      fetch(`https://api.p2pquake.net/v2/history?codes=551&limit=100&offset=${offset}`, { next: { revalidate: 120 } }).then((r) => {
+        if (!r.ok) throw new Error(`P2P Quake API responded with ${r.status}`);
+        return r.json() as Promise<P2PDetail[]>;
+      }),
+    ),
+  ).catch((e) => {
+    throw e;
+  });
+  const seen = new Set<string>();
+  return pages
+    .flat()
+    .filter((i) => i.earthquake?.hypocenter?.magnitude > 0 && i.earthquake.hypocenter.name && i.earthquake.maxScale >= 0)
+    .filter((i) => {
+      const key = `${i.earthquake.time}|${i.earthquake.hypocenter.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => jst(b.earthquake.time) - jst(a.earthquake.time))
+    .map((i) => ({
+      id: i.id,
+      location: i.earthquake.hypocenter.name,
+      magnitude: i.earthquake.hypocenter.magnitude,
+      depthKm: i.earthquake.hypocenter.depth,
+      maxIntensity: SHINDO_LABELS[i.earthquake.maxScale] ?? "—",
+      tsunami: TSUNAMI_LABELS[i.earthquake.domesticTsunami] ?? i.earthquake.domesticTsunami,
+      tsunamiCode: i.earthquake.domesticTsunami,
+      time: i.earthquake.time,
+      latitude: i.earthquake.hypocenter.latitude ?? null,
+      longitude: i.earthquake.hypocenter.longitude ?? null,
+      scaleCode: i.earthquake.maxScale,
+      foreignTsunami: i.earthquake.foreignTsunami ?? "Unknown",
+      issuedAt: i.issue?.time ?? i.earthquake.time,
+      issuedBy: i.issue?.source === "気象庁" ? "JMA" : (i.issue?.source ?? "JMA"),
+      reportType: i.issue?.type ?? "Other",
+      comment: i.comments?.freeFormComment ?? "",
+      felt: (i.points ?? []).filter((p) => p.pref).map((p) => ({ pref: p.pref, addr: p.addr, scale: SHINDO_LABELS[p.scale] ?? "—", scaleCode: p.scale })),
+    }));
+}

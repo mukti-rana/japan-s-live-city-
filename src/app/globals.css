@@ -1577,3 +1577,11 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 }
 .group:hover .dock-glint, .group:focus-visible .dock-glint { animation: none; filter: drop-shadow(0 0 4px rgba(var(--gc, 220, 230, 255), 1)) drop-shadow(0 0 14px rgba(var(--gc, 220, 230, 255), 0.95)); }
 @media (prefers-reduced-motion: reduce) { .dock-glint { animation: none; filter: drop-shadow(0 0 3px rgba(var(--gc, 255, 255, 255), 0.5)); } }
+
+/* ── Earthquakes page (EarthquakeMap) ── a ring that pulses out from the newest or the selected epicentre. */
+.eq-ring { display: block; border-radius: 9999px; border: 2px solid var(--c); box-shadow: 0 0 14px 1px var(--c); animation: eq-ring 2.2s ease-out infinite; }
+.eq-ring--still { animation: none; opacity: 0.8; }
+@keyframes eq-ring { 0% { transform: scale(0.35); opacity: 0.95; } 100% { transform: scale(1.15); opacity: 0; } }
+.eq-map .leaflet-tooltip { background: rgba(8, 9, 14, 0.92); border: 1px solid rgba(255, 255, 255, 0.14); color: #fff; border-radius: 10px; padding: 4px 9px; font-size: 12px; box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.7); }
+.eq-map .leaflet-tooltip-top::before { border-top-color: rgba(8, 9, 14, 0.92); }
+@media (prefers-reduced-motion: reduce) { .eq-ring { animation: none; opacity: 0.8; } }
