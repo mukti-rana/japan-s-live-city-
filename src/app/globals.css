@@ -1572,8 +1572,8 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
    out of step with its neighbour (--i), so a glint seems to travel along the row. Only the icons glow; the glass itself is plain. */
 .dock-glint { animation: dock-glint 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.55s); }
 @keyframes dock-glint {
-  0%, 100% { filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.28)) drop-shadow(0 0 5px rgba(200, 215, 255, 0.18)); }
-  45% { filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 11px rgba(200, 215, 255, 0.75)); }
+  0%, 100% { filter: drop-shadow(0 0 1.5px rgba(var(--gc, 200, 215, 255), 0.4)) drop-shadow(0 0 5px rgba(var(--gc, 200, 215, 255), 0.28)); }
+  45% { filter: drop-shadow(0 0 3px rgba(var(--gc, 200, 215, 255), 1)) drop-shadow(0 0 12px rgba(var(--gc, 200, 215, 255), 0.85)); }
 }
-.group:hover .dock-glint, .group:focus-visible .dock-glint { animation: none; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 13px rgba(220, 230, 255, 0.85)); }
-@media (prefers-reduced-motion: reduce) { .dock-glint { animation: none; filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4)); } }
+.group:hover .dock-glint, .group:focus-visible .dock-glint { animation: none; filter: drop-shadow(0 0 4px rgba(var(--gc, 220, 230, 255), 1)) drop-shadow(0 0 14px rgba(var(--gc, 220, 230, 255), 0.95)); }
+@media (prefers-reduced-motion: reduce) { .dock-glint { animation: none; filter: drop-shadow(0 0 3px rgba(var(--gc, 255, 255, 255), 0.5)); } }

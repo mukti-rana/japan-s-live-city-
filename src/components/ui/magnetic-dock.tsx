@@ -140,7 +140,7 @@ function DockItem({
         className={`relative flex h-full w-full items-center justify-center rounded-2xl transition-[color,background-color,filter] duration-300 ${
           item.isActive
             ? "bg-white/[0.09] text-white [filter:drop-shadow(0_0_8px_rgba(190,215,255,0.45))]"
-            : "text-[#c9ccd4] group-hover:text-white group-focus-visible:text-white"
+            : "text-[var(--ic,#c9ccd4)] group-hover:text-[var(--ic-hot,#ffffff)] group-focus-visible:text-[var(--ic-hot,#ffffff)]"
         }`}
       >
         {/* On hover: a soft glow in the tool's own colour rises behind the icon. */}
@@ -249,7 +249,7 @@ export function MagneticDock({
         <Fragment key={item.id}>
           <motion.span
             className="relative flex"
-            style={{ "--i": index } as CSSProperties}
+            style={{ "--i": index, "--gc": (item.glow ?? [190, 200, 255]).join(","), "--ic": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 62%, #ffffff)`, "--ic-hot": `color-mix(in srgb, rgb(${(item.glow ?? [190, 200, 255]).join(",")}) 38%, #ffffff)` } as CSSProperties}
             initial={reducedMotion ? false : { opacity: 0, y: 16, scale: 0.85 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.15 + index * 0.05, type: "spring", stiffness: 260, damping: 20 }}
