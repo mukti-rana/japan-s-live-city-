@@ -27,7 +27,7 @@ const CLASS = [
 ] as const;
 
 // name, parent (or null: fixed to the world), t = where along the parent it grows from (0 base .. 1 tip), start (only for roots), end, class, radius of influence (px).
-type Def = { n: string; p: string | null; t?: number; b?: [number, number]; e: [number, number]; c: 0 | 1 | 2 | 3; r: number };
+type Def = { n: string; p: string | null; t?: number; b?: [number, number]; e: [number, number]; c: 0 | 1 | 2 | 3; r: number; g?: number };
 const DEFS: Def[] = [
   // The thick trunk at the top left
   { n: "k0", p: null, b: [92, 0], e: [66, 58], c: 0, r: 26 },
@@ -63,18 +63,40 @@ const DEFS: Def[] = [
   { n: "r3", p: "r2", t: 1, e: [643, 72], c: 3, r: 40 },
   { n: "r4", p: "r3", t: 1, e: [792, 70], c: 3, r: 46 },
   { n: "w0", p: "r3", t: 0.35, e: [634, 110], c: 3, r: 38 },
-  // The blossom trees along the shore: a trunk (stiff) and a crown that sways on it
-  { n: "g0", p: null, b: [60, 612], e: [70, 520], c: 0, r: 46 },
-  { n: "g0c", p: "g0", t: 1, e: [82, 400], c: 1, r: 96 },
-  { n: "g1", p: null, b: [172, 604], e: [186, 522], c: 0, r: 46 },
-  { n: "g1c", p: "g1", t: 1, e: [192, 430], c: 1, r: 90 },
-  { n: "g2", p: null, b: [306, 606], e: [312, 546], c: 0, r: 40 },
-  { n: "g2c", p: "g2", t: 1, e: [320, 474], c: 1, r: 84 },
-  { n: "g3", p: null, b: [440, 606], e: [448, 562], c: 0, r: 36 },
-  { n: "g3c", p: "g3", t: 1, e: [454, 512], c: 1, r: 70 },
+  // The grove of blossom trees along the shore, five trees (and a little one) from left to right, each with a stiff trunk, a crown on
+  // it and branches of the crown that carry the masses of blossom, so the grove sways in waves rather than as one block
+  { n: "ga0", p: null, b: [58, 598], e: [66, 540], c: 0, r: 44 },
+  { n: "ga1", p: "ga0", t: 1, e: [80, 470], c: 1, r: 72, g: 3.8 },
+  { n: "ga2", p: "ga1", t: 1, e: [40, 400], c: 2, r: 64, g: 3.2 },
+  { n: "ga3", p: "ga1", t: 1, e: [152, 432], c: 2, r: 64, g: 4.4 },
+  { n: "ga4", p: "ga0", t: 1, e: [142, 522], c: 1, r: 66, g: 3.8 },
+  { n: "ga5", p: "ga4", t: 1, e: [214, 506], c: 2, r: 62, g: 4.4 },
+  { n: "gb0", p: null, b: [190, 602], e: [196, 548], c: 0, r: 40 },
+  { n: "gb1", p: "gb0", t: 1, e: [206, 490], c: 1, r: 68, g: 3.8 },
+  { n: "gb2", p: "gb1", t: 1, e: [160, 442], c: 2, r: 60, g: 4.4 },
+  { n: "gb3", p: "gb1", t: 1, e: [264, 466], c: 2, r: 60, g: 4.4 },
+  { n: "gb4", p: "gb0", t: 1, e: [262, 536], c: 2, r: 58, g: 4.4 },
+  { n: "gc0", p: null, b: [330, 606], e: [336, 556], c: 0, r: 36 },
+  { n: "gc1", p: "gc0", t: 1, e: [346, 505], c: 1, r: 62, g: 3.8 },
+  { n: "gc2", p: "gc1", t: 1, e: [300, 470], c: 2, r: 56, g: 4.4 },
+  { n: "gc3", p: "gc1", t: 1, e: [412, 490], c: 2, r: 58, g: 4.4 },
+  { n: "gc4", p: "gc0", t: 1, e: [402, 546], c: 2, r: 54, g: 4.4 },
+  { n: "gd0", p: null, b: [450, 606], e: [456, 562], c: 0, r: 34 },
+  { n: "gd1", p: "gd0", t: 1, e: [470, 520], c: 1, r: 56, g: 3.8 },
+  { n: "gd2", p: "gd1", t: 1, e: [430, 488], c: 2, r: 52, g: 4.4 },
+  { n: "gd3", p: "gd1", t: 1, e: [532, 505], c: 2, r: 54, g: 4.4 },
+  { n: "gd4", p: "gd0", t: 1, e: [522, 556], c: 2, r: 50, g: 4.4 },
+  { n: "ge0", p: null, b: [610, 592], e: [606, 545], c: 0, r: 26 },
+  { n: "ge1", p: "ge0", t: 1, e: [600, 510], c: 1, r: 44, g: 3.8 },
+  { n: "ge2", p: "ge1", t: 1, e: [568, 488], c: 3, r: 42, g: 4.6 },
+  { n: "ge3", p: "ge1", t: 1, e: [642, 494], c: 3, r: 42, g: 4.6 },
+  { n: "ge4", p: "ge0", t: 1, e: [652, 550], c: 3, r: 38, g: 4.6 },
+  { n: "gf0", p: null, b: [664, 592], e: [666, 556], c: 0, r: 22 },
+  { n: "gf1", p: "gf0", t: 1, e: [672, 522], c: 2, r: 40, g: 4.4 },
+  { n: "gf2", p: "gf1", t: 1, e: [700, 506], c: 3, r: 38, g: 4.6 },
 ];
 
-export type Bone = { n: string; parent: number; t: number; bx: number; by: number; ex: number; ey: number; cls: 0 | 1 | 2 | 3; rad: number };
+export type Bone = { n: string; parent: number; t: number; bx: number; by: number; ex: number; ey: number; cls: 0 | 1 | 2 | 3; rad: number; gain: number };
 
 // In the aspect-corrected space (x multiplied by IMG_ASPECT, units of picture heights), so distances and rotations are true.
 function build(): Bone[] {
@@ -92,7 +114,7 @@ function build(): Bone[] {
     }
     const e = k(d.e[0], d.e[1]);
     idx.set(d.n, out.length);
-    out.push({ n: d.n, parent, t: d.t ?? 1, bx: b[0], by: b[1], ex: e[0], ey: e[1], cls: d.c, rad: d.r / IMG_H });
+    out.push({ n: d.n, parent, t: d.t ?? 1, bx: b[0], by: b[1], ex: e[0], ey: e[1], cls: d.c, rad: d.r / IMG_H, gain: d.g ?? 1 });
   }
   return out;
 }
@@ -180,7 +202,7 @@ export class TreeSim {
       strengthSum += Math.hypot(wx, wy);
       // Wind across the bone bends it; some of it is local turbulence that differs from bone to bone.
       const across = wx * -dy + wy * dx + 0.06 * Math.sin(t * (0.9 + (i % 7) * 0.23) + this.phase[i]);
-      const torque = cl.susc * across * (0.7 + len * 2.2) * 0.9;
+      const torque = cl.susc * b.gain * across * (0.7 + len * 2.2) * 0.9;
       const w0 = cl.w0;
       const acc = torque * w0 * w0 * 0.07 - w0 * w0 * this.theta[i] - 2 * cl.damp * w0 * this.omega[i];
       this.omega[i] += acc * dt;

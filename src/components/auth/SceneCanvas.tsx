@@ -38,9 +38,8 @@ uniform sampler2D uTree;  // white where the picture is tree (branch or blossom)
 uniform float uT;
 uniform vec4 uMap;   // screen -> picture: offset x, offset y, scale x, scale y
 uniform vec4 uSeg[NB];  // bones, in picture-height units with x scaled by the aspect: base x,y and tip x,y
-uniform float uRad[NB]; // how far each bone's influence reaches
+uniform vec4 uRS[NB];   // per bone: how far its influence reaches (x), and how fast its tip is moving (y)
 uniform vec4 uXf[NB];   // each bone's current motion: how far its base has been carried (x,y), cos and sin of its total rotation
-uniform float uSpd[NB]; // how fast each bone's tip is moving
 const float IA = 1.7768;
 #define OCT 4
 
@@ -70,7 +69,7 @@ vec2 skin(vec2 P, out float act, out float cover){
     vec2 ab = s.zw - a;
     float h = clamp(dot(P - a, ab) / dot(ab, ab), 0.0, 1.0);
     vec2 q = P - a - ab * h;
-    float rr = uRad[i];
+    float rr = uRS[i].x;
     float d2 = dot(q, q) / (rr * rr);
     if (d2 > 9.0) continue;
     float w = exp(-d2);
@@ -79,7 +78,7 @@ vec2 skin(vec2 P, out float act, out float cover){
     vec2 rot = vec2(x.z * rel.x - x.w * rel.y, x.w * rel.x + x.z * rel.y);
     sum += w * (x.xy + rot - rel);
     wsum += w;
-    act += w * uSpd[i];
+    act += w * uRS[i].y;
   }
   cover = clamp(wsum, 0.0, 1.0);
   act /= wsum + 0.03;
@@ -300,15 +299,14 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       // The skeleton: where each bone starts and ends and how far its influence reaches never change; how it is moving does.
       const sim = sharedSim();
       const seg = new Float32Array(BONE_COUNT * 4);
-      const rad = new Float32Array(BONE_COUNT);
+      const rs = new Float32Array(BONE_COUNT * 4); // radius (fixed) and speed (updated every frame) of each bone
       BONES.forEach((b, i) => {
         seg.set([b.bx, b.by, b.ex, b.ey], i * 4);
-        rad[i] = b.rad;
+        rs[i * 4] = b.rad;
       });
       gl.uniform4fv(gl.getUniformLocation(prog, "uSeg"), seg);
-      gl.uniform1fv(gl.getUniformLocation(prog, "uRad"), rad);
       const uXf = gl.getUniformLocation(prog, "uXf");
-      const uSpd = gl.getUniformLocation(prog, "uSpd");
+      const uRS = gl.getUniformLocation(prog, "uRS");
 
       const small = lite;
       const fps = small ? 30 : 60;
@@ -342,7 +340,8 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
         gl.uniform1f(uT, ((now - start) / 1000) % 3600);
         sim.step(now / 1000);
         gl.uniform4fv(uXf, sim.xf);
-        gl.uniform1fv(uSpd, sim.speed);
+        for (let i = 0; i < BONE_COUNT; i++) rs[i * 4 + 1] = sim.speed[i];
+        gl.uniform4fv(uRS, rs);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         if (first) {
           first = false;

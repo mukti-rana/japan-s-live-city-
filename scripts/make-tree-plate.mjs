@@ -88,7 +88,7 @@ for (let i = 0; i < N; i++) detail[i] = Math.sqrt(Math.max(0, m2[i] - m1[i] * m1
 // shore). Everything outside them is sky, mountain or water and is never touched. The outlines are softened so the edge has no seam.
 const OUTLINES = [
   [[0, 0], [830, 0], [830, 125], [690, 150], [665, 215], [675, 325], [520, 335], [430, 305], [380, 292], [345, 326], [330, 380], [250, 395], [160, 395], [0, 430]],
-  [[0, 330], [150, 360], [262, 372], [335, 432], [425, 470], [525, 496], [625, 516], [705, 562], [725, 612], [0, 640]],
+  [[0, 330], [150, 360], [250, 372], [262, 404], [330, 400], [420, 425], [470, 462], [525, 490], [625, 512], [705, 556], [725, 612], [0, 640]],
 ];
 const zoneMask = new Float32Array(N);
 for (const poly of OUTLINES) {
