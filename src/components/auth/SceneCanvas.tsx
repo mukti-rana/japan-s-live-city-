@@ -19,8 +19,9 @@ import { BONES, BONE_COUNT, sharedSim } from "@/components/auth/treeRig";
 //    wind simulation (breeze, random gusts sweeping in from the left, springs that lean, overshoot and settle), and every pixel near a
 //    branch moves with that branch. Thick limbs stay almost still; thin branches give; twigs swing most and a little late; the blossom
 //    and leaves go wherever their twig goes and shiver as it moves.
-//  - The SKY at the right drifts as a flow (two copies of the sky sliding and cross-fading), so the clouds travel instead of wobbling,
-//    and the mist round the foot of the mountain slowly changes shape.
+//  - The CLOUDS travel. The sky and the band of mist over the mountain are split (scripts/make-tree-plate.mjs) into a smooth, still base and the
+//    cloud detail; the detail drifts through the base along the wind (higher clouds faster, mist slowest, reshaping as it goes, passing behind
+//    the mountain's outline) while the sunset glow and the blue stay put.
 //  - The LIGHT breathes, very slowly.
 //
 // The petals are separate (PetalField), lifted by the same gusts. This is drawn at the screen's own resolution (less on phones),
@@ -34,7 +35,9 @@ precision highp float;
 varying vec2 vS;
 uniform sampler2D uImg;
 uniform sampler2D uPlate; // the picture with the trees taken out and the sky behind them filled in
-uniform sampler2D uTree;  // white where the picture is tree (branch or blossom), black where it is sky
+uniform sampler2D uTree;  // masks: R = tree (branch or blossom), G = sky above the skyline, B = the band of mist over the mountain
+uniform sampler2D uBase;  // the still, smooth colour of the sky and of the mist band, with the cloud detail blurred away
+uniform sampler2D uCloud; // the cloud detail itself (0.5 = none), which is slid across the base
 uniform float uT;
 uniform vec4 uMap;   // screen -> picture: offset x, offset y, scale x, scale y
 uniform vec4 uSeg[NB];  // bones, in picture-height units with x scaled by the aspect: base x,y and tip x,y
@@ -83,6 +86,30 @@ vec2 skin(vec2 P, out float act, out float cover){
   cover = clamp(wsum, 0.0, 1.0);
   act /= wsum + 0.03;
   return sum / (wsum + 0.03);
+}
+
+// The clouds: the smooth sky stays where it is and the cloud detail drifts through it, so the sunset and the blue never move but the
+// clouds travel, as real ones do. Two copies of the detail, half a cycle apart, slide along the wind and cross-fade so the loop never
+// shows; the high sky travels a little faster than the low sky, the mist more slowly still, and a slow noise reshapes the clouds as
+// they go. Clouds are cut off by the mountain's outline (they pass behind it) because the mask is the sky only.
+vec3 cloudsAt(vec2 u, vec3 fallback, float t){
+  vec3 m = texture2D(uTree, u).rgb;
+  float sky = m.g;
+  float mist = m.b;
+  float k = max(sky, mist);
+  if (k < 0.004) return fallback;
+  float spd = mix(mix(1.3, 0.65, smoothstep(0.04, 0.46, u.y)), 0.4, mist);
+  float T = 80.0;
+  float a = fract(t / T);
+  float b = fract(t / T + 0.5);
+  float w0 = 1.0 - abs(2.0 * a - 1.0);
+  vec2 dir = vec2(1.0, 0.025);
+  float D = 0.13 * spd;
+  vec2 wob = (vec2(fbm(u * 3.0 + vec2(t * 0.012, 0.0)), fbm(u * 3.0 + vec2(5.0, -t * 0.014))) - 0.5) * 0.024;
+  vec3 d0 = (texture2D(uCloud, clamp(u - dir * D * a + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
+  vec3 d1 = (texture2D(uCloud, clamp(u - dir * D * b + wob, 0.0, 1.0)).rgb - 0.5) * 0.8;
+  vec3 col = texture2D(uBase, u).rgb + mix(d1, d0, w0);
+  return mix(fallback, col, k);
 }
 
 void main(){
@@ -176,28 +203,16 @@ void main(){
     dTree += (n1 * 0.0013 + n2 * 0.0006) * (0.25 + 1.2 * gust) * cover * ground * pagoda;
   }
 
-  // The sky at the right drifts as a flow: two copies of the picture slide slowly to the right and cross-fade, so the clouds
-  // travel instead of wobbling; the mist round the foot of the mountain flows and changes shape.
-  float edgeR = 0.27 + (u.x - 0.565) * 0.52;
-  float sky = smoothstep(0.6, 0.68, u.x) * smoothstep(edgeR - 0.01, edgeR - 0.06, u.y);
-  float band = smoothstep(0.4, 0.46, u.y) * smoothstep(0.6, 0.54, u.y);
-  d += band * smoothstep(0.44, 0.5, u.x) * vec2(fbm(vec2(u.x * 2.0 + t * 0.018, u.y * 9.0)) - 0.5, 0.0) * 0.004;
-
   vec2 p = clamp(u + d, 0.0, 1.0);
   if (lake) p.y = max(p.y, waterline(p.x) + 0.002);
   vec3 rgb = texture2D(uImg, p).rgb;
   if (treeZone) {
+    // Behind the tree: the still sky plate, with the drifting clouds in it where there are clouds.
     vec2 q = clamp(u + dTree, 0.0, 1.0);
     float a = texture2D(uTree, q).r;
-    rgb = mix(texture2D(uPlate, u).rgb, texture2D(uImg, q).rgb, a);
-  }
-  if (sky > 0.001) {
-    float a = fract(t / 55.0);
-    float b = fract(t / 55.0 + 0.5);
-    vec3 c0 = texture2D(uImg, clamp(p - vec2(0.03 * a, 0.0), 0.0, 1.0)).rgb;
-    vec3 c1 = texture2D(uImg, clamp(p - vec2(0.03 * b, 0.0), 0.0, 1.0)).rgb;
-    float w0 = 1.0 - abs(2.0 * a - 1.0);
-    rgb = mix(rgb, c0 * w0 + c1 * (1.0 - w0), sky);
+    rgb = mix(cloudsAt(u, texture2D(uPlate, u).rgb, t), texture2D(uImg, q).rgb, a);
+  } else if (!lake) {
+    rgb = cloudsAt(u, rgb, t);
   }
 
   if (lake) {
@@ -261,7 +276,7 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       const vs = compile(gl, gl.VERTEX_SHADER, VERT);
       const lite = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 700;
       // The skeleton needs three vectors per bone; a device with fewer uniforms than that keeps the still picture.
-      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 3) return;
+      if ((gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS) as number) < BONE_COUNT * 3 + 24 || (gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS) as number) < 5) return;
       const fsh = compile(gl, gl.FRAGMENT_SHADER, lite ? FRAG.replace("#define OCT 4", "#define OCT 3") : FRAG);
       if (!vs || !fsh) return;
       const prog = gl.createProgram();
@@ -278,11 +293,11 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       gl.enableVertexAttribArray(loc);
       gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-      // The picture, the sky plate (the picture without the trees) and the tree mask. If any is missing the still picture stays.
+      // The picture, the sky plate (the picture without the trees), the masks, the sky base and the cloud detail. If any is missing the still picture stays.
       let imgs: HTMLImageElement[];
       try {
         const base = src.replace(/\.webp$/, "");
-        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-tree.webp`)]);
+        imgs = await Promise.all([loadImage(src), loadImage(`${base}-plate.webp`), loadImage(`${base}-masks.webp`), loadImage(`${base}-skybase.webp`), loadImage(`${base}-clouds.webp`)]);
       } catch {
         return;
       }
@@ -299,6 +314,8 @@ export default function SceneCanvas({ src, anchor = [0.4, 0.5] }: { src: string;
       gl.uniform1i(gl.getUniformLocation(prog, "uImg"), 0);
       gl.uniform1i(gl.getUniformLocation(prog, "uPlate"), 1);
       gl.uniform1i(gl.getUniformLocation(prog, "uTree"), 2);
+      gl.uniform1i(gl.getUniformLocation(prog, "uBase"), 3);
+      gl.uniform1i(gl.getUniformLocation(prog, "uCloud"), 4);
       const uT = gl.getUniformLocation(prog, "uT");
       const uMap = gl.getUniformLocation(prog, "uMap");
       // The skeleton: where each bone starts and ends and how far its influence reaches never change; how it is moving does.

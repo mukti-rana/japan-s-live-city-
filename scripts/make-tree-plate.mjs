@@ -8,8 +8,16 @@
 // deformed by the wind simulation and drawn over the still plate. The mask separates tree from sky by what a tree looks like next to a
 // smooth dusk sky: it is dark, or it is finely detailed, or it is the saturated magenta of the blossom; the sky behind is then
 // filled from the sky around it, repeatedly blurring the known sky into the gaps at wider and wider scales (a smooth sunset needs
-// nothing cleverer). Output: fuji-sakura-dusk-plate.webp (the sky plate) and fuji-sakura-dusk-tree.webp (the tree mask, white = tree),
-// both opaque, because browsers throw away the colour of fully transparent pixels and the plate needs the sky's colour everywhere.
+// nothing cleverer).
+//
+// The same script also separates the CLOUDS from the sky they float in, so the clouds (and the mist round Mount Fuji) can drift: for
+// the sky above the mountain's skyline, and for the band of mist over its flank, it splits the picture into a smooth, still base (the
+// colour of the sky with the cloud detail blurred away) and the cloud detail itself (the picture minus that base), which the shader
+// slides across the base. So the sunset glow and the blue stay where they are while the clouds travel through them.
+//
+// Output (all opaque): fuji-sakura-dusk-plate.webp (the sky behind the trees), fuji-sakura-dusk-masks.webp (R = tree, G = sky,
+// B = mist band; white = yes), fuji-sakura-dusk-skybase.webp (the smooth base) and fuji-sakura-dusk-clouds.webp (the cloud detail,
+// 0.5 grey = none), all opaque, because browsers throw away the colour of fully transparent pixels and the plate needs the sky's colour everywhere.
 // (`sharp` is already installed because Next.js uses it.)
 
 import sharp from "sharp";
@@ -17,7 +25,9 @@ import path from "node:path";
 
 const SRC = path.resolve("public/images/login/fuji-sakura-dusk.webp");
 const OUT = path.resolve("public/images/login/fuji-sakura-dusk-plate.webp");
-const OUT_MASK = path.resolve("public/images/login/fuji-sakura-dusk-tree.webp");
+const OUT_MASK = path.resolve("public/images/login/fuji-sakura-dusk-masks.webp");
+const OUT_BASE = path.resolve("public/images/login/fuji-sakura-dusk-skybase.webp");
+const OUT_DETAIL = path.resolve("public/images/login/fuji-sakura-dusk-clouds.webp");
 const DEBUG = process.argv.includes("--debug");
 
 const { data, info } = await sharp(SRC).removeAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -149,18 +159,94 @@ for (const r of [5, 9, 16, 28, 48, 80, 130, 210, 340]) {
 }
 // Where the sky was already known (no tree) the plate is the picture itself.
 const out = Buffer.alloc(N * 3);
-const maskOut = Buffer.alloc(N * 3);
 for (let i = 0; i < N; i++) {
   const k = known[i];
-  for (let c = 0; c < 3; c++) {
-    out[i * 3 + c] = Math.round(255 * Math.min(1, Math.max(0, rgb[i * 3 + c] * k + plate[i * 3 + c] * (1 - k))));
-    maskOut[i * 3 + c] = Math.round(255 * Math.min(1, Math.max(0, tree[i])));
+  for (let c = 0; c < 3; c++) out[i * 3 + c] = Math.round(255 * Math.min(1, Math.max(0, rgb[i * 3 + c] * k + plate[i * 3 + c] * (1 - k))));
+}
+
+// ── Clouds ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+function rasterPoly(poly) {
+  const m = new Float32Array(N);
+  for (let y = 0; y < H; y++) {
+    const xs = [];
+    for (let i = 0; i < poly.length; i++) {
+      const [x1, y1] = poly[i];
+      const [x2, y2] = poly[(i + 1) % poly.length];
+      if ((y1 <= y && y2 > y) || (y2 <= y && y1 > y)) xs.push(x1 + ((y - y1) / (y2 - y1)) * (x2 - x1));
+    }
+    xs.sort((a, b) => a - b);
+    for (let k = 0; k + 1 < xs.length; k += 2) for (let x = Math.max(0, Math.ceil(xs[k])); x <= Math.min(W - 1, Math.floor(xs[k + 1])); x++) m[y * W + x] = 1;
   }
+  return m;
+}
+// The sky is everything above the skyline (Mount Fuji's outline, then the far hills), found by walking down each column of the picture from
+// the sky until the colour changes to the mountain's, then checked by eye over the picture and drawn 14 px inside the sky so no mountain is ever taken for cloud. The sun and its glow are
+// left out (they must not drift), and so are the trees.
+const SKYLINE = [[0, 455], [380, 451], [428, 445], [476, 433], [524, 422], [572, 408], [620, 391], [668, 374], [716, 359], [764, 336], [812, 305], [860, 280], [908, 259], [956, 253], [1004, 261], [1052, 281], [1060, 283], [1148, 318], [1244, 364], [1340, 391], [1388, 400], [1436, 411], [1484, 420], [1532, 427], [1580, 428], [1672, 437]];
+const skyPoly = [[0, 0], [W, 0], ...[...SKYLINE].reverse().map(([x, y]) => [x, y - 14])];
+const skyRaw = blur(rasterPoly(skyPoly), 4, 2);
+const sun = new Float32Array(N);
+for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) sun[y * W + x] = 1 - smooth(70, 150, Math.hypot(x - 388, y - 428));
+// The mist: a band across the mountain's flank, below its skyline.
+const mistPoly = [[460, 462], [700, 430], [900, 412], [1060, 414], [1300, 424], [1500, 420], [W, 430], [W, 512], [1300, 520], [900, 515], [600, 508], [460, 500]];
+const mistRaw = blur(rasterPoly(mistPoly), 9, 2);
+const skyM = new Float32Array(N);
+const mistM = new Float32Array(N);
+// The clouds near the trees stay as they are (the picture round a blossom has its own glow and fringe, and a drifting cloud cut off by a
+// swaying branch would show as a halo); they only begin to drift from about 40% of the way across, well clear of the trees.
+const treeNear = blur(tree, 6, 2);
+for (let i = 0; i < N; i++) {
+  const x = i % W;
+  const away = smooth(0.4 * W, 0.5 * W, x);
+  const notTree = 1 - smooth(0.01, 0.2, treeNear[i]);
+  skyM[i] = skyRaw[i] * (1 - sun[i]) * notTree * away;
+  mistM[i] = mistRaw[i] * notTree * away;
+}
+// The smooth base: the picture blurred (only using pixels that belong to the same region), so what is left over is the cloud detail.
+function base(mask, r) {
+  const w = blur(mask, r, 3);
+  const res = new Float32Array(N * 3);
+  for (let c = 0; c < 3; c++) {
+    const pm = new Float32Array(N);
+    for (let i = 0; i < N; i++) pm[i] = rgb[i * 3 + c] * mask[i];
+    const b = blur(pm, r, 3);
+    for (let i = 0; i < N; i++) res[i * 3 + c] = w[i] > 0.02 ? b[i] / w[i] : rgb[i * 3 + c];
+  }
+  return res;
+}
+const skyC = skyM;
+const mistC = mistM;
+const baseSky = base(skyM, 90);
+const baseMist = base(mistM, 40);
+const baseOut = Buffer.alloc(N * 3);
+const detOut = Buffer.alloc(N * 3);
+const maskOut = Buffer.alloc(N * 3);
+const RANGE = 0.8; // detail is stored as 0.5 + detail / RANGE
+for (let i = 0; i < N; i++) {
+  for (let c = 0; c < 3; c++) {
+    const j = i * 3 + c;
+    const b = skyC[i] > mistC[i] ? baseSky[j] : baseMist[j];
+    const m = Math.max(skyM[i], mistM[i]);
+    const bb = rgb[j] * (1 - m) + b * m;
+    const d = (rgb[j] - b) * m;
+    baseOut[j] = Math.round(255 * Math.min(1, Math.max(0, bb)));
+    detOut[j] = Math.round(255 * Math.min(1, Math.max(0, 0.5 + d / RANGE)));
+  }
+  maskOut[i * 3] = Math.round(255 * Math.min(1, Math.max(0, tree[i])));
+  maskOut[i * 3 + 1] = Math.round(255 * skyM[i]);
+  maskOut[i * 3 + 2] = Math.round(255 * mistM[i]);
 }
 await sharp(out, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 90, effort: 5 }).toFile(OUT);
 await sharp(maskOut, { raw: { width: W, height: H, channels: 3 } }).webp({ lossless: true, effort: 5 }).toFile(OUT_MASK);
-console.log("plate and mask written");
+await sharp(baseOut, { raw: { width: W, height: H, channels: 3 } }).webp({ quality: 92, effort: 5 }).toFile(OUT_BASE);
+await sharp(detOut, { raw: { width: W, height: H, channels: 3 } }).webp({ lossless: true, effort: 5 }).toFile(OUT_DETAIL);
+console.log("plate, masks, sky base and cloud detail written");
 if (DEBUG) {
+  const dm = Buffer.alloc(N * 3);
+  for (let i = 0; i < N; i++) { dm[i * 3] = Math.round(255 * (rgb[i * 3] * 0.35 + 0.65 * tree[i])); dm[i * 3 + 1] = Math.round(255 * (rgb[i * 3 + 1] * 0.35 + 0.65 * skyM[i])); dm[i * 3 + 2] = Math.round(255 * (rgb[i * 3 + 2] * 0.35 + 0.65 * mistM[i])); }
+  await sharp(dm, { raw: { width: W, height: H, channels: 3 } }).resize(1100).png().toFile("/private/tmp/claude-501/-Users-aayushranamagar-aayush-live-city-japan/b7020643-87a4-4f3d-bf56-a40916cf3504/scratchpad/sky-masks.png");
+  await sharp(detOut, { raw: { width: W, height: H, channels: 3 } }).resize(1100).png().toFile("/private/tmp/claude-501/-Users-aayushranamagar-aayush-live-city-japan/b7020643-87a4-4f3d-bf56-a40916cf3504/scratchpad/sky-detail.png");
+  await sharp(baseOut, { raw: { width: W, height: H, channels: 3 } }).resize(1100).png().toFile("/private/tmp/claude-501/-Users-aayushranamagar-aayush-live-city-japan/b7020643-87a4-4f3d-bf56-a40916cf3504/scratchpad/sky-base.png");
   const m = Buffer.alloc(N * 3);
   for (let i = 0; i < N; i++) {
     const t = tree[i];
