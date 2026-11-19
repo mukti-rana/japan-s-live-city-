@@ -120,7 +120,7 @@ export default function PetalField({ anchor }: { anchor: [number, number] }) {
       // Petals come loose from the twigs while the wind is up (a few seconds after each gust arrives), one now and then.
       const [wx, wy] = sim.wind(0.25 * IMG_ASPECT, 0.2, t);
       const mag = Math.hypot(wx, wy);
-      if (mag > 0.25 && Math.random() < dt * (mag - 0.2) * 1.5) {
+      if (mag > 0.3 && Math.random() < dt * (mag - 0.25) * 1.1) {
         const slot = alive < 7 ? pool.findIndex((q, i) => !q.alive && i < NEAR - 3) : -1;
         if (slot >= 0) spawn(slot, "shed");
       }

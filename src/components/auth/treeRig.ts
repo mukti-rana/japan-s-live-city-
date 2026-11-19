@@ -66,34 +66,34 @@ const DEFS: Def[] = [
   // The grove of blossom trees along the shore, five trees (and a little one) from left to right, each with a stiff trunk, a crown on
   // it and branches of the crown that carry the masses of blossom, so the grove sways in waves rather than as one block
   { n: "ga0", p: null, b: [58, 598], e: [66, 540], c: 0, r: 44 },
-  { n: "ga1", p: "ga0", t: 1, e: [80, 470], c: 1, r: 72, g: 2.4 },
-  { n: "ga2", p: "ga1", t: 1, e: [40, 400], c: 2, r: 64, g: 2.0 },
-  { n: "ga3", p: "ga1", t: 1, e: [152, 432], c: 2, r: 64, g: 2.7 },
-  { n: "ga4", p: "ga0", t: 1, e: [142, 522], c: 1, r: 66, g: 2.4 },
-  { n: "ga5", p: "ga4", t: 1, e: [214, 506], c: 2, r: 62, g: 2.7 },
+  { n: "ga1", p: "ga0", t: 1, e: [80, 470], c: 1, r: 72, g: 3.6 },
+  { n: "ga2", p: "ga1", t: 1, e: [40, 400], c: 2, r: 64, g: 3.0 },
+  { n: "ga3", p: "ga1", t: 1, e: [152, 432], c: 2, r: 64, g: 4.1 },
+  { n: "ga4", p: "ga0", t: 1, e: [142, 522], c: 1, r: 66, g: 3.6 },
+  { n: "ga5", p: "ga4", t: 1, e: [214, 506], c: 2, r: 62, g: 4.1 },
   { n: "gb0", p: null, b: [190, 602], e: [196, 548], c: 0, r: 40 },
-  { n: "gb1", p: "gb0", t: 1, e: [206, 490], c: 1, r: 68, g: 2.4 },
-  { n: "gb2", p: "gb1", t: 1, e: [160, 442], c: 2, r: 60, g: 2.7 },
-  { n: "gb3", p: "gb1", t: 1, e: [264, 466], c: 2, r: 60, g: 2.7 },
-  { n: "gb4", p: "gb0", t: 1, e: [262, 536], c: 2, r: 58, g: 2.7 },
+  { n: "gb1", p: "gb0", t: 1, e: [206, 490], c: 1, r: 68, g: 3.6 },
+  { n: "gb2", p: "gb1", t: 1, e: [160, 442], c: 2, r: 60, g: 4.1 },
+  { n: "gb3", p: "gb1", t: 1, e: [264, 466], c: 2, r: 60, g: 4.1 },
+  { n: "gb4", p: "gb0", t: 1, e: [262, 536], c: 2, r: 58, g: 4.1 },
   { n: "gc0", p: null, b: [330, 606], e: [336, 556], c: 0, r: 36 },
-  { n: "gc1", p: "gc0", t: 1, e: [346, 505], c: 1, r: 62, g: 2.4 },
-  { n: "gc2", p: "gc1", t: 1, e: [300, 470], c: 2, r: 56, g: 2.7 },
-  { n: "gc3", p: "gc1", t: 1, e: [412, 490], c: 2, r: 58, g: 2.7 },
-  { n: "gc4", p: "gc0", t: 1, e: [402, 546], c: 2, r: 54, g: 2.7 },
+  { n: "gc1", p: "gc0", t: 1, e: [346, 505], c: 1, r: 62, g: 3.6 },
+  { n: "gc2", p: "gc1", t: 1, e: [300, 470], c: 2, r: 56, g: 4.1 },
+  { n: "gc3", p: "gc1", t: 1, e: [412, 490], c: 2, r: 58, g: 4.1 },
+  { n: "gc4", p: "gc0", t: 1, e: [402, 546], c: 2, r: 54, g: 4.1 },
   { n: "gd0", p: null, b: [450, 606], e: [456, 562], c: 0, r: 34 },
-  { n: "gd1", p: "gd0", t: 1, e: [470, 520], c: 1, r: 56, g: 2.4 },
-  { n: "gd2", p: "gd1", t: 1, e: [430, 488], c: 2, r: 52, g: 2.7 },
-  { n: "gd3", p: "gd1", t: 1, e: [532, 505], c: 2, r: 54, g: 2.7 },
-  { n: "gd4", p: "gd0", t: 1, e: [522, 556], c: 2, r: 50, g: 2.7 },
+  { n: "gd1", p: "gd0", t: 1, e: [470, 520], c: 1, r: 56, g: 3.6 },
+  { n: "gd2", p: "gd1", t: 1, e: [430, 488], c: 2, r: 52, g: 4.1 },
+  { n: "gd3", p: "gd1", t: 1, e: [532, 505], c: 2, r: 54, g: 4.1 },
+  { n: "gd4", p: "gd0", t: 1, e: [522, 556], c: 2, r: 50, g: 4.1 },
   { n: "ge0", p: null, b: [610, 592], e: [606, 545], c: 0, r: 26 },
-  { n: "ge1", p: "ge0", t: 1, e: [600, 510], c: 1, r: 44, g: 2.4 },
-  { n: "ge2", p: "ge1", t: 1, e: [568, 488], c: 3, r: 42, g: 2.9 },
-  { n: "ge3", p: "ge1", t: 1, e: [642, 494], c: 3, r: 42, g: 2.9 },
-  { n: "ge4", p: "ge0", t: 1, e: [652, 550], c: 3, r: 38, g: 2.9 },
+  { n: "ge1", p: "ge0", t: 1, e: [600, 510], c: 1, r: 44, g: 3.6 },
+  { n: "ge2", p: "ge1", t: 1, e: [568, 488], c: 3, r: 42, g: 4.3 },
+  { n: "ge3", p: "ge1", t: 1, e: [642, 494], c: 3, r: 42, g: 4.3 },
+  { n: "ge4", p: "ge0", t: 1, e: [652, 550], c: 3, r: 38, g: 4.3 },
   { n: "gf0", p: null, b: [664, 592], e: [666, 556], c: 0, r: 22 },
-  { n: "gf1", p: "gf0", t: 1, e: [672, 522], c: 2, r: 40, g: 2.7 },
-  { n: "gf2", p: "gf1", t: 1, e: [700, 506], c: 3, r: 38, g: 2.9 },
+  { n: "gf1", p: "gf0", t: 1, e: [672, 522], c: 2, r: 40, g: 4.1 },
+  { n: "gf2", p: "gf1", t: 1, e: [700, 506], c: 3, r: 38, g: 4.3 },
 ];
 
 export type Bone = { n: string; parent: number; t: number; bx: number; by: number; ex: number; ey: number; cls: 0 | 1 | 2 | 3; rad: number; gain: number };
@@ -122,7 +122,11 @@ function build(): Bone[] {
 export const BONES: Bone[] = build();
 export const BONE_COUNT = BONES.length;
 
-type Gust = { t0: number; amp: number; dur: number; ang: number };
+// A gust is a patch of stronger wind: it appears somewhere, is carried slowly along, and fades; it only touches the trees under it.
+type Gust = { t0: number; amp: number; dur: number; ang: number; x0: number; y0: number; vx: number; vy: number; rad: number };
+// Each tree has its own character, so no two respond alike: how fast it swings, how easily the wind moves it, which way the wind seems to
+// come at it (a few degrees off, because of its neighbours), and how far it is out of step in time.
+type Character = { freq: number; gain: number; turn: number; lag: number };
 
 // Small deterministic-looking noise from sines, so the simulation needs no random numbers per frame.
 const hash = (n: number) => {
@@ -141,6 +145,8 @@ export class TreeSim {
   private baseX = new Float32Array(BONE_COUNT);
   private baseY = new Float32Array(BONE_COUNT);
   private gusts: Gust[] = [];
+  private waves: { kx: number; ky: number; w: number; ph: number; ax: number; ay: number }[] = [];
+  private chars: Character[] = [];
   private nextGust = 1.5 + Math.random() * 3;
   private last = -1;
   private phase = Array.from({ length: BONE_COUNT }, () => Math.random() * 100);
@@ -151,25 +157,62 @@ export class TreeSim {
     for (let i = 0; i < BONE_COUNT; i++) {
       this.xf[i * 4 + 2] = 1;
     }
+    // Eddies: travelling waves of wind with a wavelength of about 0.25 to 1 picture heights (a tree or two) and a period of 6 to 18 seconds,
+    // each pushing in its own direction.
+    const r = (a: number, b: number) => a + Math.random() * (b - a);
+    for (let k = 0; k < 8; k++) {
+      const dir = r(0, Math.PI * 2);
+      const kk = r(6, 26);
+      const push = r(0, Math.PI * 2);
+      const amp = r(0.08, 0.16);
+      this.waves.push({ kx: Math.cos(dir) * kk, ky: Math.sin(dir) * kk, w: r(0.35, 1.1) * (Math.random() < 0.5 ? -1 : 1), ph: r(0, 6.28), ax: Math.cos(push) * amp, ay: Math.sin(push) * amp });
+    }
+    // Each tree (the top-left one, and each of the trees along the shore) gets its own character.
+    const keys = new Map<string, Character>();
+    for (const b of BONES) {
+      const key = b.n.startsWith("g") ? b.n.slice(0, 2) : "top";
+      if (!keys.has(key)) {
+        // (the smaller trees are given a little more push, since their branches are shorter)
+        const base: Record<string, number> = { top: 0.62, ga: 0.55, gb: 1.0, gc: 2.1, gd: 2.5, ge: 2.3, gf: 2.5 };
+        keys.set(key, { freq: r(0.85, 1.2), gain: r(0.9, 1.15) * (base[key] ?? 1), turn: r(-0.5, 0.5), lag: r(0, 7) });
+      }
+    }
+    this.chars = BONES.map((b) => keys.get(b.n.startsWith("g") ? b.n.slice(0, 2) : "top")!);
   }
 
-  // The wind at a point (aspect space) at time t, as a vector. A steady breeze that breathes, a turbulence that differs from place
-  // to place, and the gusts, which sweep from the left across the tree.
-  wind(x: number, y: number, t: number): [number, number] {
-    const breeze = 0.1 + 0.05 * Math.sin(t * 0.26) + 0.035 * Math.sin(t * 0.64 + 1.3);
-    let g = 0;
-    for (const gu of this.gusts) {
-      const along = x / 0.9; // 0 at the left edge, ~1 across the tree
-      const local = t - gu.t0 - along * 2.4;
-      if (local < 0 || local > gu.dur) continue;
-      const rise = Math.min(1, local / 0.9);
-      const fall = Math.pow(1 - local / gu.dur, 1.6);
-      g += gu.amp * rise * rise * (3 - 2 * rise) * fall;
+  // The wind at a point (aspect space) at time t: the steady breeze that the picture already shows, plus how the air differs from it at
+  // that spot and moment. The difference is what moves the trees, so they swing both ways about the pose in the picture, leaning into
+  // a push and easing back (and a little past) in a lull. It has three layers that are never in step across the scene: drifting eddies
+  // about a tree wide (these push neighbouring trees in different directions at different times), the breeze breathing from place
+  // to place, and gusts (patches of stronger wind that are carried slowly along and touch only the trees beneath them).
+  fluct(x: number, y: number, t: number): [number, number] {
+    let fx = 0;
+    let fy = 0;
+    for (const w of this.waves) {
+      const v = Math.sin(w.kx * x + w.ky * y - w.w * t + w.ph);
+      fx += w.ax * v;
+      fy += w.ay * v;
     }
-    const m = breeze + g;
-    const swirl = Math.sin(t * 0.9 + x * 9 + y * 5) * 0.55 + Math.sin(t * 1.4 + x * 4 - y * 7) * 0.3;
-    const ang = 0.12 + 0.25 * swirl * (0.4 + g * 1.6);
-    return [Math.cos(ang) * m, Math.sin(ang) * m];
+    for (const gu of this.gusts) {
+      const age = t - gu.t0;
+      if (age < 0 || age > gu.dur) continue;
+      const cx = gu.x0 + gu.vx * age;
+      const cy = gu.y0 + gu.vy * age;
+      const d2 = ((x - cx) * (x - cx) + (y - cy) * (y - cy)) / (gu.rad * gu.rad);
+      if (d2 > 9) continue;
+      const rise = Math.min(1, age / 1.6);
+      const fall = Math.pow(1 - age / gu.dur, 1.4);
+      const m = gu.amp * rise * rise * (3 - 2 * rise) * fall * Math.exp(-d2);
+      fx += Math.cos(gu.ang) * m;
+      fy += Math.sin(gu.ang) * m;
+    }
+    return [fx, fy];
+  }
+
+  // The whole wind (breeze plus the difference), for things that ride on it such as petals.
+  wind(x: number, y: number, t: number): [number, number] {
+    const [fx, fy] = this.fluct(x, y, t);
+    return [0.12 + fx, 0.01 + fy];
   }
 
   // Advance to time t (seconds). Safe to call several times with the same t.
@@ -179,8 +222,9 @@ export class TreeSim {
     this.last = t;
     dt = Math.min(dt, 1 / 20); // after a pause, do not leap
     if (t >= this.nextGust) {
-      this.gusts.push({ t0: t, amp: 0.55 + Math.random() * 0.75, dur: 4.2 + Math.random() * 2.8, ang: 0 });
-      this.nextGust = t + 4.5 + Math.random() * 7.5;
+      const rr = (a: number, b: number) => a + Math.random() * (b - a);
+      this.gusts.push({ t0: t, amp: rr(0.7, 1.4), dur: rr(5, 9), ang: rr(-0.7, 0.8), x0: rr(-0.1, 1.0), y0: rr(0.05, 0.62), vx: rr(0.03, 0.1), vy: rr(-0.02, 0.04), rad: rr(0.16, 0.34) });
+      this.nextGust = t + 2.5 + Math.random() * 5.5;
     }
     this.gusts = this.gusts.filter((g) => t - g.t0 < g.dur + 3);
     let strengthSum = 0;
@@ -198,12 +242,16 @@ export class TreeSim {
       const dy = (dx0 * sx + dy0 * cx) / len;
       const mx = (b.bx + b.ex) / 2;
       const my = (b.by + b.ey) / 2;
-      const [wx, wy] = this.wind(mx, my, t);
-      strengthSum += Math.hypot(wx, wy);
+      const ch = this.chars[i];
+      let [wx, wy] = this.fluct(mx, my, t + ch.lag);
+      const cs = Math.cos(ch.turn);
+      const sn = Math.sin(ch.turn);
+      [wx, wy] = [wx * cs - wy * sn, wx * sn + wy * cs];
+      strengthSum += Math.hypot(wx, wy) + 0.12;
       // Wind across the bone bends it; some of it is local turbulence that differs from bone to bone.
       const across = wx * -dy + wy * dx + 0.06 * Math.sin(t * (0.6 + (i % 7) * 0.16) + this.phase[i]);
-      const torque = cl.susc * b.gain * across * (0.7 + len * 2.2) * 0.9;
-      const w0 = cl.w0;
+      const torque = cl.susc * b.gain * ch.gain * across * (0.7 + len * 2.2) * 0.9;
+      const w0 = cl.w0 * ch.freq * (0.9 + 0.2 * hash(i * 3.7));
       const acc = torque * w0 * w0 * 0.07 - w0 * w0 * this.theta[i] - 2 * cl.damp * w0 * this.omega[i];
       this.omega[i] += acc * dt;
       this.theta[i] += this.omega[i] * dt;

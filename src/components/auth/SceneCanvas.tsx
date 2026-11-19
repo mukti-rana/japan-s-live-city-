@@ -167,7 +167,7 @@ void main(){
     dTree = sk / vec2(IA, 1.0);
     // Only the crowns move: the ground, the trunks, the huts and lanterns on the shore and the pagoda stay where they are, so it is the
     // trees that sway and never the land.
-    float ground = 1.0 - smoothstep(0.52, 0.625, u.y);
+    float ground = 1.0 - smoothstep(0.535, 0.625, u.y);
     float pagoda = 1.0 - 0.95 * (1.0 - smoothstep(0.55, 1.0, length((u - vec2(0.129, 0.43)) / vec2(0.058, 0.045))));
     dTree *= ground * pagoda;
     float gust = clamp(act * 38.0, 0.0, 1.3);
