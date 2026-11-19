@@ -165,10 +165,15 @@ void main(){
     float cover;
     vec2 sk = skin(u * vec2(IA, 1.0), act, cover);
     dTree = sk / vec2(IA, 1.0);
+    // Only the crowns move: the ground, the trunks, the huts and lanterns on the shore and the pagoda stay where they are, so it is the
+    // trees that sway and never the land.
+    float ground = 1.0 - smoothstep(0.52, 0.625, u.y);
+    float pagoda = 1.0 - 0.95 * (1.0 - smoothstep(0.55, 1.0, length((u - vec2(0.129, 0.43)) / vec2(0.058, 0.045))));
+    dTree *= ground * pagoda;
     float gust = clamp(act * 38.0, 0.0, 1.3);
     vec2 n1 = vec2(vnoise(u * 52.0 + vec2(-t * 0.8, 0.0)), vnoise(u * 52.0 + vec2(5.0, -t * 0.9))) - 0.5;
     vec2 n2 = vec2(vnoise(u * 118.0 + vec2(-t * 1.6, 3.0)), vnoise(u * 118.0 + vec2(8.0, -t * 1.4))) - 0.5;
-    dTree += (n1 * 0.0016 + n2 * 0.0007) * (0.25 + 1.2 * gust) * cover;
+    dTree += (n1 * 0.0013 + n2 * 0.0006) * (0.25 + 1.2 * gust) * cover * ground * pagoda;
   }
 
   // The sky at the right drifts as a flow: two copies of the picture slide slowly to the right and cross-fade, so the clouds

@@ -20,10 +20,10 @@ export const IMG_ASPECT = IMG_W / IMG_H;
 
 // Stiffness classes: how thick the wood is. w0 = the spring's natural speed (rad/s), susc = how hard the wind pushes it, damp = damping ratio.
 const CLASS = [
-  { w0: 7.5, susc: 0.1, damp: 0.5 }, // thick limb
-  { w0: 4.8, susc: 0.5, damp: 0.38 }, // medium branch
-  { w0: 3.3, susc: 1.1, damp: 0.3 }, // thin branch
-  { w0: 2.4, susc: 1.9, damp: 0.22 }, // twig
+  { w0: 6, susc: 0.1, damp: 0.5 }, // thick limb
+  { w0: 3.8, susc: 0.5, damp: 0.4 }, // medium branch
+  { w0: 2.7, susc: 1.1, damp: 0.32 }, // thin branch
+  { w0: 2.0, susc: 1.9, damp: 0.25 }, // twig
 ] as const;
 
 // name, parent (or null: fixed to the world), t = where along the parent it grows from (0 base .. 1 tip), start (only for roots), end, class, radius of influence (px).
@@ -66,34 +66,34 @@ const DEFS: Def[] = [
   // The grove of blossom trees along the shore, five trees (and a little one) from left to right, each with a stiff trunk, a crown on
   // it and branches of the crown that carry the masses of blossom, so the grove sways in waves rather than as one block
   { n: "ga0", p: null, b: [58, 598], e: [66, 540], c: 0, r: 44 },
-  { n: "ga1", p: "ga0", t: 1, e: [80, 470], c: 1, r: 72, g: 3.8 },
-  { n: "ga2", p: "ga1", t: 1, e: [40, 400], c: 2, r: 64, g: 3.2 },
-  { n: "ga3", p: "ga1", t: 1, e: [152, 432], c: 2, r: 64, g: 4.4 },
-  { n: "ga4", p: "ga0", t: 1, e: [142, 522], c: 1, r: 66, g: 3.8 },
-  { n: "ga5", p: "ga4", t: 1, e: [214, 506], c: 2, r: 62, g: 4.4 },
+  { n: "ga1", p: "ga0", t: 1, e: [80, 470], c: 1, r: 72, g: 2.4 },
+  { n: "ga2", p: "ga1", t: 1, e: [40, 400], c: 2, r: 64, g: 2.0 },
+  { n: "ga3", p: "ga1", t: 1, e: [152, 432], c: 2, r: 64, g: 2.7 },
+  { n: "ga4", p: "ga0", t: 1, e: [142, 522], c: 1, r: 66, g: 2.4 },
+  { n: "ga5", p: "ga4", t: 1, e: [214, 506], c: 2, r: 62, g: 2.7 },
   { n: "gb0", p: null, b: [190, 602], e: [196, 548], c: 0, r: 40 },
-  { n: "gb1", p: "gb0", t: 1, e: [206, 490], c: 1, r: 68, g: 3.8 },
-  { n: "gb2", p: "gb1", t: 1, e: [160, 442], c: 2, r: 60, g: 4.4 },
-  { n: "gb3", p: "gb1", t: 1, e: [264, 466], c: 2, r: 60, g: 4.4 },
-  { n: "gb4", p: "gb0", t: 1, e: [262, 536], c: 2, r: 58, g: 4.4 },
+  { n: "gb1", p: "gb0", t: 1, e: [206, 490], c: 1, r: 68, g: 2.4 },
+  { n: "gb2", p: "gb1", t: 1, e: [160, 442], c: 2, r: 60, g: 2.7 },
+  { n: "gb3", p: "gb1", t: 1, e: [264, 466], c: 2, r: 60, g: 2.7 },
+  { n: "gb4", p: "gb0", t: 1, e: [262, 536], c: 2, r: 58, g: 2.7 },
   { n: "gc0", p: null, b: [330, 606], e: [336, 556], c: 0, r: 36 },
-  { n: "gc1", p: "gc0", t: 1, e: [346, 505], c: 1, r: 62, g: 3.8 },
-  { n: "gc2", p: "gc1", t: 1, e: [300, 470], c: 2, r: 56, g: 4.4 },
-  { n: "gc3", p: "gc1", t: 1, e: [412, 490], c: 2, r: 58, g: 4.4 },
-  { n: "gc4", p: "gc0", t: 1, e: [402, 546], c: 2, r: 54, g: 4.4 },
+  { n: "gc1", p: "gc0", t: 1, e: [346, 505], c: 1, r: 62, g: 2.4 },
+  { n: "gc2", p: "gc1", t: 1, e: [300, 470], c: 2, r: 56, g: 2.7 },
+  { n: "gc3", p: "gc1", t: 1, e: [412, 490], c: 2, r: 58, g: 2.7 },
+  { n: "gc4", p: "gc0", t: 1, e: [402, 546], c: 2, r: 54, g: 2.7 },
   { n: "gd0", p: null, b: [450, 606], e: [456, 562], c: 0, r: 34 },
-  { n: "gd1", p: "gd0", t: 1, e: [470, 520], c: 1, r: 56, g: 3.8 },
-  { n: "gd2", p: "gd1", t: 1, e: [430, 488], c: 2, r: 52, g: 4.4 },
-  { n: "gd3", p: "gd1", t: 1, e: [532, 505], c: 2, r: 54, g: 4.4 },
-  { n: "gd4", p: "gd0", t: 1, e: [522, 556], c: 2, r: 50, g: 4.4 },
+  { n: "gd1", p: "gd0", t: 1, e: [470, 520], c: 1, r: 56, g: 2.4 },
+  { n: "gd2", p: "gd1", t: 1, e: [430, 488], c: 2, r: 52, g: 2.7 },
+  { n: "gd3", p: "gd1", t: 1, e: [532, 505], c: 2, r: 54, g: 2.7 },
+  { n: "gd4", p: "gd0", t: 1, e: [522, 556], c: 2, r: 50, g: 2.7 },
   { n: "ge0", p: null, b: [610, 592], e: [606, 545], c: 0, r: 26 },
-  { n: "ge1", p: "ge0", t: 1, e: [600, 510], c: 1, r: 44, g: 3.8 },
-  { n: "ge2", p: "ge1", t: 1, e: [568, 488], c: 3, r: 42, g: 4.6 },
-  { n: "ge3", p: "ge1", t: 1, e: [642, 494], c: 3, r: 42, g: 4.6 },
-  { n: "ge4", p: "ge0", t: 1, e: [652, 550], c: 3, r: 38, g: 4.6 },
+  { n: "ge1", p: "ge0", t: 1, e: [600, 510], c: 1, r: 44, g: 2.4 },
+  { n: "ge2", p: "ge1", t: 1, e: [568, 488], c: 3, r: 42, g: 2.9 },
+  { n: "ge3", p: "ge1", t: 1, e: [642, 494], c: 3, r: 42, g: 2.9 },
+  { n: "ge4", p: "ge0", t: 1, e: [652, 550], c: 3, r: 38, g: 2.9 },
   { n: "gf0", p: null, b: [664, 592], e: [666, 556], c: 0, r: 22 },
-  { n: "gf1", p: "gf0", t: 1, e: [672, 522], c: 2, r: 40, g: 4.4 },
-  { n: "gf2", p: "gf1", t: 1, e: [700, 506], c: 3, r: 38, g: 4.6 },
+  { n: "gf1", p: "gf0", t: 1, e: [672, 522], c: 2, r: 40, g: 2.7 },
+  { n: "gf2", p: "gf1", t: 1, e: [700, 506], c: 3, r: 38, g: 2.9 },
 ];
 
 export type Bone = { n: string; parent: number; t: number; bx: number; by: number; ex: number; ey: number; cls: 0 | 1 | 2 | 3; rad: number; gain: number };
@@ -156,18 +156,18 @@ export class TreeSim {
   // The wind at a point (aspect space) at time t, as a vector. A steady breeze that breathes, a turbulence that differs from place
   // to place, and the gusts, which sweep from the left across the tree.
   wind(x: number, y: number, t: number): [number, number] {
-    const breeze = 0.1 + 0.05 * Math.sin(t * 0.37) + 0.035 * Math.sin(t * 0.91 + 1.3);
+    const breeze = 0.1 + 0.05 * Math.sin(t * 0.26) + 0.035 * Math.sin(t * 0.64 + 1.3);
     let g = 0;
     for (const gu of this.gusts) {
       const along = x / 0.9; // 0 at the left edge, ~1 across the tree
-      const local = t - gu.t0 - along * 1.6;
+      const local = t - gu.t0 - along * 2.4;
       if (local < 0 || local > gu.dur) continue;
       const rise = Math.min(1, local / 0.9);
       const fall = Math.pow(1 - local / gu.dur, 1.6);
       g += gu.amp * rise * rise * (3 - 2 * rise) * fall;
     }
     const m = breeze + g;
-    const swirl = Math.sin(t * 1.3 + x * 9 + y * 5) * 0.55 + Math.sin(t * 2.1 + x * 4 - y * 7) * 0.3;
+    const swirl = Math.sin(t * 0.9 + x * 9 + y * 5) * 0.55 + Math.sin(t * 1.4 + x * 4 - y * 7) * 0.3;
     const ang = 0.12 + 0.25 * swirl * (0.4 + g * 1.6);
     return [Math.cos(ang) * m, Math.sin(ang) * m];
   }
@@ -179,7 +179,7 @@ export class TreeSim {
     this.last = t;
     dt = Math.min(dt, 1 / 20); // after a pause, do not leap
     if (t >= this.nextGust) {
-      this.gusts.push({ t0: t, amp: 0.55 + Math.random() * 0.75, dur: 3.2 + Math.random() * 2.4, ang: 0 });
+      this.gusts.push({ t0: t, amp: 0.55 + Math.random() * 0.75, dur: 4.2 + Math.random() * 2.8, ang: 0 });
       this.nextGust = t + 4.5 + Math.random() * 7.5;
     }
     this.gusts = this.gusts.filter((g) => t - g.t0 < g.dur + 3);
@@ -201,7 +201,7 @@ export class TreeSim {
       const [wx, wy] = this.wind(mx, my, t);
       strengthSum += Math.hypot(wx, wy);
       // Wind across the bone bends it; some of it is local turbulence that differs from bone to bone.
-      const across = wx * -dy + wy * dx + 0.06 * Math.sin(t * (0.9 + (i % 7) * 0.23) + this.phase[i]);
+      const across = wx * -dy + wy * dx + 0.06 * Math.sin(t * (0.6 + (i % 7) * 0.16) + this.phase[i]);
       const torque = cl.susc * b.gain * across * (0.7 + len * 2.2) * 0.9;
       const w0 = cl.w0;
       const acc = torque * w0 * w0 * 0.07 - w0 * w0 * this.theta[i] - 2 * cl.damp * w0 * this.omega[i];
