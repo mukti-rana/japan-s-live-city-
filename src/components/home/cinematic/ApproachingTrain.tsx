@@ -10,9 +10,8 @@ import { useMotionValueEvent, useReducedMotion, useScroll } from "motion/react";
 // It is drawn in true perspective rather than with a 3D engine: the camera is 1.5 m above the rails, so a point at distance d metres
 // (relative to the train's front at d = 1) lies 1/d of the way from the horizon to where it would be at the camera. The train is one
 // head-on picture of a Shinkansen (rounded nose, windshield, headlights, coupler hatch) scaled by 1/d about the horizon; the rails are
-// two thin wedges meeting at the vanishing point; the sleepers are laid at equal steps of d and slide toward the viewer as the page
-// scrolls. The headlights bloom (in screen space, so they are visible as bright points when the train is far away) and light the
-// track ahead. Under reduced motion it is a still picture of
+// two thin wedges meeting at the vanishing point; the sleepers stand still in the world (only the train moves, so it reads as a train
+// running down the track, not a track sliding by). The headlights are two small points of light, visible from far away. Under reduced motion it is a still picture of
 // the train part-way down the track. Decoration only (aria-hidden), never takes clicks.
 
 const VB = 800; // the scene is an 800 x 800 box, sliced to fit
@@ -24,7 +23,7 @@ const HORIZON_IN_TRAIN = 214; // the horizon's height inside the train picture (
 const GAUGE = 76; // half the gauge
 const SLEEPER = 135; // half a sleeper's length
 const N_SLEEPERS = 30;
-const D_STEP = 0.58;
+const D_STEP = 0.5;
 const D_MIN = 0.36;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -44,74 +43,107 @@ const Train = memo(function Train({ id }: { id: string }) {
   return (
     <g>
       <defs>
-        <linearGradient id={`${id}-body`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={TW} y2="0">
-          <stop offset="0" stopColor="#5f6683" />
-          <stop offset="0.2" stopColor="#c4cbe0" />
-          <stop offset="0.5" stopColor="#f6f8ff" />
-          <stop offset="0.8" stopColor="#c4cbe0" />
-          <stop offset="1" stopColor="#5f6683" />
+        <linearGradient id={`${id}-pearl`} gradientUnits="userSpaceOnUse" x1="44" y1="0" x2="316" y2="0">
+          <stop offset="0" stopColor="#7a829c" />
+          <stop offset="0.16" stopColor="#c9d0e2" />
+          <stop offset="0.5" stopColor="#f7f9ff" />
+          <stop offset="0.84" stopColor="#c9d0e2" />
+          <stop offset="1" stopColor="#7a829c" />
         </linearGradient>
-        <linearGradient id={`${id}-shade`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#ffffff" stopOpacity="0.3" />
-          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="1" stopColor="#0a0d1c" stopOpacity="0.4" />
+        <linearGradient id={`${id}-carside`} gradientUnits="userSpaceOnUse" x1="28" y1="0" x2="332" y2="0">
+          <stop offset="0" stopColor="#555c75" />
+          <stop offset="0.2" stopColor="#a4abc0" />
+          <stop offset="0.5" stopColor="#c3c9db" />
+          <stop offset="0.8" stopColor="#a4abc0" />
+          <stop offset="1" stopColor="#555c75" />
+        </linearGradient>
+        <linearGradient id={`${id}-vshade`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.32" />
+          <stop offset="0.4" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="1" stopColor="#0a0d1c" stopOpacity="0.38" />
         </linearGradient>
         <linearGradient id={`${id}-glass`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#0a1124" />
-          <stop offset="0.65" stopColor="#1b2f63" />
-          <stop offset="1" stopColor="#0b1430" />
+          <stop offset="0" stopColor="#05070f" />
+          <stop offset="0.55" stopColor="#101a38" />
+          <stop offset="1" stopColor="#070b18" />
         </linearGradient>
-        <linearGradient id={`${id}-stripe`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={TW} y2="0">
-          <stop offset="0" stopColor="#12389e" />
-          <stop offset="0.5" stopColor="#3f7dff" />
-          <stop offset="1" stopColor="#12389e" />
+        <linearGradient id={`${id}-navy`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1d45a8" />
+          <stop offset="0.5" stopColor="#14307c" />
+          <stop offset="1" stopColor="#0a1842" />
         </linearGradient>
-        <radialGradient id={`${id}-lamp`} cx="0.5" cy="0.5" r="0.5">
+        <linearGradient id={`${id}-navyh`} gradientUnits="userSpaceOnUse" x1="50" y1="0" x2="310" y2="0">
+          <stop offset="0" stopColor="#000000" stopOpacity="0.45" />
+          <stop offset="0.3" stopColor="#000000" stopOpacity="0" />
+          <stop offset="0.7" stopColor="#000000" stopOpacity="0" />
+          <stop offset="1" stopColor="#000000" stopOpacity="0.45" />
+        </linearGradient>
+        <linearGradient id={`${id}-lamp`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#ffffff" />
-          <stop offset="0.45" stopColor="#fff3d0" />
-          <stop offset="1" stopColor="#ffd98a" />
-        </radialGradient>
-        <linearGradient id={`${id}-skirt`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#2a2f42" />
-          <stop offset="1" stopColor="#0c0e16" />
+          <stop offset="1" stopColor="#dfe8ff" />
         </linearGradient>
-        <filter id={`${id}-blur`} x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="9" />
-        </filter>
+        <linearGradient id={`${id}-skirt`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#323850" />
+          <stop offset="1" stopColor="#0b0d15" />
+        </linearGradient>
+        <radialGradient id={`${id}-contact`} cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#000" stopOpacity="0.7" />
+          <stop offset="1" stopColor="#000" stopOpacity="0" />
+        </radialGradient>
       </defs>
-      {/* The car behind the nose, seen over its roof. */}
-      <path d="M92 40 Q180 12 268 40 L282 84 L78 84 Z" fill="#8f97b0" />
-      <path d="M92 40 Q180 12 268 40 L274 58 Q180 34 86 58 Z" fill="#c9cfe2" opacity="0.7" />
-      {/* The nose. */}
-      <path d="M34 340 C 22 280 26 200 52 134 C 78 68 126 34 180 34 C 234 34 282 68 308 134 C 334 200 338 280 326 340 Z" fill={u("body")} />
-      <path d="M34 340 C 22 280 26 200 52 134 C 78 68 126 34 180 34 C 234 34 282 68 308 134 C 334 200 338 280 326 340 Z" fill={u("shade")} />
-      {/* The windshield, with its reflections. */}
-      <path d="M70 152 C 78 104 120 72 180 72 C 240 72 282 104 290 152 C 294 178 288 200 278 212 L 82 212 C 72 200 66 178 70 152 Z" fill={u("glass")} stroke="#2c3760" strokeWidth="3" />
-      <path d="M98 100 L150 76 L178 76 L124 212 L92 212 Z" fill="#ffffff" opacity="0.1" />
-      <path d="M196 80 L212 80 L172 212 L156 212 Z" fill="#9fb8ff" opacity="0.08" />
-      <rect x="177" y="72" width="6" height="140" fill="#161b30" />
-      {/* The stripe, following the curve of the body. */}
-      <path d="M31 292 C 120 308 240 308 329 292 L331 316 C 240 332 120 332 29 316 Z" fill={u("stripe")} />
-      <path d="M32 284 C 120 300 240 300 328 284" fill="none" stroke="#9cc3ff" strokeWidth="2" opacity="0.85" />
-      {/* Marker lights, and the headlights in their housings. */}
-      <circle cx="122" cy="232" r="4.5" fill="#eaf1ff" />
-      <circle cx="238" cy="232" r="4.5" fill="#eaf1ff" />
-      {[100, 260].map((x) => (
-        <g key={x}>
-          <ellipse cx={x} cy="262" rx="32" ry="16" fill="#0f121d" stroke="#3b4157" strokeWidth="2" />
-          <ellipse cx={x} cy="262" rx="23" ry="10" fill={u("lamp")} />
-        </g>
-      ))}
-      {/* The skirt and coupler hatch. */}
-      <path d="M46 340 L314 340 L324 372 L36 372 Z" fill={u("skirt")} />
-      <circle cx="180" cy="356" r="15" fill="#2d3347" stroke="#4a526c" strokeWidth="2" />
-      <path d="M64 350 H150 M210 350 H296 M60 360 H148 M212 360 H300" stroke="#444b63" strokeWidth="2" />
+      {/* Its shadow on the ballast. */}
+      <ellipse cx="180" cy="378" rx="190" ry="14" fill={u("contact")} />
+      {/* The car behind the nose: only its roof shows above the dome, with the pantograph and an air-conditioning housing. */}
+      <path d="M78 130 L78 76 Q78 54 104 52 L256 52 Q282 54 282 76 L282 130 Z" fill={u("carside")} />
+      <path d="M78 130 L78 76 Q78 54 104 52 L256 52 Q282 54 282 76 L282 130 Z" fill={u("vshade")} />
+      <rect x="128" y="42" width="104" height="12" rx="5" fill="#8a91aa" />
+      <path d="M152 42 L172 16 L188 16 L208 42" fill="none" stroke="#2b3046" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M158 16 H202" stroke="#2b3046" strokeWidth="4" strokeLinecap="round" />
+      {/* The streamlined nose: a wide, smooth dome in pearl white. */}
+      <path d="M50 338 C 40 282 44 212 66 154 C 92 92 136 60 180 58 C 224 60 268 92 294 154 C 316 212 320 282 310 338 Z" fill={u("pearl")} />
+      <path d="M50 338 C 40 282 44 212 66 154 C 92 92 136 60 180 58 C 224 60 268 92 294 154 C 316 212 320 282 310 338 Z" fill={u("vshade")} />
+      <path d="M180 60 L180 108 M174 214 L174 262 M186 214 L186 262" stroke="#ffffff" strokeWidth="2" opacity="0.32" fill="none" />
+      {/* The windshield: wide, low, glossy black, with a pearl frame and the wipers parked at its foot. */}
+      <path d="M84 178 C 88 148 124 122 180 120 C 236 122 272 148 276 178 C 278 194 272 206 260 211 L 100 211 C 88 206 82 194 84 178 Z" fill={u("glass")} stroke="#e9edf9" strokeWidth="3" />
+      <path d="M98 160 C 112 140 146 130 176 130 L148 206 L102 206 C 96 192 94 174 98 160 Z" fill="#ffffff" opacity="0.1" />
+      <path d="M206 130 L230 134 L190 206 L170 206 Z" fill="#a8bcff" opacity="0.07" />
+      <path d="M112 205 L172 193 M248 205 L188 193" stroke="#3a4262" strokeWidth="2.4" strokeLinecap="round" />
+      {/* The lower nose in navy, with its upper edge catching the light. */}
+      <path d="M52 318 C 66 268 118 262 180 262 C 242 262 294 268 308 318 L306 338 L54 338 Z" fill={u("navy")} />
+      <path d="M52 318 C 66 268 118 262 180 262 C 242 262 294 268 308 318 L306 338 L54 338 Z" fill={u("navyh")} />
+      <path d="M58 306 C 78 276 124 270 180 270 C 236 270 282 276 302 306" fill="none" stroke="#7fa6ff" strokeWidth="1.6" opacity="0.7" />
+      {/* Slim, level LED headlights low on either side, and marker lights above them. */}
+      {[1, -1].map((sg) => {
+        const x = (v: number) => 180 + sg * (v - 180);
+        return (
+          <g key={sg}>
+            <path d={`M${x(76)} 294 L${x(150)} 292 L${x(150)} 304 L${x(80)} 306 Z`} fill="#090c16" stroke="#3c4768" strokeWidth="1.5" />
+            <path d={`M${x(83)} 297.5 L${x(144)} 295.5 L${x(144)} 301 L${x(86)} 302.5 Z`} fill={u("lamp")} />
+            {[96, 108, 120, 132].map((px) => (
+              <circle key={px} cx={x(px)} cy="299" r="1.5" fill="#8aa4e8" opacity="0.85" />
+            ))}
+            <circle cx={x(92)} cy="272" r="3.6" fill="#eef3ff" />
+          </g>
+        );
+      })}
+      {/* The apron, the coupler flap and the bogies. */}
+      <path d="M72 338 L288 338 L300 374 L60 374 Z" fill={u("skirt")} />
+      <rect x="150" y="347" width="60" height="22" rx="8" fill="#4a526b" stroke="#6a7391" strokeWidth="1.5" />
+      <path d="M180 347 V369 M154 358 H206" stroke="#2b3146" strokeWidth="1.5" />
+      <path d="M78 350 H142 M218 350 H282 M74 362 H140 M220 362 H286" stroke="#444c66" strokeWidth="2" />
+      <rect x="70" y="374" width="46" height="9" rx="2" fill="#07080d" />
+      <rect x="244" y="374" width="46" height="9" rx="2" fill="#07080d" />
     </g>
   );
 });
 
 // Where a point at distance d lies on the screen, and how wide a unit is there.
 const yAt = (d: number) => VPY + CAM / d;
+
+const STATIC_SLEEPERS = Array.from({ length: N_SLEEPERS * 2 }, (_, k) => {
+  const d = D_MIN + k * D_STEP;
+  return { d, y: yAt(d), half: SLEEPER / d, w: Math.min(9, 7 / d), o: clamp01(1.1 - d / 20) };
+});
 
 export default function ApproachingTrain() {
   // The reduced-motion setting is only known in the browser, so it is applied after hydration (server and first render agree).
@@ -135,12 +167,9 @@ export default function ApproachingTrain() {
   const sx = Math.sin(t * 1.7) * 2.2 * shake;
   const sy = Math.sin(t * 2.3 + 1) * 1.8 * shake;
 
-  // Sleepers: equal steps in d, sliding toward the viewer as the page scrolls.
-  const phase = (reduced ? 0.5 : p) * 46;
-  const sleepers = Array.from({ length: N_SLEEPERS }, (_, k) => {
-    const d = D_MIN + ((((k - phase) % N_SLEEPERS) + N_SLEEPERS) % N_SLEEPERS) * D_STEP;
-    return { d, y: yAt(d), half: SLEEPER / d, w: Math.min(34, 26 / d), o: clamp01(1.15 - d / 15) };
-  });
+  // The sleepers stand still in the world; only the train moves.
+  const sleepers = STATIC_SLEEPERS;
+
   const railTop = VPY;
   const railBottom = VB;
   const railW = (y: number) => 7 * ((y - VPY) / CAM) + 0.5;
@@ -151,11 +180,11 @@ export default function ApproachingTrain() {
     return `${x0 - w0},${railTop} ${x0 + w0},${railTop} ${x1 + w1},${railBottom} ${x1 - w1},${railBottom}`;
   };
 
-  // The light the train throws on the track ahead of it, and the headlights' bloom.
-  const lampY = VPY + (262 - HORIZON_IN_TRAIN) / m.d;
-  const baseY = yAt(m.d);
-  const bloom = 5 + 90 * Math.pow(m.a, 1.4) + (m.b > 0 ? 60 * m.b : 0);
-  const glowOn = clamp01(0.55 + m.a);
+  // The headlights: two small points, visible from far away and no bigger than lamps need to be when the train is near.
+  const lampLocalY = 299;
+  const lampY = VPY + (lampLocalY - HORIZON_IN_TRAIN) * s;
+  const lampX = 65 * s;
+  const lampR = Math.min(2.2 + 4.5 * s, 14);
 
   return (
     <div ref={box} aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-full overflow-hidden opacity-25 sm:opacity-60 xl:w-[58%] xl:opacity-100 xl:[mask-image:linear-gradient(90deg,transparent,#000_22%)]">
@@ -163,53 +192,42 @@ export default function ApproachingTrain() {
         <defs>
           <linearGradient id={`${id}-bed`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#201c2a" stopOpacity="0" />
-            <stop offset="0.35" stopColor="#15131c" stopOpacity="0.85" />
-            <stop offset="1" stopColor="#07070a" stopOpacity="0.95" />
+            <stop offset="0.35" stopColor="#15131c" stopOpacity="0.8" />
+            <stop offset="1" stopColor="#07070a" stopOpacity="0.92" />
           </linearGradient>
           <linearGradient id={`${id}-rail`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#c9d4ff" stopOpacity="0.9" />
-            <stop offset="1" stopColor="#8d96b8" stopOpacity="0.55" />
+            <stop offset="0" stopColor="#aab4d6" stopOpacity="0.75" />
+            <stop offset="1" stopColor="#7a84a6" stopOpacity="0.5" />
           </linearGradient>
           <radialGradient id={`${id}-haze`} cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0" stopColor="#ffb98a" stopOpacity="0.5" />
-            <stop offset="0.5" stopColor="#b48cff" stopOpacity="0.18" />
+            <stop offset="0" stopColor="#ffb98a" stopOpacity="0.28" />
+            <stop offset="0.5" stopColor="#b48cff" stopOpacity="0.1" />
             <stop offset="1" stopColor="#b48cff" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id={`${id}-bloom`} cx="0.5" cy="0.5" r="0.5">
+          <radialGradient id={`${id}-lamp`} cx="0.5" cy="0.5" r="0.5">
             <stop offset="0" stopColor="#ffffff" stopOpacity="1" />
-            <stop offset="0.25" stopColor="#fff0c8" stopOpacity="0.75" />
-            <stop offset="1" stopColor="#ffd08a" stopOpacity="0" />
+            <stop offset="0.4" stopColor="#f4f7ff" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#dfe8ff" stopOpacity="0" />
           </radialGradient>
-          <radialGradient id={`${id}-pool`} cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0" stopColor="#fff2d0" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#fff2d0" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id={`${id}-streak`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="1" stopColor="#dfe6ff" stopOpacity="0.9" />
-          </linearGradient>
         </defs>
 
-        {/* The haze at the end of the line, and the track bed running out to the horizon. */}
-        <ellipse cx={VPX} cy={VPY} rx="260" ry="90" fill={`url(#${id}-haze)`} />
+        {/* The haze at the end of the line, the track bed running out to the horizon, the sleepers and the rails: all fixed in the world. */}
+        <ellipse cx={VPX} cy={VPY} rx="220" ry="70" fill={`url(#${id}-haze)`} />
         <polygon points={`${VPX - 1},${VPY} ${VPX + 1},${VPY} ${VPX + 330},${VB} ${VPX - 330},${VB}`} fill={`url(#${id}-bed)`} />
         {sleepers.map((sl, i) => (
-          <line key={i} x1={VPX - sl.half} x2={VPX + sl.half} y1={sl.y} y2={sl.y} stroke="#4b4558" strokeWidth={sl.w} opacity={sl.o * 0.9} />
+          <line key={i} x1={VPX - sl.half} x2={VPX + sl.half} y1={sl.y} y2={sl.y} stroke="#3b3648" strokeWidth={sl.w} opacity={sl.o * 0.6} />
         ))}
         <polygon points={rail(-1)} fill={`url(#${id}-rail)`} />
         <polygon points={rail(1)} fill={`url(#${id}-rail)`} />
-
-        {/* The light on the track ahead of the train. */}
-        <ellipse cx={VPX} cy={Math.min(VB + 40, baseY + 60 * s)} rx={60 + 190 * Math.min(s, 1.6)} ry={22 + 70 * Math.min(s, 1.6)} fill={`url(#${id}-pool)`} opacity={glowOn * m.a} />
 
         {/* The train, scaled about the horizon by 1/d (with a little shake as it thunders in). */}
         <g transform={`translate(${VPX + sx} ${VPY + sy}) scale(${s}) translate(${-TW / 2} ${-HORIZON_IN_TRAIN})`}>
           <Train id={id} />
         </g>
 
-        {/* The headlights' bloom, in screen space so two bright points can be seen from far away. */}
+        {/* The headlights: a small glint on each lamp, nothing more. */}
         {[-1, 1].map((side) => (
-          <circle key={side} cx={VPX + side * 80 * s + sx} cy={lampY + sy} r={bloom * (0.5 + 0.5 * glowOn)} fill={`url(#${id}-bloom)`} opacity={glowOn} style={{ mixBlendMode: "screen" }} />
+          <circle key={side} cx={VPX + side * lampX + sx} cy={lampY + sy} r={lampR * 1.9} fill={`url(#${id}-lamp)`} opacity={0.5 + 0.4 * m.a} />
         ))}
       </svg>
     </div>
