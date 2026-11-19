@@ -30,7 +30,7 @@ export default function AuthSubmitButton({
       type="submit"
       disabled={disabled || pending}
       aria-busy={pending}
-      className={`flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none ${look}`}
+      className={`auth-submit flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none ${look}`}
     >
       {pending ? (
         <>

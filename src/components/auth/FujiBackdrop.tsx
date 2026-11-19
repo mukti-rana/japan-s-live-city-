@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import SceneLife from "@/components/auth/SceneLife";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Mount Fuji over a still lake at dusk, full screen behind the sign-in panel.
@@ -80,7 +81,7 @@ export default function FujiBackdrop() {
   const tr = useTranslate();
   const petalFill = useId();
   return (
-    <div className="group pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
+    <div className="auth-backdrop group pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
       <Illustration />
       <svg width="0" height="0" className="absolute" aria-hidden="true">
         <defs>
@@ -95,25 +96,36 @@ export default function FujiBackdrop() {
 
       {/* The photograph. It starts invisible; the load handler (or the ref, if
           it finished loading before this page woke up) reveals it. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        ref={(el) => {
-          if (el && el.complete && el.naturalWidth > 0) el.dataset.ready = "1";
-        }}
-        src={thumb(1920)}
-        srcSet={`${thumb(1280)} 1280w, ${thumb(1920)} 1920w`}
-        sizes="100vw"
-        alt=""
-        decoding="async"
-        referrerPolicy="no-referrer"
-        onLoad={(e) => {
-          e.currentTarget.dataset.ready = "1";
-        }}
-        onError={(e) => {
-          e.currentTarget.hidden = true;
-        }}
-        className="auth-zoom absolute inset-0 h-full w-full object-cover opacity-0 brightness-[1.28] contrast-[1.22] transition-opacity duration-1000 [object-position:50%_42%] data-[ready]:opacity-100"
-      />
+      {/* The scene: a box exactly the photograph's size and place (it fills the screen the way the picture did, "cover", centred
+          across and 42% down), with the slow zoom on the whole of it. Everything alive in the scenery is placed inside this box so
+          it stays on the same spot of the picture at any screen size. */}
+      <div className="auth-zoom absolute inset-0">
+        <div className="auth-scene">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            ref={(el) => {
+              if (el && el.complete && el.naturalWidth > 0) el.dataset.ready = "1";
+            }}
+            src={thumb(1920)}
+            srcSet={`${thumb(1280)} 1280w, ${thumb(1920)} 1920w`}
+            sizes="100vw"
+            alt=""
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onLoad={(e) => {
+              e.currentTarget.dataset.ready = "1";
+            }}
+            onError={(e) => {
+              e.currentTarget.hidden = true;
+            }}
+            className="block h-full w-full opacity-0 brightness-[1.28] contrast-[1.22] transition-opacity duration-1000 data-[ready]:opacity-100"
+          />
+          {/* The trees, water and mist belong to the photograph, so they appear with it (and never without it). */}
+          <div className="absolute inset-0 opacity-0 transition-opacity duration-[1800ms] group-has-[img[data-ready]]:opacity-100 [container-type:size]">
+            <SceneLife id={petalFill} />
+          </div>
+        </div>
+      </div>
 
       {/* Dusk colour over everything: deep navy above, lavender and pink at the
           horizon, navy again at the bottom edge. */}
@@ -131,7 +143,7 @@ export default function FujiBackdrop() {
 
       <div aria-hidden="true" className="atm-root atm-anim absolute inset-0 overflow-hidden">
         <span className="auth-shimmer absolute inset-x-0 bottom-0 h-[40%] mix-blend-screen" />
-        {PETALS.map((p, i) => (
+        {PETALS.filter((_, i) => i % 3 !== 1).map((p, i) => (
           <span key={i} className="atm-fall absolute top-0 block" style={{ left: `${p.x}%`, width: p.size, height: p.size * 1.25, animationDelay: `${p.delay}s`, animationDuration: `${p.dur}s`, ["--dx" as string]: `${p.dx}px` }}>
             <svg viewBox="-4 -9 8 10" className="petal-flutter block h-full w-full" style={{ animationDuration: `${p.flutter}s`, animationDelay: `${p.delay}s` }}>
               <path d={PETAL} fill={`url(#${petalFill})`} stroke="#f0a3c0" strokeWidth="0.12" />

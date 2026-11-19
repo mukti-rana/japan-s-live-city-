@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Playfair_Display } from "next/font/google";
-import { ArrowLeft, Compass } from "lucide-react";
+import { ArrowLeft, ArrowRight, Compass } from "lucide-react";
 import Logo from "@/components/ui/Logo";
 import ShineBorder from "@/components/ui/ShineBorder";
 import GuestLink from "@/components/auth/GuestLink";
@@ -66,7 +66,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="pointer-events-auto relative w-full max-w-[26rem] rounded-3xl border border-white/25 bg-gradient-to-b from-white/[0.05] to-white/[0.01] p-6 shadow-[0_30px_80px_-30px_rgba(120,90,200,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[4px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
+          <section aria-labelledby="auth-title" className="auth-panel pointer-events-auto relative w-full max-w-[26rem] rounded-[1.75rem] border border-white/25 p-6 shadow-[0_34px_90px_-34px_rgba(90,70,170,0.55),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-[14px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
             <ShineBorder />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -86,17 +86,11 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                     </div>
 
                     <div className="mt-6">
-                      <GuestLink
-                        label="Explore Japan as Guest"
-                        className={`auth-guest-glow group relative isolate flex h-14 w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-lilac to-sakura text-base font-normal text-background [text-shadow:none] shadow-[0_12px_34px_-12px_rgba(196,181,253,0.7)] transition-all hover:brightness-110 active:scale-[0.985] ${ring}`}
-                      >
-                        <Compass size={18} className="transition-transform duration-500 group-hover:rotate-45" aria-hidden="true" />
-                        <span>
-                          {tr("Explore Japan as Guest")}{" "}
-                          <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-1">
-                            →
-                          </span>
-                        </span>
+                      {/* Minimal glass: transparent, a fine light border, the same width as the panel's own controls; the arrow slides on hover, focus and tap. */}
+                      <GuestLink label="Explore Japan as Guest" className={`auth-guest group ${ring}`}>
+                        <Compass size={17} className="auth-guest__icon" aria-hidden="true" />
+                        <span>{tr("Explore Japan as Guest")}</span>
+                        <ArrowRight size={17} className="auth-guest__arrow" aria-hidden="true" />
                       </GuestLink>
                       <p className="mt-2 text-center text-xs text-foreground">{tr("No account required. Start exploring Japan.")}</p>
                     </div>
