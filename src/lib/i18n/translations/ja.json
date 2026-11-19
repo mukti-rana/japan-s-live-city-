@@ -1516,5 +1516,8 @@
   "today": "今日",
   "{n} earthquake in the last 24 hours": "過去24時間に{n}回の地震",
   "{n} earthquakes in the last 24 hours": "過去24時間に{n}回の地震",
-  "{n} place": "{n}か所"
+  "{n} place": "{n}か所",
+  "{h} h {m} min of daylight left": "日没まであと{h}時間{m}分",
+  "Sunrise in {h} h {m} min": "日の出まであと{h}時間{m}分",
+  "Next hours": "今後の時間帯"
 }

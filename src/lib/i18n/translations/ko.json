@@ -2151,5 +2151,8 @@
   "today": "오늘",
   "{n} earthquake in the last 24 hours": "최근 24시간 동안 지진 {n}회",
   "{n} earthquakes in the last 24 hours": "최근 24시간 동안 지진 {n}회",
-  "{n} place": "{n}곳"
+  "{n} place": "{n}곳",
+  "{h} h {m} min of daylight left": "일몰까지 {h}시간 {m}분",
+  "Sunrise in {h} h {m} min": "일출까지 {h}시간 {m}분",
+  "Next hours": "앞으로의 시간"
 }

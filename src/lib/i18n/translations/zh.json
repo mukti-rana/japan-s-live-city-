@@ -2151,5 +2151,8 @@
   "today": "今天",
   "{n} earthquake in the last 24 hours": "过去24小时内{n}次地震",
   "{n} earthquakes in the last 24 hours": "过去24小时内{n}次地震",
-  "{n} place": "{n}个地点"
+  "{n} place": "{n}个地点",
+  "{h} h {m} min of daylight left": "距离日落还有{h}小时{m}分钟",
+  "Sunrise in {h} h {m} min": "距离日出还有{h}小时{m}分钟",
+  "Next hours": "接下来几小时"
 }

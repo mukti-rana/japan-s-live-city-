@@ -2180,5 +2180,8 @@
   "today": "आज",
   "{n} earthquake in the last 24 hours": "पिछले 24 घंटे में {n} भूकंप",
   "{n} earthquakes in the last 24 hours": "पिछले 24 घंटे में {n} भूकंप",
-  "{n} place": "{n} जगह"
+  "{n} place": "{n} जगह",
+  "{h} h {m} min of daylight left": "दिन की रोशनी {h} घंटे {m} मिनट बाकी",
+  "Sunrise in {h} h {m} min": "सूर्योदय में {h} घंटे {m} मिनट",
+  "Next hours": "अगले घंटे"
 }

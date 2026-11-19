@@ -6,7 +6,8 @@ import GlassCard from "@/components/ui/GlassCard";
 import ViewAllButton from "@/components/ui/ViewAllButton";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import WeatherAdvisor from "@/components/home/weather/WeatherAdvisor";
-import WeatherAtmosphere from "@/components/home/weather/WeatherAtmosphere";
+import WeatherSky from "@/components/home/weather/WeatherSky";
+import WeatherCardExtras, { CountUp } from "@/components/home/weather/WeatherCardExtras";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useInline, type Table, localize, translate } from "@/lib/i18n/inline";
@@ -304,7 +305,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
           <div className="grid gap-4 xl:grid-cols-2">
             {/* Left: place, temperature, condition */}
             <section className="keep-dark-ink relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
-              <WeatherAtmosphere icon={weather.icon} isNight={night} />
+              <WeatherSky icon={weather.icon} isNight={night} sunrise={weather.sunrise} sunset={weather.sunset} windKmh={weather.windKmh} precipMm={weather.hourly[0]?.precipMm ?? null} />
               <div className="relative">
                 <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
                   <MapPin size={14} className="text-gold" aria-hidden="true" />
@@ -319,7 +320,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
                 </span>
                 <div className="min-w-0">
                   <p className="text-6xl font-semibold leading-none tracking-tight tabular-nums text-foreground sm:text-7xl">
-                    {weather.tempC}
+                    <CountUp value={weather.tempC} />
                     <span className="align-top text-3xl font-medium text-foreground/70 sm:text-4xl">°C</span>
                   </p>
                   <p className="mt-2 text-base font-medium text-foreground">{translate(weather.condition, language)}</p>
@@ -328,6 +329,9 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
                   </p>
                 </div>
               </div>
+
+              {/* The day's sun and the next hours, from the real forecast. */}
+              <WeatherCardExtras sunrise={weather.sunrise} sunset={weather.sunset} hourly={weather.hourly} />
             </section>
 
             {/* Right: the Weather Advisor */}
