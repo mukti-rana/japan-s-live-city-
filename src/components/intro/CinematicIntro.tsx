@@ -31,12 +31,12 @@ const SCENE = { src: HOME_PHOTOS.kiyomizu.src, pos: "72% 50%" }; // Kyoto at nig
 
 type Step = { kind: "gap" | "words" | "zoom" | "logo"; ms: number };
 const STEPS: Step[] = [
-  { kind: "gap", ms: 900 },
-  { kind: "words", ms: 3300 }, // the reveal (about 2.2s), then a held beat
-  { kind: "zoom", ms: 2100 }, // the expansion (ZOOM_SECS) plus a breath of black
+  { kind: "gap", ms: 600 },
+  { kind: "words", ms: 2400 }, // the reveal (about 1.7s), then a short held beat
+  { kind: "zoom", ms: 1600 }, // the expansion (ZOOM_SECS) plus a breath of black
   { kind: "logo", ms: 2800 }, // the logo is drawn in 2s, then rests a moment before it flies
 ];
-const ZOOM_SECS = 2;
+const ZOOM_SECS = 1.5;
 
 const SHADE = "brightness-[0.58] saturate-[0.82] contrast-[1.06]";
 const FLY = 1.25; // seconds the logo takes to fly to the top bar
@@ -204,7 +204,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
                   className={`${serif} ${step.kind === "zoom" ? "intro-ink" : ""} text-[clamp(46px,8.4vw,120px)] font-normal leading-[1.08] tracking-[-0.02em] [text-shadow:0_0_38px_rgba(255,190,140,0.28),0_2px_44px_rgba(0,0,0,0.7)]`}
                 >
                   {(step.kind === "words" || step.kind === "zoom") && (
-                    <SplittingText type="chars" text={words} stagger={0.055} initial={{ y: "0.38em", opacity: 0, filter: "blur(14px)", rotateX: -55 }} animate={{ y: 0, opacity: 1, filter: "blur(0px)", rotateX: 0 }} transition={{ duration: 1.35, ease: EASE }} />
+                    <SplittingText type="chars" text={words} stagger={0.04} initial={{ y: "0.38em", opacity: 0, filter: "blur(14px)", rotateX: -55 }} animate={{ y: 0, opacity: 1, filter: "blur(0px)", rotateX: 0 }} transition={{ duration: 1.0, ease: EASE }} />
                   )}
                   {step.kind === "gap" && <span className="invisible block">{words}</span>}
                 </motion.div>

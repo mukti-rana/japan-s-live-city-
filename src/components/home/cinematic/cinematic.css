@@ -355,4 +355,4 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   56% { -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0); }
   100% { color: #000; -webkit-text-stroke: 0 rgba(255, 255, 255, 0); text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
 }
-.intro-ink { animation: intro-ink 1.8s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+.intro-ink { animation: intro-ink 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
