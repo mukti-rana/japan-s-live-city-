@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AlertTriangle, CalendarDays, Heart, MapPin, RefreshCw, Search, X } from "lucide-react";
+import "@/components/home/cinematic/cinematic.css";
+import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
+import { playfair } from "@/components/home/cinematic/fonts";
 import EventCard from "@/components/events/EventCard";
 import EventModal from "@/components/events/EventModal";
 import PlacePicker from "@/components/news/PlacePicker";
@@ -198,12 +201,12 @@ export default function EventsHub({
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0b0e1a]/95 via-[#1b1140]/75 to-[#0b0e1a]/40" />
         <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0b0e1a] via-transparent to-transparent" />
         <div className="flex flex-col gap-5 p-6 sm:p-9 lg:p-12">
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-sakura">{t("events.eyebrow")}</p>
-            <h1 className="mt-2 bg-gradient-to-r from-azure via-neon-purple to-sakura bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl lg:text-5xl">
-              {t("events.title")}
+          <div className={`max-w-2xl ${playfair.variable}`}>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: "rgba(255,255,255,0.78)" }}>{t("events.eyebrow")}</p>
+            <h1 className="mt-2 font-[family-name:var(--font-home-serif)] text-[clamp(38px,5.6vw,76px)] font-normal leading-[1] tracking-[-0.02em] [text-shadow:0_2px_30px_rgba(0,0,0,0.6)]" style={{ color: "#fff" }}>
+              <SlideInHeading en={t("events.title")} />
             </h1>
-            <p className="mt-3 text-sm leading-relaxed text-foreground/85 sm:text-base">{t("events.subtitle")}</p>
+            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(255,255,255,0.88)" }}>{t("events.subtitle")}</p>
           </div>
           <div className="relative max-w-xl">
             <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-muted" aria-hidden="true" />

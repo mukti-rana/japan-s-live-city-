@@ -1,5 +1,8 @@
 "use client";
 
+import "@/components/home/cinematic/cinematic.css";
+import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
+import { playfair } from "@/components/home/cinematic/fonts";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Flame, RefreshCw, Search, SlidersHorizontal, TrendingUp } from "lucide-react";
@@ -213,12 +216,14 @@ export default function TrendRadarPage({ initial }: { initial: TrendRadarData | 
     <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6">
       <header className="flex flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-sakura">
+          <div className={playfair.variable}>
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-text-tertiary">
               <Flame size={14} aria-hidden="true" />
               {tr("Japan Trend Radar")}
             </p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">{tr("Discover the topics capturing attention across Japan.")}</h1>
+            <h1 className="mt-2 max-w-[20ch] font-[family-name:var(--font-home-serif)] text-[clamp(34px,4.8vw,64px)] font-normal leading-[1.02] tracking-[-0.02em] text-foreground">
+              <SlideInHeading en="Discover the topics capturing attention across Japan." />
+            </h1>
             <p className="mt-1.5 max-w-3xl text-sm text-muted">
               {tr("A daily ranking of the most-viewed Japanese Wikipedia articles. It measures how many people opened each article — not social media, news coverage or search volume.")}
             </p>

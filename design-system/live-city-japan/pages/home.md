@@ -28,3 +28,7 @@ The home page is pictures and type on black. A photographer's name, "Photo:", or
 
 - Anything that prints a credit must carry the attribute `data-photo-credit`. `cinematic.css` hides every `[data-home-root] [data-photo-credit]`, so a photograph added later (or a Discover/Explore card showing someone else's picture) cannot put a name on the home page.
 - A new photograph goes in `src/lib/data/homePhotos.ts` with its credit record; `/credits` picks it up on its own.
+
+## Inner pages share the home page's voice (2026-11-20, approved)
+
+Weather, Trains, Events, Map, Trending and News now open with `PageHero` (`src/components/page/PageHero.tsx`): a small label, a large Playfair heading whose letters slide in one after another (`SlideInHeading`), a hairline that draws itself, and an intro line, all through the same scroll-reveal system as the home page's chapters (`cinematic.css`). The Map uses the compact size. Playfair is loaded for inner pages through this component and the Events and Trending headings, as it already is for the login page. News also leads with "Latest near you" and then "Japan and the world" by default, its cards arriving with the stagger reveal; `?cat=local` no longer turns the whole page local. Remaining tabs (Calendar, Emergency, Community, Cities, Explore, AI assistant, tools, Settings) are still to be done page by page.
