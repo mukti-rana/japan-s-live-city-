@@ -38,7 +38,7 @@ export default function HeadlinesMini() {
   const empty = !loading && (japan.data?.items.length ?? 0) + (world.data?.items.length ?? 0) === 0;
 
   return (
-    <WidgetFrame icon={Newspaper} labelKey="news.home.headlines" accent="azure" viewAll viewAllHref="/news">
+    <WidgetFrame icon={Newspaper} labelKey="news.home.headlines" accent="azure">
       {loading ? (
         <div className="flex flex-col gap-4" role="status" aria-label={t("news.hub.loadingMore")}>
           <CompactSkeleton />

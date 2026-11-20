@@ -80,7 +80,7 @@ export default function YourDay() {
   const empty = schedule.length === 0 && tasks.length === 0;
 
   return (
-    <WidgetFrame icon={CalendarCheck} labelKey="nav.calendar" accent="azure" viewAll viewAllHref="/calendar">
+    <WidgetFrame icon={CalendarCheck} labelKey="nav.calendar" accent="azure">
       <div className="-mt-1 flex items-baseline justify-between gap-2">
         <h2 className="text-lg font-bold text-foreground">{t("yourDay")}</h2>
       </div>

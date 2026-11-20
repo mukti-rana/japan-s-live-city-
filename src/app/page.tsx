@@ -44,8 +44,8 @@ export default function Home() {
         <HomeHero />
         <YourDayStrip />
 
-        {/* 02 — weather, official alerts, what's on */}
-        <Chapter id="now" number="02" label="Live" heading="Right now" intro="Weather, official alerts and what is on today." href="/weather" linkLabel="Weather">
+        {/* 02 — weather, official alerts, what's on. A chapter has no arrow of its own where one of its cards already opens the same page (Weather, the map, News, Trains): one arrow, beside the card's title. */}
+        <Chapter id="now" number="02" label="Live" heading="Right now" intro="Weather, official alerts and what is on today.">
           <div className="flex flex-col gap-4">
             <ScrollReveal>
               <LiveWeatherCard headingLevel={3} />
@@ -66,7 +66,7 @@ export default function Home() {
 
         {/* 04 — the map and a real camera */}
         <BackdropBand photo={HOME_PHOTOS.hakodate}>
-          <Chapter id="live" number="04" label="Live" heading="A live window" intro="The map of Japan, and a real camera on Shibuya Crossing." href="/map" linkLabel="Open the map" flush>
+          <Chapter id="live" number="04" label="Live" heading="A live window" intro="The map of Japan, and a real camera on Shibuya Crossing." flush>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-[3fr_2fr] [&>*]:min-w-0">
               <ScrollReveal from="left" className="h-full">
                 <JapanMapWidget />
@@ -79,7 +79,7 @@ export default function Home() {
         </BackdropBand>
 
         {/* 05 — news, the season, what Japan is reading */}
-        <Chapter id="news" number="05" label="Read" heading="Today in Japan" intro="Stories from Japan's own publishers, and what people are reading." href="/news" linkLabel="All news">
+        <Chapter id="news" number="05" label="Read" heading="Today in Japan" intro="Stories from Japan's own publishers, and what people are reading.">
           <div className="flex flex-col gap-4">
             <ScrollReveal from="slide-left">
               <LatestNewsNearYou headingLevel={3} />
@@ -102,7 +102,7 @@ export default function Home() {
         <BackdropBand photo={HOME_PHOTOS.dotonbori} side="right">
           {/* A bullet train that comes toward you as this chapter scrolls into view. */}
           <ApproachingTrain />
-          <Chapter id="trains" number="06" label="Travel" heading="Getting around" href="/trains" linkLabel="Train status">
+          <Chapter id="trains" number="06" label="Travel" heading="Getting around">
             <ScrollReveal from="left" className="max-w-2xl">
               <TrainListWidget />
             </ScrollReveal>
