@@ -43,7 +43,7 @@ The Community pages are a pitch-black social platform in **both themes** (`data-
 
 ## "View All" and chapter links are a bare arrow (2026-11-20, approved)
 
-Every "View All →" and every chapter-header link on the home page ("Weather →", "Open the map →", "All news →", "Train status →", "Explore all →") is `ArrowLink`: no box, no border, no fill, only an arrow. At rest it breathes forward slowly; pointed at or focused, it opens (the shaft stretches, the head runs ahead) and brightens; still under reduced motion. The words stay in the markup for screen readers; 44px to touch. `ViewAllButton` renders `ArrowLink`, so any page that uses it follows.
+Every "View All →" and every chapter-header link on the home page ("Weather →", "Open the map →", "All news →", "Train status →", "Explore all →") is `ArrowLink`: no box, no border, no fill, only an arrow. It is alive at rest (updated 2026-11-20, approved): its colour flows through amber, pink, violet and blue with a soft glow, it slowly opens (the shaft stretches, the head runs ahead) and closes again every 3.2s, and a light travels along the shaft; each arrow is a little out of step with the others. Pointed at or focused, it holds fully open and brightens. Still, in one colour, under reduced motion. The words stay in the markup for screen readers; 44px to touch. `ViewAllButton` renders `ArrowLink`, so any page that uses it follows.
 
 ## The weather card's sky looks like the real one (2026-11-20, approved)
 

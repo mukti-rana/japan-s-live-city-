@@ -1775,13 +1775,23 @@ body:has([data-community-page]) [data-site-header] {
 body:has([data-community-page]) { background: #050505; }
 body:has([data-explore-page]) { background: #05060c; }
 
-/* ArrowLink (see ArrowLink.tsx): a bare arrow that breathes forward at rest, and opens (the shaft stretches, the head runs ahead) when pointed at or focused. */
-@keyframes arrow-breathe { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(5px, 0, 0); } }
-.arrow-link__glyph { animation: arrow-breathe 2.8s ease-in-out infinite; }
-.arrow-link__shaft { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-.arrow-link__head { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-.arrow-link:hover .arrow-link__glyph, .arrow-link:focus-visible .arrow-link__glyph { animation: none; }
-.arrow-link:hover .arrow-link__shaft, .arrow-link:focus-visible .arrow-link__shaft { transform: translateY(-50%) scaleX(1.65); }
-.arrow-link:hover .arrow-link__head, .arrow-link:focus-visible .arrow-link__head { transform: translate3d(15px, 0, 0); }
+/* ArrowLink (see ArrowLink.tsx): a bare arrow that is alive at rest. Its colour flows through amber, pink, violet and blue; it slowly opens (the shaft stretches, the head runs ahead)
+   and closes again; and a light travels along the shaft. Pointed at or focused, it holds fully open and brightens. Each arrow is a little out of step with its neighbours
+   (--arrow-delay). Still, in one colour, under reduced motion. */
+@keyframes arrow-hue { 0%, 100% { color: #ffb347; } 25% { color: #ff6b9d; } 50% { color: #a98bff; } 75% { color: #5db0ff; } }
+@keyframes arrow-open-shaft { 0%, 100% { transform: translateY(-50%) scaleX(1); } 40%, 62% { transform: translateY(-50%) scaleX(1.65); } }
+@keyframes arrow-open-head { 0%, 100% { transform: translate3d(0, 0, 0); } 40%, 62% { transform: translate3d(15px, 0, 0); } }
+@keyframes arrow-glint { 0% { transform: translateX(-130%); } 55%, 100% { transform: translateX(300%); } }
+.arrow-link__glyph { color: #ffb347; animation: arrow-hue 7s linear infinite; animation-delay: var(--arrow-delay, 0s); filter: drop-shadow(0 0 4px currentColor); }
+.arrow-link__shaft { overflow: hidden; animation: arrow-open-shaft 3.2s cubic-bezier(0.45, 0, 0.25, 1) infinite; animation-delay: var(--arrow-delay, 0s); }
+.arrow-link__head { animation: arrow-open-head 3.2s cubic-bezier(0.45, 0, 0.25, 1) infinite; animation-delay: var(--arrow-delay, 0s); }
+.arrow-link__glint { position: absolute; inset: 0 auto 0 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent); animation: arrow-glint 3.2s ease-in-out infinite; animation-delay: var(--arrow-delay, 0s); }
+.arrow-link:hover .arrow-link__glyph, .arrow-link:focus-visible .arrow-link__glyph { filter: drop-shadow(0 0 7px currentColor) brightness(1.25); }
+.arrow-link:hover .arrow-link__shaft, .arrow-link:focus-visible .arrow-link__shaft { animation: none; transform: translateY(-50%) scaleX(1.65); }
+.arrow-link:hover .arrow-link__head, .arrow-link:focus-visible .arrow-link__head { animation: none; transform: translate3d(15px, 0, 0); }
 .arrow-link:active .arrow-link__head { transform: translate3d(18px, 0, 0); }
-@media (prefers-reduced-motion: reduce) { .arrow-link__glyph { animation: none; } .arrow-link__shaft, .arrow-link__head { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .arrow-link__glyph { animation: none; color: #ff8fb1; }
+  .arrow-link__shaft, .arrow-link__head, .arrow-link__glint { animation: none; }
+  .arrow-link__glint { display: none; }
+}
