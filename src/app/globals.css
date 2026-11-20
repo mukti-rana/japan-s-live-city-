@@ -1605,3 +1605,12 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 .ex-list > li { animation: ex-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
 @keyframes ex-in { from { opacity: 0; transform: translate3d(0, 22px, 0) scale(0.985); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ex-list > li { animation: none; } }
+
+/* Entering an inner page (src/app/template.tsx): it zooms in from slightly smaller and softly blurred, out of the spot that was pressed. */
+.page-enter { transform-origin: 50% 12%; animation: page-enter 0.8s cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+@keyframes page-enter {
+  from { opacity: 0; transform: scale(0.93) translate3d(0, 18px, 0); filter: blur(7px); }
+  60% { filter: blur(0); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
