@@ -47,7 +47,7 @@ export function filtersFromParams(sp: Record<string, string | string[] | undefin
   if (TOPIC_IDS.has(cat)) f.topic = cat as CategoryId;
   else if (cat === "japan") f.scope = "japan";
   else if (cat === "international") f.scope = "world";
-  else if (cat === "local") f.loc = "near";
+  // ?cat=local (an old address) opens the normal page: the "Latest near you" row is always its first line, so the rest of the page stays Japan and the world.
   else if (["osaka", "kyoto", "tokyo"].includes(cat)) f.loc = cat;
   const loc = get("loc") || get("pref");
   if (loc === "near" || PREFECTURES.some((p) => p.id === loc)) f.loc = loc;

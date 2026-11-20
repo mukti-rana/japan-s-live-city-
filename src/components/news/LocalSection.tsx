@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, LocateFixed, MapPin } from "lucide-react";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NewsCard from "@/components/news/NewsCard";
 import PlacePicker from "@/components/news/PlacePicker";
 import { CardSkeleton } from "@/components/news/NewsSkeleton";
@@ -17,7 +18,7 @@ export default function LocalSection({ placeInfo, onOpen, onSeeAll }: { placeInf
   const { t } = useLanguage();
   const tr = useTranslate();
   const live = useLiveLocation();
-  const local = useNewsFeed(placeInfo.place ? { cat: "local", place: placeInfo.place, video: 0, limit: 3 } : null);
+  const local = useNewsFeed(placeInfo.place ? { cat: "local", place: placeInfo.place, video: 0, limit: 4 } : null);
   const items = local.data?.items ?? [];
   const loading = placeInfo.locating || (Boolean(placeInfo.place) && local.loading);
 
@@ -54,7 +55,7 @@ export default function LocalSection({ placeInfo, onOpen, onSeeAll }: { placeInf
       )}
 
       {loading ? (
-        <div className="grid gap-4 md:grid-cols-3" role="status" aria-label={t("news.hub.loadingMore")}>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" role="status" aria-label={t("news.hub.loadingMore")}>
           <CardSkeleton />
           <CardSkeleton />
           <CardSkeleton />
@@ -64,11 +65,13 @@ export default function LocalSection({ placeInfo, onOpen, onSeeAll }: { placeInf
       ) : items.length === 0 ? (
         <p className="rounded-xl border border-dashed border-glass-border p-4 text-center text-xs text-muted">{t("news.home.empty")}</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
-          {items.map((item) => (
-            <NewsCard key={item.id} item={item} variant="card" onOpen={onOpen} showLevel />
-          ))}
-        </div>
+        <ScrollReveal from="stagger">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {items.map((item) => (
+              <NewsCard key={item.id} item={item} variant="card" onOpen={onOpen} showLevel />
+            ))}
+          </div>
+        </ScrollReveal>
       )}
     </section>
   );

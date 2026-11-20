@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/components/home/cinematic/cinematic.css";
 import Reveal from "@/components/ui/Reveal";
 import NewsHub from "@/components/news/NewsHub";
 import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";

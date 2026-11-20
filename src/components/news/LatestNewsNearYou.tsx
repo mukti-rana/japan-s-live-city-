@@ -50,7 +50,7 @@ export default function LatestNewsNearYou({ headingLevel = 2 }: { headingLevel?:
             <p className="text-xs text-muted">{t("news.home.subtitle")}</p>
           </div>
         </div>
-        <ViewAllButton href="/news?cat=local" label={t("news.home.viewAll")} />
+        <ViewAllButton href="/news" label={t("news.home.viewAll")} />
       </div>
 
       {(placeInfo.place || (!placeInfo.locating && !placeInfo.place)) && <PlacePicker current={placeInfo} compact />}

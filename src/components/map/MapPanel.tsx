@@ -215,7 +215,7 @@ function CityDetails({
         ) : (
           <p className="text-sm text-muted">{text("newsNone")}</p>
         )}
-        <Link href={`/news?cat=local`} className="mt-2 inline-block text-xs font-medium text-azure hover:underline">
+        <Link href={`/news`} className="mt-2 inline-block text-xs font-medium text-azure hover:underline">
           {text("moreNews")} →
         </Link>
       </Block>

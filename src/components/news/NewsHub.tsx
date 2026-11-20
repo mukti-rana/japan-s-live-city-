@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCw, Search, ShieldAlert, SlidersHorizontal, X } from "lucide-react";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NewsCard from "@/components/news/NewsCard";
 import NewsModal from "@/components/news/NewsModal";
 import BreakingStrip from "@/components/news/BreakingStrip";
@@ -244,7 +245,11 @@ export default function NewsHub({
       {plainView && <BreakingStrip onOpen={setOpenItem} />}
 
       {/* A — Latest near you */}
-      {plainView && <LocalSection placeInfo={placeInfo} onOpen={setOpenItem} onSeeAll={() => update({ loc: "near" })} />}
+      {plainView && (
+        <ScrollReveal from="up">
+          <LocalSection placeInfo={placeInfo} onOpen={setOpenItem} onSeeAll={() => update({ loc: "near" })} />
+        </ScrollReveal>
+      )}
 
       {filters.loc === "near" && (
         <div className="rounded-2xl border border-glass-border bg-glass-bg p-4">
@@ -268,10 +273,10 @@ export default function NewsHub({
       <section aria-label={tr("Latest news")} className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">{filters.video ? t("news.hub.videoNews") : tr("Latest news")}</h2>
+            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">{filters.video ? t("news.hub.videoNews") : plainView ? tr("Japan and the world") : tr("Latest news")}</h2>
             {lastPage && !loading && (
               <p className="mt-0.5 text-[11px] text-muted" aria-live="polite">
-                {lastPage.total} {t("news.hub.stories")}
+                {lastPage.total} {t("news.hub.stories")}{plainView && filters.scope === "all" ? ` · ${tr("Japan and international, newest first")}` : ""}
                 {fetchedAt ? ` · ${tr("Checked")} ${timeAgo(new Date(fetchedAt).toISOString(), language)}` : ""}
                 {stale ? ` · ${t("news.hub.stale")}` : ""}
               </p>
@@ -343,9 +348,14 @@ export default function NewsHub({
           </div>
         ) : (
           <>
-            {featured && <NewsCard item={featured} variant="featured" onOpen={setOpenItem} showLevel={filters.loc === "near"} priority />}
+            {featured && (
+              <ScrollReveal from="scale">
+                <NewsCard item={featured} variant="featured" onOpen={setOpenItem} showLevel={filters.loc === "near"} priority />
+              </ScrollReveal>
+            )}
 
             {videos.data && videos.data.items.length > 0 && (
+              <ScrollReveal from="slide-right">
               <section aria-label={t("news.hub.videoNews")} className="flex flex-col gap-2.5">
                 <h3 className="text-sm font-semibold text-foreground">▶ {t("news.hub.videoNews")}</h3>
                 <ul className="-mx-3 flex snap-x scroll-pl-3 gap-3 overflow-x-auto px-3 pb-2 sm:mx-0 sm:px-0">
@@ -356,13 +366,16 @@ export default function NewsHub({
                   ))}
                 </ul>
               </section>
+              </ScrollReveal>
             )}
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {first.map((item) => (
-                <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
-              ))}
-            </div>
+            <ScrollReveal from="stagger">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {first.map((item) => (
+                  <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
+                ))}
+              </div>
+            </ScrollReveal>
 
             {/* C — Continue discovering */}
             {(later.length > 0 || lastPage?.nextOffset) && (
@@ -372,11 +385,13 @@ export default function NewsHub({
                   <p className="mt-0.5 text-xs text-muted">{tr("More stories from other prefectures, major cities and the world, newest first. Each story appears once.")}</p>
                 </div>
                 {later.length > 0 && (
-                  <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    {later.map((item) => (
-                      <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
-                    ))}
-                  </div>
+                  <ScrollReveal from="stagger">
+                    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                      {later.map((item) => (
+                        <NewsCard key={item.id} item={item} onOpen={setOpenItem} showLevel={filters.loc === "near"} />
+                      ))}
+                    </div>
+                  </ScrollReveal>
                 )}
                 {loadingMore && (
                   <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-label={t("news.hub.loadingMore")}>

@@ -1519,5 +1519,7 @@
   "{n} place": "{n}か所",
   "{h} h {m} min of daylight left": "日没まであと{h}時間{m}分",
   "Sunrise in {h} h {m} min": "日の出まであと{h}時間{m}分",
-  "Next hours": "今後の時間帯"
+  "Next hours": "今後の時間帯",
+  "Japan and the world": "日本と世界",
+  "Japan and international, newest first": "日本と海外のニュース、新しい順"
 }
