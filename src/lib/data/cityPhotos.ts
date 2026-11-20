@@ -8,7 +8,7 @@ export const CITY_PHOTOS: Record<string, readonly HomePhoto[]> = {
   tokyo: [HOME_PHOTOS.hero, HOME_PHOTOS.tokyoZojojiTokyoTower, HOME_PHOTOS.tokyoSunsetCityscape, HOME_PHOTOS.tokyoShinjukuNight],
   osaka: [HOME_PHOTOS.ownOsakaSign, HOME_PHOTOS.ownOsakaCastleNight, HOME_PHOTOS.ownTsutenkakuDusk, HOME_PHOTOS.dotonbori, HOME_PHOTOS.osakaNakanoshimaNight, HOME_PHOTOS.osakaCastleBridge, HOME_PHOTOS.osakaCastleTiers],
   kyoto: [HOME_PHOTOS.fushimi, HOME_PHOTOS.kiyomizu, HOME_PHOTOS.kyotoSaganoBamboo, HOME_PHOTOS.kyotoFushimiRomonDusk],
-  nara: [HOME_PHOTOS.todaiji, HOME_PHOTOS.ownNaraDeer, HOME_PHOTOS.ownNaraStag, HOME_PHOTOS.ownNaraDeerHerd, HOME_PHOTOS.ownNaraDeerWithOwner, HOME_PHOTOS.ownNaraWakakusaView, HOME_PHOTOS.ownNaraWakakusaLying, HOME_PHOTOS.naraKasugaTorii, HOME_PHOTOS.naraDeer],
+  nara: [HOME_PHOTOS.todaiji, HOME_PHOTOS.ownNaraDeer, HOME_PHOTOS.ownNaraStag, HOME_PHOTOS.ownNaraDeerHerd, HOME_PHOTOS.ownNaraDeerWithOwner, HOME_PHOTOS.ownNaraWakakusaView, HOME_PHOTOS.naraKasugaTorii, HOME_PHOTOS.naraDeer],
   hiroshima: [HOME_PHOTOS.itsukushima, HOME_PHOTOS.hiroshimaAtomicBombDome, HOME_PHOTOS.hiroshimaPeaceCenotaph],
   kobe: [HOME_PHOTOS.kobePortTower, HOME_PHOTOS.kobeCityFromHills],
   sapporo: [HOME_PHOTOS.sapporoTvTower, HOME_PHOTOS.sapporoOdoriParkWinter, HOME_PHOTOS.sapporoSusukinoNight],
