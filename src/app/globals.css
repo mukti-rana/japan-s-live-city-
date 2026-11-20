@@ -1614,3 +1614,23 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   to { opacity: 1; transform: none; filter: none; }
 }
 @media (prefers-reduced-motion: reduce) { .page-enter { animation: none; } }
+
+/* Explore Japan: its full-screen photograph runs up behind the top bar, as on the home page. At the top of the page the bar floats over the photograph
+   as a soft fade from black with the light-on-dark colours; once the page is scrolled (data-compact) it returns to its normal solid style, so it stays readable
+   over the light page below the hero. */
+body:has([data-explore-hero]) [data-site-header] { margin-bottom: -3.5rem; }
+body:has([data-explore-hero]) [data-site-header]:has(> header:not([data-compact="true"])) {
+  color-scheme: dark;
+  --background: #000000; --foreground: #f4f4f5; --muted: #c9ccd6;
+  --panel: #0b0b0c; --sidebar-bg: #000000;
+  --text-primary: #f4f4f5; --text-secondary: #c9ccd6; --text-tertiary: #aeb2c0;
+  --glass-bg: rgba(255, 255, 255, 0.06); --glass-bg-strong: rgba(255, 255, 255, 0.1); --glass-border: rgba(255, 255, 255, 0.14);
+  --btn-line: rgba(255, 255, 255, 0.2); --btn-line-hover: rgba(255, 255, 255, 0.45); --btn-ink: rgba(255, 255, 255, 0.78); --btn-wash: rgba(255, 255, 255, 0.05);
+  color: var(--foreground);
+}
+body:has([data-explore-hero]) [data-site-header] > header:not([data-compact="true"]) {
+  background: linear-gradient(rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0));
+  border-color: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}

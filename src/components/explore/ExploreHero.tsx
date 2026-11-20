@@ -73,7 +73,7 @@ export default function ExploreHero({
   ];
 
   return (
-    <header className={`${playfair.variable} keep-dark-ink relative isolate -mx-3 -mt-3 flex min-h-[calc(100svh-var(--header-h,3.5rem))] flex-col justify-end overflow-hidden sm:-mx-4 sm:-mt-4`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
+    <header data-explore-hero className={`${playfair.variable} keep-dark-ink relative isolate -mx-3 -mt-3 flex min-h-[100svh] flex-col justify-end overflow-hidden sm:-mx-4 sm:-mt-4`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
       <ExploreBackdrop />
       <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-5 pb-10 pt-24 sm:px-10 lg:px-14 lg:pb-14">
         <div>
