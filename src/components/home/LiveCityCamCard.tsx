@@ -1,63 +1,6 @@
-"use client";
+import CityCam from "@/components/citycam/CityCam";
 
-import { useState } from "react";
-import { ExternalLink, Video } from "lucide-react";
-import WidgetFrame from "@/components/home/WidgetFrame";
-import { CITIES, type CitySlug } from "@/lib/data/cities";
-import { CITY_CAMS } from "@/lib/data/cityCams";
-import { useTranslate } from "@/lib/i18n/inline";
-
-// "SHIBUYA, TOKYO" → "Shibuya, Tokyo", the form the translation memory keeps.
-const titleCase = (s: string) => s.toLowerCase().replace(/(^|[\s,])([a-z])/g, (_, a: string, b: string) => a + b.toUpperCase());
-
+// The home page's Live City Cam: the cameras, the player and the camera's information are in CityCam (src/components/citycam).
 export default function LiveCityCamCard() {
-  const [citySlug, setCitySlug] = useState<CitySlug>("tokyo");
-  const cam = CITY_CAMS[citySlug];
-  const tr = useTranslate();
-  const location = tr(titleCase(cam.location)).toUpperCase();
-
-  return (
-    <WidgetFrame icon={Video} labelKey="citycam.title" accent="mint" live>
-      <div className="flex items-center gap-1.5">
-        {CITIES.map((city) => (
-          <button
-            key={city.slug}
-            type="button"
-            onClick={() => setCitySlug(city.slug)}
-            className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-              citySlug === city.slug
-                ? "bg-azure/20 text-azure"
-                : "text-muted hover:text-foreground"
-            }`}
-          >
-            {tr(city.name)}
-          </button>
-        ))}
-      </div>
-
-      <div className="keep-dark-ink relative aspect-video w-full flex-1 overflow-hidden rounded-xl bg-[#0a1024]">
-        <iframe
-          key={cam.videoId}
-          src={`https://www.youtube.com/embed/${cam.videoId}?autoplay=1&mute=1&rel=0&playsinline=1`}
-          title={`${location} — ${tr("Live")}`}
-          className="absolute inset-0 h-full w-full"
-          allow="autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-        />
-
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-[#0a0a0b]/85 to-transparent p-3">
-          <p className="font-mono text-[10px] text-foreground/80">{location}</p>
-          <a
-            href={cam.watchUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="pointer-events-auto flex items-center gap-1 text-[10px] text-foreground/60 hover:text-foreground"
-          >
-            {cam.source}
-            <ExternalLink size={10} />
-          </a>
-        </div>
-      </div>
-    </WidgetFrame>
-  );
+  return <CityCam />;
 }
