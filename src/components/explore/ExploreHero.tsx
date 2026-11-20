@@ -74,9 +74,11 @@ export default function ExploreHero({
 
   return (
     <header data-explore-hero className={`${playfair.variable} keep-dark-ink relative -mx-3 -mt-3 flex min-h-[100svh] flex-col justify-end overflow-hidden sm:-mx-4 sm:-mt-4`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
+      {/* From a tablet up it stands at the top right of the screen, under the top bar, as it always did. */}
+      <ExploreCaption className="absolute right-10 top-24 z-10 hidden sm:block lg:right-14" />
       <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-5 pb-10 pt-24 sm:px-10 lg:px-14 lg:pb-14">
-        {/* On a phone the recommended place sits above the heading; from a tablet up it stands at the right of it. */}
-        <ExploreCaption className="sm:absolute sm:right-10 sm:top-24 lg:right-14" />
+        {/* On a phone the recommended place sits above the heading (the top-right corner is taken by the controls when they open). */}
+        <ExploreCaption className="sm:hidden" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "rgba(255,255,255,0.78)" }}>{tr("Explore Japan")}</p>
           <h1 className="mt-3 max-w-[16ch] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,112px)] font-normal leading-[0.98] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(0,0,0,0.55)]">
