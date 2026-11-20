@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -51,6 +51,49 @@ function usePlaces(origin: ExploreLocation | null) {
   const feed = useLazyJson<ExploreResult>(url);
   const items = (feed.data?.items ?? []).filter((d): d is Destination & { image: NonNullable<Destination["image"]> } => Boolean(d.image)).slice(0, 6);
   return { items, scope, loading: feed.loading };
+}
+
+// The words' colours are worked out from each photograph on the server (see /api/explore/ink): a tint of a hue the picture really contains, light enough
+// to read against it at WCAG contrast 4.5, with a soft dark glow behind the words only as deep as the picture needs. One set for a wide screen, one for a phone.
+type Ink = { hue: number; glow: number; eyebrow: string; name: string; meta: string; credit: string };
+type Inks = { wide: Ink; narrow: Ink };
+const inkLoads = new Map<string, Promise<Inks | null>>();
+function loadInk(id: string): Promise<Inks | null> {
+  let p = inkLoads.get(id);
+  if (!p) {
+    p = fetch(`/api/explore/ink?id=${encodeURIComponent(id)}`)
+      .then((r) => (r.ok ? (r.json() as Promise<Inks>) : null))
+      .catch(() => null)
+      .then((v) => {
+        if (!v) inkLoads.delete(id); // a failure is tried again next time, not remembered
+        return v;
+      });
+    inkLoads.set(id, p);
+  }
+  return p;
+}
+function useInk(id: string | null): Ink | null {
+  const [got, setGot] = useState<{ id: string; inks: Inks } | null>(null);
+  const wide = useSyncExternalStore(
+    (cb) => {
+      const m = window.matchMedia("(min-width: 640px)");
+      m.addEventListener("change", cb);
+      return () => m.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(min-width: 640px)").matches,
+    () => true,
+  );
+  useEffect(() => {
+    if (!id) return;
+    let live = true;
+    void loadInk(id).then((inks) => {
+      if (live && inks) setGot({ id, inks });
+    });
+    return () => {
+      live = false;
+    };
+  }, [id]);
+  return got && got.id === id ? (wide ? got.inks.wide : got.inks.narrow) : null;
 }
 
 type PhotoState = {
@@ -127,15 +170,18 @@ export function ExploreCaption({ className = "" }: { className?: string }) {
   const { language } = useLanguage();
   const { items, scope, i, setI, places } = usePhotos();
   const current = places ? items[i % items.length] : null;
+  const ink = useInk(current?.id ?? null);
   if (!current) return null;
   const where = [current.city, prefectureLabel(current.prefectureId, language)].filter(Boolean).join(", ");
   return (
-    <div key={current.id} className={`${playfair.variable} explore-caption max-w-[18rem] sm:max-w-[22rem] ${className}`} style={{ color: "#fff" }}>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.26em]" style={{ color: "rgba(255,255,255,0.75)" }}>
+    <div key={current.id} className={`${playfair.variable} explore-caption isolate max-w-[18rem] sm:max-w-[22rem] ${className}`} style={{ color: "#fff" }}>
+      {/* A soft dark glow behind the words, only as deep as this photograph needs for the colours to read. */}
+      <div aria-hidden="true" className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10" style={{ background: `radial-gradient(closest-side, rgba(4,5,10,${ink?.glow ?? 0.2}) 45%, transparent)`, transition: "background 1.4s ease" }} />
+        <p className="text-[10px] font-semibold uppercase tracking-[0.26em]" style={{ color: ink?.eyebrow ?? "rgba(255,255,255,0.75)", transition: "color 1.4s ease" }}>
           {scope === "all" ? tr("Featured destination") : tr("Recommended near you")}
         </p>
-        <p className="mt-1.5 font-[family-name:var(--font-home-serif)] text-[clamp(22px,2.2vw,32px)] font-normal leading-[1.08] [text-shadow:0_2px_20px_rgba(0,0,0,0.7)]">{placeName(current, language)}</p>
-        <p className="mt-1 flex items-center gap-1.5 text-xs" style={{ color: "rgba(255,255,255,0.8)" }}>
+        <p className="mt-1.5 font-[family-name:var(--font-home-serif)] text-[clamp(22px,2.2vw,32px)] font-normal leading-[1.08] [text-shadow:0_2px_20px_rgba(0,0,0,0.7)]" style={{ color: ink?.name, transition: "color 1.4s ease" }}>{placeName(current, language)}</p>
+        <p className="mt-1 flex items-center gap-1.5 text-xs" style={{ color: ink?.meta ?? "rgba(255,255,255,0.8)", transition: "color 1.4s ease" }}>
           <MapPin size={12} aria-hidden="true" className="shrink-0" />
           <span className="truncate">{where}</span>
           {current.distanceKm !== null && scope === "near" ? <span className="shrink-0">· {Math.round(current.distanceKm)} km</span> : null}
@@ -149,7 +195,7 @@ export function ExploreCaption({ className = "" }: { className?: string }) {
             <button key={d.id} type="button" aria-label={placeName(d, language)} aria-pressed={n === i} onClick={() => setI(n)} className={`h-1.5 rounded-full transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${n === i ? "w-7 bg-white" : "w-3 bg-white/40 hover:bg-white/70"}`} />
           ))}
         </div>
-        <a href={current.image.page} target="_blank" rel="noopener noreferrer" className="mt-2 block max-w-full truncate text-[9px] hover:underline" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <a href={current.image.page} target="_blank" rel="noopener noreferrer" className="mt-2 block max-w-full truncate text-[9px] hover:underline" style={{ color: ink?.credit ?? "rgba(255,255,255,0.6)", transition: "color 1.4s ease" }}>
           {x("photoBy")}: {current.image.author ?? "Wikimedia Commons"}
           {current.image.license ? ` · ${current.image.license}` : ""}
         </a>
