@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { Camera, ChevronLeft, ChevronRight, Compass, HelpCircle, Map as MapIcon, Users } from "lucide-react";
+import { playfair } from "@/components/home/cinematic/fonts";
+import FeedPost from "@/components/community/FeedPost";
+import PhotoMasonry from "@/components/community/PhotoMasonry";
+import { ReactionsProvider } from "@/components/community/PostReactions";
 import Tx from "@/components/i18n/Tx";
 import Bi from "@/components/community/Bi";
 import CommunitySearch from "@/components/community/CommunitySearch";
@@ -9,7 +13,7 @@ import Unavailable from "@/components/community/Unavailable";
 import QuestionCard from "@/components/community/QuestionCard";
 import { PLACE_CATEGORIES } from "@/lib/community/placeTypes";
 import { locationOptions } from "@/lib/community/locationOptions";
-import { type Area, type FeaturedArea } from "@/lib/community/areas";
+import { FEATURED_AREAS, type Area, type FeaturedArea } from "@/lib/community/areas";
 import { CATEGORIES } from "@/lib/community/categories";
 import { feedQuery, isFiltered, type FeedFilters } from "@/lib/community/feed";
 import type { FeedResult } from "@/lib/community/queries";
@@ -18,7 +22,6 @@ import type { CommunityQuestion } from "@/lib/community/types";
 import type { Discovery } from "@/lib/community/discoveryQuery";
 import DiscoverySections from "@/components/community/DiscoverySections";
 import LatestPhotos from "@/components/community/LatestPhotos";
-import PostGrid from "@/components/community/PostGrid";
 
 const pager = "inline-flex h-11 items-center gap-1.5 rounded-xl border border-white/12 bg-white/[0.04] px-4 text-sm font-medium text-foreground transition-colors hover:border-white/30 hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
 const primary = "inline-flex shrink-0 items-center gap-2 rounded-xl bg-white font-semibold text-black transition-colors hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -96,35 +99,36 @@ export default function CommunityHub({
   // The region filter makes no sense on one city's own page.
   const toolbarFacets = area && !photos ? facets.filter((f) => f.id !== "region") : facets;
 
-  // The small heading at the left of the header row: the place's name on a city
-  // page, otherwise just "Community" (or "Photos").
-  const title = area && nameEn && nameJa ? <Bi en={nameEn} ja={nameJa} /> : <Tx en={photos ? "Photos" : "Community"} />;
-
   return (
-    <div className="mx-auto flex w-full max-w-[1760px] flex-col gap-5">
-      <CommunityTabs active={photos ? "photos" : "discover"} />
+    <div className={`${playfair.variable} mx-auto flex w-full max-w-[1240px] flex-col gap-8`}>
+      {/* The opening: a small label, a large serif heading, one line of what this is. Centred, like the feed below it. */}
+      <header className="flex flex-col items-center gap-3 pt-3 text-center sm:pt-8">
+        <p className="text-xs font-medium uppercase tracking-[0.26em] text-foreground/60">
+          <Tx en="Community" />
+        </p>
+        <h1 className="max-w-[18ch] font-[family-name:var(--font-home-serif)] text-[clamp(38px,6.4vw,76px)] font-normal leading-[1.02] tracking-[-0.025em] text-foreground sm:max-w-[22ch]">{area && nameEn && nameJa ? <Bi en={nameEn} ja={nameJa} /> : <Tx en={photos ? "Photos" : "Japan, through people's eyes"} />}</h1>
+        <p className="max-w-[52ch] text-base leading-relaxed text-foreground/70 sm:text-lg">
+          <Tx en={photos ? "Photographs of places across Japan, shared by the people who took them." : "Real photos and stories from people across Japan."} />
+        </p>
+      </header>
 
-      {/* Compact header: title, search, the one filter button, and Share. */}
-      <FilterToolbar
-        path={basePath}
-        facets={toolbarFacets}
-        q={filters.q}
-        clearHref={photos ? basePath : "/community"}
-        lead={
-          <>
-            <h1 className="order-1 text-lg font-semibold tracking-tight text-foreground sm:mr-1 sm:text-xl">{title}</h1>
-            <div className="order-3 w-[calc(100%-3rem)] min-w-0 sm:order-2 sm:w-auto sm:max-w-xl sm:flex-1">
-              <CommunitySearch action="/community/search" defaultValue={filters.q} />
-            </div>
-          </>
-        }
-        trail={
-          <Link href="/community/new" className={`${primary} order-2 ml-auto h-10 px-4 text-sm sm:order-5`}>
-            <Camera size={16} aria-hidden="true" />
-            <Tx en="Share your experience" />
-          </Link>
-        }
-      />
+      <div className="flex flex-col items-center gap-5">
+        <CommunityTabs active={photos ? "photos" : "discover"} />
+        <div className="w-full max-w-2xl">
+          {/* Search and the one filter button; the Create button now lives in the dock at the foot of the screen. */}
+          <FilterToolbar
+            path={basePath}
+            facets={toolbarFacets}
+            q={filters.q}
+            clearHref={photos ? basePath : "/community"}
+            lead={
+              <div className="order-1 min-w-0 flex-1">
+                <CommunitySearch action="/community/search" defaultValue={filters.q} />
+              </div>
+            }
+          />
+        </div>
+      </div>
 
       {area && !photos && (
         <section aria-labelledby="ask-local-h" className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-cm-surface p-5 sm:p-6">
@@ -159,7 +163,7 @@ export default function CommunityHub({
       )}
 
       <section aria-labelledby="community-posts">
-        <h2 id="community-posts" className={result.state === "ready" && result.posts.length > 0 ? "mb-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl" : "sr-only"}>
+        <h2 id="community-posts" className="sr-only">
           <Tx en={filtered || area ? "Community posts" : "Latest community posts"} />
         </h2>
         {result.state === "unavailable" ? (
@@ -168,7 +172,7 @@ export default function CommunityHub({
           filtered ? (
             <Notice heading="Nothing matches these filters" body="Try a different city, topic or search." action={{ href: photos ? basePath : "/community", label: "Clear filters" }} />
           ) : (
-            <div className="rounded-2xl border border-dashed border-white/15 bg-cm-surface px-5 py-14 text-center sm:py-20">
+            <div className="mx-auto max-w-2xl rounded-[28px] border border-dashed border-white/15 bg-cm-surface px-5 py-14 text-center sm:py-20">
               <span aria-hidden="true" className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
                 <Users size={26} className="text-azure" />
               </span>
@@ -196,9 +200,23 @@ export default function CommunityHub({
           )
         ) : (
           <>
-            <PostGrid posts={result.posts} reveal={photos} />
+            {photos ? (
+              <PhotoMasonry posts={result.posts} />
+            ) : (
+              // The feed: one centred column of large posts, with a compact guide beside it on a wide screen.
+              <div className="xl:grid xl:grid-cols-[minmax(0,720px)_280px] xl:justify-center xl:gap-10">
+                <ReactionsProvider posts={result.posts}>
+                  <div className="mx-auto flex w-full max-w-[720px] flex-col gap-6 sm:gap-8 xl:mx-0">
+                    {result.posts.map((post, i) => (
+                      <FeedPost key={post.id} post={post} first={i === 0} />
+                    ))}
+                  </div>
+                </ReactionsProvider>
+                <FeedGuide />
+              </div>
+            )}
             {(filters.page > 1 || result.hasMore) && (
-              <div className="mt-6 flex items-center justify-between gap-3">
+              <div className="mx-auto mt-8 flex max-w-[720px] items-center justify-between gap-3">
                 {filters.page > 1 ? (
                   <Link href={link({ page: filters.page - 1 })} rel="prev" className={pager}>
                     <ChevronLeft size={16} aria-hidden="true" />
@@ -242,5 +260,53 @@ function Notice({ heading, body, action }: { heading: string; body: string; acti
         </Link>
       )}
     </div>
+  );
+}
+
+// A compact guide beside the feed on a wide screen: the topics and the cities that have their own pages, and where to ask or explore.
+// Plain links to pages that already exist.
+function FeedGuide() {
+  const chip = "inline-flex h-8 items-center rounded-full border border-white/12 bg-white/[0.04] px-3 text-xs font-medium text-foreground/85 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
+  return (
+    <aside aria-labelledby="guide-topics" className="sticky top-24 hidden h-fit flex-col gap-6 xl:flex">
+      <section aria-labelledby="guide-topics" className="flex flex-col gap-3">
+        <h2 id="guide-topics" className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
+          <Tx en="Topics" />
+        </h2>
+        <ul className="flex flex-wrap gap-1.5">
+          {CATEGORIES.slice(0, 9).map((c) => (
+            <li key={c.slug}>
+              <Link href={`/community?category=${c.slug}`} className={chip}>
+                <Bi en={c.en} ja={c.ja} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section aria-labelledby="guide-cities" className="flex flex-col gap-3">
+        <h2 id="guide-cities" className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
+          <Tx en="Cities" />
+        </h2>
+        <ul className="flex flex-wrap gap-1.5">
+          {FEATURED_AREAS.slice(0, 8).map((f) => (
+            <li key={f.slug}>
+              <Link href={`/community/${f.slug}`} className={chip}>
+                <Bi en={f.en} ja={f.ja} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="flex flex-col gap-2 border-t border-white/10 pt-5">
+        <Link href="/community/help" className="inline-flex items-center gap-2 rounded text-sm font-medium text-foreground/85 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <HelpCircle size={15} aria-hidden="true" />
+          <Tx en="Ask a Local" />
+        </Link>
+        <Link href="/explore" className="inline-flex items-center gap-2 rounded text-sm font-medium text-foreground/85 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          <Compass size={15} aria-hidden="true" />
+          <Tx en="Explore Japan" />
+        </Link>
+      </section>
+    </aside>
   );
 }
