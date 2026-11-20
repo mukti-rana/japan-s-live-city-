@@ -2185,5 +2185,7 @@
   "Sunrise in {h} h {m} min": "सूर्योदयमा {h} घण्टा {m} मिनेट",
   "Next hours": "आगामी घण्टा",
   "Japan and the world": "जापान र विश्व",
-  "Japan and international, newest first": "जापान र अन्तर्राष्ट्रिय, नयाँ पहिले"
+  "Japan and international, newest first": "जापान र अन्तर्राष्ट्रिय, नयाँ पहिले",
+  "Drag across the chart to read each hour": "चार्टमा तान्दा प्रत्येक घण्टा देखिन्छ",
+  "Hourly forecast": "घण्टा-घण्टाको पूर्वानुमान"
 }

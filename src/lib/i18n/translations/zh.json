@@ -2156,5 +2156,7 @@
   "Sunrise in {h} h {m} min": "距离日出还有{h}小时{m}分钟",
   "Next hours": "接下来几小时",
   "Japan and the world": "日本与世界",
-  "Japan and international, newest first": "日本与国际新闻，最新优先"
+  "Japan and international, newest first": "日本与国际新闻，最新优先",
+  "Drag across the chart to read each hour": "在图表上滑动可查看每小时",
+  "Hourly forecast": "逐小时预报"
 }

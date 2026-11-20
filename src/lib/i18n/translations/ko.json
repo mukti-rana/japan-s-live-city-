@@ -2156,5 +2156,7 @@
   "Sunrise in {h} h {m} min": "일출까지 {h}시간 {m}분",
   "Next hours": "앞으로의 시간",
   "Japan and the world": "일본과 세계",
-  "Japan and international, newest first": "일본·해외 뉴스, 최신순"
+  "Japan and international, newest first": "일본·해외 뉴스, 최신순",
+  "Drag across the chart to read each hour": "차트를 드래그해 시간별로 확인하세요",
+  "Hourly forecast": "시간별 예보"
 }

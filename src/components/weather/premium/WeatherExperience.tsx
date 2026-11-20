@@ -4,7 +4,10 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { MapPin, Map as MapIcon, ShieldCheck, Sunrise, Sunset, Droplets, Wind, Sun as SunIcon, CloudRain } from "lucide-react";
 import GlassCard from "@/components/ui/GlassCard";
-import WeatherScene from "@/components/ui/WeatherScene";
+import WeatherSky from "@/components/home/weather/WeatherSky";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
+import "@/components/home/cinematic/cinematic.css";
+import { HourlyChart, WeekChart } from "@/components/weather/premium/WeatherCharts";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import AnimatedNumber from "@/components/weather/premium/AnimatedNumber";
 import T from "@/components/i18n/T";
@@ -25,7 +28,6 @@ import {
 } from "@/lib/weather/insights";
 import type { TranslationKey } from "@/lib/i18n/translationKeys";
 import { known, translate } from "@/lib/i18n/inline";
-import { weekdayLabel } from "@/lib/weather/time";
 
 const BAND_KEY: Record<TempBand, TranslationKey> = {
   cold: "weather.v2.band.cold",
@@ -158,7 +160,7 @@ export default function WeatherExperience({
       {/* HERO */}
       <div className="keep-dark-ink relative overflow-hidden rounded-3xl border border-glass-border">
         <div className="absolute inset-0">
-          <WeatherScene icon={snapshot.icon} isNight={isNight} variant="backdrop" className="h-full w-full" />
+          <WeatherSky icon={snapshot.icon} isNight={isNight} sunrise={snapshot.sunrise} sunset={snapshot.sunset} windKmh={snapshot.windKmh} precipMm={snapshot.hourly[0]?.precipMm ?? null} />
         </div>
         {sceneTint && <div className={`pointer-events-none absolute inset-0 ${sceneTint}`} />}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/30 to-transparent" />
@@ -217,7 +219,7 @@ export default function WeatherExperience({
       </div>
 
       {/* WHAT'S HAPPENING NOW */}
-      <GlassCard className="p-5">
+      <RC className="p-5">
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
           <T k="weather.v2.whatHappening" />
         </p>
@@ -228,11 +230,11 @@ export default function WeatherExperience({
           <Stat icon={<SunIcon size={14} />} label={<T k="weather.uvIndex" />} value={`${snapshot.todayUvIndex}`} />
           <Stat icon={<SunIcon size={14} />} label={<T k="hero.feelsLike" />} value={`${snapshot.feelsLikeC}°C`} />
         </div>
-      </GlassCard>
+      </RC>
 
       {/* WHAT TO EXPECT */}
       {hasAnyHourly && (
-        <GlassCard className="p-5">
+        <RC className="p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
             <T k="weather.v2.whatExpect" />
           </p>
@@ -259,16 +261,17 @@ export default function WeatherExperience({
           <p className="mt-3 text-sm text-foreground/85">
             <T k={trendKey} />
           </p>
-        </GlassCard>
+        </RC>
       )}
 
       {/* HOURLY (horizontal scroll) */}
       {hasAnyHourly && (
-        <GlassCard className="p-5">
+        <RC className="p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
             <T k="weather.hourlyTitle" />
           </p>
-          <div className="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-2">
+          <HourlyChart hourly={snapshot.hourly} />
+          <div className="-mx-1 mt-3 flex snap-x gap-2 overflow-x-auto px-1 pb-2">
             {snapshot.hourly.slice(0, 24).map((p, i) => (
               <div
                 key={p.time}
@@ -283,13 +286,13 @@ export default function WeatherExperience({
               </div>
             ))}
           </div>
-        </GlassCard>
+        </RC>
       )}
 
       {/* RAIN + TEMPERATURE JOURNEY */}
       <div className="grid gap-4 md:grid-cols-2">
         {hasAnyHourly && (
-          <GlassCard className="p-5">
+          <RC className="p-5">
             <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground/70">
               <CloudRain size={13} className="text-azure" />
               <T k="weather.v2.rainForecast" />
@@ -309,22 +312,22 @@ export default function WeatherExperience({
             <p className="mt-3 text-sm text-foreground/85">
               {t(rainLine).replace("{time}", likelyRain ? clockOf(likelyRain.time) : "")}
             </p>
-          </GlassCard>
+          </RC>
         )}
 
         {journeyPoints.length > 0 && (
-          <GlassCard className="p-5">
+          <RC className="p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
               <T k="weather.v2.tempJourney" />
             </p>
             <TemperatureLine points={journeyPoints} />
-          </GlassCard>
+          </RC>
         )}
       </div>
 
       {/* TODAY'S STORY */}
       {hasAnyHourly && (
-        <GlassCard className="p-5">
+        <RC className="p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
             <T k="weather.v2.story" />
           </p>
@@ -340,11 +343,11 @@ export default function WeatherExperience({
               </div>
             ))}
           </div>
-        </GlassCard>
+        </RC>
       )}
 
       {/* RECOMMENDATIONS */}
-      <GlassCard className="p-5">
+      <RC className="p-5">
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
           <T k="weather.v2.recommendations" />
         </p>
@@ -355,11 +358,11 @@ export default function WeatherExperience({
             </li>
           ))}
         </ul>
-      </GlassCard>
+      </RC>
 
       {/* SUN PATH + 7-DAY */}
       <div className="grid gap-4 md:grid-cols-2">
-        <GlassCard className="p-5">
+        <RC className="p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
             <T k="weather.v2.sunPath" />
           </p>
@@ -372,30 +375,18 @@ export default function WeatherExperience({
               <Sunset size={13} className="text-sakura" /> <T k="widget.sunset" /> {snapshot.sunset}
             </span>
           </div>
-        </GlassCard>
+        </RC>
 
-        <GlassCard className="p-5">
+        <RC className="p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-foreground/70">
             <T k="weather.dailyTitle" />
           </p>
-          <div className="flex flex-col gap-1.5">
-            <DayRow
-              label={<T k="weather.today" />}
-              icon={snapshot.icon}
-              high={snapshot.todayHigh}
-              low={snapshot.todayLow}
-              rain={snapshot.todayPrecipProbability}
-              highlight
-            />
-            {snapshot.forecast.map((d) => (
-              <DayRow key={d.date} label={weekdayLabel(d.date, language)} icon={d.icon} high={d.high} low={d.low} rain={d.precipProbability} />
-            ))}
-          </div>
-        </GlassCard>
+          <WeekChart today={{ icon: snapshot.icon, high: snapshot.todayHigh, low: snapshot.todayLow, rain: snapshot.todayPrecipProbability }} forecast={snapshot.forecast} />
+        </RC>
       </div>
 
       {/* ALERTS */}
-      <GlassCard className="flex items-start gap-3 p-5">
+      <RC className="flex items-start gap-3 p-5">
         <ShieldCheck size={18} className="mt-0.5 shrink-0 text-muted" />
         <div>
           <p className="text-sm font-semibold text-foreground">
@@ -405,7 +396,7 @@ export default function WeatherExperience({
             <T k="weather.v2.alertsNotConnected" />
           </p>
         </div>
-      </GlassCard>
+      </RC>
 
       {/* MAP */}
       <Link
@@ -421,6 +412,15 @@ export default function WeatherExperience({
   );
 }
 
+// Every card arrives with the scroll (the same reveal as the rest of the site).
+function RC({ className = "", children }: { className?: string; children: ReactNode }) {
+  return (
+    <ScrollReveal>
+      <GlassCard className={className}>{children}</GlassCard>
+    </ScrollReveal>
+  );
+}
+
 function Stat({ icon, label, value }: { icon: ReactNode; label: ReactNode; value: string }) {
   return (
     <div className="flex flex-col gap-1 rounded-xl border border-glass-border bg-glass-bg p-3">
@@ -429,37 +429,6 @@ function Stat({ icon, label, value }: { icon: ReactNode; label: ReactNode; value
         {label}
       </span>
       <span className="text-base font-semibold text-foreground">{value}</span>
-    </div>
-  );
-}
-
-function DayRow({
-  label,
-  icon,
-  high,
-  low,
-  rain,
-  highlight = false,
-}: {
-  label: ReactNode;
-  icon: WeatherIconKind;
-  high: number;
-  low: number;
-  rain: number;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-sm ${
-        highlight ? "bg-azure/10 text-foreground" : "text-foreground/85"
-      }`}
-    >
-      <span className="w-14 text-xs font-medium">{label}</span>
-      <WeatherIcon icon={icon} size={16} />
-      <span className="w-10 text-right text-[11px] text-azure">{rain}%</span>
-      <span className="w-20 text-right font-medium">
-        {high}° <span className="text-muted">/ {low}°</span>
-      </span>
     </div>
   );
 }
