@@ -52,3 +52,7 @@ Every "View All â†’" and every chapter-header link on the home page ("Weather â†
 ## Explore: the top bar is fully transparent (2026-11-20, approved)
 
 On the Explore page the top bar has no fill, no blur, no line and no shadow in every state (at the top and once the page is scrolled and the bar shrinks); only its logo and icons show, in the light-on-dark colours the dark page needs, so it never turns black. Content scrolling under it shows through by design. Technical note: "backdrop-filter: none" is dropped by the CSS minifier, so it is written as a zero-radius blur (`blur(0px)`).
+
+## Home: the top bar is fully transparent (2026-11-20, approved)
+
+The home page's top bar is the same: no fill, no fade, no blur, no line and no shadow in every state (the soft black fade, the denser fade once scrolled and the extra fade hanging under it are gone); only its logo and icons show, over the photographs and chapters. Anything that needs the icons readable over a bright photograph now has to do it with the photograph, not the bar.
