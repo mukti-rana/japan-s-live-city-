@@ -2,13 +2,13 @@
 
 import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import ExploreBackdrop from "@/components/explore/ExploreBackdrop";
+import { ExploreCaption } from "@/components/explore/ExploreBackdrop";
 import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
 import { playfair } from "@/components/home/cinematic/fonts";
 import "@/components/home/cinematic/cinematic.css";
 import { Globe2, LocateFixed, MapPin, Navigation, Search } from "lucide-react";
 import type { Suggestion } from "@/lib/explore/catalogue";
-import type { ExploreLocation, useExploreLocation } from "@/lib/explore/useExploreLocation";
+import type { useExploreLocation } from "@/lib/explore/useExploreLocation";
 import { localize, useTranslate } from "@/lib/i18n/inline";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { MAP_CITIES } from "@/lib/map/cities";
@@ -27,15 +27,12 @@ export default function ExploreHero({
   loc,
   onSearch,
   outside,
-  origin,
 }: {
   tab: Tab;
   setTab: (t: Tab) => void;
   loc: ReturnType<typeof useExploreLocation>;
   onSearch: (text: string) => void;
   outside: boolean;
-  // Where the visitor is looking, so the opening photographs are the places recommended for there.
-  origin: ExploreLocation | null;
 }) {
   const tr = useTranslate();
   const { language } = useLanguage();
@@ -76,9 +73,10 @@ export default function ExploreHero({
   ];
 
   return (
-    <header data-explore-hero className={`${playfair.variable} keep-dark-ink relative isolate -mx-3 -mt-3 flex min-h-[100svh] flex-col justify-end overflow-hidden sm:-mx-4 sm:-mt-4`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
-      <ExploreBackdrop origin={origin} />
+    <header data-explore-hero className={`${playfair.variable} keep-dark-ink relative -mx-3 -mt-3 flex min-h-[100svh] flex-col justify-end overflow-hidden sm:-mx-4 sm:-mt-4`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
       <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-5 pb-10 pt-24 sm:px-10 lg:px-14 lg:pb-14">
+        {/* On a phone the recommended place sits above the heading; from a tablet up it stands at the right of it. */}
+        <ExploreCaption className="sm:absolute sm:right-10 sm:top-24 lg:right-14" />
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "rgba(255,255,255,0.78)" }}>{tr("Explore Japan")}</p>
           <h1 className="mt-3 max-w-[16ch] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,112px)] font-normal leading-[0.98] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(0,0,0,0.55)]">

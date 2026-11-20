@@ -5,6 +5,7 @@ import { LayoutGrid, LocateFixed, Map as MapIcon, MapPin, Sparkles } from "lucid
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import AllJapan from "@/components/explore/AllJapan";
 import DiscoverSections from "@/components/explore/DiscoverSections";
+import ExploreBackdrop, { ExplorePhotos } from "@/components/explore/ExploreBackdrop";
 import ExploreHero, { type Tab } from "@/components/explore/ExploreHero";
 import ExploreResults from "@/components/explore/ExploreResults";
 import SavedPlaces from "@/components/explore/SavedPlaces";
@@ -86,7 +87,10 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
   const season = useMemo(() => seasonOfMonth(month), [month]);
 
   return (
-    <div className="flex flex-col gap-10 sm:gap-14">
+    <ExplorePhotos origin={origin}>
+    {/* The whole page is dark: the recommended place's photograph is fixed behind it, so it stays full screen as the page scrolls. */}
+    <div data-explore-page className="keep-dark-ink relative isolate flex flex-col" style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
+      <ExploreBackdrop />
       <ExploreHero
         tab={tab}
         setTab={(t) => {
@@ -96,9 +100,10 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         loc={loc}
         onSearch={onSearch}
         outside={loc.status === "outside"}
-        origin={origin}
       />
 
+      {/* Below the hero the sections glide over the photograph, which a deepening shade keeps calm enough to read on. */}
+      <div className="-mx-3 bg-[linear-gradient(180deg,rgba(5,6,12,0)_0,rgba(5,6,12,0.72)_14rem)] px-3 pb-6 pt-10 sm:-mx-4 sm:px-4 sm:pt-14">
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-10 sm:gap-14">
       <TopicGrid selected={filters.topics} onToggle={toggleTopic} />
 
@@ -175,6 +180,8 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         {tr("Coverage: {n} places across {m} prefectures, from open data (Wikidata, Wikipedia and Wikimedia Commons). Opening hours, prices and ratings are shown only when a source provides them.").replace("{n}", meta.total.toLocaleString()).replace("{m}", String(meta.prefecturesCovered))}
       </p>
       </div>
+      </div>
     </div>
+    </ExplorePhotos>
   );
 }
