@@ -316,7 +316,7 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
 
               <div className="relative flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:items-center sm:gap-5">
                 <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-foreground shadow-[0_0_30px_-6px_rgba(77,163,255,0.5)] backdrop-blur-sm sm:h-20 sm:w-20">
-                  <WeatherIcon icon={weather.icon} size={40} strokeWidth={1.4} aria-hidden="true" />
+                  <WeatherIcon icon={weather.icon} night={night} size={40} strokeWidth={1.4} aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-6xl font-semibold leading-none tracking-tight tabular-nums text-foreground sm:text-7xl">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import type { HourlyPoint } from "@/lib/services/weather";
+import { clockOf } from "@/lib/weather/insights";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // The temperature, counting up to the reading (and re-counting when it changes).
@@ -89,7 +90,7 @@ function SunArc({ sunrise, sunset }: { sunrise: string; sunset: string }) {
 }
 
 // The next hours, from the real forecast: the time, the sky, the temperature and the chance of rain.
-function NextHours({ hourly }: { hourly: HourlyPoint[] }) {
+function NextHours({ hourly, sunrise, sunset }: { hourly: HourlyPoint[]; sunrise: string; sunset: string }) {
   const tr = useTranslate();
   const hours = hourly.slice(0, 6);
   if (hours.length === 0) return null;
@@ -100,7 +101,7 @@ function NextHours({ hourly }: { hourly: HourlyPoint[] }) {
         {hours.map((h, i) => (
           <li key={h.time} className="flex flex-col items-center gap-1 rounded-xl bg-white/[0.06] px-1 py-2 text-center">
             <span className="text-[10px] text-white/65">{i === 0 ? tr("Now") : h.hourLabel}</span>
-            <WeatherIcon icon={h.icon} size={18} strokeWidth={1.5} aria-hidden="true" />
+            <WeatherIcon icon={h.icon} night={clockOf(h.time) < sunrise || clockOf(h.time) >= sunset} size={18} strokeWidth={1.5} aria-hidden="true" />
             <span className="text-xs font-semibold tabular-nums text-white">{Math.round(h.tempC)}°</span>
             <span className={`text-[10px] tabular-nums ${h.precipProbability >= 30 ? "text-sky-300" : "text-white/40"}`}>{h.precipProbability}%</span>
           </li>
@@ -115,7 +116,7 @@ export default function WeatherCardExtras({ sunrise, sunset, hourly }: { sunrise
   return (
     <div className="relative grid gap-4 rounded-2xl border border-white/10 bg-black/25 p-3.5 backdrop-blur-md sm:grid-cols-[minmax(0,9.5rem)_minmax(0,1fr)] sm:items-end">
       <SunArc sunrise={sunrise} sunset={sunset} />
-      <NextHours hourly={hourly} />
+      <NextHours hourly={hourly} sunrise={sunrise} sunset={sunset} />
     </div>
   );
 }
