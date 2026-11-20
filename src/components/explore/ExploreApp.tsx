@@ -96,6 +96,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         loc={loc}
         onSearch={onSearch}
         outside={loc.status === "outside"}
+        origin={origin}
       />
 
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-10 sm:gap-14">

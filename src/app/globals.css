@@ -1634,3 +1634,8 @@ body:has([data-explore-hero]) [data-site-header] > header:not([data-compact="tru
   box-shadow: none;
   backdrop-filter: none;
 }
+
+/* The caption of the Explore hero's photograph fades up each time the place changes. */
+.explore-caption { animation: explore-caption 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both; }
+@keyframes explore-caption { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .explore-caption { animation: none; } }
