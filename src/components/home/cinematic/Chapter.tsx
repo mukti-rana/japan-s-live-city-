@@ -1,4 +1,4 @@
-import Link from "next/link";
+import ArrowLink from "@/components/ui/ArrowLink";
 import type { ReactNode } from "react";
 import Tx from "@/components/i18n/Tx";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
@@ -50,10 +50,9 @@ export function ChapterHeader({
         </div>
         {href && linkLabel && (
           <ScrollReveal from="right" delay={0.36}>
-            <Link href={href} className="inline-flex h-11 items-center rounded-full border border-white/20 bg-black/50 px-5 text-sm text-white/85 backdrop-blur-sm transition-colors hover:border-white/50 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            <ArrowLink href={href}>
               <Tx en={linkLabel} />
-              <span aria-hidden="true" className="ml-1.5">→</span>
-            </Link>
+            </ArrowLink>
           </ScrollReveal>
         )}
       </div>

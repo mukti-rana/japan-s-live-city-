@@ -1787,3 +1787,14 @@ body:has([data-community-page]) [data-site-header] {
 /* The pages that are dark in both themes (Community, Explore) also sit on a dark page background, so their opening fade never shows white behind them. */
 body:has([data-community-page]) { background: #050505; }
 body:has([data-explore-page]) { background: #05060c; }
+
+/* ArrowLink (see ArrowLink.tsx): a bare arrow that breathes forward at rest, and opens (the shaft stretches, the head runs ahead) when pointed at or focused. */
+@keyframes arrow-breathe { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(5px, 0, 0); } }
+.arrow-link__glyph { animation: arrow-breathe 2.8s ease-in-out infinite; }
+.arrow-link__shaft { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.arrow-link__head { transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+.arrow-link:hover .arrow-link__glyph, .arrow-link:focus-visible .arrow-link__glyph { animation: none; }
+.arrow-link:hover .arrow-link__shaft, .arrow-link:focus-visible .arrow-link__shaft { transform: translateY(-50%) scaleX(1.65); }
+.arrow-link:hover .arrow-link__head, .arrow-link:focus-visible .arrow-link__head { transform: translate3d(15px, 0, 0); }
+.arrow-link:active .arrow-link__head { transform: translate3d(18px, 0, 0); }
+@media (prefers-reduced-motion: reduce) { .arrow-link__glyph { animation: none; } .arrow-link__shaft, .arrow-link__head { transition: none; } }
