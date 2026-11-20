@@ -2204,5 +2204,14 @@
   "Create a post": "पोस्ट बनाएँ",
   "Topics": "विषय",
   "View full post": "पूरी पोस्ट देखें",
-  "Browse by topic or city": "विषय या शहर के अनुसार देखें"
+  "Browse by topic or city": "विषय या शहर के अनुसार देखें",
+  "This camera can't be played here right now.": "यह कैमरा अभी यहाँ नहीं चलाया जा सकता।",
+  "Watch on YouTube": "YouTube पर देखें",
+  "Pause": "रोकें",
+  "Play": "चलाएँ",
+  "Unmute": "अनम्यूट करें",
+  "Mute": "म्यूट करें",
+  "Volume": "वॉल्यूम",
+  "Exit fullscreen": "फ़ुलस्क्रीन बंद करें",
+  "Fullscreen": "फ़ुलस्क्रीन"
 }

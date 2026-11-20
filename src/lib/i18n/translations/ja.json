@@ -1540,5 +1540,14 @@
   "Create a post": "投稿を作成",
   "Topics": "トピック",
   "View full post": "投稿をすべて見る",
-  "Browse by topic or city": "トピックや都市で探す"
+  "Browse by topic or city": "トピックや都市で探す",
+  "This camera can't be played here right now.": "このカメラは現在ここで再生できません。",
+  "Watch on YouTube": "YouTubeで見る",
+  "Pause": "一時停止",
+  "Play": "再生",
+  "Unmute": "ミュート解除",
+  "Mute": "ミュート",
+  "Volume": "音量",
+  "Exit fullscreen": "全画面を終了",
+  "Fullscreen": "全画面"
 }

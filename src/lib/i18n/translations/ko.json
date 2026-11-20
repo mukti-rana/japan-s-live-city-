@@ -2175,5 +2175,14 @@
   "Create a post": "게시물 만들기",
   "Topics": "주제",
   "View full post": "게시물 전체 보기",
-  "Browse by topic or city": "주제 또는 도시별로 보기"
+  "Browse by topic or city": "주제 또는 도시별로 보기",
+  "This camera can't be played here right now.": "이 카메라는 지금 여기서 재생할 수 없습니다.",
+  "Watch on YouTube": "YouTube에서 보기",
+  "Pause": "일시정지",
+  "Play": "재생",
+  "Unmute": "음소거 해제",
+  "Mute": "음소거",
+  "Volume": "볼륨",
+  "Exit fullscreen": "전체 화면 종료",
+  "Fullscreen": "전체 화면"
 }

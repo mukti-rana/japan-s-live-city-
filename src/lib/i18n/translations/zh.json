@@ -2175,5 +2175,14 @@
   "Create a post": "创建帖子",
   "Topics": "主题",
   "View full post": "查看完整帖子",
-  "Browse by topic or city": "按主题或城市浏览"
+  "Browse by topic or city": "按主题或城市浏览",
+  "This camera can't be played here right now.": "此摄像头目前无法在此播放。",
+  "Watch on YouTube": "在YouTube上观看",
+  "Pause": "暂停",
+  "Play": "播放",
+  "Unmute": "取消静音",
+  "Mute": "静音",
+  "Volume": "音量",
+  "Exit fullscreen": "退出全屏",
+  "Fullscreen": "全屏"
 }
