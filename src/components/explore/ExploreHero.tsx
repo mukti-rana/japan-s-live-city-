@@ -113,9 +113,9 @@ export default function ExploreHero({
               aria-expanded={open && suggestions.length > 0 && text.trim().length > 0}
               aria-controls={listId}
               autoComplete="off"
-              className="h-14 w-full rounded-2xl border border-white/15 bg-background/60 pl-12 pr-28 text-base text-foreground outline-none backdrop-blur-md placeholder:text-muted focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40"
+              className="h-14 w-full rounded-2xl border border-white/15 bg-background/60 pl-12 pr-24 text-base text-foreground outline-none backdrop-blur-md placeholder:text-muted focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40"
             />
-            <button type="submit" className="absolute right-2 top-1/2 flex h-10 -translate-y-1/2 items-center rounded-xl bg-gradient-to-r from-azure to-neon-purple px-5 text-sm font-semibold text-white hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            <button type="submit" className="absolute right-2.5 top-1/2 flex h-8 -translate-y-1/2 items-center rounded-full border border-white/30 bg-transparent px-3.5 text-xs font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
               {tr("Search")}
             </button>
           </form>
@@ -181,21 +181,21 @@ export default function ExploreHero({
           </div>
 
           {tab === "near" && (
-            <div role="tabpanel" className="rounded-2xl border border-white/10 bg-background/40 p-3.5 backdrop-blur-md">
+            <div role="tabpanel" className="rounded-xl border border-white/10 bg-transparent px-3 py-2">
               {gps ? (
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-foreground">
                       <MapPin size={16} className="text-gold" aria-hidden="true" />
                       {gps.label}
                       <span className="rounded-full bg-mint/15 px-2 py-0.5 text-[10px] font-semibold text-mint">{tr("Your current location")}</span>
                     </p>
-                    <p className="mt-1 text-[11px] text-muted">
+                    <p className="mt-0.5 text-[11px] text-white/60">
                       {tr("Distances are measured from where you are.")}
                       {gps.accuracyKm !== null ? ` ${tr("accuracy about")} ${gps.accuracyKm} km.` : ""}
                     </p>
                   </div>
-                  <button type="button" onClick={loc.useMyLocation} disabled={status === "locating"} className="flex min-h-10 items-center gap-2 rounded-full border border-azure/40 px-4 text-sm font-semibold text-azure hover:bg-azure/10 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                  <button type="button" onClick={loc.useMyLocation} disabled={status === "locating"} className="flex min-h-8 items-center gap-1.5 rounded-full border border-white/30 bg-transparent px-3 text-xs font-medium text-white transition-colors hover:border-white/60 hover:bg-white/10 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
                     <LocateFixed size={15} aria-hidden="true" />
                     {status === "locating" ? tr("Finding your location…") : tr("Update location")}
                   </button>
@@ -212,12 +212,12 @@ export default function ExploreHero({
                     {outside && <p role="status" className="mt-1.5 text-xs text-gold">{tr("You appear to be outside Japan. Pick a Japanese city to explore from.")}</p>}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <button type="button" onClick={loc.useMyLocation} disabled={status === "locating"} className="flex min-h-10 items-center gap-2 rounded-full bg-gradient-to-r from-azure to-neon-purple px-4 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                    <button type="button" onClick={loc.useMyLocation} disabled={status === "locating"} className="flex min-h-8 items-center gap-1.5 rounded-full border border-white/30 bg-transparent px-3 text-xs font-medium text-white transition-colors hover:border-white/60 hover:bg-white/10 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
                       <LocateFixed size={15} aria-hidden="true" />
                       {status === "locating" ? tr("Finding your location…") : tr("Use my location")}
                     </button>
                     {(status === "denied" || status === "unavailable" || outside) && (
-                      <button type="button" onClick={() => setTab("city")} className="flex min-h-10 items-center gap-1.5 rounded-full border border-glass-border px-4 text-sm font-medium text-foreground/90 hover:border-azure/40">
+                      <button type="button" onClick={() => setTab("city")} className="flex min-h-8 items-center gap-1.5 rounded-full border border-white/20 bg-transparent px-3 text-xs font-medium text-white/90 transition-colors hover:border-white/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
                         <MapPin size={14} aria-hidden="true" />
                         {tr("Choose City")}
                       </button>
@@ -229,7 +229,7 @@ export default function ExploreHero({
           )}
 
           {tab === "city" && (
-            <div role="tabpanel" className="rounded-2xl border border-white/10 bg-background/40 p-3.5 backdrop-blur-md">
+            <div role="tabpanel" className="rounded-xl border border-white/10 bg-transparent px-3 py-2">
               <div className="flex flex-wrap items-center gap-2">
                 {MAP_CITIES.slice(0, 8).map((c) => {
                   const on = manual?.kind === "city" && manual.label === c.name;
