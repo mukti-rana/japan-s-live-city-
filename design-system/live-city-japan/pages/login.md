@@ -18,3 +18,8 @@ Behaviour rules for this page:
 - Guest = a plain link to `/`. No session, no cookie, no account is created.
 - Sign-in and create-account use the existing server actions unchanged.
 - Language menu is in-page (top right) because the app's own switcher is covered by this full-screen page.
+
+
+## Lighter panel and a colour-flowing guest button (2026-11-20, approved)
+
+The sign-in panel is more transparent (a navy tint of about 24% fading to 12%, an 8px blur instead of 14px), so the scene shows through it; its text keeps its soft shadow for legibility. "Explore Japan as Guest" (on both the sign-in and the sign-up view) is coloured: its words are a gradient of amber, pink, violet and blue clipped to the letters and slid slowly along (4s, seamless), and its icon and arrow turn through the same four colours; the arrow still nudges at rest and slides on hover. Under reduced motion the words stay in the gradient, still, and the icon and arrow stay one soft pink.

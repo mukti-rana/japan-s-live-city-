@@ -1431,8 +1431,8 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
    the top edge. */
 .auth-panel {
   background:
-    radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.12), transparent 60%),
-    linear-gradient(180deg, rgba(20, 24, 58, 0.5), rgba(20, 24, 58, 0.34));
+    radial-gradient(120% 60% at 50% 0%, rgba(255, 255, 255, 0.1), transparent 60%),
+    linear-gradient(180deg, rgba(20, 24, 58, 0.24), rgba(20, 24, 58, 0.12));
 }
 /* "Explore Japan as Guest": transparent glass with a fine border (none of the site's blue, purple, pink or white fills). It is
    deliberately not styled with Tailwind colour utilities, so the site-wide quiet-button rules leave it alone. */
@@ -1477,22 +1477,39 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 .auth-guest:hover::after,
 .auth-guest:focus-visible::after { transform: skewX(-18deg) translateX(520%); }
 .auth-guest:active { transform: scale(0.985); }
-.auth-guest__icon { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+/* The words flow through amber, pink, violet and blue (a gradient clipped to the letters, slid slowly along); the icon and arrow turn through the same colours.
+   The soft shadow is a drop-shadow filter (a text-shadow would show through the transparent letters). */
+.auth-guest__label {
+  background: linear-gradient(100deg, #ffc26b, #ff7fb0, #b496ff, #6cc8ff, #ffc26b);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  font-weight: 600;
+  filter: drop-shadow(0 1px 6px rgba(6, 8, 24, 0.5));
+  animation: auth-guest-flow 4s linear infinite;
+}
+@keyframes auth-guest-flow { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+@keyframes auth-guest-hue { 0%, 100% { color: #ffc26b; } 25% { color: #ff7fb0; } 50% { color: #b496ff; } 75% { color: #6cc8ff; } }
+.auth-guest__icon { transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); animation: auth-guest-hue 5s linear infinite; }
 .auth-guest:hover .auth-guest__icon,
 .auth-guest:focus-visible .auth-guest__icon { transform: rotate(45deg); }
 /* The arrow rests with a very small, slow nudge (so a touch screen, which cannot hover, still shows it is a way forward),
    slides further when pointed at or focused, and leaps ahead when pressed. */
 .auth-guest__arrow {
   transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  animation: auth-arrow-nudge 3.4s ease-in-out infinite;
+  animation: auth-arrow-nudge 3.4s ease-in-out infinite, auth-guest-hue 5s linear infinite;
 }
 .auth-guest:hover .auth-guest__arrow,
-.auth-guest:focus-visible .auth-guest__arrow { animation: none; transform: translateX(6px); }
-.auth-guest:active .auth-guest__arrow { animation: none; transform: translateX(10px); }
+.auth-guest:focus-visible .auth-guest__arrow { animation: auth-guest-hue 5s linear infinite; transform: translateX(6px); }
+.auth-guest:active .auth-guest__arrow { animation: auth-guest-hue 5s linear infinite; transform: translateX(10px); }
 @keyframes auth-arrow-nudge { 0%, 70%, 100% { transform: translateX(0); } 82% { transform: translateX(3px); } 92% { transform: translateX(0); } }
 @media (prefers-reduced-motion: reduce) {
-  .auth-guest, .auth-guest::after, .auth-guest__icon, .auth-guest__arrow { animation: none; transition: none; }
-  .auth-guest:hover .auth-guest__arrow, .auth-guest:focus-visible .auth-guest__arrow, .auth-guest:active .auth-guest__arrow { transform: none; }
+  .auth-guest, .auth-guest::after, .auth-guest__icon, .auth-guest__arrow, .auth-guest__label { animation: none; transition: none; }
+  .auth-guest__icon, .auth-guest__arrow { color: #ffb8d4; }
+  .auth-guest:hover .auth-guest__arrow, .auth-guest:focus-visible .auth-guest__arrow, .auth-guest:active .auth-guest__arrow { transform: none; animation: none; }
   .auth-guest::after { display: none; }
 }
 /* The panel's own buttons stay clearly readable over the darker glass (the site-wide quiet look would grey them out here). */

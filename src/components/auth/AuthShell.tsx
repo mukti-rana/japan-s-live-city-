@@ -66,7 +66,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="auth-panel pointer-events-auto relative w-full max-w-[26rem] rounded-[1.75rem] border border-white/25 p-6 shadow-[0_34px_90px_-34px_rgba(90,70,170,0.55),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-[14px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
+          <section aria-labelledby="auth-title" className="auth-panel pointer-events-auto relative w-full max-w-[26rem] rounded-[1.75rem] border border-white/25 p-6 shadow-[0_34px_90px_-34px_rgba(90,70,170,0.55),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-[8px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
             <ShineBorder />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -89,7 +89,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                       {/* Minimal glass: transparent, a fine light border, the same width as the panel's own controls; the arrow slides on hover, focus and tap. */}
                       <GuestLink label="Explore Japan as Guest" className={`auth-guest group ${ring}`}>
                         <Compass size={17} className="auth-guest__icon" aria-hidden="true" />
-                        <span>{tr("Explore Japan as Guest")}</span>
+                        <span className="auth-guest__label">{tr("Explore Japan as Guest")}</span>
                         <ArrowRight size={17} className="auth-guest__arrow" aria-hidden="true" />
                       </GuestLink>
                       <p className="mt-2 text-center text-xs text-foreground">{tr("No account required. Start exploring Japan.")}</p>
@@ -131,7 +131,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                     </p>
                     <GuestLink label="Explore Japan as Guest" className={`mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-medium text-lilac transition-colors hover:bg-lilac/10 ${ring}`}>
                       <Compass size={15} aria-hidden="true" />
-                      {tr("Explore Japan as Guest")}
+                      <span className="auth-guest__label">{tr("Explore Japan as Guest")}</span>
                     </GuestLink>
                   </>
                 )}
