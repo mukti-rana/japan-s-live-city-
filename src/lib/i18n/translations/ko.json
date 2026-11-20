@@ -2184,5 +2184,8 @@
   "Mute": "음소거",
   "Volume": "볼륨",
   "Exit fullscreen": "전체 화면 종료",
-  "Fullscreen": "전체 화면"
+  "Fullscreen": "전체 화면",
+  "Choose a city above to see events near you.": "위에서 도시를 선택하면 가까운 행사를 볼 수 있습니다.",
+  "No upcoming events found near you yet.": "근처에서 예정된 행사를 아직 찾지 못했습니다.",
+  "Across Japan": "일본 전역"
 }

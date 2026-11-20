@@ -2213,5 +2213,8 @@
   "Mute": "आवाज बन्द गर्नुहोस्",
   "Volume": "आवाज",
   "Exit fullscreen": "पूर्ण स्क्रिन बन्द गर्नुहोस्",
-  "Fullscreen": "पूर्ण स्क्रिन"
+  "Fullscreen": "पूर्ण स्क्रिन",
+  "Choose a city above to see events near you.": "तपाईंको नजिकका कार्यक्रम हेर्न माथि सहर छान्नुहोस्।",
+  "No upcoming events found near you yet.": "तपाईंको नजिक आगामी कार्यक्रम अझै भेटिएन।",
+  "Across Japan": "सम्पूर्ण जापान"
 }

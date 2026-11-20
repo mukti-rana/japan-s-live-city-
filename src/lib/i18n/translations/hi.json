@@ -2213,5 +2213,8 @@
   "Mute": "म्यूट करें",
   "Volume": "वॉल्यूम",
   "Exit fullscreen": "फ़ुलस्क्रीन बंद करें",
-  "Fullscreen": "फ़ुलस्क्रीन"
+  "Fullscreen": "फ़ुलस्क्रीन",
+  "Choose a city above to see events near you.": "अपने पास के कार्यक्रम देखने के लिए ऊपर शहर चुनें।",
+  "No upcoming events found near you yet.": "आपके पास अभी कोई आगामी कार्यक्रम नहीं मिला।",
+  "Across Japan": "पूरे जापान में"
 }

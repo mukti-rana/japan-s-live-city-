@@ -17,9 +17,7 @@ export default async function EventsPage({ searchParams }: PageProps<"/events">)
 
   return (
     <LiveLocationProvider>
-      <div className="mx-auto w-full max-w-[1400px]">
-        <EventsHub initialFilters={filters} initialResult={null} />
-      </div>
+      <EventsHub initialFilters={filters} initialResult={null} />
     </LiveLocationProvider>
   );
 }

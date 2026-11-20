@@ -2184,5 +2184,8 @@
   "Mute": "静音",
   "Volume": "音量",
   "Exit fullscreen": "退出全屏",
-  "Fullscreen": "全屏"
+  "Fullscreen": "全屏",
+  "Choose a city above to see events near you.": "在上方选择城市，即可查看附近的活动。",
+  "No upcoming events found near you yet.": "附近暂时没有找到即将举行的活动。",
+  "Across Japan": "日本各地"
 }

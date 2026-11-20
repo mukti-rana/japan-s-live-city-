@@ -1621,8 +1621,10 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 /* Explore Japan: its full-screen photograph runs up behind the top bar, as on the home page. The bar is fully transparent in every state (at the top, and
    once the page is scrolled and the bar shrinks): no fill, no blur, no line, no shadow, so it never turns black; only its icons and logo show, in the light-on-dark
    colours the dark page needs. */
-body:has([data-explore-hero]) [data-site-header] { margin-bottom: -3.5rem; }
-body:has([data-explore-hero]) [data-site-header] {
+body:has([data-explore-hero]) [data-site-header],
+body:has([data-events-hero]) [data-site-header] { margin-bottom: -3.5rem; }
+body:has([data-explore-hero]) [data-site-header],
+body:has([data-events-hero]) [data-site-header] {
   color-scheme: dark;
   --background: #000000; --foreground: #f4f4f5; --muted: #c9ccd6;
   --panel: #0b0b0c; --sidebar-bg: #000000;
@@ -1631,13 +1633,15 @@ body:has([data-explore-hero]) [data-site-header] {
   --btn-line: rgba(255, 255, 255, 0.2); --btn-line-hover: rgba(255, 255, 255, 0.45); --btn-ink: rgba(255, 255, 255, 0.78); --btn-wash: rgba(255, 255, 255, 0.05);
   color: var(--foreground);
 }
-body:has([data-explore-hero]) [data-site-header] > header {
+body:has([data-explore-hero]) [data-site-header] > header,
+body:has([data-events-hero]) [data-site-header] > header {
   background: transparent;
   border-color: transparent;
   box-shadow: none;
 }
 /* No blur behind the bar: written as a zero-radius blur, because the CSS minifier drops "backdrop-filter: none" altogether. */
-body:has([data-explore-hero]) [data-site-header] > header { backdrop-filter: blur(0px) !important; }
+body:has([data-explore-hero]) [data-site-header] > header,
+body:has([data-events-hero]) [data-site-header] > header { backdrop-filter: blur(0px) !important; }
 
 /* The caption of the Explore hero's photograph fades up each time the place changes. */
 .explore-caption { animation: explore-caption 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both; }
@@ -1647,6 +1651,7 @@ body:has([data-explore-hero]) [data-site-header] > header { backdrop-filter: blu
 /* Explore Japan is a dark page in both themes (the fixed photograph is behind all of it): this puts back the dark palette the light theme replaced, for everything
    inside it (the shared helper above resets only a few tokens, and the cards here use more of them). */
 html:not(.dark) [data-explore-page],
+html:not(.dark) [data-events-page],
 html:not(.dark) [data-community-page] {
   color-scheme: dark;
   --surface-0: #0a0a0b;
@@ -1791,6 +1796,7 @@ body:has([data-community-page]) [data-site-header] {
 /* The pages that are dark in both themes (Community, Explore) also sit on a dark page background, so their opening fade never shows white behind them. */
 body:has([data-community-page]) { background: #050505; }
 body:has([data-explore-page]) { background: #05060c; }
+body:has([data-events-page]) { background: #05060c; }
 
 /* ArrowLink (see ArrowLink.tsx): a bare arrow that is alive at rest. Its colour flows through amber, pink, violet and blue; it slowly opens (the shaft stretches, the head runs ahead)
    and closes again; and a light travels along the shaft. Pointed at or focused, it holds fully open and brightens. Each arrow is a little out of step with its neighbours

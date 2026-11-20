@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { AlertTriangle, CalendarDays, Heart, MapPin, RefreshCw, Search, X } from "lucide-react";
+import { AlertTriangle, CalendarDays, ChevronDown, Heart, MapPin, RefreshCw, Search, SlidersHorizontal, X } from "lucide-react";
 import "@/components/home/cinematic/cinematic.css";
 import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
 import { playfair } from "@/components/home/cinematic/fonts";
@@ -25,7 +25,7 @@ import {
   WHEN_IDS,
   type EventFilters,
 } from "@/lib/events/hubFilters";
-import { formatUpdated, useSavedEvents } from "@/lib/events/useEvents";
+import { formatUpdated, useEventsFeed, useSavedEvents } from "@/lib/events/useEvents";
 import { known, localize, translate } from "@/lib/i18n/inline";
 
 interface Loaded {
@@ -34,15 +34,16 @@ interface Loaded {
   failed?: boolean;
 }
 
+// Everything here is small and see-through: a hairline border and no fill, so the photograph behind shows through.
 const chip =
-  "shrink-0 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
-const chipOff = "border-glass-border bg-glass-bg text-foreground/75 hover:border-white/25 hover:text-foreground";
+  "shrink-0 whitespace-nowrap rounded-full border px-3 py-1 text-[11px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60";
+const chipOff = "border-white/20 bg-transparent text-white/75 hover:border-white/45 hover:text-white";
 const field =
-  "h-10 w-full rounded-xl border border-glass-border bg-panel px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
+  "h-9 w-full rounded-full border border-white/20 bg-transparent px-3.5 text-xs text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 [&>option]:bg-[#0b0b0c] [&>option]:text-white";
 
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex min-w-0 flex-col gap-1 text-[11px] font-medium text-muted">
+    <label className="flex min-w-0 flex-col gap-1 text-[11px] font-medium text-white/60">
       {label}
       {children}
     </label>
@@ -66,6 +67,9 @@ export default function EventsHub({
   const [loadingMore, setLoadingMore] = useState(false);
   const [moreFailed, setMoreFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [openFilters, setOpenFilters] = useState(false);
+  // The first line of the page: events near the visitor's city (or the one they chose), whatever the list below is showing.
+  const nearRow = useEventsFeed(placeInfo.place ? { near: placeInfo.place, sort: "nearest", limit: 8 } : null);
 
   const initialKey = initialResult ? toQueryString(eventGridParams(initialFilters, null, [])) : null;
   const [loaded, setLoaded] = useState<Loaded | null>(initialResult && initialKey ? { key: initialKey, pages: [initialResult] } : null);
@@ -186,172 +190,205 @@ export default function EventsHub({
   const sources = lastPage?.sources ?? [];
   const okSources = sources.filter((s) => s.ok);
 
+  const activeExtra = [filters.near, Boolean(filters.kind), filters.free, filters.family, Boolean(filters.pref), Boolean(filters.city), Boolean(filters.date), filters.ended, filters.saved, filters.sort !== "date"].filter(Boolean).length;
+  const nearItems = nearRow.data?.items ?? [];
+  const showNearRow = !filters.near;
+
   return (
-    <div className="flex flex-col gap-5">
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden rounded-3xl border border-glass-border">
-        <Image
-          src="/images/event-nebuta.jpg"
-          alt=""
-          fill
-          preload
-          sizes="(min-width: 1536px) 1400px, 100vw"
-          className="-z-10 object-cover [object-position:50%_45%]"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0b0e1a]/95 via-[#1b1140]/75 to-[#0b0e1a]/40" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0b0e1a] via-transparent to-transparent" />
-        <div className="flex flex-col gap-5 p-6 sm:p-9 lg:p-12">
-          <div className={`max-w-2xl ${playfair.variable}`}>
+    <div
+      data-events-page
+      className="keep-dark-ink relative isolate flex flex-col"
+      style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}
+    >
+      {/* The photograph is fixed behind the whole page, so it stays full screen as the page scrolls. */}
+      <div aria-hidden="true" className="fixed inset-0 -z-10 bg-black">
+        <Image src="/images/event-nebuta.jpg" alt="" fill preload sizes="100vw" className="explore-kenburns object-cover [object-position:50%_45%]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,5,10,0.6)_0%,rgba(4,5,10,0.28)_35%,rgba(4,5,10,0.7)_80%,rgba(4,5,10,0.85)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,5,10,0.78)_0%,rgba(4,5,10,0.15)_62%,transparent_100%)]" />
+      </div>
+
+      {/* Hero: full screen, running up behind the (fully transparent) top bar. */}
+      <header data-events-hero className={`${playfair.variable} relative -mx-3 -mt-3 flex min-h-[100svh] flex-col justify-end sm:-mx-4 sm:-mt-4`}>
+        <div className="relative mx-auto flex w-full max-w-[1500px] flex-col gap-5 px-5 pb-10 pt-24 sm:px-10 lg:px-14 lg:pb-14">
+          <div className="max-w-3xl">
             <p className="text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: "rgba(255,255,255,0.78)" }}>{t("events.eyebrow")}</p>
-            <h1 className="mt-2 font-[family-name:var(--font-home-serif)] text-[clamp(38px,5.6vw,76px)] font-normal leading-[1] tracking-[-0.02em] [text-shadow:0_2px_30px_rgba(0,0,0,0.6)]" style={{ color: "#fff" }}>
+            <h1 className="mt-3 font-[family-name:var(--font-home-serif)] text-[clamp(44px,6.6vw,96px)] font-normal leading-[1] tracking-[-0.02em] [text-shadow:0_2px_30px_rgba(0,0,0,0.6)]" style={{ color: "#fff" }}>
               <SlideInHeading en={t("events.title")} />
             </h1>
-            <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: "rgba(255,255,255,0.88)" }}>{t("events.subtitle")}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: "rgba(255,255,255,0.88)" }}>{t("events.subtitle")}</p>
           </div>
-          <div className="relative max-w-xl">
-            <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-muted" aria-hidden="true" />
+          {/* Search: small and see-through. */}
+          <div className="relative w-full max-w-sm">
+            <Search size={14} className="pointer-events-none absolute left-3.5 top-1/2 z-10 -translate-y-1/2 text-white/60" aria-hidden="true" />
             <input
               type="search"
               value={qInput}
               onChange={(e) => setQInput(e.target.value)}
               placeholder={t("events.search")}
               aria-label={t("events.search")}
-              className="h-12 w-full rounded-xl border border-white/15 bg-background/70 pl-10 pr-4 text-base text-foreground outline-none backdrop-blur-md placeholder:text-muted focus:border-azure/60 focus-visible:ring-2 focus-visible:ring-azure/40 sm:text-sm"
+              className="h-9 w-full rounded-full border border-white/25 bg-transparent pl-9 pr-4 text-base text-white outline-none placeholder:text-white/55 focus:border-white/60 focus-visible:ring-2 focus-visible:ring-white/40 sm:text-sm"
             />
           </div>
-        </div>
-      </section>
-
-      {/* Near you */}
-      <section aria-labelledby="near-title" className="rounded-2xl border border-glass-border bg-glass-bg p-4 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex min-w-full flex-1 flex-col gap-2.5 sm:min-w-0">
-            <h2 id="near-title" className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-foreground/90">
-              <MapPin size={15} className="text-gold" aria-hidden="true" />
-              {t("events.near.title")}
-            </h2>
+          {/* Where "near you" is measured from. */}
+          <div className="flex flex-wrap items-center gap-2 text-white/80">
+            <MapPin size={14} className="shrink-0" aria-hidden="true" />
             <PlacePicker current={placeInfo} compact />
           </div>
-          <div className="flex flex-wrap items-end gap-3">
-            <button
-              type="button"
-              aria-pressed={filters.near}
-              disabled={!placeInfo.place}
-              onClick={() => update({ near: !filters.near, sort: !filters.near ? "nearest" : "date" })}
-              className={`${chip} ${filters.near ? "border-gold/60 bg-gold/20 text-gold" : chipOff} disabled:cursor-not-allowed disabled:opacity-40`}
-            >
-              {t("events.when.near")}
-            </button>
-            <Labeled label={t("events.radius")}>
-              <select
-                value={filters.radius}
-                disabled={!filters.near}
-                onChange={(e) => update({ radius: Number(e.target.value) })}
-                className={`${field} w-36 disabled:opacity-40`}
-              >
-                <option value={0}>{t("events.radius.any")}</option>
-                {RADII.map((r) => (
-                  <option key={r} value={r}>
-                    {r} km
-                  </option>
-                ))}
-              </select>
-            </Labeled>
-          </div>
         </div>
-        <p className="mt-3 text-[11px] text-muted">{t("events.near.measured")}</p>
-      </section>
+      </header>
 
-      {/* Filters */}
-      <div className="flex flex-col gap-3">
-        <div
-          role="group"
-          aria-label={translate("When", language)}
-          className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
-        >
-          {WHEN_IDS.map((w) => (
-            <button key={w} type="button" aria-pressed={filters.when === w && !filters.date} onClick={() => update({ when: w, date: "" })} className={`${chip} snap-start ${filters.when === w && !filters.date ? "border-azure/50 bg-azure/20 text-azure" : chipOff}`}>
-              {t(`events.when.${w}` as TranslationKey)}
-            </button>
-          ))}
-        </div>
+      {/* Below the hero the sections glide over the photograph, under a shade that deepens so they stay readable. */}
+      <div className="-mx-3 bg-[linear-gradient(180deg,rgba(5,6,12,0)_0,rgba(5,6,12,0.72)_14rem)] px-3 pb-6 pt-10 sm:-mx-4 sm:px-4 sm:pt-14">
+        <div className={`${playfair.variable} mx-auto flex w-full max-w-[1500px] flex-col gap-10 px-2 sm:gap-14 sm:px-6 lg:px-10`}>
+          {/* The first line: events near you. */}
+          {showNearRow && (
+            <section aria-labelledby="near-title" className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h2 id="near-title" className="font-[family-name:var(--font-home-serif)] text-[clamp(26px,3.2vw,40px)] font-normal leading-tight tracking-[-0.015em] text-foreground">
+                  {t("events.near.title")}
+                  {placeInfo.place ? <span className="text-white/60"> · {known(placeInfo.place, language)}</span> : null}
+                </h2>
+                <p className="text-[11px] text-white/55">{t("events.near.measured")}</p>
+              </div>
+              {placeInfo.locating || (placeInfo.place && nearRow.loading) ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" role="status" aria-label={t("news.hub.loadingMore")}>
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                </div>
+              ) : !placeInfo.place ? (
+                <p className="rounded-xl border border-dashed border-white/20 px-4 py-3 text-sm text-white/70">{translate("Choose a city above to see events near you.", language)}</p>
+              ) : nearRow.failed || nearItems.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-white/20 px-4 py-3 text-sm text-white/70">{translate("No upcoming events found near you yet.", language)}</p>
+              ) : (
+                <ul className="-mx-3 flex snap-x snap-mandatory gap-4 overflow-x-auto px-3 pb-2 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
+                  {nearItems.map((e) => (
+                    <li key={e.id} className="flex w-[78vw] max-w-[22rem] shrink-0 snap-start flex-col sm:w-[20rem] [&>*]:flex-1">
+                      <EventCard event={e} onOpen={setOpenEvent} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
-        <div
-          role="group"
-          aria-label={translate("Categories", language)}
-          className="-mx-3 flex snap-x scroll-pl-3 gap-2 overflow-x-auto px-3 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
-        >
-          {KIND_CHIPS.map((k) => (
-            <button key={k.id} type="button" aria-pressed={filters.kind === k.id} onClick={() => update({ kind: filters.kind === k.id ? "" : k.id })} className={`${chip} snap-start ${filters.kind === k.id ? "border-neon-purple/50 bg-neon-purple/20 text-lilac" : chipOff}`}>
-              {t(`events.kind.${k.id}` as TranslationKey)}
-            </button>
-          ))}
-          <button type="button" aria-pressed={filters.free} onClick={() => update({ free: !filters.free })} className={`${chip} snap-start ${filters.free ? "border-mint/50 bg-mint/20 text-mint" : chipOff}`}>
-            {t("events.filter.free")}
-          </button>
-          <button type="button" aria-pressed={filters.family} onClick={() => update({ family: !filters.family })} className={`${chip} snap-start ${filters.family ? "border-mint/50 bg-mint/20 text-mint" : chipOff}`}>
-            {t("events.filter.family")}
-          </button>
-          <button type="button" aria-pressed={filters.saved} onClick={() => update({ saved: !filters.saved })} className={`${chip} snap-start ${filters.saved ? "border-sakura/50 bg-sakura/20 text-sakura" : chipOff}`}>
-            <Heart size={11} className="mr-1 inline" aria-hidden="true" />
-            {t("events.filter.saved")} ({saved.ids.length})
-          </button>
-          <button type="button" aria-pressed={filters.ended} onClick={() => update({ ended: !filters.ended })} className={`${chip} snap-start ${filters.ended ? "border-white/40 bg-white/15 text-foreground" : chipOff}`}>
-            {t("events.filter.ended")}
-          </button>
-        </div>
+          {/* Then the whole of Japan, by default. */}
+          <section aria-labelledby="japan-title" className="flex flex-col gap-4">
+            <h2 id="japan-title" className="font-[family-name:var(--font-home-serif)] text-[clamp(26px,3.2vw,40px)] font-normal leading-tight tracking-[-0.015em] text-foreground">
+              {filters.near ? t("events.near.title") : translate("Across Japan", language)}
+            </h2>
 
-        <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
-          <Labeled label={t("events.prefecture")}>
-            <select value={filters.pref} onChange={(e) => update({ pref: e.target.value })} className={field}>
-              <option value="">{t("events.anyPrefecture")}</option>
-              {PREFECTURES.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {localize(p.en, p.ja, language)}
-                </option>
+            {/* The filters, minimised: the time chips in one small row, and everything else behind one small button. */}
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <div role="group" aria-label={translate("When", language)} className="-mx-3 flex snap-x scroll-pl-3 gap-1.5 overflow-x-auto px-3 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+                  {WHEN_IDS.map((w) => {
+                    const on = filters.when === w && !filters.date;
+                    return (
+                      <button key={w} type="button" aria-pressed={on} onClick={() => update({ when: w, date: "" })} className={`${chip} snap-start ${on ? "border-white/65 bg-white/12 text-white" : chipOff}`}>
+                        {t(`events.when.${w}` as TranslationKey)}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button type="button" aria-expanded={openFilters} aria-controls="events-filters" onClick={() => setOpenFilters((o) => !o)} className={`${chip} inline-flex items-center gap-1.5 ${openFilters || activeExtra > 0 ? "border-white/65 bg-white/12 text-white" : chipOff}`}>
+                  <SlidersHorizontal size={12} aria-hidden="true" />
+                  {translate("Filters", language)}
+                  {activeExtra > 0 ? ` (${activeExtra})` : ""}
+                  <ChevronDown size={12} aria-hidden="true" className={`transition-transform duration-300 motion-reduce:transition-none ${openFilters ? "rotate-180" : ""}`} />
+                </button>
+              </div>
+
+              <div id="events-filters" aria-hidden={!openFilters} className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${openFilters ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                <div className={`min-h-0 overflow-hidden ${openFilters ? "" : "pointer-events-none"}`}>
+                  <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-transparent p-3 sm:p-4">
+                    <div role="group" aria-label={translate("Categories", language)} className="flex flex-wrap gap-1.5">
+                      <button type="button" aria-pressed={filters.near} disabled={!placeInfo.place} onClick={() => update({ near: !filters.near, sort: !filters.near ? "nearest" : "date" })} className={`${chip} ${filters.near ? "border-[#ffc26b]/70 bg-[#ffc26b]/15 text-[#ffd9a0]" : chipOff} disabled:cursor-not-allowed disabled:opacity-40`}>
+                        {t("events.when.near")}
+                      </button>
+                      {KIND_CHIPS.map((k) => (
+                        <button key={k.id} type="button" aria-pressed={filters.kind === k.id} onClick={() => update({ kind: filters.kind === k.id ? "" : k.id })} className={`${chip} ${filters.kind === k.id ? "border-[#b496ff]/70 bg-[#b496ff]/15 text-[#dccfff]" : chipOff}`}>
+                          {t(`events.kind.${k.id}` as TranslationKey)}
+                        </button>
+                      ))}
+                      <button type="button" aria-pressed={filters.free} onClick={() => update({ free: !filters.free })} className={`${chip} ${filters.free ? "border-[#4ade80]/70 bg-[#4ade80]/15 text-[#a6f0c0]" : chipOff}`}>
+                        {t("events.filter.free")}
+                      </button>
+                      <button type="button" aria-pressed={filters.family} onClick={() => update({ family: !filters.family })} className={`${chip} ${filters.family ? "border-[#4ade80]/70 bg-[#4ade80]/15 text-[#a6f0c0]" : chipOff}`}>
+                        {t("events.filter.family")}
+                      </button>
+                      <button type="button" aria-pressed={filters.saved} onClick={() => update({ saved: !filters.saved })} className={`${chip} ${filters.saved ? "border-[#ff7fb0]/70 bg-[#ff7fb0]/15 text-[#ffb8d2]" : chipOff}`}>
+                        <Heart size={11} className="mr-1 inline" aria-hidden="true" />
+                        {t("events.filter.saved")} ({saved.ids.length})
+                      </button>
+                      <button type="button" aria-pressed={filters.ended} onClick={() => update({ ended: !filters.ended })} className={`${chip} ${filters.ended ? "border-white/65 bg-white/12 text-white" : chipOff}`}>
+                        {t("events.filter.ended")}
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5 md:grid-cols-5">
+                      <Labeled label={t("events.prefecture")}>
+                        <select value={filters.pref} onChange={(e) => update({ pref: e.target.value })} className={field}>
+                          <option value="">{t("events.anyPrefecture")}</option>
+                          {PREFECTURES.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {localize(p.en, p.ja, language)}
+                            </option>
+                          ))}
+                        </select>
+                      </Labeled>
+                      <Labeled label={t("events.city")}>
+                        <input value={cityInput} onChange={(e) => setCityInput(e.target.value)} placeholder={t("events.cityPlaceholder")} className={`${field} placeholder:text-white/50`} />
+                      </Labeled>
+                      <Labeled label={t("events.date")}>
+                        <input type="date" value={filters.date} onChange={(e) => update({ date: e.target.value })} className={field} />
+                      </Labeled>
+                      <Labeled label={t("events.sort")}>
+                        <select value={filters.sort} onChange={(e) => update({ sort: e.target.value as EventFilters["sort"] })} className={field}>
+                          <option value="date">{t("events.sort.date")}</option>
+                          <option value="announced">{t("events.sort.announced")}</option>
+                          <option value="nearest" disabled={!placeInfo.place}>
+                            {t("events.sort.nearest")}
+                          </option>
+                        </select>
+                      </Labeled>
+                      <Labeled label={t("events.radius")}>
+                        <select value={filters.radius} disabled={!filters.near} onChange={(e) => update({ radius: Number(e.target.value) })} className={`${field} disabled:opacity-40`}>
+                          <option value={0}>{t("events.radius.any")}</option>
+                          {RADII.map((r) => (
+                            <option key={r} value={r}>
+                              {r} km
+                            </option>
+                          ))}
+                        </select>
+                      </Labeled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* What's selected, and how many results */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-live="polite">
+              {chips.length > 0 && <span className="text-[11px] font-medium text-white/60">{t("events.showing")}:</span>}
+              {chips.map((c) => (
+                <button key={c.key} type="button" onClick={c.clear} className="flex items-center gap-1 rounded-full border border-white/25 bg-transparent px-2.5 py-1 text-[11px] font-medium text-white hover:border-white/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60">
+                  {c.label}
+                  <X size={11} aria-hidden="true" />
+                </button>
               ))}
-            </select>
-          </Labeled>
-          <Labeled label={t("events.city")}>
-            <input value={cityInput} onChange={(e) => setCityInput(e.target.value)} placeholder={t("events.cityPlaceholder")} className={`${field} placeholder:text-muted`} />
-          </Labeled>
-          <Labeled label={t("events.date")}>
-            <input type="date" value={filters.date} onChange={(e) => update({ date: e.target.value })} className={field} />
-          </Labeled>
-          <Labeled label={t("events.sort")}>
-            <select value={filters.sort} onChange={(e) => update({ sort: e.target.value as EventFilters["sort"] })} className={field}>
-              <option value="date">{t("events.sort.date")}</option>
-              <option value="announced">{t("events.sort.announced")}</option>
-              <option value="nearest" disabled={!placeInfo.place}>
-                {t("events.sort.nearest")}
-              </option>
-            </select>
-          </Labeled>
-        </div>
-      </div>
+              {chips.length > 0 && (
+                <button type="button" onClick={clearAll} className="text-[11px] font-medium text-white/60 underline-offset-2 hover:text-white hover:underline">
+                  {t("events.clear")}
+                </button>
+              )}
+              {lastPage && !loading && (
+                <span className="ml-auto text-[11px] text-white/60">
+                  {lastPage.total} {t("events.sources.count")}
+                </span>
+              )}
+            </div>
 
-      {/* What's selected, and how many results */}
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2" aria-live="polite">
-        {chips.length > 0 && <span className="text-[11px] font-medium text-muted">{t("events.showing")}:</span>}
-        {chips.map((c) => (
-          <button key={c.key} type="button" onClick={c.clear} className="flex items-center gap-1 rounded-full bg-azure/15 px-2.5 py-1 text-[11px] font-medium text-azure hover:bg-azure/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-            {c.label}
-            <X size={11} aria-hidden="true" />
-          </button>
-        ))}
-        {chips.length > 0 && (
-          <button type="button" onClick={clearAll} className="text-[11px] font-medium text-muted underline-offset-2 hover:text-foreground hover:underline">
-            {t("events.clear")}
-          </button>
-        )}
-        {lastPage && !loading && (
-          <span className="ml-auto text-[11px] text-muted">
-            {lastPage.total} {t("events.sources.count")}
-          </span>
-        )}
-      </div>
-
-      {/* Results */}
+            {/* Results */}
       {waitingForPlace ? (
         placeInfo.locating ? (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -418,7 +455,7 @@ export default function EventsHub({
                 type="button"
                 onClick={() => void loadMore()}
                 disabled={loadingMore}
-                className="rounded-full border border-glass-border bg-glass-bg px-6 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-azure/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure disabled:opacity-60"
+                className="rounded-full border border-white/25 bg-transparent px-5 py-2 text-xs font-semibold text-white transition-colors hover:border-white/55 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 disabled:opacity-60"
               >
                 {loadingMore ? t("news.hub.loadingMore") : t("news.hub.loadMore")}
               </button>
@@ -432,8 +469,10 @@ export default function EventsHub({
         </>
       )}
 
-      {/* Where the data comes from, and how fresh it is */}
-      <section aria-labelledby="sources-title" className="rounded-2xl border border-glass-border bg-glass-bg p-4 sm:p-5">
+          </section>
+
+          {/* Where the data comes from, and how fresh it is */}
+      <section aria-labelledby="sources-title" className="rounded-2xl border border-white/10 bg-transparent p-4 sm:p-5">
         <h2 id="sources-title" className="text-sm font-semibold uppercase tracking-wide text-foreground/90">
           {t("events.sources.title")}
         </h2>
@@ -468,6 +507,8 @@ export default function EventsHub({
           </details>
         )}
       </section>
+        </div>
+      </div>
 
       <EventModal event={openEvent} onClose={() => setOpenEvent(null)} />
     </div>

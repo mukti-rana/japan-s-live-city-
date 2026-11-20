@@ -1549,5 +1549,8 @@
   "Mute": "ミュート",
   "Volume": "音量",
   "Exit fullscreen": "全画面を終了",
-  "Fullscreen": "全画面"
+  "Fullscreen": "全画面",
+  "Choose a city above to see events near you.": "上で都市を選ぶと、近くのイベントが表示されます。",
+  "No upcoming events found near you yet.": "近くに今後のイベントはまだ見つかっていません。",
+  "Across Japan": "日本全国"
 }
