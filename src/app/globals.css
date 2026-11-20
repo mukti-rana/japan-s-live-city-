@@ -1585,3 +1585,13 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 .eq-map .leaflet-tooltip { background: rgba(8, 9, 14, 0.92); border: 1px solid rgba(255, 255, 255, 0.14); color: #fff; border-radius: 10px; padding: 4px 9px; font-size: 12px; box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.7); }
 .eq-map .leaflet-tooltip-top::before { border-top-color: rgba(8, 9, 14, 0.92); }
 @media (prefers-reduced-motion: reduce) { .eq-ring { animation: none; opacity: 0.8; } }
+
+/* The phone menu (Sidebar): when the drawer opens, its header, links and card rise in one after another. */
+@media (max-width: 1023.98px) {
+  #site-sidebar .drawer-item { opacity: 0; transform: translateX(-14px); }
+  #site-sidebar[data-open="true"] .drawer-item { animation: drawer-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 38ms + 120ms); }
+}
+@keyframes drawer-in { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  #site-sidebar .drawer-item, #site-sidebar[data-open="true"] .drawer-item { animation: none; opacity: 1; transform: none; }
+}
