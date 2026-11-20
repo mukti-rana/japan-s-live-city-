@@ -86,7 +86,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
   const season = useMemo(() => seasonOfMonth(month), [month]);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-10 sm:gap-14">
+    <div className="flex flex-col gap-10 sm:gap-14">
       <ExploreHero
         tab={tab}
         setTab={(t) => {
@@ -98,6 +98,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         outside={loc.status === "outside"}
       />
 
+      <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-10 sm:gap-14">
       <TopicGrid selected={filters.topics} onToggle={toggleTopic} />
 
       <ScrollReveal>
@@ -172,6 +173,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
       <p className="border-t border-glass-border pt-4 text-[11px] leading-relaxed text-muted">
         {tr("Coverage: {n} places across {m} prefectures, from open data (Wikidata, Wikipedia and Wikimedia Commons). Opening hours, prices and ratings are shown only when a source provides them.").replace("{n}", meta.total.toLocaleString()).replace("{m}", String(meta.prefecturesCovered))}
       </p>
+      </div>
     </div>
   );
 }
