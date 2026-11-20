@@ -2,6 +2,10 @@
 
 import { useEffect, useId, useState } from "react";
 import { useRouter } from "next/navigation";
+import ExploreBackdrop from "@/components/explore/ExploreBackdrop";
+import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
+import { playfair } from "@/components/home/cinematic/fonts";
+import "@/components/home/cinematic/cinematic.css";
 import { Globe2, LocateFixed, MapPin, Navigation, Search } from "lucide-react";
 import type { Suggestion } from "@/lib/explore/catalogue";
 import type { useExploreLocation } from "@/lib/explore/useExploreLocation";
@@ -69,14 +73,15 @@ export default function ExploreHero({
   ];
 
   return (
-    <header className="relative overflow-hidden rounded-3xl border border-glass-border bg-gradient-to-br from-azure/15 via-panel to-neon-purple/20 p-5 sm:p-8">
-      <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-neon-purple/20 blur-3xl" aria-hidden="true" />
-      <div className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-azure/20 blur-3xl" aria-hidden="true" />
-      <div className="relative flex flex-col gap-5">
+    <header className={`${playfair.variable} keep-dark-ink relative isolate flex min-h-[min(82vh,700px)] flex-col justify-end overflow-hidden rounded-3xl border border-white/10 p-5 sm:p-10 lg:p-14`} style={{ color: "#fff", "--btn-ink": "#ffffff", "--btn-line": "rgba(255,255,255,0.34)", "--btn-line-hover": "rgba(255,255,255,0.7)" } as React.CSSProperties}>
+      <ExploreBackdrop />
+      <div className="relative flex flex-col gap-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#c4b5fd]">{tr("Explore Japan")}</p>
-          <h1 className="mt-2 text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">{tr("Where would you like to go?")}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-foreground/75 sm:text-base">{tr("Discover amazing places, activities and experiences across Japan.")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em]" style={{ color: "rgba(255,255,255,0.78)" }}>{tr("Explore Japan")}</p>
+          <h1 className="mt-3 max-w-[16ch] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,112px)] font-normal leading-[0.98] tracking-[-0.025em] [text-shadow:0_4px_40px_rgba(0,0,0,0.55)]">
+            <SlideInHeading en="Where would you like to go?" />
+          </h1>
+          <p className="mt-4 max-w-xl text-[clamp(15px,1.35vw,19px)] leading-relaxed" style={{ color: "rgba(255,255,255,0.86)" }}>{tr("Discover amazing places, activities and experiences across Japan.")}</p>
         </div>
 
         {/* Search */}

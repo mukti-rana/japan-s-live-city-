@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { LayoutGrid, LocateFixed, Map as MapIcon, MapPin, Sparkles } from "lucide-react";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import AllJapan from "@/components/explore/AllJapan";
 import DiscoverSections from "@/components/explore/DiscoverSections";
 import ExploreHero, { type Tab } from "@/components/explore/ExploreHero";
@@ -85,7 +86,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
   const season = useMemo(() => seasonOfMonth(month), [month]);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-10 sm:gap-14">
       <ExploreHero
         tab={tab}
         setTab={(t) => {
@@ -99,7 +100,9 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
 
       <TopicGrid selected={filters.topics} onToggle={toggleTopic} />
 
-      <SmartStrip filters={filters} origin={origin} month={month} savedCount={savedCount} />
+      <ScrollReveal>
+        <SmartStrip filters={filters} origin={origin} month={month} savedCount={savedCount} />
+      </ScrollReveal>
 
       {/* Highlights, the full list, or the map */}
       <div role="group" aria-label={tr("View")} className="inline-flex w-fit rounded-2xl border border-glass-border bg-glass-bg p-1">
@@ -146,8 +149,11 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
         <ExploreResults filters={filters} setFilters={setFilters} origin={origin} view={effectiveMode === "map" ? "map" : "list"} setView={(v) => setMode(v)} month={month} />
       )}
 
-      <SavedPlaces onCount={setSavedCount} />
+      <ScrollReveal>
+        <SavedPlaces onCount={setSavedCount} />
+      </ScrollReveal>
 
+      <ScrollReveal>
       <AllJapan
         currentSeason={season}
         onRegion={(id) => browseTo({ region: id, pref: "" }, "all")}
@@ -161,6 +167,7 @@ export default function ExploreApp({ meta }: { meta: CatalogueMeta }) {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
       />
+      </ScrollReveal>
 
       <p className="border-t border-glass-border pt-4 text-[11px] leading-relaxed text-muted">
         {tr("Coverage: {n} places across {m} prefectures, from open data (Wikidata, Wikipedia and Wikimedia Commons). Opening hours, prices and ratings are shown only when a source provides them.").replace("{n}", meta.total.toLocaleString()).replace("{m}", String(meta.prefecturesCovered))}

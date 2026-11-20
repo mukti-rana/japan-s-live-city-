@@ -121,11 +121,12 @@ export default function ExploreResults({
   const effectiveSort = filters.sort || (scope === "near" ? "nearest" : origin ? "recommended" : "popular");
 
   const list = (compact: boolean) => (
-    <ul className={compact ? "flex flex-col gap-3" : "grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"}>
-      {items.map((p) => (
+    <ul key={base} className={`ex-list ${compact ? "flex flex-col gap-3" : "grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"}`}>
+      {items.map((p, idx) => (
         <li
           key={p.id}
           data-place={p.id}
+          style={{ "--i": idx % 12 } as React.CSSProperties}
           onMouseEnter={() => view === "map" && setSelectedId(p.id)}
           onFocusCapture={() => view === "map" && setSelectedId(p.id)}
           className={`rounded-2xl transition-shadow ${p.id === selectedId && view === "map" ? "ring-2 ring-azure" : ""}`}

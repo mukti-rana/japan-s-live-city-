@@ -1595,3 +1595,13 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 @media (prefers-reduced-motion: reduce) {
   #site-sidebar .drawer-item, #site-sidebar[data-open="true"] .drawer-item { animation: none; opacity: 1; transform: none; }
 }
+
+/* Explore Japan (ExploreBackdrop): the opening photograph drifts and zooms very slowly while it is on show. */
+@keyframes explore-kenburns { from { transform: scale(1.04) translate3d(0, 0, 0); } to { transform: scale(1.16) translate3d(-1.2%, -0.8%, 0); } }
+.explore-kenburns { animation: explore-kenburns 12s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .explore-kenburns { animation: none; } }
+
+/* Explore results: when the filters change, the new places arrive one after another instead of snapping in. */
+.ex-list > li { animation: ex-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--i, 0) * 55ms); }
+@keyframes ex-in { from { opacity: 0; transform: translate3d(0, 22px, 0) scale(0.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ex-list > li { animation: none; } }
