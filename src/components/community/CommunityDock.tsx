@@ -32,9 +32,11 @@ function CameraPlus({ className = "" }: { className?: string }) {
   );
 }
 
-// The Community's Create button, floating at the foot of the screen: an amber, pink, violet and blue ring slowly turns round its edge, a soft glow
-// breathes behind it, it lifts a little when pointed at and presses in when tapped. It opens the existing post creation page; nothing about
-// creating a post changes. It sits clear of the phone's menu button (at the left), keeps inside the safe area, and the page keeps room for it.
+// The Community's Create button, floating at the foot of the screen. Black glass with a hairline edge; a single short comet of amber, pink and
+// violet light circles that edge (the rest of the edge stays a quiet grey), nothing glows outside it. The icon sits in a small gradient disc and
+// tilts a little when the button is pointed at, a soft sheen crosses the glass, and the button lifts; pressing it settles it back. It opens the
+// existing post creation page; nothing about creating a post changes. It sits clear of the phone's menu button, keeps inside the safe area,
+// and the page keeps room for it. Under reduced motion the comet rests at the top and nothing moves.
 export default function CommunityDock() {
   const pathname = usePathname();
   const reduced = useReducedMotion();
@@ -44,31 +46,31 @@ export default function CommunityDock() {
     <div className="pointer-events-none fixed inset-x-0 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 flex justify-center">
       <motion.div
         className="pointer-events-auto relative"
-        initial={reduced ? false : { opacity: 0, y: 28, scale: 0.92 }}
+        initial={reduced ? false : { opacity: 0, y: 24, scale: 0.94 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 260, damping: 24, delay: 0.5 }}
-        whileHover={reduced ? undefined : { y: -4 }}
-        whileTap={reduced ? undefined : { scale: 0.96 }}
+        transition={{ type: "spring", stiffness: 260, damping: 26, delay: 0.5 }}
+        whileHover={reduced ? undefined : { y: -3 }}
+        whileTap={reduced ? undefined : { scale: 0.97 }}
       >
-        {/* The breathing glow, behind everything. */}
-        <span aria-hidden="true" className="cm-create-glow pointer-events-none absolute -inset-3 -z-10 rounded-full bg-[conic-gradient(from_200deg,#f5a524,#ff5c93,#9b6bff,#4da3ff,#f5a524)] opacity-60 blur-2xl" />
         <Link
           href="/community/new"
           aria-label={tr("Create a post")}
-          className="group relative isolate flex h-14 items-center gap-3 overflow-hidden rounded-full pl-2.5 pr-6 text-white shadow-[0_18px_40px_-14px_rgba(0,0,0,0.9)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          className="group relative isolate flex h-[3.4rem] items-center gap-3 overflow-hidden rounded-full pl-2 pr-6 text-white shadow-[0_14px_30px_-12px_rgba(0,0,0,0.95)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
-          {/* The turning ring: a big conic gradient behind the button, of which only the edge shows. */}
+          {/* The edge: a quiet hairline all round, and over it one short comet of light that circles it. */}
+          <span aria-hidden="true" className="absolute inset-0 -z-20 rounded-full bg-white/[0.14]" />
           <span aria-hidden="true" className="absolute left-1/2 top-1/2 -z-20 h-0 w-0">
-            <span className="cm-create-ring absolute -left-[170px] -top-[170px] block h-[340px] w-[340px] bg-[conic-gradient(#f5a524,#ff5c93,#9b6bff,#4da3ff,#f5a524)]" />
+            <span className="cm-create-ring absolute -left-[170px] -top-[170px] block h-[340px] w-[340px] bg-[conic-gradient(from_0deg,transparent_0deg,transparent_210deg,#f5a524_262deg,#ff5c93_312deg,#9b6bff_342deg,transparent_360deg)]" />
           </span>
-          {/* The button's face, leaving a thin edge of the ring. */}
-          <span aria-hidden="true" className="absolute inset-[1.5px] -z-10 rounded-full bg-[#09090c]/95 backdrop-blur-xl transition-colors duration-300 group-hover:bg-[#0d0d12]/90" />
-          {/* A soft sheen that crosses the face when pointed at. */}
-          <span aria-hidden="true" className="pointer-events-none absolute inset-[1.5px] -z-10 rounded-full bg-[linear-gradient(110deg,transparent_30%,rgba(255,255,255,0.14)_50%,transparent_70%)] bg-[length:250%_100%] bg-[position:120%_0] transition-[background-position] duration-[900ms] ease-out group-hover:bg-[position:-20%_0] motion-reduce:transition-none" />
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#f5a524_0%,#ff5c93_50%,#9b6bff_100%)] shadow-[0_6px_18px_-6px_rgba(255,92,147,0.9)] transition-transform duration-300 group-hover:scale-105 group-hover:-rotate-6 motion-reduce:transition-none">
+          {/* The glass, leaving a hairline of the edge. */}
+          <span aria-hidden="true" className="absolute inset-px -z-10 rounded-full bg-[#0a0a0d]" />
+          <span aria-hidden="true" className="absolute inset-px -z-10 rounded-full bg-[linear-gradient(180deg,rgba(255,255,255,0.09),transparent_58%)]" />
+          {/* A soft sheen that crosses the glass when pointed at. */}
+          <span aria-hidden="true" className="pointer-events-none absolute inset-px -z-10 rounded-full bg-[linear-gradient(110deg,transparent_32%,rgba(255,255,255,0.12)_50%,transparent_68%)] bg-[length:260%_100%] bg-[position:120%_0] transition-[background-position] duration-[1000ms] ease-out group-hover:bg-[position:-20%_0] motion-reduce:transition-none" />
+          <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(140deg,#f5a524_0%,#ff5c93_55%,#9b6bff_100%)] shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-6px_10px_rgba(0,0,0,0.18)] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-rotate-6 group-hover:scale-105 motion-reduce:transition-none">
             <CameraPlus />
           </span>
-          <span className="text-[15px] font-semibold tracking-tight">
+          <span className="text-[15px] font-semibold tracking-[0.01em]">
             <Tx en="Create" />
           </span>
         </Link>

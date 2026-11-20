@@ -4,6 +4,7 @@ import { playfair } from "@/components/home/cinematic/fonts";
 import FeedPost from "@/components/community/FeedPost";
 import PhotoMasonry from "@/components/community/PhotoMasonry";
 import { ReactionsProvider } from "@/components/community/PostReactions";
+import QuickBrowse from "@/components/community/QuickBrowse";
 import Tx from "@/components/i18n/Tx";
 import Bi from "@/components/community/Bi";
 import CommunitySearch from "@/components/community/CommunitySearch";
@@ -128,6 +129,10 @@ export default function CommunityHub({
             }
           />
         </div>
+        <QuickBrowse
+          topics={CATEGORIES.map((c) => ({ href: `${basePath}?category=${c.slug}`, en: c.en, ja: c.ja }))}
+          cities={FEATURED_AREAS.map((f) => ({ href: photos ? `${basePath}?area=${f.areaId}` : `/community/${f.slug}`, en: f.en, ja: f.ja }))}
+        />
       </div>
 
       {area && !photos && (
@@ -203,16 +208,15 @@ export default function CommunityHub({
             {photos ? (
               <PhotoMasonry posts={result.posts} />
             ) : (
-              // The feed: one centred column of large posts, with a compact guide beside it on a wide screen.
-              <div className="xl:grid xl:grid-cols-[minmax(0,720px)_280px] xl:justify-center xl:gap-10">
+              // The feed: one centred column of large posts.
+              <div>
                 <ReactionsProvider posts={result.posts}>
-                  <div className="mx-auto flex w-full max-w-[720px] flex-col gap-6 sm:gap-8 xl:mx-0">
+                  <div className="mx-auto flex w-full max-w-[720px] flex-col gap-6 sm:gap-8">
                     {result.posts.map((post, i) => (
                       <FeedPost key={post.id} post={post} first={i === 0} />
                     ))}
                   </div>
                 </ReactionsProvider>
-                <FeedGuide />
               </div>
             )}
             {(filters.page > 1 || result.hasMore) && (
@@ -260,53 +264,5 @@ function Notice({ heading, body, action }: { heading: string; body: string; acti
         </Link>
       )}
     </div>
-  );
-}
-
-// A compact guide beside the feed on a wide screen: the topics and the cities that have their own pages, and where to ask or explore.
-// Plain links to pages that already exist.
-function FeedGuide() {
-  const chip = "inline-flex h-8 items-center rounded-full border border-white/12 bg-white/[0.04] px-3 text-xs font-medium text-foreground/85 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure";
-  return (
-    <aside aria-labelledby="guide-topics" className="sticky top-24 hidden h-fit flex-col gap-6 xl:flex">
-      <section aria-labelledby="guide-topics" className="flex flex-col gap-3">
-        <h2 id="guide-topics" className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
-          <Tx en="Topics" />
-        </h2>
-        <ul className="flex flex-wrap gap-1.5">
-          {CATEGORIES.slice(0, 9).map((c) => (
-            <li key={c.slug}>
-              <Link href={`/community?category=${c.slug}`} className={chip}>
-                <Bi en={c.en} ja={c.ja} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section aria-labelledby="guide-cities" className="flex flex-col gap-3">
-        <h2 id="guide-cities" className="text-xs font-medium uppercase tracking-[0.2em] text-foreground/60">
-          <Tx en="Cities" />
-        </h2>
-        <ul className="flex flex-wrap gap-1.5">
-          {FEATURED_AREAS.slice(0, 8).map((f) => (
-            <li key={f.slug}>
-              <Link href={`/community/${f.slug}`} className={chip}>
-                <Bi en={f.en} ja={f.ja} />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section className="flex flex-col gap-2 border-t border-white/10 pt-5">
-        <Link href="/community/help" className="inline-flex items-center gap-2 rounded text-sm font-medium text-foreground/85 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          <HelpCircle size={15} aria-hidden="true" />
-          <Tx en="Ask a Local" />
-        </Link>
-        <Link href="/explore" className="inline-flex items-center gap-2 rounded text-sm font-medium text-foreground/85 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          <Compass size={15} aria-hidden="true" />
-          <Tx en="Explore Japan" />
-        </Link>
-      </section>
-    </aside>
   );
 }

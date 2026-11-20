@@ -1765,14 +1765,12 @@ body:has([data-community-page]) [data-site-header] {
   color: var(--foreground);
 }
 
-/* The Create button in the Community dock (CommunityDock): its edge is a slowly turning ring of amber, pink, violet and blue. */
+/* The Create button in the Community dock (CommunityDock): a short comet of amber, pink and violet light circles its edge. */
 @keyframes cm-ring { to { transform: rotate(360deg); } }
-.cm-create-ring { animation: cm-ring 7s linear infinite; }
-@keyframes cm-create-glow { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.95; } }
-.cm-create-glow { animation: cm-create-glow 4.5s ease-in-out infinite; }
+.cm-create-ring { animation: cm-ring 6s linear infinite; }
 @keyframes cm-sparkle { 0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(1.18) rotate(18deg); opacity: 0.85; } }
 .cm-create-spark { transform-origin: 18px 6px; animation: cm-sparkle 3.2s ease-in-out infinite; }
-@media (prefers-reduced-motion: reduce) { .cm-create-ring, .cm-create-glow, .cm-create-spark { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .cm-create-ring, .cm-create-spark { animation: none; } }
 
 /* A post in the feed or the gallery rises into place as it scrolls into view (once). */
 @keyframes cm-rise { from { opacity: 0; transform: translate3d(0, 28px, 0); } to { opacity: 1; transform: none; } }
