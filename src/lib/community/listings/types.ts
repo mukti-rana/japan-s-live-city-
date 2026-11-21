@@ -24,6 +24,8 @@ export interface ListingMedia {
 
 export interface Listing {
   id: string;
+  // The author's id (public, like their profile). Pages compare it with the signed-in person to show the author's own controls.
+  userId: string;
   kind: ListingKind;
   status: ListingStatus;
   title: string;
