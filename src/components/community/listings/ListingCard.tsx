@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { MapPin } from "lucide-react";
 import { playfair } from "@/components/home/cinematic/fonts";
-import { CATEGORY_ICON, CategoryChip, KIND_LABEL, PriceText, StateBadges, WhenText, photosOf, type PhotoSrc } from "@/components/community/listings/ListingPieces";
+import { CategoryChip, PriceText, StateBadges, WhenText } from "@/components/community/listings/ListingPieces";
+import { CATEGORY_ICON, KIND_LABEL, photosOf, type PhotoSrc } from "@/lib/community/listings/display";
 import Tx from "@/components/i18n/Tx";
 import { AREA_BY_ID } from "@/lib/community/areas";
 import Bi from "@/components/community/Bi";

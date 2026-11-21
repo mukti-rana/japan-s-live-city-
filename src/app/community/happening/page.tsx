@@ -5,7 +5,7 @@ import ListingCard from "@/components/community/listings/ListingCard";
 import ListingRail from "@/components/community/listings/ListingRail";
 import ListingsHeader from "@/components/community/listings/ListingsHeader";
 import NearYouListings from "@/components/community/listings/NearYouListings";
-import { CATEGORY_ICON } from "@/components/community/listings/ListingPieces";
+import { CATEGORY_ICON } from "@/lib/community/listings/display";
 import Bi from "@/components/community/Bi";
 import Unavailable from "@/components/community/Unavailable";
 import Tx from "@/components/i18n/Tx";

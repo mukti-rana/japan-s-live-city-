@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
-import type { PhotoSrc } from "@/components/community/listings/ListingPieces";
+import type { PhotoSrc } from "@/lib/community/listings/display";
 import { videoEmbedUrl } from "@/lib/community/listings/video";
 import { useTranslate } from "@/lib/i18n/inline";
 

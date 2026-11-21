@@ -8,13 +8,13 @@ import { AlertTriangle, ArrowLeft, ArrowRight, Check, CheckCircle2, Loader2, Shi
 import Bi from "@/components/community/Bi";
 import ListingCard from "@/components/community/listings/ListingCard";
 import ListingDetailView from "@/components/community/listings/ListingDetailView";
-import { KIND_LABEL, type PhotoSrc } from "@/components/community/listings/ListingPieces";
+import { KIND_LABEL, type PhotoSrc } from "@/lib/community/listings/display";
 import PhotoPicker, { type ExistingPhoto, type PhotoPickerHandle } from "@/components/community/PhotoPicker";
 import PlacePicker from "@/components/community/PlacePicker";
 import Tx from "@/components/i18n/Tx";
 import { AREAS } from "@/lib/community/areas";
 import { LISTING_CATEGORIES } from "@/lib/community/listings/categories";
-import { isoToJst, nowMs } from "@/lib/community/listings/time";
+import { nowMs } from "@/lib/community/listings/time";
 import { EMPTY_LISTING, LISTING_LIMITS, parseListingInput, type ListingErrors, type ListingInput, type ListingRow } from "@/lib/community/listings/validation";
 import type { Listing, ListingKind, ListingStatus } from "@/lib/community/listings/types";
 import { NO_PLACE, type PickedPlace } from "@/lib/community/pickedPlace";
@@ -544,50 +544,4 @@ export default function ListingWizard({ kind, author, initial }: { kind: Listing
       </p>
     </div>
   );
-}
-
-// An existing listing as the form's starting values (the dates read back in Japan time).
-export function inputFromListing(l: Listing): ListingInput {
-  const s = isoToJst(l.startsAt);
-  const e = isoToJst(l.endsAt);
-  const timed = l.kind === "event" || l.kind === "activity";
-  return {
-    kind: l.kind,
-    title: l.title,
-    summary: l.summary,
-    description: l.description,
-    categorySlug: l.categorySlug,
-    areaId: l.areaId ?? "",
-    cityLabel: l.cityLabel ?? "",
-    venueName: l.venueName ?? "",
-    address: l.address ?? "",
-    lat: l.lat,
-    lon: l.lon,
-    startDate: s.date,
-    startTime: l.allDay ? "" : s.time,
-    endDate: l.endsAt && (l.allDay || !timed || e.date !== s.date) ? e.date : "",
-    endTime: l.endsAt && timed && !l.allDay ? e.time : "",
-    recurrence: l.recurrence,
-    recurrenceUntil: l.recurrenceUntil ?? "",
-    registrationRequired: l.registrationRequired,
-    isFree: l.isFree,
-    priceText: l.priceText ?? "",
-    ticketUrl: l.ticketUrl ?? "",
-    registrationUrl: l.registrationUrl ?? "",
-    websiteUrl: l.websiteUrl ?? "",
-    socialUrl: l.socialUrl ?? "",
-    organizerName: l.organizerName ?? "",
-    organizerContact: l.organizerContact ?? "",
-    businessName: l.businessName ?? "",
-    offerDetails: l.offerDetails ?? "",
-    terms: l.terms ?? "",
-    ageRestriction: l.ageRestriction ?? "",
-    accessibility: l.accessibility ?? "",
-    instructions: l.instructions ?? "",
-    inquiriesEnabled: l.inquiriesEnabled,
-    postponed: l.postponed,
-    scheduleNote: l.scheduleNote ?? "",
-    images: [],
-    videoUrl: l.media.find((m) => m.kind === "video")?.videoUrl ?? "",
-  };
 }

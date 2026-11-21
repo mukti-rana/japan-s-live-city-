@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ListingGate from "@/components/community/listings/ListingGate";
-import ListingWizard, { inputFromListing } from "@/components/community/listings/ListingWizard";
+import ListingWizard from "@/components/community/listings/ListingWizard";
+import { inputFromListing } from "@/lib/community/listings/form";
 import ListingsHeader from "@/components/community/listings/ListingsHeader";
 import { fetchListing } from "@/lib/community/listings/queries";
 import { isUuid } from "@/lib/community/listings/server";

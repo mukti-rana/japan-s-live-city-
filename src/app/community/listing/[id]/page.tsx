@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import CommunityTabs from "@/components/community/CommunityTabs";
 import ListingDetailView from "@/components/community/listings/ListingDetailView";
 import OwnerControls from "@/components/community/listings/OwnerControls";
-import { photosOf } from "@/components/community/listings/ListingPieces";
+import { photosOf } from "@/lib/community/listings/display";
 import Unavailable from "@/components/community/Unavailable";
 import { fetchListing, fetchRelated } from "@/lib/community/listings/queries";
 import { nowMs } from "@/lib/community/listings/time";
