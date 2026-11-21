@@ -5,10 +5,10 @@ import { UUID_RE } from "@/lib/community/validation";
 // The database still has the final say: only people in `moderators` can change
 // anything, whatever this code is asked to do.
 
-export const TARGETS = ["post", "comment", "review", "question", "answer", "user"] as const;
+export const TARGETS = ["post", "comment", "review", "question", "answer", "user", "listing"] as const;
 export type Target = (typeof TARGETS)[number];
 
-export const ACTIONS = ["hide", "restore", "approve", "reject", "delete", "dismiss", "reviewed", "suspend", "unsuspend"] as const;
+export const ACTIONS = ["hide", "restore", "approve", "reject", "delete", "dismiss", "reviewed", "suspend", "unsuspend", "feature", "unfeature"] as const;
 export type Action = (typeof ACTIONS)[number];
 
 // The table each kind of content lives in.
@@ -18,6 +18,7 @@ export const TABLE: Record<Exclude<Target, "user">, string> = {
   review: "community_reviews",
   question: "community_questions",
   answer: "community_answers",
+  listing: "community_listings",
 };
 
 // What each content action does to the content's status.
@@ -31,6 +32,8 @@ export const STATUS_FOR: Partial<Record<Action, "hidden" | "published" | "reject
 // People are only suspended or have reports closed; content is hidden, restored,
 // approved, rejected or deleted. (Suspending from a piece of content acts on its author.)
 export function actionAllowed(target: Target, action: Action): boolean {
+  // Featuring is for publications only.
+  if (action === "feature" || action === "unfeature") return target === "listing";
   if (target === "user") return action === "suspend" || action === "unsuspend" || action === "dismiss" || action === "reviewed";
   return true;
 }
@@ -98,4 +101,5 @@ export const TARGET_LABEL: Record<Target, string> = {
   question: "Question",
   answer: "Answer",
   user: "Person",
+  listing: "Event or announcement",
 };

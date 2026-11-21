@@ -28,18 +28,23 @@ export async function POST(request: Request) {
   let authorId: string | null = targetType === "user" ? targetId : null;
   let files: string[] = [];
   if (targetType !== "user") {
-    const select = targetType === "post" ? "id,user_id,community_post_images(storage_path,thumb_path)" : targetType === "review" ? "id,user_id,community_review_images(storage_path,thumb_path)" : "id,user_id";
+    const select = targetType === "post" ? "id,user_id,community_post_images(storage_path,thumb_path)" : targetType === "listing" ? "id,user_id,community_listing_media(storage_path,thumb_path)" : targetType === "review" ? "id,user_id,community_review_images(storage_path,thumb_path)" : "id,user_id";
     const { data: row, error } = await supabase.from(TABLE[targetType]).select(select).eq("id", targetId).maybeSingle();
     if (error) return dbFailure(error, "That didn't work. Please try again.");
-    const content = row as unknown as { user_id: string; community_post_images?: { storage_path: string; thumb_path: string | null }[]; community_review_images?: { storage_path: string; thumb_path: string | null }[] } | null;
+    const content = row as unknown as { user_id: string; community_post_images?: { storage_path: string; thumb_path: string | null }[]; community_review_images?: { storage_path: string; thumb_path: string | null }[]; community_listing_media?: { storage_path: string | null; thumb_path: string | null }[] } | null;
     // Content that is already gone can still have its reports closed.
     if (!content && !["dismiss", "reviewed"].includes(action)) return json({ error: "That item could not be found." }, 404);
     authorId = content?.user_id ?? null;
-    files = [...(content?.community_post_images ?? []), ...(content?.community_review_images ?? [])].flatMap((i) => [i.storage_path, i.thumb_path].filter(Boolean) as string[]);
+    files = [...(content?.community_post_images ?? []), ...(content?.community_review_images ?? []), ...(content?.community_listing_media ?? [])].flatMap((i) => [i.storage_path, i.thumb_path].filter(Boolean) as string[]);
   }
 
   const status = STATUS_FOR[action];
-  if (status && targetType !== "user") {
+  if ((action === "feature" || action === "unfeature") && targetType === "listing") {
+    // Only a published publication can be featured (the lists only ever show published ones).
+    const q = supabase.from("community_listings").update({ featured: action === "feature" }).eq("id", targetId);
+    const { error } = await (action === "feature" ? q.eq("status", "published") : q);
+    if (error) return dbFailure(error, "That didn't work. Please try again.");
+  } else if (status && targetType !== "user") {
     const { error } = await supabase.from(TABLE[targetType]).update({ status }).eq("id", targetId);
     if (error) return dbFailure(error, "That didn't work. Please try again.");
   } else if (action === "delete" && targetType !== "user") {
@@ -60,7 +65,7 @@ export async function POST(request: Request) {
   }
 
   // Close the open reports about this item, recording who did it and when.
-  if (closeReports && action !== "unsuspend") {
+  if (closeReports && action !== "unsuspend" && action !== "feature" && action !== "unfeature") {
     await supabase
       .from("community_reports")
       .update({ status: reportStatusFor(action), reviewed_by: user.id, reviewed_at: new Date().toISOString() })

@@ -19,6 +19,8 @@ const STATUS_TONE: Record<string, string> = {
 // preview of the words (or the first photo), and the buttons that apply.
 export default function ModItemCard({ item, actions, children }: { item: ModItem; actions: ActionSpec[]; children?: React.ReactNode }) {
   const thumb = item.thumbPath ? photoUrl(item.thumbPath) : null;
+  // A published publication can also be featured (shown first in What's Happening) or un-featured.
+  const all: ActionSpec[] = item.type === "listing" && item.status === "published" ? [...actions, item.featured ? { action: "unfeature", label: "Remove from featured", tone: "neutral" } : { action: "feature", label: "Feature it", tone: "good" }] : actions;
   return (
     <article className="rounded-2xl border border-glass-border bg-panel/70 p-4 backdrop-blur-xl">
       <div className="flex gap-3">
@@ -30,7 +32,9 @@ export default function ModItemCard({ item, actions, children }: { item: ModItem
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <span className="rounded-full border border-lilac/40 bg-lilac/10 px-2.5 py-0.5 font-medium text-lilac">
               <Tx en={TARGET_LABEL[item.type]} />
+              {item.kind ? ` · ${item.kind}` : ""}
             </span>
+            {item.featured && <span className="rounded-full bg-gold/15 px-2.5 py-0.5 font-medium text-gold"><Tx en="Featured" /></span>}
             <span className={`rounded-full px-2.5 py-0.5 font-medium ${STATUS_TONE[item.status] ?? STATUS_TONE.hidden}`}>
               <Tx en={item.status === "published" ? "Published" : item.status === "pending" ? "Waiting for approval" : item.status === "hidden" ? "Hidden" : "Rejected"} />
             </span>
@@ -53,7 +57,7 @@ export default function ModItemCard({ item, actions, children }: { item: ModItem
       </div>
       {children}
       <div className="mt-3">
-        <ModerationActions targetType={item.type} targetId={item.id} actions={actions} />
+        <ModerationActions targetType={item.type} targetId={item.id} actions={all} />
       </div>
     </article>
   );

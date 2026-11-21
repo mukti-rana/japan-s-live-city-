@@ -17,6 +17,9 @@ export interface ModItem {
   createdAt: string;
   thumbPath: string | null;
   rating: number | null;
+  // Publications only: the kind (event, announcement…) and whether it is featured.
+  kind: string | null;
+  featured: boolean;
 }
 
 type Content = Exclude<Target, "user">;
@@ -30,6 +33,7 @@ const SELECT: Record<Content, string> = {
   review: "id,user_id,body,rating,status,place_ref,created_at,profiles!community_reviews_user_id_fkey(username)",
   question: "id,user_id,title,body,status,created_at,profiles!community_questions_user_id_fkey(username)",
   answer: "id,user_id,body,status,question_id,created_at,profiles!community_answers_user_id_fkey(username)",
+  listing: "id,user_id,kind,title,summary,description,status,featured,hold_reason,created_at,profiles!community_listings_user_id_fkey(username),community_listing_media(thumb_path,storage_path,position,kind)",
 };
 
 interface Raw {
@@ -48,6 +52,12 @@ interface Raw {
   question_id?: string;
   community_answers?: { question_id: string } | { question_id: string }[] | null;
   community_post_images?: { thumb_path: string | null; storage_path: string; position: number }[] | null;
+  kind?: string;
+  summary?: string;
+  description?: string;
+  featured?: boolean;
+  hold_reason?: string | null;
+  community_listing_media?: { thumb_path: string | null; storage_path: string | null; position: number; kind: string }[] | null;
 }
 
 function toItem(type: Content, r: Raw): ModItem {
@@ -57,20 +67,29 @@ function toItem(type: Content, r: Raw): ModItem {
     : type === "question" ? `/community/question/${r.id}`
     : type === "answer" ? `/community/question/${r.question_id}`
     : type === "review" ? `/explore/${r.place_ref}`
+    : type === "listing" ? `/community/listing/${r.id}`
     : r.post_id ? `/community/post/${r.post_id}` : `/community/question/${answerQ ?? ""}`;
-  const cover = type === "post" ? (r.community_post_images ?? []).slice().sort((a, b) => a.position - b.position)[0] : undefined;
+  const cover =
+    type === "post"
+      ? (r.community_post_images ?? []).slice().sort((a, b) => a.position - b.position)[0]
+      : type === "listing"
+        ? (r.community_listing_media ?? []).filter((m) => m.kind === "image" && m.storage_path).sort((a, b) => a.position - b.position).map((m) => ({ thumb_path: m.thumb_path, storage_path: m.storage_path as string }))[0]
+        : undefined;
   return {
     type,
     id: r.id,
     status: r.status,
     authorId: r.user_id,
     author: nameOf(r.profiles),
-    title: type === "post" || type === "question" ? (r.title ?? "") : "",
-    excerpt: cut(type === "post" ? r.caption : r.body),
+    title: type === "post" || type === "question" || type === "listing" ? (r.title ?? "") : "",
+    // For a held publication the reason the automatic checks gave comes first, so the moderator sees why it is here.
+    excerpt: cut(type === "post" ? r.caption : type === "listing" ? [r.hold_reason ? `Held: ${r.hold_reason}` : "", r.summary || r.description].filter(Boolean).join("\n") : r.body),
     href,
     createdAt: r.created_at,
     thumbPath: cover ? (cover.thumb_path ?? cover.storage_path) : null,
     rating: type === "review" ? (r.rating ?? null) : null,
+    kind: type === "listing" ? (r.kind ?? null) : null,
+    featured: type === "listing" ? r.featured === true : false,
   };
 }
 
@@ -85,7 +104,7 @@ export async function fetchByStatus(client: SupabaseClient, type: Content, statu
   return ((data ?? []) as unknown as Raw[]).map((r) => toItem(type, r));
 }
 
-const CONTENT: Content[] = ["post", "review", "question", "answer", "comment"];
+const CONTENT: Content[] = ["post", "review", "question", "answer", "comment", "listing"];
 
 export async function fetchAllByStatus(client: SupabaseClient, statuses: string[]): Promise<ModItem[]> {
   const lists = await Promise.all(CONTENT.map((t) => fetchByStatus(client, t, statuses)));
@@ -119,7 +138,7 @@ export async function fetchReportGroups(client: SupabaseClient): Promise<ReportG
   }
   const list = [...groups.values()];
   await Promise.all(
-    (["post", "comment", "review", "question", "answer"] as Content[]).map(async (t) => {
+    (["post", "comment", "review", "question", "answer", "listing"] as Content[]).map(async (t) => {
       const mine = list.filter((g) => g.targetType === t);
       const items = await fetchByIds(client, t, mine.map((g) => g.targetId));
       for (const g of mine) g.item = items.find((i) => i.id === g.targetId) ?? null;
