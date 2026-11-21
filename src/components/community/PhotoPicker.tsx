@@ -29,6 +29,8 @@ export interface PhotoPickerHandle {
   uploadAll(onProgress: (done: number, total: number) => void): Promise<string[]>;
   // Saved photos the person kept (editing only).
   keptPaths(): string[];
+  // Pictures to show in a preview before anything is sent: the saved ones kept, then the new ones that are ready.
+  previews(): { src: string }[];
 }
 
 const PHOTO_PROBLEMS: Record<string, string> = {
@@ -137,6 +139,7 @@ export default function PhotoPicker({
     count: () => photosRef.current.filter((p) => p.status === "ready").length + keptRef.current.length,
     preparing: () => photosRef.current.some((p) => p.status === "preparing"),
     keptPaths: () => keptRef.current.map((k) => k.path),
+    previews: () => [...keptRef.current.map((k) => ({ src: k.url })), ...photosRef.current.filter((p) => p.status === "ready").map((p) => ({ src: p.preview }))],
     uploadAll: async (onProgress) => {
       const ready = photosRef.current.filter((p) => p.status === "ready");
       const paths: string[] = [];

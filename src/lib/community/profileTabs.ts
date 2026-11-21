@@ -5,11 +5,11 @@ import type { CommunityProfile } from "@/lib/community/types";
 // chose to share it. A visitor who asks for a tab they may not see just gets
 // the first tab.
 
-export type ProfileTab = "posts" | "photos" | "reviews" | "questions" | "answers" | "visited" | "saved" | "profile";
-export const ALL_TABS: ProfileTab[] = ["posts", "photos", "reviews", "questions", "answers", "visited", "saved", "profile"];
+export type ProfileTab = "posts" | "photos" | "reviews" | "questions" | "answers" | "visited" | "saved" | "listings" | "profile";
+export const ALL_TABS: ProfileTab[] = ["posts", "photos", "reviews", "questions", "answers", "visited", "saved", "listings", "profile"];
 
 export function tabsFor(profile: Pick<CommunityProfile, "showVisited">, owner: boolean): ProfileTab[] {
-  return ALL_TABS.filter((t) => (t === "saved" || t === "profile" ? owner : t === "visited" ? owner || profile.showVisited : true));
+  return ALL_TABS.filter((t) => (t === "saved" || t === "profile" || t === "listings" ? owner : t === "visited" ? owner || profile.showVisited : true));
 }
 
 export function parseTab(raw: string | string[] | undefined, allowed: ProfileTab[]): ProfileTab {

@@ -8,6 +8,9 @@ import ProfileHeader from "@/components/community/ProfileHeader";
 import QuestionCard from "@/components/community/QuestionCard";
 import Stars from "@/components/community/Stars";
 import VisitedList from "@/components/community/VisitedList";
+import ListingCard from "@/components/community/listings/ListingCard";
+import { fetchMyListings } from "@/lib/community/listings/queries";
+import { nowMs } from "@/lib/community/listings/time";
 import Tx from "@/components/i18n/Tx";
 import { photoUrl } from "@/lib/community/photos";
 import { fetchProfileStats, fetchSavedPlaces, fetchSavedPosts, fetchUserAnswers, fetchUserPosts, fetchUserQuestions, fetchUserReviews, fetchVisited } from "@/lib/community/profileQuery";
@@ -15,7 +18,9 @@ import { tabsFor, type ProfileTab } from "@/lib/community/profileTabs";
 import type { CommunityProfile } from "@/lib/community/types";
 import { getDestination } from "@/lib/explore/catalogue";
 
-const TAB_TEXT: Record<ProfileTab, string> = { posts: "Posts", photos: "Photos", reviews: "Reviews", questions: "Questions", answers: "Answers", visited: "Places visited", saved: "Saved", profile: "Edit profile" };
+const TAB_TEXT: Record<ProfileTab, string> = { posts: "Posts", photos: "Photos", reviews: "Reviews", questions: "Questions", answers: "Answers", visited: "Places visited", saved: "Saved", listings: "My events & announcements", profile: "Edit profile" };
+
+const LISTING_STATUS_TEXT: Record<string, string> = { draft: "Draft (only you)", pending: "Waiting for review", published: "Published", rejected: "Not approved", hidden: "Hidden by a moderator", expired: "Ended", cancelled: "Cancelled" };
 
 const STATUS_TEXT: Record<string, string> = { pending: "Waiting for approval", hidden: "Hidden", rejected: "Not approved" };
 
@@ -159,6 +164,39 @@ export default async function ProfileView({ client, profile, owner, tab, basePat
             </ul>
           )}
         </section>
+      </div>
+    );
+  } else if (tab === "listings") {
+    // The owner's own publications in every state, with a pointer for each one that is waiting or private.
+    const mine = await fetchMyListings(client, profile.id);
+    const now = nowMs();
+    content = (
+      <div className="flex flex-col gap-4">
+        <Link href="/community/create" className="inline-flex h-11 w-fit items-center rounded-xl bg-white px-5 text-sm font-semibold text-background transition hover:brightness-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+          <Tx en="Publish something" />
+        </Link>
+        {mine.length === 0 ? (
+          <Empty en="You haven't published an event, announcement or offer yet." />
+        ) : (
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {mine.map((l) => (
+              <li key={l.id} className="flex flex-col gap-2">
+                <ListingCard l={l} now={now} />
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-foreground/70">
+                  <span className="font-semibold uppercase tracking-[0.14em]">
+                    <Tx en={LISTING_STATUS_TEXT[l.status] ?? l.status} />
+                  </span>
+                  {(l.status === "draft" || l.status === "published" || l.status === "pending" || l.status === "cancelled") && (
+                    <Link href={`/community/listing/${l.id}/edit`} className="rounded text-lilac underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+                      <Tx en="Edit" />
+                    </Link>
+                  )}
+                </p>
+                {l.holdReason && l.status === "pending" && <p className="text-xs text-foreground/60">{l.holdReason}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
   } else if (tab === "profile") {

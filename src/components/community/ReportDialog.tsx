@@ -17,7 +17,7 @@ const REASON_TEXT: Record<ReportReason, string> = {
 
 // "Report this post": pick why, add a note if you like. Reports go to the
 // moderators; the person who posted is never told who reported.
-export type ReportTarget = "post" | "review" | "comment" | "question" | "answer";
+export type ReportTarget = "post" | "review" | "comment" | "question" | "answer" | "listing";
 
 const TITLES: Record<ReportTarget, string> = {
   post: "Report this post",
@@ -25,6 +25,7 @@ const TITLES: Record<ReportTarget, string> = {
   comment: "Report this comment",
   question: "Report this question",
   answer: "Report this answer",
+  listing: "Report this publication",
 };
 const ALREADY: Record<ReportTarget, string> = {
   post: "You've already reported this post. Thank you.",
@@ -32,6 +33,7 @@ const ALREADY: Record<ReportTarget, string> = {
   comment: "You've already reported this comment. Thank you.",
   question: "You've already reported this question. Thank you.",
   answer: "You've already reported this answer. Thank you.",
+  listing: "You've already reported this publication. Thank you.",
 };
 
 export default function ReportDialog({ targetType = "post", targetId, onClose }: { targetType?: ReportTarget; targetId: string; onClose: () => void }) {

@@ -53,8 +53,8 @@ export default function CommunityDock() {
         whileTap={reduced ? undefined : { scale: 0.97 }}
       >
         <Link
-          href="/community/new"
-          aria-label={tr("Create a post")}
+          href="/community/create"
+          aria-label={tr("Create")}
           className="group relative isolate flex h-[3.4rem] items-center gap-3 overflow-hidden rounded-full pl-2 pr-6 text-white [text-shadow:0_1px_12px_rgba(0,0,0,0.7)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         >
           {/* No fill at all: the page shows straight through. Only the edge: a quiet hairline all round, and over it one short comet of light that circles it (the comet is clipped to a 1.5px band). */}

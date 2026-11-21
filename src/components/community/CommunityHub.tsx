@@ -133,6 +133,19 @@ export default function CommunityHub({
           topics={CATEGORIES.map((c) => ({ href: `${basePath}?category=${c.slug}`, en: c.en, ja: c.ja }))}
           cities={FEATURED_AREAS.map((f) => ({ href: photos ? `${basePath}?area=${f.areaId}` : `/community/${f.slug}`, en: f.en, ja: f.ja }))}
         />
+        {/* Photos, Reviews, Trending and Places left the tab bar to make room for What's Happening; they stay one tap away from here. */}
+        <nav aria-label="More from the community" className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-foreground/70">
+          {[
+            { href: "/community/photos", en: "Photos" },
+            { href: "/community/reviews", en: "Reviews" },
+            { href: "/community/trending", en: "Trending" },
+            { href: "/community/places", en: "Places" },
+          ].map((x) => (
+            <Link key={x.href} href={x.href} className="rounded underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+              <Tx en={x.en} />
+            </Link>
+          ))}
+        </nav>
       </div>
 
       {area && !photos && (

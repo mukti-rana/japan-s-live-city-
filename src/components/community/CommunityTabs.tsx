@@ -2,25 +2,27 @@
 
 import Link from "next/link";
 import { useLayoutEffect, useRef } from "react";
-import { HelpCircle, Images, LayoutGrid, Star, UserRound } from "lucide-react";
+import { CalendarDays, HelpCircle, LayoutGrid, Megaphone, Sparkles, UserRound } from "lucide-react";
 import { useReducedMotion } from "motion/react";
 import Tx from "@/components/i18n/Tx";
 
 // Every Community page names the section it belongs to. Trending and Places are reached from Discover, so they light up "Discover";
 // the Need Help page lights up "Questions".
-export type CommunitySection = "discover" | "trending" | "photos" | "reviews" | "places" | "questions" | "help" | "me";
+export type CommunitySection = "discover" | "trending" | "photos" | "reviews" | "places" | "questions" | "help" | "me" | "happening" | "events" | "announcements";
 
-type TabId = "discover" | "photos" | "reviews" | "questions" | "me";
+type TabId = "discover" | "happening" | "events" | "announcements" | "questions" | "me";
 
 const TABS: { id: TabId; href: string; en: string; Icon: typeof HelpCircle }[] = [
   { id: "discover", href: "/community", en: "Discover", Icon: LayoutGrid },
-  { id: "photos", href: "/community/photos", en: "Photos", Icon: Images },
-  { id: "reviews", href: "/community/reviews", en: "Reviews", Icon: Star },
-  { id: "questions", href: "/community/questions", en: "Questions", Icon: HelpCircle },
+  { id: "happening", href: "/community/happening", en: "What's Happening", Icon: Sparkles },
+  { id: "events", href: "/community/events", en: "Events", Icon: CalendarDays },
+  { id: "announcements", href: "/community/announcements", en: "Announcements", Icon: Megaphone },
+  { id: "questions", href: "/community/questions", en: "Questions & Answers", Icon: HelpCircle },
   { id: "me", href: "/community/me", en: "My Contributions", Icon: UserRound },
 ];
 
-const TAB_OF: Record<CommunitySection, TabId> = { discover: "discover", trending: "discover", photos: "photos", reviews: "reviews", places: "discover", questions: "questions", help: "questions", me: "me" };
+// Photos and Reviews are reached from Discover (and the pages' own links), so they light up "Discover".
+const TAB_OF: Record<CommunitySection, TabId> = { discover: "discover", trending: "discover", photos: "discover", reviews: "discover", places: "discover", questions: "questions", help: "questions", me: "me", happening: "happening", events: "events", announcements: "announcements" };
 
 const KEY = "lc:cm-tab";
 
