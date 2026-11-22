@@ -3,7 +3,8 @@
 import { useState } from "react";
 import ViewAllButton from "@/components/ui/ViewAllButton";
 import { MapPin } from "lucide-react";
-import NewsCard from "@/components/news/NewsCard";
+import { EditorialLead, EditorialRow, hasPicture } from "@/components/news/EditorialNews";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NewsModal from "@/components/news/NewsModal";
 import PlacePicker from "@/components/news/PlacePicker";
 import { CardSkeleton, CompactSkeleton } from "@/components/news/NewsSkeleton";
@@ -35,8 +36,10 @@ export default function LatestNewsNearYou({ headingLevel = 2 }: { headingLevel?:
   const loading = placeInfo.locating || (placeInfo.place ? local.loading || (localEmpty && fallback.loading) : fallback.loading);
   const failed = placeInfo.place ? local.failed : fallback.failed;
 
-  const [lead, ...others] = items;
-  const compact = others.slice(0, 4);
+  // The lead is the first story that has a picture of its own (a big empty illustration is a poor front page); the rest keep their order.
+  const leadAt = Math.max(0, items.findIndex(hasPicture));
+  const lead = items[leadAt];
+  const rest = items.filter((_, i) => i !== leadAt).slice(0, 4);
 
   return (
     <GlassCard className="flex flex-col gap-4 p-4 sm:p-5">
@@ -72,15 +75,20 @@ export default function LatestNewsNearYou({ headingLevel = 2 }: { headingLevel?:
       ) : failed || !lead ? (
         <p className="rounded-xl border border-dashed border-glass-border p-5 text-center text-xs text-muted">{t("news.home.unavailable")}</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-[1.1fr_1fr]">
-          <NewsCard item={lead} variant="card" onOpen={setOpenItem} showLevel={!showingFallback} />
-          <ul className="flex flex-col gap-3.5">
-            {compact.map((item) => (
-              <li key={item.id} className="border-b border-glass-border pb-3.5 last:border-0 last:pb-0">
-                <NewsCard item={item} variant="compact" onOpen={setOpenItem} showLevel={!showingFallback} />
-              </li>
-            ))}
-          </ul>
+        <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr] lg:gap-8">
+          <ScrollReveal from="image">
+            <EditorialLead item={lead} onOpen={setOpenItem} showLevel={!showingFallback} />
+          </ScrollReveal>
+          {/* The stories arrive one after another, each under a hairline. */}
+          <ScrollReveal from="stagger" className="self-center">
+            <ul className="grid">
+              {rest.map((item, i) => (
+                <li key={item.id} className="border-t border-white/10 py-4 first:border-t-0 first:pt-0 last:pb-0">
+                  <EditorialRow item={item} index={i + 2} onOpen={setOpenItem} showLevel={!showingFallback} />
+                </li>
+              ))}
+            </ul>
+          </ScrollReveal>
         </div>
       )}
 

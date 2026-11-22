@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Newspaper } from "lucide-react";
-import NewsCard from "@/components/news/NewsCard";
+import { EditorialRow } from "@/components/news/EditorialNews";
 import NewsModal from "@/components/news/NewsModal";
 import { CompactSkeleton } from "@/components/news/NewsSkeleton";
 import WidgetFrame from "@/components/home/WidgetFrame";
@@ -14,11 +14,14 @@ function Group({ title, items, onOpen }: { title: string; items: NewsItem[]; onO
   if (items.length === 0) return null;
   return (
     <section className="flex flex-col gap-3">
-      <h3 className="text-[11px] font-semibold uppercase tracking-wide text-muted">{title}</h3>
-      <ul className="flex flex-col gap-3">
+      <h3 className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/70">
+        {title}
+        <span aria-hidden="true" className="h-px flex-1 bg-white/10" />
+      </h3>
+      <ul className="flex flex-col gap-4">
         {items.map((item) => (
           <li key={item.id}>
-            <NewsCard item={item} variant="compact" onOpen={onOpen} />
+            <EditorialRow item={item} onOpen={onOpen} />
           </li>
         ))}
       </ul>
@@ -40,7 +43,7 @@ export default function HeadlinesMini() {
   return (
     <WidgetFrame icon={Newspaper} labelKey="news.home.headlines" accent="azure">
       {loading ? (
-        <div className="flex flex-col gap-4" role="status" aria-label={t("news.hub.loadingMore")}>
+        <div className="flex flex-col gap-5" role="status" aria-label={t("news.hub.loadingMore")}>
           <CompactSkeleton />
           <CompactSkeleton />
           <CompactSkeleton />
