@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type FocusEvent } from "react";
+import { useEffect, useId, useState, type FocusEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { ExploreCaption } from "@/components/explore/ExploreBackdrop";
@@ -8,7 +8,7 @@ import ShineBorder from "@/components/ui/ShineBorder";
 import SlideInHeading from "@/components/home/cinematic/SlideInHeading";
 import { playfair } from "@/components/home/cinematic/fonts";
 import "@/components/home/cinematic/cinematic.css";
-import { Globe2, LocateFixed, MapPin, Navigation, Search } from "lucide-react";
+import { ArrowRight, Globe2, LocateFixed, MapPin, Navigation, Search } from "lucide-react";
 import type { Suggestion } from "@/lib/explore/catalogue";
 import type { useExploreLocation } from "@/lib/explore/useExploreLocation";
 import { localize, useTranslate } from "@/lib/i18n/inline";
@@ -57,6 +57,11 @@ export default function ExploreHero({
     return () => window.clearInterval(id);
   }, [reduced]);
   const wide = active || text.trim().length > 0;
+  // A soft light follows the pointer across the pill (CSS variables, no re-render).
+  const follow = (e: ReactPointerEvent<HTMLFormElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+  };
 
   useEffect(() => {
     const q = text.trim();
@@ -110,10 +115,13 @@ export default function ExploreHero({
               submit(text);
             }}
             role="search"
-            className={`relative h-11 rounded-full border border-white/20 bg-transparent transition-[width,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none hover:border-white/35 ${wide ? "w-full border-white/40" : "w-full sm:w-[21rem]"}`}
+            onPointerMove={follow}
+            className={`group/search relative h-11 rounded-full border border-white/20 bg-transparent transition-[width,border-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none hover:border-white/50 ${wide ? "w-full border-white/40" : "w-full sm:w-[21rem] sm:hover:w-[24rem]"}`}
           >
+            {/* the light under the pointer */}
+            <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover/search:opacity-100 motion-reduce:hidden" style={{ background: "radial-gradient(150px circle at var(--mx, 50%) 50%, rgba(255,255,255,0.14), transparent 70%)" }} />
             {wide && <ShineBorder colors={["#ffffff", "#9fb4ff", "#ffffff"]} width={1} duration={5} />}
-            <Search size={16} className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/75" aria-hidden="true" />
+            <Search size={16} className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/75 transition-all duration-300 group-hover/search:scale-110 group-hover/search:text-white group-focus-within/search:text-white motion-reduce:transition-none" aria-hidden="true" />
             <input
               type="search"
               value={text}
@@ -142,9 +150,10 @@ export default function ExploreHero({
             <button
               type="submit"
               tabIndex={wide ? 0 : -1}
-              className={`absolute right-1.5 top-1/2 flex h-8 -translate-y-1/2 items-center rounded-full border border-white/30 bg-transparent px-3.5 text-xs font-semibold text-white transition-all duration-300 hover:border-white/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${wide ? "opacity-100" : "pointer-events-none translate-x-2 opacity-0"}`}
+              className={`group/go absolute right-1.5 top-1/2 flex h-8 -translate-y-1/2 items-center gap-1 rounded-full border border-white/30 bg-transparent px-3.5 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:border-white hover:bg-white/20 hover:shadow-[0_0_22px_-4px_rgba(255,255,255,0.55)] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 motion-reduce:transition-none motion-reduce:hover:scale-100 ${wide ? "opacity-100" : "pointer-events-none translate-x-2 opacity-0 group-hover/search:pointer-events-auto group-hover/search:translate-x-0 group-hover/search:opacity-100"}`}
             >
               {tr("Search")}
+              <ArrowRight size={13} aria-hidden="true" className="-ml-0.5 w-0 opacity-0 transition-all duration-300 group-hover/go:ml-0 group-hover/go:w-[13px] group-hover/go:translate-x-0.5 group-hover/go:opacity-100 motion-reduce:transition-none" />
             </button>
           </form>
           {open && text.trim() && suggestions.length > 0 && (
