@@ -7,6 +7,9 @@ import ViewAllButton from "@/components/ui/ViewAllButton";
 import WeatherIcon from "@/components/ui/WeatherIcon";
 import WeatherAdvisor from "@/components/home/weather/WeatherAdvisor";
 import WeatherSky from "@/components/home/weather/WeatherSky";
+import WindowDrops from "@/components/home/weather/WindowDrops";
+import SceneFrame from "@/components/home/weather/SceneFrame";
+import LiveClock from "@/components/home/weather/LiveClock";
 import WeatherCardExtras, { CountUp } from "@/components/home/weather/WeatherCardExtras";
 import { PREFECTURE_CENTER } from "@/lib/events/geo";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -304,35 +307,55 @@ export default function LiveWeatherCard({ headingLevel = 2 }: { headingLevel?: 2
         <>
           <div className="grid gap-4 xl:grid-cols-2">
             {/* Left: place, temperature, condition */}
-            <section className="keep-dark-ink relative isolate flex min-h-[16rem] flex-col justify-between gap-6 overflow-hidden rounded-2xl border border-glass-border p-5 sm:p-6 md:min-h-[20rem]">
-              <WeatherSky icon={weather.icon} isNight={night} sunrise={weather.sunrise} sunset={weather.sunset} windKmh={weather.windKmh} precipMm={weather.hourly[0]?.precipMm ?? null} />
-              <div className="relative">
-                <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
-                  <MapPin size={14} className="text-gold" aria-hidden="true" />
-                  <span className={`truncate ${useOwnLocation && !prefecture ? "place-name" : ""}`}>{cityName}</span>
-                </p>
-                <p className="mt-0.5 pl-5 text-xs text-foreground/65">{country}</p>
+            <SceneFrame className="keep-dark-ink relative isolate flex min-h-[28rem] flex-col overflow-hidden rounded-2xl border border-white/10 p-5 sm:p-6 md:min-h-[34rem] xl:sticky xl:top-24 xl:min-h-[min(46rem,calc(100svh-7rem))] xl:self-start">
+              {/* Behind the glass: the sky (it moves with the real weather and time) and, in rain, the drops on the pane. */}
+              <div className="wx-bg absolute -inset-3">
+                <WeatherSky icon={weather.icon} isNight={night} sunrise={weather.sunrise} sunset={weather.sunset} windKmh={weather.windKmh} precipMm={weather.hourly[0]?.precipMm ?? null} />
               </div>
+              <WindowDrops icon={weather.icon} precipMm={weather.hourly[0]?.precipMm ?? null} windKmh={weather.windKmh} />
 
-              <div className="relative flex flex-col items-start gap-3 min-[420px]:flex-row min-[420px]:items-center sm:gap-5">
-                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-foreground shadow-[0_0_30px_-6px_rgba(77,163,255,0.5)] backdrop-blur-sm sm:h-20 sm:w-20">
-                  <WeatherIcon icon={weather.icon} night={night} size={40} strokeWidth={1.4} aria-hidden="true" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-6xl font-semibold leading-none tracking-tight tabular-nums text-foreground sm:text-7xl">
-                    <CountUp value={weather.tempC} />
-                    <span className="align-top text-3xl font-medium text-foreground/70 sm:text-4xl">°C</span>
-                  </p>
-                  <p className="mt-2 text-base font-medium text-foreground">{translate(weather.condition, language)}</p>
-                  <p className="mt-0.5 text-xs text-foreground/70">
-                    {text("feelsLike")} {weather.feelsLikeC}° · {text("high")} {weather.todayHigh}° · {text("low")} {weather.todayLow}°
-                  </p>
+              {/* In front of it: the place and the time, the weather now, and the day's sun and next hours. */}
+              <div className="wx-fg relative flex flex-1 flex-col justify-between gap-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                      <MapPin size={14} className="text-gold" aria-hidden="true" />
+                      <span className={`truncate ${useOwnLocation && !prefecture ? "place-name" : ""}`}>{cityName}</span>
+                    </p>
+                    <p className="mt-0.5 pl-5 text-xs text-foreground/65">{country}</p>
+                  </div>
+                  <LiveClock className="rounded-full border border-white/12 bg-black/20 px-3 py-1 text-[11px] font-medium tracking-wide text-foreground/85 backdrop-blur-md" />
                 </div>
-              </div>
 
-              {/* The day's sun and the next hours, from the real forecast. */}
-              <WeatherCardExtras sunrise={weather.sunrise} sunset={weather.sunset} hourly={weather.hourly} />
-            </section>
+                <div className="flex flex-col items-start gap-4">
+                  <div className="flex items-center gap-4 sm:gap-5">
+                    <span className="wx-icon flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-foreground backdrop-blur-sm sm:h-20 sm:w-20">
+                      <WeatherIcon icon={weather.icon} night={night} size={40} strokeWidth={1.4} aria-hidden="true" />
+                    </span>
+                    <p className="wx-temp text-[5.5rem] font-semibold leading-[0.9] tracking-tight tabular-nums sm:text-[7.5rem]">
+                      <CountUp value={weather.tempC} />
+                      <span className="align-top text-3xl font-medium opacity-70 sm:text-4xl">°C</span>
+                    </p>
+                  </div>
+                  <p className="font-[family-name:var(--font-home-serif)] text-[1.9rem] italic leading-tight tracking-[-0.01em] text-foreground sm:text-[2.3rem]">{translate(weather.condition, language)}</p>
+                  <ul className="flex flex-wrap gap-2 text-xs text-foreground/85">
+                    {[
+                      [text("feelsLike"), weather.feelsLikeC],
+                      [text("high"), weather.todayHigh],
+                      [text("low"), weather.todayLow],
+                    ].map(([label, value]) => (
+                      <li key={String(label)} className="flex items-center gap-1.5 rounded-full border border-white/12 bg-black/20 px-3 py-1.5 backdrop-blur-md">
+                        <span className="text-foreground/60">{label}</span>
+                        <span className="font-semibold tabular-nums">{value}°</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* The day's sun and the next hours, from the real forecast. */}
+                <WeatherCardExtras sunrise={weather.sunrise} sunset={weather.sunset} hourly={weather.hourly} />
+              </div>
+            </SceneFrame>
 
             {/* Right: the Weather Advisor */}
             <WeatherAdvisor weather={weather} isNight={night} uvLabel={text(uvKey(weather.todayUvIndex))} />

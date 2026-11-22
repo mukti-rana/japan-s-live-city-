@@ -1638,6 +1638,22 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   .wx-card[data-live="false"] .wx-chill__bar { width: var(--w, 50%); }
 }
 
+/* The weather card as a window with depth (SceneFrame): the pane tilts toward a mouse pointer, the sky behind drifts with it and the
+   words in front drift the other way; a faint light slides over the glass. --px/--py are -1..1, --hv is 1 while the pointer is over it.
+   The big temperature is a soft white-to-ice gradient, and the icon tile carries a gentle glow that breathes. */
+.wx-scene { transform: perspective(1300px) rotateX(calc(var(--py, 0) * -2deg)) rotateY(calc(var(--px, 0) * 2.6deg)); transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+.wx-bg { transform: translate3d(calc(var(--px, 0) * 12px), calc(var(--py, 0) * 8px), 0); transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+.wx-fg { transform: translate3d(calc(var(--px, 0) * -8px), calc(var(--py, 0) * -5px), 0); transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+.wx-glare { opacity: var(--hv, 0); transition: opacity 0.6s ease; background: radial-gradient(460px circle at calc(50% + var(--px, 0) * 45%) calc(50% + var(--py, 0) * 45%), rgba(255, 255, 255, 0.075), transparent 62%); }
+.wx-temp { background: linear-gradient(180deg, #ffffff 25%, #bcd0f5 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; filter: drop-shadow(0 4px 24px rgba(6, 10, 30, 0.45)); }
+.wx-icon { box-shadow: 0 0 30px -6px rgba(120, 170, 255, 0.5); animation: wx-breathe 5s ease-in-out infinite; }
+@keyframes wx-breathe { 0%, 100% { box-shadow: 0 0 22px -8px rgba(120, 170, 255, 0.35); } 50% { box-shadow: 0 0 38px -4px rgba(120, 170, 255, 0.6); } }
+@media (prefers-reduced-motion: reduce) {
+  .wx-scene, .wx-bg, .wx-fg { transform: none; transition: none; }
+  .wx-glare { display: none; }
+  .wx-icon { animation: none; }
+}
+
 /* The dock's icons shine (MagneticDock): each icon carries a soft white glow that swells and fades on a slow beat, every icon a little
    out of step with its neighbour (--i), so a glint seems to travel along the row. Only the icons glow; the glass itself is plain. */
 .dock-glint { animation: dock-glint 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.55s); }
