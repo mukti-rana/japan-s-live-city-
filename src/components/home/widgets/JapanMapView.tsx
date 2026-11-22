@@ -5,9 +5,7 @@ import Link from "next/link";
 import { useInView } from "motion/react";
 import { ArrowUpRight, Globe2 } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
-import { JAPAN_BOUNDS, JAPAN_OUTLINE, JAPAN_VIEW, projectJapan } from "@/lib/map/japanOutline";
-
-const JAPAN_BOUNDS_X0 = JAPAN_BOUNDS.lon0;
+import { JAPAN_OUTLINE, JAPAN_VIEW, projectJapan } from "@/lib/map/japanOutline";
 import { MAP_CITIES, tempColor } from "@/lib/map/cities";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useLiveLocation } from "@/lib/geo/useLiveLocation";
@@ -40,18 +38,16 @@ const LABEL_SIDE: Record<string, "l" | "r"> = {
   fukuoka: "l",
 };
 
-// Latitudes and longitudes of the fine grid drawn behind the islands, and where Mount Fuji stands.
-const PARALLELS = [32, 36, 40, 44];
-const MERIDIANS = [130, 134, 138, 142, 146];
+// Where Mount Fuji stands.
 const FUJI = { lon: 138.7274, lat: 35.3606 };
 
 // The preview: Japan's real outline, a few cities with their current
 // temperature, and the visitor's own city picked out. The full interactive
 // map lives at /map.
 //
-// It draws itself each time it scrolls into view (and again on the way back): the graticule's lines are drawn first, then the coast of every
+// It draws itself each time it scrolls into view (and again on the way back), starting the moment its top edge appears: the coast of every
 // island is traced, the land fills in, the other cities' lights come on, Mount Fuji is marked, the six cities drop in one after another with
-// their temperatures, and a band of light sweeps across the land once. After that, slow ripples spread from the coast. All of it is CSS
+// their temperatures, and a band of light sweeps across the land once. All of it is CSS
 // keyed to data-live (see "Japan map" in cinematic.css); with reduced motion, or before the page is running, the map is simply finished.
 export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
   const { t, language } = useLanguage();
@@ -67,7 +63,8 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
 
   const ref = useRef<HTMLAnchorElement>(null);
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
-  const live = useInView(ref, { amount: 0.4 });
+  // It starts as soon as a little of it (a tenth) shows, a little before the middle of the screen, so it is already moving as you arrive.
+  const live = useInView(ref, { amount: 0.1, margin: "0px 0px -4% 0px" });
   const shown = new Set(cities.map((c) => c.slug));
   const fuji = projectJapan(FUJI.lon, FUJI.lat);
   const follow = (e: React.PointerEvent<HTMLAnchorElement>) => {
@@ -123,44 +120,10 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
               </mask>
             </defs>
 
-            {/* the graticule: parallels and meridians, drawn first, with their degrees */}
-            <g fill="none" stroke="#7daaff" strokeWidth="0.6" opacity="0.42">
-              {PARALLELS.map((lat, i) => {
-                const y = projectJapan(JAPAN_BOUNDS_X0, lat).y;
-                return <path key={lat} className="jm-draw" pathLength={1} style={{ "--d": 0.05 + i * 0.12 } as React.CSSProperties} d={`M0 ${y.toFixed(1)}H${JAPAN_VIEW.width}`} />;
-              })}
-              {MERIDIANS.map((lon, i) => {
-                const x = projectJapan(lon, 38).x;
-                return <path key={lon} className="jm-draw" pathLength={1} style={{ "--d": 0.1 + i * 0.12 } as React.CSSProperties} d={`M${x.toFixed(1)} 0V${JAPAN_VIEW.height}`} />;
-              })}
-            </g>
-            <g className="jm-light" style={{ "--i": 0 } as React.CSSProperties} fill="#a9c6ff" fontSize="7" opacity="0.7">
-              {PARALLELS.map((lat) => (
-                <text key={lat} x="3" y={(projectJapan(JAPAN_BOUNDS_X0, lat).y - 2).toFixed(1)}>
-                  {lat}°N
-                </text>
-              ))}
-              {MERIDIANS.map((lon) => (
-                <text key={lon} x={(projectJapan(lon, 38).x + 2).toFixed(1)} y={JAPAN_VIEW.height - 3}>
-                  {lon}°E
-                </text>
-              ))}
-            </g>
-
-            {/* ripples spreading from the coast, once the map is drawn */}
-            <g fill="none" stroke="#4DA3FF" strokeLinejoin="round">
-              {JAPAN_OUTLINE.map((d, i) => (
-                <path key={i} className="jm-ripple" d={d} />
-              ))}
-              {JAPAN_OUTLINE.map((d, i) => (
-                <path key={i} className="jm-ripple jm-ripple--late" d={d} />
-              ))}
-            </g>
-
             {/* the coast is traced, then the land fills */}
             <g fill="none" stroke="#4DA3FF" strokeWidth="3" opacity="0.45" filter="url(#jp-glow)">
               {JAPAN_OUTLINE.map((d, i) => (
-                <path key={i} className="jm-draw" pathLength={1} style={{ "--d": 0.5 + (i % 5) * 0.08 } as React.CSSProperties} d={d} />
+                <path key={i} className="jm-draw" pathLength={1} style={{ "--d": 0.02 + (i % 5) * 0.05 } as React.CSSProperties} d={d} />
               ))}
             </g>
             <g className="jm-fill" fill="url(#jp-land)" opacity="0.95">
@@ -170,7 +133,7 @@ export default function JapanMapView({ cities }: { cities: HomeMapCity[] }) {
             </g>
             <g fill="none" stroke="#6FB4FF" strokeWidth="0.9" strokeLinejoin="round">
               {JAPAN_OUTLINE.map((d, i) => (
-                <path key={i} className="jm-draw" pathLength={1} style={{ "--d": 0.5 + (i % 5) * 0.08 } as React.CSSProperties} d={d} />
+                <path key={i} className="jm-draw" pathLength={1} style={{ "--d": 0.02 + (i % 5) * 0.05 } as React.CSSProperties} d={d} />
               ))}
             </g>
             <g className="jm-fill" fill="none" stroke="#dbeaff" strokeWidth="0.35" opacity="0.28" strokeLinejoin="round">
