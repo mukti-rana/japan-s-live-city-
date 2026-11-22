@@ -16,6 +16,7 @@ export function ChapterHeader({
   href,
   linkLabel,
   className = "",
+  headingClassName = "text-[clamp(44px,7.4vw,116px)]",
 }: {
   id: string;
   number: string;
@@ -25,6 +26,8 @@ export function ChapterHeader({
   href?: string;
   linkLabel?: string;
   className?: string;
+  // The heading's size (a Tailwind text-size class); chapters keep the default.
+  headingClassName?: string;
 }) {
   return (
     <div className={className}>
@@ -37,7 +40,7 @@ export function ChapterHeader({
               <span className="tabular-nums">{number}</span> <span aria-hidden="true">·</span> <Tx en={label} />
             </p>
           </ScrollReveal>
-          <h2 id={`${id}-h`} className="mt-[clamp(14px,2.4vh,28px)] font-[family-name:var(--font-home-serif)] text-[clamp(44px,7.4vw,116px)] font-normal leading-[0.98] tracking-[-0.025em] text-foreground">
+          <h2 id={`${id}-h`} className={`mt-[clamp(14px,2.4vh,28px)] font-[family-name:var(--font-home-serif)] font-normal leading-[0.98] tracking-[-0.025em] text-foreground ${headingClassName}`}>
             <SlideInHeading en={heading} />
           </h2>
           {intro && (

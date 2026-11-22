@@ -333,3 +333,12 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   100% { color: #000; -webkit-text-stroke: 0 rgba(255, 255, 255, 0); text-shadow: 0 0 0 transparent, 0 0 0 transparent; }
 }
 .intro-ink { animation: intro-ink 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+/* ── "Where to?" photographs (RevealFrame): the scroll's progress (--rv, 0 to 1) settles the picture and lifts the caption ──
+   Reduced motion, or before the script has run, leaves --rv unset, so both fall back to their final state. */
+.where-zoom { scale: calc(1.24 - 0.24 * var(--rv, 1)); transform-origin: 50% 50%; will-change: scale; }
+.where-text { opacity: clamp(0, calc((var(--rv, 1) - 0.5) * 2.6), 1); translate: 0 calc((1 - var(--rv, 1)) * 40px); }
+@media (prefers-reduced-motion: reduce) {
+  .where-zoom { scale: none; }
+  .where-text { opacity: 1; translate: none; }
+}

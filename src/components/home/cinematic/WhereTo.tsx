@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ChapterHeader, CHAPTER_WIDTH } from "@/components/home/cinematic/Chapter";
 import ParallaxImage from "@/components/home/cinematic/ParallaxImage";
+import Curtain from "@/components/home/cinematic/Curtain";
+import RevealFrame, { type Edge } from "@/components/home/cinematic/RevealFrame";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
@@ -8,15 +10,18 @@ import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
 const BLUR = "blur" as const;
 const PAD = "px-(--home-gutter)";
 
-// `place` is the place's own name (a proper noun), shown as it is written. The photographs
-// run edge to edge with only a hairline of black between them.
-function PlaceCard({ photo, kanji, place, href, sizes, className, delay = 0 }: { photo: HomePhoto; kanji: string; place: string; href: string; sizes: string; className: string; delay?: number }) {
+// `place` is the place's own name (a proper noun), shown as it is written. The photographs run edge to edge with only a hairline of
+// black between them. Each one arrives with the scroll from its own `from` edge (RevealFrame): it slides in while a wipe opens it, the
+// photograph settles from a close-up (.where-zoom) and the caption rises into place (.where-text); see cinematic.css.
+function PlaceCard({ photo, kanji, place, href, sizes, className, from }: { photo: HomePhoto; kanji: string; place: string; href: string; sizes: string; className: string; from: Edge }) {
   return (
-    <ScrollReveal from="image" className="h-full" delay={delay}>
+    <RevealFrame from={from} className="h-full">
       <article className={`group relative isolate flex h-full items-end overflow-hidden ${className}`}>
-        <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="-z-20 transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
+        <div className="where-zoom absolute inset-0 -z-20">
+          <ParallaxImage src={photo.src} alt={photo.alt} sizes={sizes} placeholder={BLUR} blurDataURL={photo.blur} className="transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" />
+        </div>
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-        <div className={`flex w-full flex-col items-start gap-3 py-[clamp(24px,5vh,56px)] xl:flex-row xl:items-end xl:justify-between xl:gap-4 ${PAD}`}>
+        <div className={`where-text flex w-full flex-col items-start gap-3 py-[clamp(24px,5vh,56px)] xl:flex-row xl:items-end xl:justify-between xl:gap-4 ${PAD}`}>
           <div className="min-w-0">
             <p lang="ja" aria-hidden="true" className="font-[family-name:var(--font-home-kanji)] text-[clamp(22px,2.8vw,40px)] text-white/85 [text-shadow:0_1px_12px_rgba(0,0,0,0.7)]">
               {kanji}
@@ -30,7 +35,7 @@ function PlaceCard({ photo, kanji, place, href, sizes, className, delay = 0 }: {
           </div>
         </div>
       </article>
-    </ScrollReveal>
+    </RevealFrame>
   );
 }
 
@@ -43,18 +48,24 @@ export default function WhereTo() {
   const halfSizes = "(min-width: 768px) 50vw, 100vw";
   return (
     <section id="where" aria-labelledby="where-h" className="relative scroll-mt-16 pb-[clamp(32px,5vh,56px)] pt-[clamp(72px,12vh,160px)]">
-      <div className={CHAPTER_WIDTH}>
-        <ChapterHeader id="where" number="03" label="Explore" heading="Where to?" intro="Five places to start. Open any of them in Explore." href="/explore" linkLabel="Explore all" className="mb-[clamp(32px,6vh,72px)]" />
-      </div>
-      <div className="flex flex-col gap-[3px]">
-        <PlaceCard photo={HOME_PHOTOS.fushimi} kanji="伏見稲荷大社" place="Fushimi Inari, Kyoto" href="/explore/Q714828" sizes="100vw" className={first} />
+      {/* The heading is the stage: it stays at the top while the first photograph rises over it (Curtain). */}
+      <Curtain
+        stage={
+          <div className={CHAPTER_WIDTH}>
+            <ChapterHeader id="where" number="03" label="Explore" heading="Where to?" intro="Five places to start. Open any of them in Explore." href="/explore" linkLabel="Explore all" headingClassName="text-[clamp(64px,13vw,224px)]" />
+          </div>
+        }
+      >
+        <PlaceCard photo={HOME_PHOTOS.fushimi} kanji="伏見稲荷大社" place="Fushimi Inari, Kyoto" href="/explore/Q714828" sizes="100vw" className={first} from="bottom" />
+      </Curtain>
+      <div className="mt-[3px] flex flex-col gap-[3px]">
         <div className="grid gap-[3px] md:grid-cols-2">
-          <PlaceCard photo={HOME_PHOTOS.dotonbori} kanji="道頓堀" place="Dōtonbori, Osaka" href="/osaka" sizes={halfSizes} className={half} />
-          <PlaceCard photo={HOME_PHOTOS.itsukushima} kanji="厳島神社" place="Itsukushima, Miyajima" href="/explore/Q191763" sizes={halfSizes} className={half} delay={0.12} />
+          <PlaceCard photo={HOME_PHOTOS.dotonbori} kanji="道頓堀" place="Dōtonbori, Osaka" href="/osaka" sizes={halfSizes} className={half} from="left" />
+          <PlaceCard photo={HOME_PHOTOS.itsukushima} kanji="厳島神社" place="Itsukushima, Miyajima" href="/explore/Q191763" sizes={halfSizes} className={half} from="right" />
         </div>
         <div className="grid gap-[3px] md:grid-cols-2">
-          <PlaceCard photo={HOME_PHOTOS.todaiji} kanji="東大寺" place="Tōdai-ji, Nara" href="/explore/Q460367" sizes={halfSizes} className={half} />
-          <PlaceCard photo={HOME_PHOTOS.fuji} kanji="富士山" place="Chureito Pagoda & Fuji" href="/explore/Q21652375" sizes={halfSizes} className={half} delay={0.12} />
+          <PlaceCard photo={HOME_PHOTOS.todaiji} kanji="東大寺" place="Tōdai-ji, Nara" href="/explore/Q460367" sizes={halfSizes} className={half} from="left" />
+          <PlaceCard photo={HOME_PHOTOS.fuji} kanji="富士山" place="Chureito Pagoda & Fuji" href="/explore/Q21652375" sizes={halfSizes} className={half} from="right" />
         </div>
       </div>
       <div className={`${CHAPTER_WIDTH} mt-[clamp(56px,10vh,120px)]`}>
