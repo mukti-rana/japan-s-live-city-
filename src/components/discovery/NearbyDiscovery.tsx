@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Compass, LocateFixed, MapPin } from "lucide-react";
 import FeaturedPlace from "@/components/discovery/FeaturedPlace";
+import RevealFrame from "@/components/home/cinematic/RevealFrame";
+import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import PlaceTile from "@/components/discovery/PlaceTile";
 import GlassCard from "@/components/ui/GlassCard";
 import { useLazyJson } from "@/components/map/useMapData";
@@ -23,8 +25,11 @@ function jstMonth(): number {
 }
 
 // Home's small taste of discovery: one featured place and two more near the
-// visitor, then a clear way into the full Explore Japan page.
-export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2 | 3 } = {}) {
+// visitor, then a clear way into the full Explore Japan page. `animated` (the home page) lets the parts arrive with the scroll: the
+// featured place unfolds from a small rounded window while its photograph settles, a light glints across it and its lines rise one
+// after another; the two places slide in from the right; the heading, icon, link and button arrive from their own sides (see
+// cinematic.css, "Discover near you"). Without it (or with reduced motion) everything is simply there.
+export default function NearbyDiscovery({ headingLevel = 2, animated = false }: { headingLevel?: 2 | 3; animated?: boolean } = {}) {
   const Heading = headingLevel === 3 ? "h3" : "h2";
   const tr = useTranslate();
   const { language } = useLanguage();
@@ -63,13 +68,27 @@ export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2
     if (live.status !== "ready") live.requestLocation();
   };
 
+  // Wraps a part so it arrives its own way when `animated`; otherwise the part is returned as it is.
+  const arrive = (node: React.ReactNode, from: "pop" | "left" | "right" | "up", delay = 0) =>
+    animated ? (
+      <ScrollReveal from={from} delay={delay}>
+        {node}
+      </ScrollReveal>
+    ) : (
+      node
+    );
+
   return (
-    <GlassCard className="flex flex-col gap-4 p-4 sm:p-5">
+    <GlassCard className={`flex flex-col gap-4 p-4 sm:p-5 ${animated ? "disc" : ""}`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-azure/25 to-neon-purple/25 text-[#c4b5fd]">
-            <Compass size={18} aria-hidden="true" />
-          </span>
+          {arrive(
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-azure/25 to-neon-purple/25 text-[#c4b5fd]">
+              <Compass size={18} aria-hidden="true" />
+            </span>,
+            "pop",
+          )}
+          {arrive(
           <div className="min-w-0">
             <Heading className="text-lg font-semibold leading-tight text-foreground sm:text-xl">{tr("Discover near you")}</Heading>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted">
@@ -87,12 +106,19 @@ export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2
                 tr("The best places and things to do around you today.")
               )}
             </p>
-          </div>
+          </div>,
+            "left",
+            0.08,
+          )}
         </div>
-        <Link href="/explore" className="flex min-h-10 items-center gap-1.5 rounded-full border border-azure/40 bg-azure/10 px-4 text-sm font-semibold text-azure transition-colors hover:bg-azure/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-          {tr("Explore all Japan")}
-          <ArrowRight size={14} aria-hidden="true" />
-        </Link>
+        {arrive(
+          <Link href="/explore" className="flex min-h-10 items-center gap-1.5 rounded-full border border-azure/40 bg-azure/10 px-4 text-sm font-semibold text-azure transition-colors hover:bg-azure/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+            {tr("Explore all Japan")}
+            <ArrowRight size={14} aria-hidden="true" />
+          </Link>,
+          "right",
+          0.16,
+        )}
       </div>
 
       {!loc ? (
@@ -129,12 +155,25 @@ export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2
         <p className="rounded-2xl border border-dashed border-glass-border p-5 text-center text-sm text-muted">{tr("No places found near here yet. Open Explore Japan to look further afield.")}</p>
       ) : (
         <div className="grid gap-4 xl:grid-cols-[2fr_1fr]">
-          {featured && <FeaturedPlace place={featured} approximate={approximate} month={month} />}
+          {featured &&
+            (animated ? (
+              <RevealFrame from="center" className="flex h-full [&>*]:min-w-0 [&>*]:flex-1">
+                <FeaturedPlace place={featured} approximate={approximate} month={month} />
+              </RevealFrame>
+            ) : (
+              <FeaturedPlace place={featured} approximate={approximate} month={month} />
+            ))}
           {more.length > 0 && (
             <ul className="grid grid-cols-2 gap-3 xl:grid-cols-1">
               {more.map((p) => (
                 <li key={p.id}>
-                  <PlaceTile place={p} approximate={approximate} month={month} />
+                  {animated ? (
+                    <RevealFrame from="right" className="h-full">
+                      <PlaceTile place={p} approximate={approximate} month={month} />
+                    </RevealFrame>
+                  ) : (
+                    <PlaceTile place={p} approximate={approximate} month={month} />
+                  )}
                 </li>
               ))}
             </ul>
@@ -142,10 +181,13 @@ export default function NearbyDiscovery({ headingLevel = 2 }: { headingLevel?: 2
         </div>
       )}
 
-      <Link href="/explore" className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-azure to-neon-purple px-5 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(124,92,255,0.9)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
-        {loc ? tr("Discover more nearby") : tr("Explore Japan")}
-        <ArrowRight size={16} aria-hidden="true" />
-      </Link>
+      {arrive(
+        <Link href="/explore" className="flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-azure to-neon-purple px-5 text-sm font-semibold text-white shadow-[0_0_30px_-10px_rgba(124,92,255,0.9)] transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure">
+          {loc ? tr("Discover more nearby") : tr("Explore Japan")}
+          <ArrowRight size={16} aria-hidden="true" />
+        </Link>,
+        "pop",
+      )}
     </GlassCard>
   );
 }

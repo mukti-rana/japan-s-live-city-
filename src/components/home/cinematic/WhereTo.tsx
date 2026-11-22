@@ -3,7 +3,6 @@ import { ChapterHeader, CHAPTER_WIDTH } from "@/components/home/cinematic/Chapte
 import ParallaxImage from "@/components/home/cinematic/ParallaxImage";
 import Curtain from "@/components/home/cinematic/Curtain";
 import RevealFrame, { type Edge } from "@/components/home/cinematic/RevealFrame";
-import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import NearbyDiscovery from "@/components/discovery/NearbyDiscovery";
 import { HOME_PHOTOS, type HomePhoto } from "@/lib/data/homePhotos";
 
@@ -69,9 +68,7 @@ export default function WhereTo() {
         </div>
       </div>
       <div className={`${CHAPTER_WIDTH} mt-[clamp(56px,10vh,120px)]`}>
-        <ScrollReveal>
-          <NearbyDiscovery headingLevel={3} />
-        </ScrollReveal>
+        <NearbyDiscovery headingLevel={3} animated />
       </div>
     </section>
   );
