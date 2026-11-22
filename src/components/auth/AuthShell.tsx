@@ -47,8 +47,8 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
 
   const signingIn = view === "signin";
   const heading = `${language === "ja" ? "font-jp" : display.className} text-4xl font-semibold leading-tight tracking-tight text-foreground outline-none sm:text-[2.6rem]`;
-  const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent";
-  const textLink = `rounded font-semibold text-white underline decoration-white/40 underline-offset-4 transition-colors hover:decoration-white ${ring}`;
+  const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac focus-visible:ring-offset-2 focus-visible:ring-offset-panel";
+  const textLink = `rounded font-semibold text-lilac underline-offset-2 transition-colors hover:text-white hover:underline ${ring}`;
 
   return (
     <div data-auth-shell className="keep-dark-ink fixed inset-0 z-[70] overflow-y-auto bg-background">
@@ -58,7 +58,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         <header className="pointer-events-none flex items-center justify-between gap-3 px-4 py-4 sm:px-8 sm:py-5">
           <div className="pointer-events-auto flex items-center gap-2.5">
             <Logo size={36} />
-            <p className="text-xs font-bold tracking-[0.28em] text-foreground [text-shadow:0_1px_3px_rgba(0,0,0,0.8),0_0_14px_rgba(0,0,0,0.55)]">LIVE CITY JAPAN</p>
+            <p className="text-xs font-bold tracking-[0.28em] text-foreground [text-shadow:0_1px_3px_rgba(24,10,50,0.85),0_0_14px_rgba(24,10,50,0.7)]">LIVE CITY JAPAN</p>
           </div>
           <div className="pointer-events-auto">
             <AuthLanguageMenu />
@@ -66,8 +66,8 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
         </header>
 
         <main className="pointer-events-none flex flex-1 items-start justify-center px-4 pb-14 pt-[20vh] sm:items-center sm:pt-0 lg:justify-end lg:pr-[7vw] xl:pr-[10vw]">
-          <section aria-labelledby="auth-title" className="auth-panel pointer-events-auto relative w-full max-w-[26rem] rounded-[1.75rem] border border-white/[0.14] p-6 shadow-[0_32px_80px_-30px_rgba(0,0,0,0.75),inset_0_1px_0_rgba(255,255,255,0.07)] [text-shadow:0_1px_2px_rgba(0,0,0,0.6)] sm:p-8">
-            <ShineBorder colors={["#6f6a62", "#a39c90", "#6f6a62"]} width={1} duration={9} />
+          <section aria-labelledby="auth-title" className="auth-panel pointer-events-auto relative w-full max-w-[26rem] rounded-[1.75rem] border border-white/25 p-6 shadow-[0_34px_90px_-34px_rgba(90,70,170,0.55),inset_0_1px_0_rgba(255,255,255,0.26)] backdrop-blur-[8px] backdrop-saturate-150 [text-shadow:0_1px_2px_rgba(6,8,24,0.7),0_2px_16px_rgba(6,8,24,0.75)] sm:p-8">
+            <ShineBorder />
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={view}
@@ -96,9 +96,9 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                     </div>
 
                     <div role="separator" className="my-5 flex items-center gap-3">
-                      <span aria-hidden="true" className="h-px flex-1 bg-white/[0.14]" />
+                      <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
                       <span className="text-center text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground">{tr("Or sign in to your account")}</span>
-                      <span aria-hidden="true" className="h-px flex-1 bg-white/[0.14]" />
+                      <span aria-hidden="true" className="h-px flex-1 bg-white/20" />
                     </div>
 
                     <div className="flex flex-col gap-3">{signIn}</div>
@@ -129,7 +129,7 @@ export default function AuthShell({ initialView = "signin", signIn, signUp }: { 
                         {tr("Sign in")}
                       </button>
                     </p>
-                    <GuestLink label="Explore Japan as Guest" className={`mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-medium text-white/90 transition-colors hover:bg-white/[0.07] ${ring}`}>
+                    <GuestLink label="Explore Japan as Guest" className={`mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl text-sm font-medium text-lilac transition-colors hover:bg-lilac/10 ${ring}`}>
                       <Compass size={15} aria-hidden="true" />
                       <span className="auth-guest__label">{tr("Explore Japan as Guest")}</span>
                     </GuestLink>

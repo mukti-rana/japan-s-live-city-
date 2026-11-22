@@ -244,26 +244,16 @@ void main(){
     // The lights and the sun's path sparkle as the waves pass; a few warm glints and the glitter; the rings catch the light.
     float L = dot(rgb, vec3(0.3, 0.59, 0.11));
     float near = smoothstep(0.0, 0.08, depth);
-    // Real water: the strong lights in a reflection are pale and warm, not saturated (a bright reflection washes toward white), the
-    // sparkle is fainter and whiter, and the water darkens a little toward the viewer, where the surface reflects less sky.
-    float lit = smoothstep(0.5, 0.95, L);
-    rgb = mix(rgb, vec3(L) * vec3(1.0, 0.95, 0.88), lit * 0.4);
-    rgb *= 1.0 + (ripple - 0.5) * 0.32 * smoothstep(0.3, 0.8, L) * near + ringShade * 0.06 * smoothstep(0.2, 0.7, L);
-    rgb += vec3(0.95, 0.9, 0.86) * smoothstep(0.78, 0.96, ripple) * (0.025 + 0.07 * L) * near;
-    rgb += vec3(1.0, 0.9, 0.78) * spec * 0.3;
-    rgb += vec3(0.85, 0.85, 0.88) * max(ringShade, 0.0) * 0.015;
-    rgb *= mix(1.0, 0.8, smoothstep(0.1, 1.0, depth));
+    rgb *= 1.0 + (ripple - 0.5) * 0.55 * smoothstep(0.3, 0.8, L) * near + ringShade * 0.1 * smoothstep(0.2, 0.7, L);
+    rgb += vec3(1.0, 0.78, 0.84) * smoothstep(0.76, 0.95, ripple) * (0.04 + 0.16 * L) * near;
+    rgb += vec3(1.0, 0.72, 0.5) * spec * 0.7;
+    rgb += vec3(0.9, 0.7, 0.85) * max(ringShade, 0.0) * 0.03;
   }
   // The dusk light breathes, and the sun's glow with it.
   rgb *= 1.0 + 0.018 * (breathe - 0.5);
   float sun = exp(-pow(length((u - vec2(0.232, 0.455)) * vec2(IA, 1.0)) * 7.0, 2.0));
-  rgb += vec3(1.0, 0.72, 0.5) * sun * 0.035 * breathe;
+  rgb += vec3(1.0, 0.62, 0.32) * sun * 0.06 * breathe;
 
-  // The grade (kept in step with the still picture's CSS filter in FujiBackdrop.tsx): the colours are drawn back toward natural,
-  // the brightest highlights are eased so nothing glares, and the whole picture sits a little darker.
-  rgb = rgb / (1.0 + 0.1 * rgb);
-  float gl = dot(rgb, vec3(0.2126, 0.7152, 0.0722));
-  rgb = mix(vec3(gl), rgb, lake ? 0.6 : 0.72) * 0.9;
   gl_FragColor = vec4(rgb, 1.0);
 }
 `.replace(/NB/g, String(BONE_COUNT));

@@ -23,15 +23,3 @@ Behaviour rules for this page:
 ## Lighter panel and a colour-flowing guest button (2026-11-20, approved)
 
 The sign-in panel is more transparent (a navy tint of about 24% fading to 12%, an 8px blur instead of 14px), so the scene shows through it; its text keeps its soft shadow for legibility. "Explore Japan as Guest" (on both the sign-in and the sign-up view) is coloured: its words are a gradient of amber, pink, violet and blue clipped to the letters and slid slowly along (4s, seamless), and its icon and arrow turn through the same four colours; the arrow still nudges at rest and slides on hover. Under reduced motion the words stay in the gradient, still, and the icon and arrow stay one soft pink.
-
-
-## Calmer, cinematic and natural (2026-11-22, approved: "premium Japanese travel experience, not a colourful gaming interface")
-
-This **supersedes** the earlier lines about "exactly as supplied / no colour overlay", the lilac-sakura-gold shine border, the rainbow guest button and the lilac links. The picture itself is unchanged (same file, same composition, same movement); only how it is graded and what sits on it changed.
-
-- **Grade.** The shader (`SceneCanvas.tsx`) draws the picture with its colour drawn back (sky and land ×0.72, water ×0.60 of the original saturation), the brightest highlights eased, and everything a touch darker (×0.9). The still picture underneath carries the same grade as a CSS filter (`saturate(0.72) brightness(0.9)`) so nothing jumps when the shader takes over.
-- **Overlay.** `FujiBackdrop.tsx` adds one neutral blue-black layer over the scene (vignette, deeper top and foot, a little more on the panel's side). It is a darkening, never a colour wash.
-- **Water.** Reflections are calmer and more natural: bright lights in the water wash toward warm white instead of staying saturated, the sparkle and ring highlights are about half as strong and whiter, the sun's warm glow is fainter, and the lake darkens a little toward the viewer.
-- **Panel.** Dark smoked glass: a neutral blue-black tint (about 60%), 18px blur, a 1px border at 14% white, one soft shadow, no coloured glow. The travelling shine border stays but is a single 1px, slow, dim stone-grey light. Fields are dark wells; focus is a plain white ring (never blue).
-- **Buttons and links.** "Explore Japan as Guest" is quiet ivory glass (white text and icon, no colour cycling, the arrow's small nudge kept). The sign-in and create-account buttons are neutral glass (create-account a little stronger). Links are white with an underline. The language menu is dark glass with white focus and selection.
-- **Unchanged.** Heading, texts, layout, logo, form fields, server actions, guest link and the language menu's behaviour. Contrast: white text on the panel stays above 6:1 even over the brightest part of the picture.
