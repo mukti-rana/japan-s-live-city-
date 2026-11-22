@@ -385,3 +385,40 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
   .disc [data-featured] > div:first-child::after { display: none; }
   .disc [data-featured] > div:last-child > *, .disc li article > div:last-child > * { opacity: 1; translate: none; }
 }
+
+/* ── Japan map: it draws itself (JapanMapView) ──
+   data-live is "true" while the map is on screen and "false" once it has left; the map then draws again on its way back. Order: the
+   graticule's lines, the coast of every island traced (--d staggers the islands), the land filling in, the other cities' lights, the six
+   pins dropping in one after another and their temperatures, one band of light across the land, then ripples from the coast.
+   data-live is only set once the page is running, and with reduced motion everything is simply finished. */
+.jm-draw { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 2.4s cubic-bezier(0.6, 0, 0.3, 1) calc(var(--d, 0) * 1s + 0.1s); }
+[data-jm][data-live="false"] .jm-draw { stroke-dashoffset: 1; transition: none; }
+.jm-fill { opacity: 1; transition: opacity 1.2s ease 2.1s; }
+[data-jm][data-live="false"] .jm-fill { opacity: 0; transition: none; }
+.jm-light { opacity: 1; transition: opacity 0.7s ease calc(1.7s + var(--i, 0) * 0.1s); }
+[data-jm][data-live="false"] .jm-light { opacity: 0; transition: none; }
+.jm-twinkle { animation: jm-twinkle 3.2s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.7s); }
+@keyframes jm-twinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+[data-jm][data-live="false"] .jm-twinkle { animation: none; }
+.jm-pin { transform-origin: 0 0; opacity: 1; transition: opacity 0.5s ease calc(2.3s + var(--i, 0) * 0.2s), transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) calc(2.3s + var(--i, 0) * 0.2s); }
+[data-jm][data-live="false"] .jm-pin { opacity: 0; transform: scale(0.2); transition: none; }
+.jm-label { transition: opacity 0.5s ease calc(2.7s + var(--i, 0) * 0.2s), translate 0.6s ease calc(2.7s + var(--i, 0) * 0.2s); }
+[data-jm][data-live="false"] .jm-label { opacity: 0; translate: 0 6px; transition: none; }
+.jm-sweep { opacity: 0; }
+[data-jm][data-live="true"] .jm-sweep { animation: jm-sweep 2.4s ease-in-out 3.2s 1 both; }
+@keyframes jm-sweep { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateX(520px); opacity: 0; } }
+.jm-ripple { stroke-opacity: 0; stroke-width: 1; }
+[data-jm][data-live="true"] .jm-ripple { animation: jm-ripple 6s ease-out 4.2s infinite; }
+[data-jm][data-live="true"] .jm-ripple--late { animation-delay: 7.2s; }
+@keyframes jm-ripple { 0% { stroke-opacity: 0.32; stroke-width: 1; } 100% { stroke-opacity: 0; stroke-width: 18; } }
+.jm-spot { opacity: 0; transition: opacity 0.4s ease; background: radial-gradient(130px circle at var(--mx, 50%) var(--my, 50%), rgba(130, 190, 255, 0.16), transparent 70%); }
+[data-jm]:hover .jm-spot { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .jm-draw, .jm-fill, .jm-light, .jm-pin, .jm-label { transition: none !important; }
+  [data-jm][data-live="false"] .jm-draw { stroke-dashoffset: 0; }
+  [data-jm][data-live="false"] .jm-fill, [data-jm][data-live="false"] .jm-light { opacity: 1; }
+  [data-jm][data-live="false"] .jm-pin { opacity: 1; transform: none; }
+  [data-jm][data-live="false"] .jm-label { opacity: 1; translate: none; }
+  .jm-twinkle, .jm-sweep, .jm-ripple { animation: none !important; }
+  .jm-spot { display: none; }
+}
