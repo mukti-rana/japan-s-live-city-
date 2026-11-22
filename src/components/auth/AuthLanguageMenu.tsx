@@ -56,7 +56,7 @@ export default function AuthLanguageMenu() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${t("languageSwitcher.label")}: ${current.label}`}
-        className="flex h-10 items-center gap-2 rounded-full border border-white/20 bg-panel/70 px-3.5 text-sm font-medium text-foreground backdrop-blur-md transition-colors hover:border-white/40 hover:bg-panel/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac"
+        className="flex h-10 items-center gap-2 rounded-full border border-white/[0.16] bg-black/35 px-3.5 text-sm font-medium text-white backdrop-blur-md transition-colors hover:border-white/35 hover:bg-black/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
       >
         <Globe size={16} aria-hidden="true" />
         <span className="max-w-[7rem] truncate">{current.label}</span>
@@ -64,7 +64,7 @@ export default function AuthLanguageMenu() {
       </button>
 
       {open && (
-        <div role="menu" aria-label={t("languageSwitcher.label")} className="absolute right-0 top-full z-10 mt-2 w-56 rounded-2xl border border-white/15 bg-panel p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)]">
+        <div role="menu" aria-label={t("languageSwitcher.label")} className="absolute right-0 top-full z-10 mt-2 w-56 rounded-2xl border border-white/[0.14] bg-[#0d0f14]/95 p-1.5 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.7)]">
           {LANGUAGES.map((lang) => {
             const active = lang.code === language;
             return (
@@ -78,11 +78,11 @@ export default function AuthLanguageMenu() {
                   setOpen(false);
                   buttonRef.current?.focus();
                 }}
-                className={`flex min-h-11 w-full items-center gap-2.5 rounded-xl px-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lilac ${active ? "bg-lilac/15 text-foreground" : "text-foreground/80 hover:bg-white/10 hover:text-foreground"}`}
+                className={`flex min-h-11 w-full items-center gap-2.5 rounded-xl px-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 ${active ? "bg-white/[0.1] text-white" : "text-foreground/80 hover:bg-white/10 hover:text-foreground"}`}
               >
                 <span aria-hidden="true" className="text-base">{lang.flag}</span>
                 <span className="min-w-0 flex-1 truncate text-left">{lang.label}</span>
-                {active && <Check size={14} aria-hidden="true" className="shrink-0 text-lilac" />}
+                {active && <Check size={14} aria-hidden="true" className="shrink-0 text-white/80" />}
               </button>
             );
           })}

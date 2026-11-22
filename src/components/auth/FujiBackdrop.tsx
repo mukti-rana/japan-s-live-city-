@@ -8,12 +8,15 @@ import PetalField from "@/components/auth/PetalField";
 // Layers, bottom to top:
 //   1. An illustration drawn here in SVG (sky, Fuji, lake). It is always there, so the page looks right with no network and
 //      while the picture loads.
-//   2. The picture (public/images/login/fuji-sakura-dusk.webp), shown exactly as supplied: no colour overlay, no zoom, no
-//      crop beyond what "cover" needs. It stays underneath as the still version.
+//   2. The picture (public/images/login/fuji-sakura-dusk.webp): the same picture, no zoom, no crop beyond what "cover" needs, graded
+//      a little calmer (colour drawn back, a touch darker; the shader does the same, see SceneCanvas). It stays underneath as the
+//      still version.
 //   3. SceneCanvas: the same picture drawn by a small shader that moves the lake and its reflections, sways the cherry branches
 //      and drifts the clouds and mist (nothing about the picture's look changes; it only moves). Not started for visitors who
 //      ask for less motion.
 //   4. PetalField: a few petals and leaves blown by the same wind that bends the branches, some coming loose from the twigs.
+//   5. A quiet dark overlay: a soft vignette and a deeper top and foot, so the scene feels cinematic and the panel's text sits on calm
+//      ground. It is neutral (blue-black), not a colour wash, and carries no information.
 // Nothing here takes clicks; the movement stops for people who ask for less motion and while the tab is hidden.
 
 const IMAGE = "/images/login/fuji-sakura-dusk.webp";
@@ -64,9 +67,17 @@ export default function FujiBackdrop() {
     <div className="auth-backdrop pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#141a44]">
       <Illustration />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={IMAGE} alt="" decoding="async" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${ANCHOR[0] * 100}% ${ANCHOR[1] * 100}%` }} />
+      <img src={IMAGE} alt="" decoding="async" fetchPriority="high" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: `${ANCHOR[0] * 100}% ${ANCHOR[1] * 100}%`, filter: "saturate(0.72) brightness(0.9)" }} />
       <SceneCanvas src={IMAGE} anchor={ANCHOR} />
       <PetalField anchor={ANCHOR} />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(125% 95% at 36% 46%, transparent 42%, rgba(4,6,14,0.4) 100%), linear-gradient(180deg, rgba(6,8,18,0.34) 0%, rgba(6,8,18,0.1) 30%, rgba(6,8,18,0.14) 58%, rgba(6,8,18,0.44) 100%), linear-gradient(90deg, transparent 52%, rgba(6,8,18,0.2) 100%)",
+        }}
+      />
     </div>
   );
 }
