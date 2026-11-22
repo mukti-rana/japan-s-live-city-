@@ -2474,5 +2474,12 @@
   "Community Meetups": "सामुदायिक भेटघाट",
   "Business Promotions": "व्यवसाय प्रवर्द्धन",
   "Seasonal Activities": "मौसमी गतिविधिहरू",
-  "Local Announcements": "स्थानीय सूचनाहरू"
+  "Local Announcements": "स्थानीय सूचनाहरू",
+  "Air": "हावा",
+  "Peak UV today": "आजको उच्चतम UV",
+  "Temperature today: where it feels like now, between the low and the high": "आजको तापक्रम: न्यूनतम र अधिकतमको बीचमा अहिले कति महसुस हुन्छ",
+  "Chance of rain in each of the next 12 hours": "आगामी १२ घण्टामध्ये प्रत्येक घण्टाको वर्षाको सम्भावना",
+  "UV index at its peak today, on a scale from 1 to 11": "आजको उच्चतम UV सूचकांक, १ देखि ११ को स्केलमा",
+  "Dry and wet hours over the next 12 hours": "आगामी १२ घण्टामा सुख्खा र भिजेका घण्टाहरू",
+  "Air temperature compared with how it feels": "हावाको तापक्रम र महसुस हुने तापक्रमको तुलना"
 }

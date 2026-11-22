@@ -100,3 +100,12 @@ On the home page (`NearbyDiscovery animated`, only there; the Explore page's `Fe
 - **The two other places slide in from the right** (a wipe), their photographs settling from 116% and their lines rising in turn.
 - **Header and button:** the compass icon pops, the title slides in from the left, "Explore all Japan" from the right and "Discover more nearby" pops (the home page's own reveal system; on a phone they simply rise).
 - All of it is driven by one value, `--rv` (0 to 1), published by `RevealFrame`; with reduced motion, or before the script runs, it is unset and means "finished", so nothing is displaced and no light shows. The clip is removed completely once finished, so a glow or shadow is never cut off. Only `transform`, `clip-path`, `opacity` and `scale` move.
+
+## Weather Advisor: a premium, readable-at-a-glance layer (2026-11-22)
+
+`WeatherAdvisor.tsx` keeps its real advice, colours (set from the real conditions) and layout; it gains:
+
+- **The day in one line**, large and in the page's serif, over a thin rule in the colour of what to wear; a green "live" dot and "Updated 21:45 JST" (the reading's own time) beside "Today's advice".
+- **A true picture of the numbers in each card** (decoration over text that already says the same; each is a labelled image): *What to wear*, a temperature scale (-5° to 35°) with the day's low-to-high band and a glowing dot at the feels-like; *Umbrella*, the chance of rain for each of the next 12 hours as bars (a flat line of short bars when it is dry, which is the honest picture); *Sun protection*, the peak UV on the usual 1 to 11 scale, lit cell by cell (dimmed at night); *Outdoor activities*, the next 12 hours as dry (green) or wet (blue) cells, judged the same way as the advice; *Cold weather*, air against feels-like as two bars on one scale.
+- **Motion, whenever a card is on screen** (and again each time it returns): the big figure counts up with a gradient on its numerals, the dot slides to its place, the bars, cells and chill bars grow in one after another. Each card also has a soft aurora of its own colour drifting in its corner (18-25s, different for each), and a light of that colour follows the pointer. `transform`, `opacity`, `left`, `width` only.
+- Reduced motion, or before the page is running, shows every picture finished, with no aurora or pointer light. No figure is invented: every picture is drawn from the same real forecast the advice is built from.

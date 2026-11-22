@@ -2445,5 +2445,12 @@
   "Community Meetups": "社区聚会",
   "Business Promotions": "商家促销",
   "Seasonal Activities": "季节性活动",
-  "Local Announcements": "本地公告"
+  "Local Announcements": "本地公告",
+  "Air": "气温",
+  "Peak UV today": "今日紫外线峰值",
+  "Temperature today: where it feels like now, between the low and the high": "今日的气温：最低与最高之间，当前的体感温度",
+  "Chance of rain in each of the next 12 hours": "未来12小时内每小时的降雨概率",
+  "UV index at its peak today, on a scale from 1 to 11": "今日峰值时的紫外线指数（1 至 11 的刻度）",
+  "Dry and wet hours over the next 12 hours": "未来12小时内的干燥与降雨时段",
+  "Air temperature compared with how it feels": "气温与体感温度的对比"
 }

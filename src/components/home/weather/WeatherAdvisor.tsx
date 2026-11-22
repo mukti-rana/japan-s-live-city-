@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, type CSSProperties, type ReactNode } from "react";
-import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
+import { useEffect, useRef, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 import { Footprints, Shirt, Snowflake, Sparkles, Sun, Umbrella } from "lucide-react";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
 import { buildAdvice } from "@/lib/weather/advice";
-import type { WeatherSnapshot } from "@/lib/services/weather";
+import type { HourlyPoint, WeatherSnapshot } from "@/lib/services/weather";
 import { useTranslate } from "@/lib/i18n/inline";
 
 // Each kind of advice has its own quiet colour (lavender for clothing, cyan for rain, amber for sun, green for being outside, ice
@@ -14,8 +14,9 @@ import { useTranslate } from "@/lib/i18n/inline";
 // the reading changes. The colours are set as numbers (see .wx-card in globals.css) so the browser can animate them.
 type Accent = { rgb: number[]; strength: number };
 
-// A number that counts to its new value when the reading changes (and just shows it for visitors who ask for less motion).
-function Figure({ value, suffix }: { value: number; suffix?: string }) {
+// A number that counts up to its value each time its card comes into view, and to its new value when the reading changes (and just
+// shows it for visitors who ask for less motion).
+function Figure({ value, suffix, live }: { value: number; suffix?: string; live: boolean }) {
   const reduce = useReducedMotion();
   const mv = useMotionValue(value);
   const shown = useTransform(mv, (v) => String(Math.round(v)));
@@ -24,9 +25,13 @@ function Figure({ value, suffix }: { value: number; suffix?: string }) {
       mv.set(value);
       return;
     }
-    const run = animate(mv, value, { duration: 0.9, ease: [0.22, 1, 0.36, 1] });
+    if (!live) {
+      mv.set(0);
+      return;
+    }
+    const run = animate(mv, value, { duration: 1.3, ease: [0.22, 1, 0.36, 1] });
     return () => run.stop();
-  }, [value, reduce, mv]);
+  }, [value, live, reduce, mv]);
   return (
     <span className="tabular-nums">
       <motion.span>{shown}</motion.span>
@@ -35,12 +40,128 @@ function Figure({ value, suffix }: { value: number; suffix?: string }) {
   );
 }
 
+// ── The little pictures: each card draws the real numbers behind its advice, so the card can be read at a glance. They grow in when the
+// card comes into view (CSS keyed to the card's data-live, see .wx-viz in globals.css) and show finished under reduced motion. Each is
+// decoration over text that already says the same thing, so it is a labelled image, not extra content. ──
+const pct = (v: number, lo: number, hi: number) => Math.min(100, Math.max(0, ((v - lo) / (hi - lo)) * 100));
+const UV_COLOURS = ["#6ee7a0", "#8ae88a", "#b6e876", "#e0e060", "#f1c94f", "#f5a845", "#f58a3f", "#f0663d", "#e8484f", "#c94fb0", "#9a5fe0"];
+
+// The day's range of temperature on a scale from -5° to 35°, with where it feels like right now.
+function TempScale({ feels, low, high, label }: { feels: number; low: number; high: number; label: string }) {
+  const tr = useTranslate();
+  return (
+    <div className="wx-viz" role="img" aria-label={label}>
+      <div className="wx-scale">
+        <span className="wx-scale__band" style={{ left: `${pct(low, -5, 35)}%`, width: `${Math.max(2, pct(high, -5, 35) - pct(low, -5, 35))}%` }} />
+        <span className="wx-scale__dot" style={{ "--p": pct(feels, -5, 35) / 100 } as CSSProperties} />
+      </div>
+      <div className="mt-1.5 flex justify-between text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/60">
+        <span>
+          {tr("Low")} {low}°
+        </span>
+        <span>
+          {tr("High")} {high}°
+        </span>
+      </div>
+    </div>
+  );
+}
+
+// The chance of rain in each of the next 12 hours, as bars.
+function RainBars({ hours, label }: { hours: HourlyPoint[]; label: string }) {
+  const tr = useTranslate();
+  if (hours.length === 0) return null;
+  return (
+    <div className="wx-viz" role="img" aria-label={label}>
+      <div className="wx-bars">
+        {hours.map((h, i) => (
+          <span key={h.time} className="wx-bar" style={{ "--i": i, "--h": `${Math.max(7, h.precipProbability)}%`, "--a": 0.35 + (h.precipProbability / 100) * 0.65 } as CSSProperties} />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/60">
+        <span>{tr("Now")}</span>
+        <span className="tabular-nums">{hours[hours.length - 1].time.slice(11, 16)}</span>
+      </div>
+    </div>
+  );
+}
+
+// The day's peak UV on the usual 1 to 11+ scale, lit up to the figure.
+function UvMeter({ uv, dim, label }: { uv: number; dim: boolean; label: string }) {
+  const tr = useTranslate();
+  const lit = Math.min(11, Math.round(uv));
+  return (
+    <div className={`wx-viz ${dim ? "opacity-60" : ""}`} role="img" aria-label={label}>
+      <div className="wx-uv">
+        {UV_COLOURS.map((c, i) => (
+          <span key={c} className="wx-uv__cell" data-lit={i < lit ? "true" : "false"} style={{ "--i": i, "--c": c } as CSSProperties} />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/60">
+        <span>{tr("Peak UV today")}</span>
+        <span className="tabular-nums">{uv}</span>
+      </div>
+    </div>
+  );
+}
+
+// Each of the next 12 hours: dry (green) or wet (blue), judged the same way as the advice itself.
+function DryStrip({ hours, label }: { hours: HourlyPoint[]; label: string }) {
+  const tr = useTranslate();
+  if (hours.length === 0) return null;
+  return (
+    <div className="wx-viz" role="img" aria-label={label}>
+      <div className="wx-dry">
+        {hours.map((h, i) => (
+          <span key={h.time} className="wx-dry__cell" data-wet={h.precipProbability >= 40 || (h.precipMm ?? 0) >= 0.5 ? "true" : "false"} style={{ "--i": i } as CSSProperties} />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[10px] font-medium uppercase tracking-[0.12em] text-foreground/60">
+        <span>{tr("Now")}</span>
+        <span className="tabular-nums">{hours[hours.length - 1].time.slice(11, 16)}</span>
+      </div>
+    </div>
+  );
+}
+
+// The air against how it feels, two bars on one scale (-10° to 20°): the gap is the wind's bite.
+function ChillBars({ air, feels, label }: { air: number; feels: number; label: string }) {
+  const tr = useTranslate();
+  const rows = [
+    { name: tr("Air"), v: air, tone: "air" },
+    { name: tr("Feels like"), v: feels, tone: "feels" },
+  ];
+  return (
+    <div className="wx-viz flex flex-col gap-2" role="img" aria-label={label}>
+      {rows.map((r, i) => (
+        <div key={r.tone} className="flex items-center gap-3 text-[11px] text-foreground/70">
+          <span className="w-[5.5rem] shrink-0 font-medium uppercase tracking-[0.1em]">{r.name}</span>
+          <span className="wx-chill"><span className="wx-chill__bar" data-tone={r.tone} style={{ "--w": `${Math.max(3, pct(r.v, -10, 20))}%`, "--i": i } as CSSProperties} /></span>
+          <span className="w-9 shrink-0 text-right font-semibold tabular-nums text-foreground/90">{r.v}°</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // One piece of advice: a coloured icon and heading, the advice itself in a large clear line, the real figure that matters most
 // (large, on the right), a few chips for the concrete things to bring or do, and the real figures behind it in small print.
-function Card({ accent, icon, title, headline, figure, items, details, wide }: { accent: Accent; icon: ReactNode; title: string; headline: string; figure?: { label: string; value: number; suffix?: string }; items: string[]; details: string[]; wide?: boolean }) {
+function Card({ accent, icon, title, headline, figure, items, details, wide, viz }: { accent: Accent; icon: ReactNode; title: string; headline: string; figure?: { label: string; value: number; suffix?: string }; items: string[]; details: string[]; wide?: boolean; viz?: ReactNode }) {
   const style = { "--acc-r": accent.rgb[0], "--acc-g": accent.rgb[1], "--acc-b": accent.rgb[2], "--acc-s": accent.strength } as CSSProperties;
+  const ref = useRef<HTMLDivElement>(null);
+  // The card knows when it is on screen (so its figure and picture play each time it comes into view) and where the pointer is (a soft
+  // light of the card's own colour follows it). Until the browser has mounted, no state is claimed and everything shows finished.
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const live = useInView(ref, { amount: 0.4 });
+  const follow = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
   return (
-    <div style={style} className={`wx-card flex min-w-0 flex-col gap-3 ${wide ? "sm:col-span-2" : ""}`}>
+    <div ref={ref} style={style} onPointerMove={follow} data-live={mounted ? String(live) : undefined} className={`wx-card flex min-w-0 flex-col gap-3 ${wide ? "sm:col-span-2" : ""}`}>
       <div className="flex items-start justify-between gap-3">
         <p className="wx-title flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.16em]">
           <span className="wx-chip-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl">{icon}</span>
@@ -48,8 +169,8 @@ function Card({ accent, icon, title, headline, figure, items, details, wide }: {
         </p>
         {figure && (
           <div className="shrink-0 text-right">
-            <p className="wx-title text-[2rem] font-semibold leading-none tracking-tight sm:text-[2.35rem]">
-              <Figure value={figure.value} suffix={figure.suffix} />
+            <p className="wx-title wx-figure text-[2rem] font-semibold leading-none tracking-tight sm:text-[2.35rem]">
+              <Figure value={figure.value} suffix={figure.suffix} live={!mounted || live} />
             </p>
             <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.14em] text-foreground/65">{figure.label}</p>
           </div>
@@ -68,6 +189,7 @@ function Card({ accent, icon, title, headline, figure, items, details, wide }: {
           ))}
         </ul>
       )}
+      {viz && <div className="mt-1">{viz}</div>}
       <div className="mt-auto flex flex-col gap-1 pt-0.5">
         {details.map((d) => (
           <p key={d} className="text-[13px] leading-relaxed text-foreground/72">
@@ -137,25 +259,37 @@ export default function WeatherAdvisor({ weather, isNight, uvLabel }: { weather:
   return (
     <section aria-label={tr("Weather Advisor")} className="flex h-full min-w-0 flex-col gap-5">
       <div>
-        <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
-          <Sparkles size={13} aria-hidden="true" className="text-[#c4b5fd]" />
-          {tr("Today's advice")}
+        <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
+          <span className="flex items-center gap-2">
+            <Sparkles size={13} aria-hidden="true" className="text-[#c4b5fd]" />
+            {tr("Today's advice")}
+          </span>
+          {/\d\d:\d\d/.test(weather.updatedAt.slice(11, 16)) && (
+            <span className="flex items-center gap-1.5 font-medium normal-case tracking-normal text-foreground/60">
+              <span aria-hidden="true" className="wx-live h-1.5 w-1.5 rounded-full bg-[#7ee0a8]" />
+              {tr("Updated")} {weather.updatedAt.slice(11, 16)} JST
+            </span>
+          )}
         </p>
         <h3 className="mt-2 text-2xl font-semibold leading-tight tracking-tight text-foreground sm:text-[1.9rem]">{tr("Weather Advisor")}</h3>
         <p className="mt-1.5 text-sm text-foreground/72">{tr("What should I prepare before going out?")}</p>
       </div>
 
-      <motion.p key={parts.join("|")} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }} className="border-l-2 border-white/25 pl-4 text-base leading-relaxed text-foreground sm:text-[1.075rem]">
-        {parts.join(". ")}.
-      </motion.p>
+      {/* The day in one line, large and in the page's serif, over a rule in the colour of what to wear. */}
+      <div style={{ "--acc-r": wearAccent.rgb[0], "--acc-g": wearAccent.rgb[1], "--acc-b": wearAccent.rgb[2], "--acc-s": wearAccent.strength } as CSSProperties}>
+        <motion.p key={parts.join("|")} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="font-[family-name:var(--font-home-serif)] text-[clamp(1.4rem,2.2vw,2rem)] leading-[1.25] tracking-[-0.01em] text-foreground">
+          {parts.join(". ")}.
+        </motion.p>
+        <span aria-hidden="true" className="wx-rule mt-4 block" />
+      </div>
 
       <ScrollReveal from="stagger">
         <div className="grid gap-3.5 sm:grid-cols-2">
-          <Card accent={wearAccent} icon={<Shirt size={18} aria-hidden="true" />} title={tr("What to wear")} headline={tr(a.wear.headline)} figure={{ label: tr("Feels like"), value: a.wear.feelsLikeC, suffix: "°" }} items={a.wear.items.map((i) => tr(i))} details={wearDetails} />
-          <Card accent={umbrellaAccent} icon={<Umbrella size={18} aria-hidden="true" />} title={tr("Umbrella advice")} headline={tr(a.umbrella.headline)} figure={{ label: tr("Rain chance"), value: u.peakProb, suffix: "%" }} items={[]} details={rainDetails} />
-          <Card accent={sunAccent} icon={<Sun size={18} aria-hidden="true" />} title={tr("Sun protection")} headline={tr(s.headline)} figure={s.level === "night" ? undefined : { label: tr("UV index"), value: s.uv }} items={s.items.map((i) => tr(i))} details={sunDetails} />
-          <Card accent={outdoorAccent} icon={<Footprints size={18} aria-hidden="true" />} title={tr("Outdoor activities")} headline={tr(o.headline)} figure={{ label: tr("Dry hours"), value: o.dryHours ?? o.hoursChecked, suffix: "h" }} items={o.items.map((i) => tr(i))} details={outdoorDetails} />
-          {cold && <Card wide accent={coldAccent} icon={<Snowflake size={18} aria-hidden="true" />} title={tr("Cold weather")} headline={tr(a.wear.band === "freezing" ? "Freezing — cover up and mind the ice" : "Cold — keep your hands and neck warm")} figure={{ label: tr("Lowest today"), value: weather.todayLow, suffix: "°" }} items={coldItems} details={coldDetails} />}
+          <Card accent={wearAccent} icon={<Shirt size={18} aria-hidden="true" />} title={tr("What to wear")} headline={tr(a.wear.headline)} figure={{ label: tr("Feels like"), value: a.wear.feelsLikeC, suffix: "°" }} items={a.wear.items.map((i) => tr(i))} details={wearDetails} viz={<TempScale feels={a.wear.feelsLikeC} low={weather.todayLow} high={weather.todayHigh} label={tr("Temperature today: where it feels like now, between the low and the high")} />} />
+          <Card accent={umbrellaAccent} icon={<Umbrella size={18} aria-hidden="true" />} title={tr("Umbrella advice")} headline={tr(a.umbrella.headline)} figure={{ label: tr("Rain chance"), value: u.peakProb, suffix: "%" }} items={[]} details={rainDetails} viz={<RainBars hours={weather.hourly.slice(0, 12)} label={tr("Chance of rain in each of the next 12 hours")} />} />
+          <Card accent={sunAccent} icon={<Sun size={18} aria-hidden="true" />} title={tr("Sun protection")} headline={tr(s.headline)} figure={s.level === "night" ? undefined : { label: tr("UV index"), value: s.uv }} items={s.items.map((i) => tr(i))} details={sunDetails} viz={<UvMeter uv={s.uv} dim={s.level === "night"} label={tr("UV index at its peak today, on a scale from 1 to 11")} />} />
+          <Card accent={outdoorAccent} icon={<Footprints size={18} aria-hidden="true" />} title={tr("Outdoor activities")} headline={tr(o.headline)} figure={{ label: tr("Dry hours"), value: o.dryHours ?? o.hoursChecked, suffix: "h" }} items={o.items.map((i) => tr(i))} details={outdoorDetails} viz={<DryStrip hours={weather.hourly.slice(0, 12)} label={tr("Dry and wet hours over the next 12 hours")} />} />
+          {cold && <Card wide accent={coldAccent} icon={<Snowflake size={18} aria-hidden="true" />} title={tr("Cold weather")} headline={tr(a.wear.band === "freezing" ? "Freezing — cover up and mind the ice" : "Cold — keep your hands and neck warm")} figure={{ label: tr("Lowest today"), value: weather.todayLow, suffix: "°" }} items={coldItems} details={coldDetails} viz={<ChillBars air={Math.round(weather.tempC)} feels={a.wear.feelsLikeC} label={tr("Air temperature compared with how it feels")} />} />}
         </div>
       </ScrollReveal>
     </section>

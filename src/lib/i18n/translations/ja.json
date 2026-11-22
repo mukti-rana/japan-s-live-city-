@@ -1813,5 +1813,12 @@
   "Community Meetups": "地域の交流会",
   "Business Promotions": "お店のプロモーション",
   "Seasonal Activities": "季節のアクティビティ",
-  "Local Announcements": "地域のお知らせ"
+  "Local Announcements": "地域のお知らせ",
+  "Air": "気温",
+  "Peak UV today": "今日の紫外線ピーク",
+  "Temperature today: where it feels like now, between the low and the high": "今日の気温：最低と最高の間で、いまの体感温度",
+  "Chance of rain in each of the next 12 hours": "今後12時間の1時間ごとの降水確率",
+  "UV index at its peak today, on a scale from 1 to 11": "今日のピーク時の紫外線指数（1〜11の目盛り）",
+  "Dry and wet hours over the next 12 hours": "今後12時間の、晴れ間と雨の時間",
+  "Air temperature compared with how it feels": "気温と体感温度の比較"
 }

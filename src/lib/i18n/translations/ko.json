@@ -2445,5 +2445,12 @@
   "Community Meetups": "지역 모임",
   "Business Promotions": "업체 프로모션",
   "Seasonal Activities": "계절 활동",
-  "Local Announcements": "지역 공지"
+  "Local Announcements": "지역 공지",
+  "Air": "기온",
+  "Peak UV today": "오늘의 자외선 최고치",
+  "Temperature today: where it feels like now, between the low and the high": "오늘의 기온: 최저와 최고 사이에서 지금 느껴지는 온도",
+  "Chance of rain in each of the next 12 hours": "앞으로 12시간 동안 시간별 비 올 확률",
+  "UV index at its peak today, on a scale from 1 to 11": "오늘 최고 시점의 자외선 지수 (1~11 단계)",
+  "Dry and wet hours over the next 12 hours": "앞으로 12시간 동안의 맑은 시간과 비 오는 시간",
+  "Air temperature compared with how it feels": "기온과 체감 온도 비교"
 }
