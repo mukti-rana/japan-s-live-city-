@@ -1,0 +1,13 @@
+{
+  "name": "live-city-db-tests",
+  "private": true,
+  "type": "module",
+  "description": "Local tests for database migrations and the backup tool, run on an in-memory Postgres (PGlite). Never touches Supabase.",
+  "scripts": {
+    "test": "node migration-0014.test.mjs && node migration-0015-optional.test.mjs && node backup-tool.test.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.6.0",
+    "@electric-sql/pglite-socket": "*"
+  }
+}
