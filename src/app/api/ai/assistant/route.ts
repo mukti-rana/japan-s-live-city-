@@ -3,20 +3,17 @@ import { buildSystemPrompt, type AssistantMode } from "@/lib/ai/systemPrompt";
 import { ALL_TOOLS } from "@/lib/ai/tools";
 import { executeTool, INTERNAL_TOOL_SOURCES } from "@/lib/ai/executeTool";
 import { writeNdjson } from "@/lib/ai/ndjsonStream";
-import { DEFAULT_LANGUAGE } from "@/lib/ai/languages";
-import type { ChatMessage, WebSourceLink } from "@/lib/ai/types";
+import { DEFAULT_LANGUAGE, isLanguageCode } from "@/lib/ai/languages";
+import { AI_LIMITS, GUEST_LIMIT, MEMBER_LIMIT, clientKey, takeToken, validateAssistantBody } from "@/lib/ai/guard";
+import { isSameOrigin, json } from "@/lib/community/http";
+import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import type { WebSourceLink } from "@/lib/ai/types";
 
 export const runtime = "nodejs";
 
 const MAX_ITERATIONS = 8;
 const MAX_TOKENS = 6144;
-
-interface RequestBody {
-  messages?: ChatMessage[];
-  language?: string;
-  mode?: AssistantMode;
-  image?: { base64: string; mediaType: "image/jpeg" | "image/png" | "image/webp" | "image/gif" };
-}
 
 const VALID_MODES: AssistantMode[] = ["chat", "explain-japanese", "sign-assistant"];
 
@@ -32,32 +29,56 @@ function dedupeByUrl(links: WebSourceLink[]): WebSourceLink[] {
 }
 
 export async function POST(req: Request) {
-  let body: RequestBody;
+  // 1. Only this website may call it (a request from another site, or none, is refused).
+  if (!isSameOrigin(req)) return json({ error: "This request isn't allowed." }, 403);
+
+  // 2. Not absurdly large (the body is read as text so the size is checked even without a Content-Length).
+  if (Number(req.headers.get("content-length") ?? 0) > AI_LIMITS.maxBodyBytes) return json({ error: "That request is too large." }, 413);
+  let raw: string;
   try {
-    body = await req.json();
+    raw = await req.text();
   } catch {
-    return Response.json({ error: "Invalid request body." }, { status: 400 });
+    return json({ error: "Invalid request body." }, 400);
+  }
+  if (raw.length > AI_LIMITS.maxBodyBytes) return json({ error: "That request is too large." }, 413);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return json({ error: "Invalid request body." }, 400);
   }
 
-  const messages = Array.isArray(body.messages) ? body.messages : [];
-  if (messages.length === 0 || messages[messages.length - 1]?.role !== "user") {
-    return Response.json({ error: "At least one user message is required." }, { status: 400 });
-  }
+  // 3. The right shape and size (message count and length, image kind and size).
+  const checked = validateAssistantBody(parsed);
+  if (!checked.ok) return json({ error: checked.error }, checked.status);
+  const { messages, image } = checked.value;
+  const language = isLanguageCode(checked.value.language) ? checked.value.language : DEFAULT_LANGUAGE;
+  const mode: AssistantMode = VALID_MODES.includes(checked.value.mode as AssistantMode) ? (checked.value.mode as AssistantMode) : "chat";
 
-  const language =
-    typeof body.language === "string" && body.language.trim() ? body.language : DEFAULT_LANGUAGE;
-  const mode: AssistantMode = VALID_MODES.includes(body.mode as AssistantMode)
-    ? (body.mode as AssistantMode)
-    : "chat";
-
+  // 4. Switched off when there is no key (checked before anything is counted).
   if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(
+    return json(
       {
         error:
           "Coming soon — LIVE CITY AI is turned off right now. The rest of the site — weather, trains, news, events and maps — works as normal.",
       },
-      { status: 503 },
+      503,
     );
+  }
+
+  // 5. A fair share for everyone: signed-in people get more than guests (see lib/ai/guard.ts).
+  let userId: string | null = null;
+  if (isSupabaseConfigured) {
+    try {
+      const { data } = await (await createClient()).auth.getUser();
+      userId = data.user?.id ?? null;
+    } catch {
+      userId = null;
+    }
+  }
+  const wait = takeToken(clientKey(req.headers, userId), userId ? MEMBER_LIMIT : GUEST_LIMIT);
+  if (wait > 0) {
+    return json({ error: "You're asking quickly — please wait a moment and try again." }, 429, { "Retry-After": String(wait) });
   }
 
   const client = new Anthropic();
@@ -69,7 +90,6 @@ export async function POST(req: Request) {
   }));
 
   // Attach an image (if any) to only the final, current user turn.
-  const image = body.image;
   if (image && workingMessages.length > 0) {
     const lastIndex = workingMessages.length - 1;
     const last = workingMessages[lastIndex];
