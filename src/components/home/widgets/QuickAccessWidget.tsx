@@ -99,13 +99,13 @@ function Tile({ tool, index }: { tool: (typeof TOOLS)[number]; index: number }) 
   };
   return (
     <li className={`qa-item ${wide ? "col-span-2" : ""}`} style={style}>
-      <Link href={tool.href} onPointerMove={follow} onPointerLeave={rest} className="qa-tile group flex h-full items-center gap-3.5 rounded-2xl p-3 sm:p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
-        <span className="qa-icon flex h-10 w-10 shrink-0 sm:h-11 sm:w-11 items-center justify-center rounded-xl">
-          <Icon size={19} aria-hidden="true" />
+      <Link href={tool.href} onPointerMove={follow} onPointerLeave={rest} className="qa-tile group flex h-full items-center gap-3 rounded-xl p-3 sm:px-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+        <span className="qa-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+          <Icon size={15} aria-hidden="true" />
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block break-words text-[14px] font-medium leading-tight text-foreground sm:truncate sm:text-[15px]">{t(tool.labelKey)}</span>
-          <span className="mt-1 block line-clamp-2 text-[11.5px] leading-snug text-muted sm:truncate sm:text-[12px]">{t(tool.subKey)}</span>
+          <span className="block break-words text-[13px] font-medium leading-tight text-foreground sm:truncate sm:text-[14px]">{t(tool.labelKey)}</span>
+          <span className="mt-1 block line-clamp-2 text-[11px] leading-snug text-muted sm:truncate sm:text-[11.5px]">{t(tool.subKey)}</span>
         </span>
         <ArrowUpRight size={15} aria-hidden="true" className="qa-go hidden shrink-0 text-white/40 sm:block" />
       </Link>
