@@ -1,0 +1,13 @@
+{
+  "name": "live-city-backup",
+  "private": true,
+  "type": "module",
+  "description": "Weekly encrypted backup of LIVE CITY JAPAN data. Not part of the website; runs on the owner's Mac.",
+  "scripts": {
+    "backup": "node backup.mjs",
+    "restore": "node restore.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.20.0"
+  }
+}

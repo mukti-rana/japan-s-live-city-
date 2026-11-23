@@ -40,3 +40,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backup tool (its own small install, not part of the website)
+/ops/backup/node_modules

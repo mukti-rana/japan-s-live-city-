@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Weekly backup, Sundays 03:30 (if the Mac is asleep it runs when it wakes). Copy to ~/Library/LaunchAgents/ after
+     replacing NODE_PATH, REPO_PATH and HOME_PATH, as described in README.md. Contains no secrets. -->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.livecityjapan.backup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>NODE_PATH</string>
+    <string>REPO_PATH/ops/backup/backup.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>REPO_PATH/ops/backup</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Weekday</key><integer>0</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>30</integer></dict>
+  <key>StandardOutPath</key><string>HOME_PATH/LiveCityBackups/backup.log</string>
+  <key>StandardErrorPath</key><string>HOME_PATH/LiveCityBackups/backup.log</string>
+</dict>
+</plist>
