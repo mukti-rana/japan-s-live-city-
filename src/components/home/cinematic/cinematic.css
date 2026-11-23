@@ -419,51 +419,25 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
 }
 
 /* ── Quick access (QuickAccessWidget): tiles that fly out of the middle of the screen ──
-   data-live is "true" while the grid is on screen and "false" once it has left, so it plays again on the way back. A point of light opens at the
-   grid's middle and each tile travels from deep behind the screen (small, tilted back, blurred) out to its place, the middle tiles first
-   (--d is its delay, --cx/--cy where it stands from the middle). Pointing at a tile tilts it toward the pointer (--px/--py) and lays a light of its
-   colour (--acc-r/g/b) under the cursor (--mx/--my). Reduced motion, or before the page is running, shows the tiles in place. */
+   Only the arrival is new; the tiles look as they always did. data-live is "true" while the panel is on screen and "false" once it has left, so it
+   plays again on the way back. A point of light opens at the panel's middle and each tile travels from deep behind the screen (small, tilted
+   back, blurred) out to its place, the middle tiles first (--d is its delay, --cx/--cy where it stands from the middle). Reduced motion, or before
+   the page is running, shows the tiles in place. */
 .qa-grid { perspective: 1200px; perspective-origin: 50% 40%; }
 .qa-item {
   transform-style: preserve-3d;
-  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d, 0) * 1s), opacity 0.6s ease calc(var(--d, 0) * 1s), filter 0.8s ease calc(var(--d, 0) * 1s);
+  transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--d, 0) * 1s), opacity 0.6s ease calc(var(--d, 0) * 1s), filter 0.8s ease calc(var(--d, 0) * 1s), border-color 0.2s ease, background-color 0.2s ease;
 }
 [data-live="false"] .qa-item {
   opacity: 0;
   filter: blur(7px);
-  transform: translate3d(calc(var(--cx, 0) * -42%), calc(var(--cy, 0) * -55%), -520px) rotateX(24deg) scale(0.6);
+  transform: translate3d(calc(var(--cx, 0) * -60%), calc(var(--cy, 0) * -140%), -520px) rotateX(24deg) scale(0.6);
   transition: none;
 }
 .qa-portal { background: radial-gradient(circle, rgba(140, 190, 255, 0.55), rgba(140, 190, 255, 0) 68%); opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
 [data-live="true"] .qa-portal { animation: qa-portal 1.3s ease-out both; }
 @keyframes qa-portal { 0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); } 25% { opacity: 0.9; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(3.4); } }
-.qa-tile {
-  --acc: rgb(var(--acc-r) var(--acc-g) var(--acc-b));
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: linear-gradient(160deg, rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.07), rgba(255, 255, 255, 0.02) 55%), #0a0a0b;
-  transform: perspective(700px) rotateX(calc(var(--py, 0) * -5deg)) rotateY(calc(var(--px, 0) * 6deg));
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease, box-shadow 0.4s ease;
-}
-.qa-tile::after {
-  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 0.35s ease;
-  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.2), transparent 70%);
-}
-.qa-tile:hover, .qa-tile:focus-visible {
-  border-color: rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.5);
-  box-shadow: 0 18px 40px -22px rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.7);
-}
-.qa-tile:hover::after, .qa-tile:focus-visible::after { opacity: 1; }
-.qa-icon { color: var(--acc); background: rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.14); border: 1px solid rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.25); transition: transform 0.4s cubic-bezier(0.34, 1.5, 0.64, 1), box-shadow 0.4s ease; }
-.qa-tile:hover .qa-icon, .qa-tile:focus-visible .qa-icon { transform: scale(1.08) rotate(-5deg); box-shadow: 0 0 22px -2px rgb(var(--acc-r) var(--acc-g) var(--acc-b) / 0.65); }
-.qa-go { transition: transform 0.35s ease, color 0.3s ease; }
-.qa-tile:hover .qa-go, .qa-tile:focus-visible .qa-go { transform: translate(2px, -2px); color: #fff; }
 @media (prefers-reduced-motion: reduce) {
   .qa-item, [data-live="false"] .qa-item { opacity: 1; filter: none; transform: none; transition: none; }
   .qa-portal { display: none; }
-  .qa-tile { transform: none; transition: none; }
-  .qa-tile::after { display: none; }
-  .qa-tile:hover .qa-icon, .qa-tile:hover .qa-go { transform: none; }
 }
