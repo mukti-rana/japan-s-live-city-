@@ -2,7 +2,8 @@
 import { makeDb, mkUser, REPO } from "./harness.mjs";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 import http from "node:http";
-import { mkdtempSync, readFileSync, readdirSync, existsSync, statSync } from "node:fs";
+import { mkdtempSync, mkdirSync, cpSync, symlinkSync, readFileSync, readdirSync, existsSync, statSync } from "node:fs";
+import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import assert from "node:assert/strict";
@@ -108,6 +109,58 @@ threw = "";
 try { await runBackup({ dbUrl: "postgres://postgres:pw@127.0.0.1:1/postgres?sslmode=disable", passphrase: PASS, outDir: out }); } catch (e) { threw = e.message; }
 ok(threw !== "", "an unreachable database fails loudly (no half-written file)");
 ok(readdirSync(out).every((f) => !f.endsWith(".tmp")), "no temporary file left behind");
+
+console.log("\n== hardening checks ==");
+// 1. the command-line entry point must work from a folder whose name contains spaces (this project's does)
+const spaced = join(mkdtempSync(join(tmpdir(), "lcj-sp ")), "my project", "ops", "backup");
+mkdirSync(spaced, { recursive: true });
+for (const f of ["backup.mjs", "restore.mjs", "lib.mjs", "package.json"]) cpSync(join(REPO, "ops/backup", f), join(spaced, f));
+symlinkSync(join(REPO, "ops/backup/node_modules"), join(spaced, "node_modules"));
+const runCli = (script, args, env) => new Promise((res) => {
+  const child = spawn("node", [join(spaced, script), ...args], { env: { PATH: process.env.PATH, HOME: process.env.HOME, LCJ_BACKUP_QUIET: "1", LCJ_BACKUP_PASSPHRASE: PASS, ...env } });
+  let o = "", e = "";
+  child.stdout.on("data", (d) => (o += d)); child.stderr.on("data", (d) => (e += d));
+  const t = setTimeout(() => child.kill(), 90000);
+  child.on("close", (code) => { clearTimeout(t); res({ code, out: o, err: e }); });
+});
+const cliOut = mkdtempSync(join(tmpdir(), "lcj-cli-"));
+const cli1 = await runCli("backup.mjs", [], { LCJ_BACKUP_DIR: cliOut, LCJ_BACKUP_DB_URL: dbUrl, LCJ_SUPABASE_URL: webUrl });
+ok(cli1.code === 0 && /Backup OK/.test(cli1.out) && readdirSync(cliOut).some((f) => f.endsWith(".lcjbk")), "the command-line backup RUNS from a folder with spaces in its name (it used to do nothing, silently)");
+const cli2 = await runCli("backup.mjs", [], { LCJ_BACKUP_DIR: cliOut, LCJ_BACKUP_DB_URL: dbUrl, LCJ_SUPABASE_URL: webUrl, LCJ_BACKUP_ONLY_IF_DUE_DAYS: "6" });
+ok(cli2.code === 0 && /Not due/.test(cli2.out) && readdirSync(cliOut).filter((f) => f.endsWith(".lcjbk")).length === 1, "started again straight away with the 'only if due' setting, it does nothing");
+// 2. the server's identity must be checked: without Supabase's certificate the tool refuses BEFORE connecting
+const noCa = await runCli("backup.mjs", [], { LCJ_BACKUP_DIR: mkdtempSync(join(tmpdir(), "lcj-cli-")), LCJ_BACKUP_DB_URL: "postgres://postgres:pw@127.0.0.1:1/postgres" });
+ok(noCa.code === 1 && /certificate file is missing/.test(noCa.err) && !/ECONNREFUSED/.test(noCa.err), "without Supabase's certificate it refuses before any connection is attempted");
+ok(!/pw@|postgres:\/\//.test(noCa.err + noCa.out), "...and says nothing about the address or password");
+// 3. a failed photo download names no person
+const bad = http.createServer((q, s2) => { s2.writeHead(500); s2.end("x"); }).listen(0);
+const cli3 = await runCli("backup.mjs", [], { LCJ_BACKUP_DIR: mkdtempSync(join(tmpdir(), "lcj-cli-")), LCJ_BACKUP_DB_URL: dbUrl, LCJ_SUPABASE_URL: `http://127.0.0.1:${bad.address().port}` });
+ok(cli3.code === 1 && /photo 1 of 2/.test(cli3.err) && !cli3.err.includes(a), "a failed photo download reports 'photo 1 of 2', not the person's id");
+bad.close();
+// 4. restore: the generated SQL refuses to run on a database that already has data
+const guarded = buildRestore(all, PASS).sql;
+ok(/do \$guard\$/.test(guarded), "restore.sql starts with a safety check");
+const live = await makeDb();
+const liveUser = await mkUser(live, "live@test.dev");
+await live.query("update public.profiles set bio='LIVE DATA' where id=$1", [liveUser]);
+let refused = "";
+try { await live.exec(guarded); } catch (e) { refused = e.message; }
+await live.exec("rollback"); // (the SQL editor rolls back a script that stopped with an error; PGlite needs to be told)
+ok(/already contains community data/.test(refused), "pasting restore.sql into a database that already has data is REFUSED", refused);
+ok((await live.query("select bio from public.profiles where id=$1", [liveUser])).rows[0].bio === "LIVE DATA", "...and nothing in that database was changed");
+ok(!/do \$guard\$/.test(buildRestore(all, PASS, { guard: false }).sql), "the guard can be left out only by asking for it explicitly");
+// 5. restore refuses to write its (unencrypted) files inside a git project
+const inRepo = join(REPO, "zz-restore-should-not-exist");
+const rs1 = await runCli("restore.mjs", [join(cliOut, readdirSync(cliOut).find((f) => f.endsWith(".lcjbk"))), "--out", inRepo], {});
+ok(rs1.code === 1 && /OUTSIDE any git project/.test(rs1.err) && !existsSync(inRepo), "restore refuses an output folder inside the project (and creates nothing)");
+const safeOut = join(mkdtempSync(join(tmpdir(), "lcj-rs-")), "restored");
+const rs2 = await runCli("restore.mjs", [join(cliOut, readdirSync(cliOut).find((f) => f.endsWith(".lcjbk"))), "--out", safeOut], {});
+ok(rs2.code === 0 && existsSync(join(safeOut, "restore.sql")) && /NOT encrypted/.test(rs2.out), "restore works from a folder with spaces, writes outside the project, and reminds you to delete the files");
+// 6. the encryption header cannot be tampered with
+const hdr = Buffer.from(all); hdr[7] ^= 0x01; // the cost byte
+let t3 = ""; try { verify(hdr, PASS); } catch (e) { t3 = e.message; }
+ok(t3 !== "", "changing the encryption-cost byte in the header is detected");
+ok(all.subarray(0, 7).toString() === "LCJBK2\n", "files carry the new format marker");
 
 console.log(`\nALL ${pass} CHECKS PASSED`);
 await sock.stop(); web.close(); process.exit(0);

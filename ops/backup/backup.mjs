@@ -9,11 +9,12 @@
 import pg from "pg";
 import { gzipSync, gunzipSync } from "node:zlib";
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync, readFileSync, renameSync, readdirSync, unlinkSync, chmodSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, renameSync, readdirSync, unlinkSync, chmodSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
-import { join } from "node:path";
-import { encrypt, decrypt, secret } from "./lib.mjs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { encrypt, decrypt, secret, isMain } from "./lib.mjs";
 
 const keep = () => Math.max(1, Number(process.env.LCJ_BACKUP_KEEP ?? 8));
 const BUCKET = "community-photos";
@@ -28,15 +29,23 @@ function notify(title, text) {
   }
 }
 
+// Encrypted AND identity-checked: the connection is only made if the server proves it is Supabase, using Supabase's
+// own certificate (their database uses a private certificate authority that the Mac does not know). Without the
+// certificate file the tool refuses to connect, so a password is never sent to an unverified server. (sslmode=disable
+// exists only for the local test database.)
+function tlsConfig(mode) {
+  if (mode === "disable") return false;
+  const caPath = process.env.LCJ_BACKUP_CA ?? join(dirname(fileURLToPath(import.meta.url)), "supabase-ca.crt");
+  if (existsSync(caPath)) return { rejectUnauthorized: true, ca: readFileSync(caPath, "utf8") };
+  if (process.env.LCJ_BACKUP_ALLOW_UNVERIFIED_TLS === "1") return { rejectUnauthorized: false };
+  throw new Error("Supabase's certificate file is missing, so the server's identity cannot be checked. Put it at ops/backup/supabase-ca.crt (see README, step 3b). Nothing was sent.");
+}
+
 function connectionConfig(url) {
   const u = new URL(url);
   const mode = u.searchParams.get("sslmode");
   u.searchParams.delete("sslmode");
-  const caPath = process.env.LCJ_BACKUP_CA;
-  // Encrypted in transit always (unless sslmode=disable, for a local test). The server's identity is verified only
-  // when LCJ_BACKUP_CA points to Supabase's certificate (see README).
-  const ssl = mode === "disable" ? false : { rejectUnauthorized: Boolean(caPath), ...(caPath ? { ca: readFileSync(caPath, "utf8") } : {}) };
-  return { connectionString: u.toString(), ssl, statement_timeout: 120_000, application_name: "livecity-backup" };
+  return { connectionString: u.toString(), ssl: tlsConfig(mode), statement_timeout: 120_000, application_name: "livecity-backup" };
 }
 
 // https://<project>.supabase.co, taken from the pooler user name "postgres.<project>" unless given explicitly.
@@ -49,6 +58,12 @@ function projectUrl(dbUrl) {
 export async function runBackup({ dbUrl, passphrase, outDir }) {
   const client = new pg.Client(connectionConfig(dbUrl));
   await client.connect();
+  // Read-only for the WHOLE connection (not just one transaction), and proven before anything is read.
+  await client.query("set session characteristics as transaction read only");
+  if ((await client.query("show transaction_read_only")).rows[0].transaction_read_only !== "on") {
+    await client.end().catch(() => {});
+    throw new Error("Safety check failed: the connection is not read-only. Nothing was read.");
+  }
   const lines = [];
   const counts = {};
   const dbCounts = {};
@@ -90,7 +105,7 @@ export async function runBackup({ dbUrl, passphrase, outDir }) {
     else
       for (const name of names) {
         const res = await fetch(`${base}/storage/v1/object/public/${BUCKET}/${name.split("/").map(encodeURIComponent).join("/")}`, { signal: AbortSignal.timeout(30_000) });
-        if (!res.ok) throw new Error(`Could not download photo ${name} (HTTP ${res.status}).`);
+        if (!res.ok) throw new Error(`Could not download photo ${photos + 1} of ${names.length} (HTTP ${res.status}).`);
         const buf = Buffer.from(await res.arrayBuffer());
         photoBytes += buf.length;
         if (photoBytes > MAX_PHOTO_BYTES) throw new Error("The photos have outgrown this simple backup (over 300 MB). See the README.");
@@ -113,12 +128,21 @@ export async function runBackup({ dbUrl, passphrase, outDir }) {
   chmodSync(outDir, 0o700);
   const stamp = meta.at.replace(/[:]/g, "-").slice(0, 19);
   const file = join(outDir, `lcj-backup-${stamp}.lcjbk`);
-  writeFileSync(file + ".tmp", encrypt(archive, passphrase), { mode: 0o600 });
-
-  // Prove the file is good BEFORE keeping it: decrypt, check the fingerprint and every count against the database.
-  const check = verify(readFileSync(file + ".tmp"), passphrase);
-  for (const [t, n] of Object.entries(dbCounts)) if (check.counts[t] !== n) throw new Error(`Check failed: ${t} has ${n} rows in the database but ${check.counts[t]} in the backup.`);
-  renameSync(file + ".tmp", file);
+  const tmp = file + ".tmp";
+  try {
+    writeFileSync(tmp, encrypt(archive, passphrase), { mode: 0o600 });
+    // Prove the file is good BEFORE keeping it: decrypt, check the fingerprint and every count against the database.
+    const check = verify(readFileSync(tmp), passphrase);
+    for (const [t, n] of Object.entries(dbCounts)) if (check.counts[t] !== n) throw new Error(`Check failed: ${t} has ${n} rows in the database but ${check.counts[t]} in the backup.`);
+    renameSync(tmp, file);
+  } catch (e) {
+    try {
+      unlinkSync(tmp); // never leave a half-checked file behind
+    } catch {
+      /* it was never written */
+    }
+    throw e;
+  }
 
   const old = readdirSync(outDir).filter((f) => /^lcj-backup-.*\.lcjbk$/.test(f)).sort().slice(0, -keep());
   for (const f of old) unlinkSync(join(outDir, f));
@@ -157,8 +181,22 @@ export function verify(fileBuf, passphrase) {
 }
 
 // Only run when started from the command line.
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMain(import.meta.url)) {
   const outDir = process.env.LCJ_BACKUP_DIR ?? join(homedir(), "LiveCityBackups");
+  // The weekly job also starts at login (in case the Mac was off at the scheduled time). It does nothing unless the
+  // last good backup is older than LCJ_BACKUP_ONLY_IF_DUE_DAYS.
+  const dueDays = Number(process.env.LCJ_BACKUP_ONLY_IF_DUE_DAYS ?? 0);
+  if (dueDays > 0) {
+    try {
+      const last = JSON.parse(readFileSync(join(outDir, "status.json"), "utf8"));
+      if (last.ok && Date.now() - Date.parse(last.at) < dueDays * 86_400_000) {
+        console.log(`Not due: the last good backup is from ${last.at}.`);
+        process.exit(0);
+      }
+    } catch {
+      /* no earlier backup: run */
+    }
+  }
   try {
     const status = await runBackup({ dbUrl: secret("LCJ_BACKUP_DB_URL", "livecityjapan-supabase-db-url"), passphrase: secret("LCJ_BACKUP_PASSPHRASE", "livecityjapan-backup-passphrase"), outDir });
     console.log(`Backup OK: ${status.rows} rows in ${status.tables} tables, ${status.photos} photos, ${status.bytes} bytes -> ${status.file} (keeping ${status.kept})`);

@@ -10,6 +10,12 @@
     <string>NODE_PATH</string>
     <string>REPO_PATH/ops/backup/backup.mjs</string>
   </array>
+  <!-- Also run when you log in (in case the Mac was off on Sunday); it does nothing unless the last good backup is older than 6 days. -->
+  <key>RunAtLoad</key><true/>
+  <key>EnvironmentVariables</key>
+  <dict><key>LCJ_BACKUP_ONLY_IF_DUE_DAYS</key><string>6</string></dict>
+  <!-- Files this job creates (the log) are readable by you only. -->
+  <key>Umask</key><integer>63</integer>
   <key>WorkingDirectory</key><string>REPO_PATH/ops/backup</string>
   <key>StartCalendarInterval</key>
   <dict><key>Weekday</key><integer>0</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>30</integer></dict>
