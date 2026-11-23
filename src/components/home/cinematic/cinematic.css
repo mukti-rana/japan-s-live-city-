@@ -443,38 +443,19 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
 }
 
 /* ── Community actions (CommunityChapter) ──
-   "Share your experience" leads: a larger pill filled with the amber, pink and violet gradient, which drifts slowly, with a ring that breathes
-   around it and a sheen that crosses it when pointed at. "Open Community" and "Need Help?" are the smaller supporting pills. In each, the icon
-   disc has two faces (.cc-flip__f) and flips over (a half turn about its vertical axis) to the second when the button is pointed at or focused.
-   The buttons themselves lift a little (the home page's own hover rule adds a 1px lift and a touch more brightness). Reduced motion: none of the movement. */
+   Three borderless, unfilled actions: an icon disc and a label. "Share your experience" leads by size (and a white disc); "Open Community" and
+   "Need Help?" are smaller. Pointing at or focusing one lays a faint glass wash behind it and lifts it 2px, and its icon disc (two faces,
+   .cc-flip__f) flips a half turn about its vertical axis to the second icon. Reduced motion: no lift and no flip. */
 .cc-flip { display: inline-grid; perspective: 420px; }
 .cc-flip__in { display: grid; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.34, 1.35, 0.64, 1); }
 .cc-flip__f { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .cc-flip__b { transform: rotateY(180deg); }
 .cc-btn:hover .cc-flip__in, .cc-btn:focus-visible .cc-flip__in { transform: rotateY(180deg); }
 
-[data-home-root] a.cc-btn.cc-lead {
-  background: linear-gradient(110deg, #f5a524, #ff5c93 45%, #9b6bff 85%, #f5a524);
-  background-size: 220% 100%;
-  box-shadow: 0 14px 40px -14px rgba(255, 92, 147, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  animation: cc-drift 7s ease-in-out infinite alternate;
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
-}
-[data-home-root] a.cc-btn.cc-lead:hover { transform: translateY(-3px) scale(1.035); box-shadow: 0 20px 50px -12px rgba(255, 92, 147, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
-.cc-lead__ring { position: absolute; inset: 0; border-radius: 9999px; border: 1.5px solid rgba(255, 150, 190, 0.7); pointer-events: none; animation: cc-breathe 2.8s ease-out infinite; }
-.cc-lead__sheen { position: absolute; inset: 0; overflow: hidden; border-radius: 9999px; pointer-events: none; }
-.cc-lead__sheen > span { position: absolute; top: 0; bottom: 0; left: -40%; width: 30%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.55), transparent); transform: skewX(-18deg); opacity: 0; }
-.cc-lead:hover .cc-lead__sheen > span { animation: cc-sheen 0.9s ease-out; }
-
-[data-home-root] a.cc-btn.cc-side { transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-[data-home-root] a.cc-btn.cc-side:hover { border-color: rgba(255, 255, 255, 0.55); background-color: rgba(255, 255, 255, 0.1); color: #fff; transform: translateY(-2px); }
-
-@keyframes cc-drift { to { background-position: 100% 0; } }
-@keyframes cc-breathe { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.18, 1.45); opacity: 0; } }
-@keyframes cc-sheen { 0% { left: -40%; opacity: 1; } 100% { left: 130%; opacity: 1; } }
+/* (prefixed with [data-home-root] and an element so they beat the home page's generic link transition and hover) */
+[data-home-root] a.cc-btn { background-color: transparent; transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+[data-home-root] a.cc-btn:hover { background-color: rgba(255, 255, 255, 0.09); color: #fff; transform: translateY(-2px); }
 @media (prefers-reduced-motion: reduce) {
-  [data-home-root] a.cc-btn.cc-lead, .cc-lead__ring, .cc-lead__sheen > span { animation: none !important; }
-  .cc-lead__ring { display: none; }
   .cc-flip__in, .cc-btn:hover .cc-flip__in, .cc-btn:focus-visible .cc-flip__in { transform: none; transition: none; }
-  [data-home-root] a.cc-btn.cc-lead:hover, [data-home-root] a.cc-btn.cc-side:hover { transform: none; }
+  [data-home-root] a.cc-btn:hover { transform: none; }
 }
