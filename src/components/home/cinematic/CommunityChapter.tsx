@@ -13,7 +13,7 @@ import { HOME_PHOTOS } from "@/lib/data/homePhotos";
 
 const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 // The three actions are a lead and two supporting players, all borderless and unfilled: only an icon disc and a label. "Share your experience" leads
-// by being a little larger, with a white disc; the other two are smaller with a soft disc. Pointing at (or focusing) any of them lays a faint
+// by being a little larger; each icon disc has its own soft colour (amber for Share, blue for Open Community, pink for Need Help), which fills in when it flips. Pointing at (or focusing) any of them lays a faint
 // glass wash behind it and flips its icon disc over to a second icon (see .cc-* in cinematic.css). Reduced motion: no lift and no flip.
 const lead = `cc-btn cc-lead group relative inline-flex h-12 items-center gap-3 rounded-full py-0 pl-1.5 pr-5 text-base font-semibold text-white ${ring}`;
 const side = `cc-btn cc-side group relative inline-flex h-10 items-center gap-2 rounded-full py-0 pl-1 pr-4 text-sm font-medium text-white/85 ${ring}`;
@@ -61,15 +61,15 @@ export default async function CommunityChapter() {
         )}
         <ScrollReveal from="pop" delay={0.15} className="mt-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-5">
           <Link href="/community" className={`${side} order-2 sm:order-1`}>
-            <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-white/10 text-white"><ArrowRight size={15} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><ArrowUpRight size={15} /></span>} />
+            <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#6aa8ff]/20 text-[#9cc4ff]"><ArrowRight size={15} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#6aa8ff] text-[#06101f]"><ArrowUpRight size={15} /></span>} />
             <Tx en="Open Community" />
           </Link>
           <Link href="/community/new" className={`${lead} order-1 sm:order-2`}>
-            <Flip className="h-9 w-9" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><Camera size={17} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><Aperture size={19} /></span>} />
+            <Flip className="h-9 w-9" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#ffb74d]/25 text-[#ffcf85]"><Camera size={17} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#ffb74d] text-[#1f1405]"><Aperture size={19} /></span>} />
             <Tx en="Share your experience" />
           </Link>
           <Link href="/community/help" className={`${side} order-3`}>
-            <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-white/10 text-white"><HelpCircle size={15} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><LifeBuoy size={15} /></span>} />
+            <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#ff7aa8]/20 text-[#ffa3c2]"><HelpCircle size={15} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#ff7aa8] text-[#210510]"><LifeBuoy size={15} /></span>} />
             <Tx en="Need Help?" />
           </Link>
         </ScrollReveal>
