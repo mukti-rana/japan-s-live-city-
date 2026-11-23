@@ -61,6 +61,19 @@ export function secret(envName, keychainService) {
   throw new Error(`Missing secret "${keychainService}". Store it in the Keychain as described in ops/backup/README.md.`);
 }
 
+// The Keychain entry may hold either a full connection string ("postgresql://user:password@host:port/db") or JUST the
+// database password. With only a password, the address is built from fixed, non-secret parts (this project's
+// connection-pooler address and login name; override with LCJ_BACKUP_DB_HOST / _USER / _PORT, for instance to use
+// Supabase's read-only user), and the password is URL-encoded so symbols cannot break it. The result is never printed.
+export function dbUrlFromSecret(value, env = process.env) {
+  const v = value.trim();
+  if (/^postgres(ql)?:\/\//i.test(v)) return v;
+  const host = env.LCJ_BACKUP_DB_HOST ?? "aws-1-ap-northeast-1.pooler.supabase.com";
+  const user = env.LCJ_BACKUP_DB_USER ?? "postgres.kmulidalmhqezaffadzc";
+  const port = env.LCJ_BACKUP_DB_PORT ?? "5432";
+  return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(v)}@${host}:${port}/postgres`;
+}
+
 // True when this file was started directly from the command line (not imported). The old check compared the file's
 // address with the raw path, which silently failed whenever the folder name contained a space (as this project's does).
 export function isMain(metaUrl) {

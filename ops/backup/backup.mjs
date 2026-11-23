@@ -14,7 +14,7 @@ import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { encrypt, decrypt, secret, isMain } from "./lib.mjs";
+import { encrypt, decrypt, secret, isMain, dbUrlFromSecret } from "./lib.mjs";
 
 const keep = () => Math.max(1, Number(process.env.LCJ_BACKUP_KEEP ?? 8));
 const BUCKET = "community-photos";
@@ -76,6 +76,9 @@ export async function runBackup({ dbUrl, passphrase, outDir }) {
     const tables = (await client.query("select tablename from pg_tables where schemaname = 'public' order by 1")).rows.map((r) => r.tablename);
     // Columns the database fills in itself: they cannot be written back, so the restore tool leaves them out.
     const generated = (await client.query("select table_name, column_name from information_schema.columns where table_schema = 'public' and (is_generated = 'ALWAYS' or identity_generation = 'ALWAYS')")).rows;
+    // Each table's primary key, so a restore into an empty project can put the backup's values over the rows the migrations pre-fill (settings, categories).
+    const primaryKeys = {};
+    for (const r of (await client.query("select tc.table_name, array_agg(kcu.column_name::text order by kcu.ordinal_position) as cols from information_schema.table_constraints tc join information_schema.key_column_usage kcu on kcu.constraint_schema = tc.constraint_schema and kcu.constraint_name = tc.constraint_name where tc.constraint_type = 'PRIMARY KEY' and tc.table_schema = 'public' group by tc.table_name")).rows) primaryKeys[r.table_name] = r.cols;
 
     for (const t of tables) {
       const rows = (await client.query(`select to_jsonb(x) as r from public."${t.replace(/"/g, '""')}" x`)).rows;
@@ -113,7 +116,7 @@ export async function runBackup({ dbUrl, passphrase, outDir }) {
         photos++;
       }
     await client.query("commit");
-    meta = { v: 1, at: new Date().toISOString(), tables, counts, generated, photos, photoBytes, skipped };
+    meta = { v: 1, at: new Date().toISOString(), tables, counts, generated, primaryKeys, photos, photoBytes, skipped };
   } catch (e) {
     await client.query("rollback").catch(() => {});
     throw e;
@@ -198,7 +201,7 @@ if (isMain(import.meta.url)) {
     }
   }
   try {
-    const status = await runBackup({ dbUrl: secret("LCJ_BACKUP_DB_URL", "livecityjapan-supabase-db-url"), passphrase: secret("LCJ_BACKUP_PASSPHRASE", "livecityjapan-backup-passphrase"), outDir });
+    const status = await runBackup({ dbUrl: dbUrlFromSecret(secret("LCJ_BACKUP_DB_URL", "livecityjapan-supabase-db-url")), passphrase: secret("LCJ_BACKUP_PASSPHRASE", "livecityjapan-backup-passphrase"), outDir });
     console.log(`Backup OK: ${status.rows} rows in ${status.tables} tables, ${status.photos} photos, ${status.bytes} bytes -> ${status.file} (keeping ${status.kept})`);
     if (status.skipped.length) console.log("Skipped:", status.skipped.join("; "));
     notify("LIVE CITY backup", `Done: ${status.rows} rows, ${status.photos} photos.`);

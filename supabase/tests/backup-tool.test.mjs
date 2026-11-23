@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 
 const { runBackup, verify } = await import(`${REPO}/ops/backup/backup.mjs`);
 const { buildRestore } = await import(`${REPO}/ops/backup/restore.mjs`);
-const { decrypt } = await import(`${REPO}/ops/backup/lib.mjs`);
+const { decrypt, dbUrlFromSecret } = await import(`${REPO}/ops/backup/lib.mjs`);
 
 let pass = 0;
 const ok = (c, m) => { assert.ok(c, m); pass++; console.log("  ok -", m); };
@@ -156,6 +156,28 @@ ok(rs1.code === 1 && /OUTSIDE any git project/.test(rs1.err) && !existsSync(inRe
 const safeOut = join(mkdtempSync(join(tmpdir(), "lcj-rs-")), "restored");
 const rs2 = await runCli("restore.mjs", [join(cliOut, readdirSync(cliOut).find((f) => f.endsWith(".lcjbk"))), "--out", safeOut], {});
 ok(rs2.code === 0 && existsSync(join(safeOut, "restore.sql")) && /NOT encrypted/.test(rs2.out), "restore works from a folder with spaces, writes outside the project, and reminds you to delete the files");
+// 8. rows the migrations pre-fill (settings, categories) take the BACKUP's values on a restore into a fresh project
+// (This test database has ONE shared session, so the backup tool's session-wide read-only setting is still on: switch it off for the test's own write.)
+await db.exec("set session characteristics as transaction read write");
+await db.query("update public.community_settings set max_posts_per_hour = 3, require_approval = true");
+const cfgOut = mkdtempSync(join(tmpdir(), "lcj-cfg-"));
+await runBackup({ dbUrl, passphrase: PASS, outDir: cfgOut });
+const cfgFile = readFileSync(join(cfgOut, readdirSync(cfgOut).find((f) => f.endsWith(".lcjbk"))));
+const freshCfg = await makeDb(); // starts with the migration's defaults (10 posts an hour, no approval)
+ok((await freshCfg.query("select max_posts_per_hour m from public.community_settings")).rows[0].m === 10, "a new project starts with the migration's default settings");
+await freshCfg.exec(buildRestore(cfgFile, PASS).sql);
+const cfgAfter = (await freshCfg.query("select max_posts_per_hour m, require_approval r from public.community_settings")).rows[0];
+ok(cfgAfter.m === 3 && cfgAfter.r === true, "after a restore the settings are the BACKUP's, not the migration defaults");
+const freshKeep = await makeDb();
+await freshKeep.exec(buildRestore(cfgFile, PASS, { guard: false }).sql);
+ok((await freshKeep.query("select max_posts_per_hour m from public.community_settings")).rows[0].m === 10, "with the guard switched off (--allow-non-empty) rows that already exist are left alone");
+// 7. the Keychain entry may be just the password: the tool builds the address itself and encodes symbols
+const full = "postgresql://postgres.abc:pw@host.example:5432/postgres";
+ok(dbUrlFromSecret(full) === full && dbUrlFromSecret(`  ${full}\n`) === full, "a full connection string is used exactly as given");
+const built = new URL(dbUrlFromSecret("Tr1cky@P:ss/w#rd%20 x"));
+ok(decodeURIComponent(built.password) === "Tr1cky@P:ss/w#rd%20 x" && built.hostname === "aws-1-ap-northeast-1.pooler.supabase.com" && decodeURIComponent(built.username) === "postgres.kmulidalmhqezaffadzc" && built.port === "5432" && built.pathname === "/postgres", "a password alone becomes the right address, with symbols safely encoded");
+const ro = new URL(dbUrlFromSecret("pw", { LCJ_BACKUP_DB_USER: "supabase_read_only_user.kmulidalmhqezaffadzc", LCJ_BACKUP_DB_HOST: "h.example", LCJ_BACKUP_DB_PORT: "6543" }));
+ok(ro.username.startsWith("supabase_read_only_user.") && ro.hostname === "h.example" && ro.port === "6543", "the login name, host and port can be changed (for the read-only user later)");
 // 6. the encryption header cannot be tampered with
 const hdr = Buffer.from(all); hdr[7] ^= 0x01; // the cost byte
 let t3 = ""; try { verify(hdr, PASS); } catch (e) { t3 = e.message; }

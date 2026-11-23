@@ -35,7 +35,7 @@ export function buildRestore(fileBuf, passphrase, { guard = true } = {}) {
   const sql = [
     `-- LIVE CITY JAPAN data restore, from a backup taken ${meta.at}.`,
     "-- Run in a project whose tables already exist (apply supabase/migrations first). Triggers are switched off while",
-    "-- loading so counters, dates and statuses come back exactly as they were; rows that already exist are left alone.",
+    "-- loading so counters, dates and statuses come back exactly as they were. Rows the migrations pre-fill take the backup's values.",
     "begin;",
   ];
   if (guard) {
@@ -55,8 +55,15 @@ export function buildRestore(fileBuf, passphrase, { guard = true } = {}) {
     if (!list?.length) continue;
     const q = `public."${name.replace(/"/g, '""')}"`;
     // Name the columns explicitly (every row has the same ones) so the ones the database calculates are never written.
-    const cols = Object.keys(list[0]).map((c) => `"${c.replace(/"/g, '""')}"`).join(", ");
-    sql.push(`insert into ${q} (${cols}) select ${cols} from jsonb_populate_recordset(null::${q}, $${tag}$${JSON.stringify(list)}$${tag}$::jsonb) on conflict do nothing;`);
+    const quote = (c) => `"${c.replace(/"/g, '""')}"`;
+    const colList = Object.keys(list[0]);
+    const cols = colList.map(quote).join(", ");
+    // Default (guarded) mode only ever runs on an empty project, so rows the migrations pre-filled (settings, categories) take the
+    // BACKUP's values. With --allow-non-empty nothing is ever replaced: rows that already exist are simply left alone.
+    const pk = meta.primaryKeys?.[name];
+    const nonKey = colList.filter((c) => !(pk ?? []).includes(c));
+    const onConflict = guard && pk?.length && nonKey.length ? `on conflict (${pk.map(quote).join(", ")}) do update set ${nonKey.map((c) => `${quote(c)} = excluded.${quote(c)}`).join(", ")}` : "on conflict do nothing";
+    sql.push(`insert into ${q} (${cols}) select ${cols} from jsonb_populate_recordset(null::${q}, $${tag}$${JSON.stringify(list)}$${tag}$::jsonb) ${onConflict};`);
   }
   sql.push("commit;", "");
   const accounts = rows.filter((x) => x.t === "auth.users_minimal").map((x) => x.r);
