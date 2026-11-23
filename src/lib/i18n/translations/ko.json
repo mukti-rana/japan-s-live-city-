@@ -2453,5 +2453,8 @@
   "UV index at its peak today, on a scale from 1 to 11": "오늘 최고 시점의 자외선 지수 (1~11 단계)",
   "Dry and wet hours over the next 12 hours": "앞으로 12시간 동안의 맑은 시간과 비 오는 시간",
   "Air temperature compared with how it feels": "기온과 체감 온도 비교",
-  "Mt. Fuji": "후지산"
+  "Mt. Fuji": "후지산",
+  "Approximate location": "대략적인 위치",
+  "Use my exact location": "정확한 내 위치 사용",
+  "Location is blocked for this site. Allow it in your browser's site settings to use your exact position.": "이 사이트의 위치 권한이 차단되어 있습니다. 정확한 위치를 사용하려면 브라우저의 사이트 설정에서 허용해 주세요."
 }

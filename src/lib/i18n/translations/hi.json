@@ -2482,5 +2482,8 @@
   "UV index at its peak today, on a scale from 1 to 11": "आज के चरम पर UV सूचकांक, 1 से 11 के पैमाने पर",
   "Dry and wet hours over the next 12 hours": "अगले 12 घंटों में सूखे और गीले घंटे",
   "Air temperature compared with how it feels": "हवा के तापमान की तुलना में महसूस होने वाला तापमान",
-  "Mt. Fuji": "माउंट फ़ूजी"
+  "Mt. Fuji": "माउंट फ़ूजी",
+  "Approximate location": "अनुमानित स्थान",
+  "Use my exact location": "मेरा सटीक स्थान उपयोग करें",
+  "Location is blocked for this site. Allow it in your browser's site settings to use your exact position.": "इस साइट के लिए स्थान अवरुद्ध है। अपना सटीक स्थान उपयोग करने के लिए अपने ब्राउज़र की साइट सेटिंग में इसे अनुमति दें।"
 }

@@ -33,7 +33,7 @@ import { LiveLocationProvider } from "@/lib/geo/LiveLocationContext";
 // page, top bar and footer dark in both themes (see pages/home.md).
 export default function Home() {
   return (
-    <LiveLocationProvider>
+    <LiveLocationProvider network>
       <WelcomeGate />
       {/* The cinematic welcome: plays every time the site is opened, once the visitor is past the entrance above (see IntroGate). */}
       <div className={homeFontVars}>

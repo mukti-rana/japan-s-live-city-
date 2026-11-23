@@ -269,3 +269,40 @@ test("site: /api/weather/live refuses bad coordinates and rate-limits floods", l
   const limited = await get("?lat=35.5&lon=139.7");
   if (limited.status === 429) assert.ok(Number(limited.headers.get("retry-after")) >= 1);
 });
+
+test("site: /api/geo gives only the visitor's own rough place, never cached, and refuses garbage", live, async () => {
+  const local = /^https?:\/\/(localhost|127\.0\.0\.1)/.test(BASE);
+  const ask = (headers = {}) => fetch(`${BASE}/api/geo`, { headers });
+  const plain = await ask();
+  assert.equal(plain.status, 200);
+  assert.match(plain.headers.get("cache-control") ?? "", /no-store/); // per-visitor answer: must never be cached or shared
+  assert.equal(typeof (await plain.json()).available, "boolean");
+  if (!local) return; // on a real host the location headers are set by the host itself and cannot be simulated
+  // Without the host's location headers there is nothing to say.
+  assert.equal((await (await ask()).json()).available, false);
+  // With them: city, country and coordinates rounded to about 1 km.
+  const good = await (await ask({ "x-vercel-ip-city": "Fukuoka", "x-vercel-ip-country": "JP", "x-vercel-ip-latitude": "33.590188", "x-vercel-ip-longitude": "130.401716" })).json();
+  assert.deepEqual(good, { available: true, city: "Fukuoka", country: "Japan", lat: 33.59, lon: 130.4 });
+  const encoded = await (await ask({ "x-vercel-ip-city": encodeURIComponent("Kyōto"), "x-vercel-ip-country": "JP", "x-vercel-ip-latitude": "35.01", "x-vercel-ip-longitude": "135.77" })).json();
+  assert.equal(encoded.city, "Kyōto");
+  // Garbage never becomes a place and never causes an error.
+  for (const h of [
+    { "x-vercel-ip-city": "<script>alert(1)</script>", "x-vercel-ip-latitude": "35", "x-vercel-ip-longitude": "139" },
+    { "x-vercel-ip-city": "%E0%A4%A", "x-vercel-ip-latitude": "35", "x-vercel-ip-longitude": "139" },
+    { "x-vercel-ip-city": "Tokyo", "x-vercel-ip-latitude": "999", "x-vercel-ip-longitude": "139" },
+    { "x-vercel-ip-city": "Tokyo", "x-vercel-ip-latitude": "abc", "x-vercel-ip-longitude": "139" },
+    { "x-vercel-ip-city": "x".repeat(200), "x-vercel-ip-latitude": "35", "x-vercel-ip-longitude": "139" },
+    { "x-vercel-ip-city": "", "x-vercel-ip-latitude": "35", "x-vercel-ip-longitude": "139" },
+  ]) {
+    const r = await ask(h);
+    assert.equal(r.status, 200);
+    assert.equal((await r.json()).available, false, JSON.stringify(h).slice(0, 60));
+  }
+  // A country code that is not a code is ignored, not echoed.
+  const odd = await (await ask({ "x-vercel-ip-city": "Tokyo", "x-vercel-ip-country": "<b>", "x-vercel-ip-latitude": "35.68", "x-vercel-ip-longitude": "139.69" })).json();
+  assert.equal(odd.country, null);
+  // A flood from one address is slowed (20 a minute) on a single server.
+  const codes = [];
+  for (let i = 0; i < 30; i++) codes.push((await ask()).status);
+  assert.ok(codes.includes(429), `a flood should hit the limit: ${codes.join(",")}`);
+});

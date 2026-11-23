@@ -53,9 +53,18 @@ export default function HomeHero() {
   const tr = useTranslate();
   const name = (en: string | undefined) => (en ? (lookup(en, language) ?? en) : en);
   useAmbientLighting();
-  const { status, location, weather: liveWeather, requestLocation } = useLiveLocation();
+  const { status, location, weather: liveWeather, approximate, requestLocation } = useLiveLocation();
   const [manualCity, setManualCity] = useState<HeroCityInfo | null>(null);
   const [manualWeather, setManualWeather] = useState<WeatherSnapshot | null>(null);
+  // The city list is always one click away from an approximate position, and appears by itself if the browser's
+  // Allow / Block question is left unanswered for a few seconds (so the first screen never waits on it).
+  const [choosing, setChoosing] = useState(false);
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    if (status !== "locating") return;
+    const id = window.setTimeout(() => setSlow(true), 6000);
+    return () => window.clearTimeout(id);
+  }, [status]);
   // The slideshow holds still while the pointer is over the hero text or keyboard focus is inside the hero.
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
@@ -72,6 +81,7 @@ export default function HomeHero() {
 
   function pickCity(city: HeroCityInfo) {
     setManualCity(city);
+    setChoosing(false);
     setManualWeather(null);
     fetch(`/api/weather/live?lat=${city.lat}&lon=${city.lon}`)
       .then((r) => (r.ok ? (r.json() as Promise<WeatherSnapshot>) : null))
@@ -81,12 +91,20 @@ export default function HomeHero() {
 
   const isLive = status === "ready" && Boolean(liveWeather);
   const isManual = !isLive && Boolean(manualCity);
-  const isLoadingLocation = status === "idle" || status === "locating";
-  const needsPicker = !isLive && !isManual && !isLoadingLocation;
+  // A rough position from the network: only when there is no exact one and nothing was picked; always labelled.
+  const isApprox = !isLive && !isManual && Boolean(approximate?.weather);
+  const isLoadingLocation = (status === "idle" || status === "locating") && !slow && !isApprox;
+  const needsPicker = (!isLive && !isManual && !isApprox && !isLoadingLocation) || (choosing && !isLive);
 
-  const weather = isLive ? liveWeather : isManual ? manualWeather : null;
-  const matchedCity = isLive ? (location?.name ? findHeroCity(location.name) : undefined) : (manualCity ?? undefined);
-  const displayName = isLive ? (location?.area || location?.name || matchedCity?.name) : manualCity?.name;
+  const weather = isLive ? liveWeather : isManual ? manualWeather : isApprox ? (approximate?.weather ?? null) : null;
+  const matchedCity = isLive
+    ? location?.name
+      ? findHeroCity(location.name)
+      : undefined
+    : isApprox
+      ? findHeroCity(approximate?.location.name ?? "")
+      : (manualCity ?? undefined);
+  const displayName = isLive ? (location?.area || location?.name || matchedCity?.name) : isApprox ? approximate?.location.name : manualCity?.name;
   const isNight = weather ? isNightNow(weather.sunrise, weather.sunset) : true;
   const season = currentSeasonJST();
 
@@ -156,11 +174,41 @@ export default function HomeHero() {
                   {t("hero.changeCity")}
                 </button>
               )}
+              {isApprox && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/35 bg-black/60 px-2.5 py-0.5 normal-case tracking-normal text-white/90 backdrop-blur-sm [text-shadow:none]">
+                  <span aria-hidden="true">≈</span>
+                  {tr("Approximate location")}
+                </span>
+              )}
+              {isApprox && (
+                <button
+                  type="button"
+                  onClick={requestLocation}
+                  className={`inline-flex min-h-8 items-center gap-1.5 rounded-full border border-azure/60 bg-black/60 px-3 normal-case tracking-normal text-white backdrop-blur-sm transition-colors hover:border-azure hover:bg-white/15 [text-shadow:none] ${ring}`}
+                >
+                  <LocateFixed size={13} aria-hidden="true" />
+                  {tr("Use my exact location")}
+                </button>
+              )}
+              {isApprox && (
+                <button
+                  type="button"
+                  onClick={() => setChoosing(true)}
+                  className={`inline-flex min-h-8 items-center rounded-full border border-white/35 bg-black/60 px-3 normal-case tracking-normal text-white backdrop-blur-sm transition-colors hover:border-white/60 hover:bg-white/15 [text-shadow:none] ${ring}`}
+                >
+                  {t("hero.changeCity")}
+                </button>
+              )}
             </>
           ) : (
             <span>{t("hero.chooseCity")}</span>
           )}
         </p>
+        {isApprox && status === "denied" && (
+          <p role="status" className="mt-2 max-w-md text-xs leading-relaxed text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
+            {tr("Location is blocked for this site. Allow it in your browser's site settings to use your exact position.")}
+          </p>
+        )}
 
         <p aria-hidden="true" lang="ja" className="mt-3 font-[family-name:var(--font-home-kanji)] text-[clamp(88px,17vw,248px)] font-normal leading-[0.9] tracking-[-0.02em] text-white/95">
           {kanji}

@@ -1821,5 +1821,8 @@
   "UV index at its peak today, on a scale from 1 to 11": "今日のピーク時の紫外線指数（1〜11の目盛り）",
   "Dry and wet hours over the next 12 hours": "今後12時間の、晴れ間と雨の時間",
   "Air temperature compared with how it feels": "気温と体感温度の比較",
-  "Mt. Fuji": "富士山"
+  "Mt. Fuji": "富士山",
+  "Approximate location": "おおよその現在地",
+  "Use my exact location": "正確な現在地を使う",
+  "Location is blocked for this site. Allow it in your browser's site settings to use your exact position.": "このサイトでは位置情報がブロックされています。正確な位置を使うには、ブラウザのサイト設定で許可してください。"
 }
