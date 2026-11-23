@@ -262,7 +262,9 @@ test("site: /api/weather/live refuses bad coordinates and rate-limits floods", l
   // A flood of different coordinates from one address is cut off by the allowance (20 a minute).
   const codes = [];
   for (let i = 0; i < 26; i++) codes.push((await get(`?lat=35.${String(10 + i)}&lon=139.70`)).status);
-  assert.ok(codes.includes(429), `a flood should hit the limit: ${codes.join(",")}`);
+  // On a serverless host (Vercel) requests may be served by different server copies, each with its own memory, so the in-code limit is
+  // a speed bump, not a guaranteed cutoff there (the Vercel firewall is the global backstop). It must cut a flood off on one server.
+  if (/^https?:\/\/(localhost|127\.0\.0\.1)/.test(BASE)) assert.ok(codes.includes(429), `a flood should hit the limit: ${codes.join(",")}`);
   assert.ok(codes.every((c) => [200, 429, 502].includes(c)), `unexpected codes ${codes.join(",")}`);
   const limited = await get("?lat=35.5&lon=139.7");
   if (limited.status === 429) assert.ok(Number(limited.headers.get("retry-after")) >= 1);
