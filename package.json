@@ -10,7 +10,8 @@
     "catalogue:build": "node scripts/build-catalogue.mjs",
     "i18n:check": "node scripts/i18n-audit.mjs",
     "sakura:render": "node scripts/render-sakura.mjs",
-    "login:plate": "node scripts/make-tree-plate.mjs"
+    "login:plate": "node scripts/make-tree-plate.mjs",
+    "security:test": "node --test scripts/security-tests.mjs"
   },
   "dependencies": {
     "@animate-ui/react": "^2.4.6",
