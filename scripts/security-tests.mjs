@@ -163,3 +163,15 @@ test("site: the sign-in callback never leaves the site, whatever 'next' says", l
     assert.equal(new URL(to, BASE).origin, new URL(BASE).origin, `${next} -> ${to}`);
   }
 });
+
+test("site: the sign-in callback fails gently (a friendly redirect, never a 5xx, no detail leaked)", live, async () => {
+  for (const url of [`${BASE}/auth/callback`, `${BASE}/auth/callback?code=bogus`, `${BASE}/auth/callback?code=${"x".repeat(2000)}&next=/settings`]) {
+    const r = await fetch(url, { redirect: "manual" });
+    assert.ok(r.status >= 300 && r.status < 400, `${url.slice(0, 60)} -> ${r.status}`);
+    const to = new URL(r.headers.get("location") ?? "", BASE);
+    assert.equal(to.pathname, "/login");
+    const msg = to.searchParams.get("error") ?? "";
+    assert.ok(msg.length > 0 && msg.length < 120, "a short, friendly message");
+    assert.doesNotMatch(msg, /supabase|env|key|token|stack|error:|undefined|configured/i);
+  }
+});
