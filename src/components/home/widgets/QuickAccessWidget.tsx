@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useSyncExternalStore, type CSSProperties } from "react";
+import { useRef, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { useInView } from "motion/react";
 import {
   Zap,
@@ -15,6 +15,7 @@ import {
   Home,
   Languages,
   Camera,
+  ArrowUpRight,
 } from "lucide-react";
 import WidgetFrame from "@/components/home/WidgetFrame";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
@@ -69,7 +70,10 @@ const ACCENT_CLASS: Record<Accent, string> = {
 // The panel looks exactly as it always did (three groups of small tiles, each group with its own colour). Only the arrival is new: each time
 // the panel scrolls into view (and again on the way back), a point of light opens at its middle and the tiles travel out of it from deep behind
 // the screen (small, tilted back, blurred) to their places, the middle tiles first and the outer ones after. Reduced motion, or before the page
-// is running, shows the tiles in place (see "Quick access" in cinematic.css).
+// is running, shows the tiles in place (see "Quick access" in cinematic.css). Pointing at a tile brings it to life: it lifts, its border takes its
+// group's colour, its icon pops and tips with a glow, a light follows the cursor under it, and an arrow slides in.
+// Each group's colour, as numbers, for the glow its tiles take when pointed at.
+const ACCENT_RGB: Record<Accent, string> = { azure: "77 163 255", sakura: "255 122 168", gold: "245 185 74" };
 const COLS = 2;
 const TOTAL_ROWS = QUICK_GROUPS.reduce((n, g) => n + Math.ceil(g.links.length / COLS), 0);
 // The row at which each group starts.
@@ -84,7 +88,6 @@ export default function QuickAccessWidget() {
   return (
     <WidgetFrame icon={Zap} labelKey="quickaccess.title" accent="azure">
       <div ref={ref} className="qa relative" data-live={mounted ? String(live) : undefined}>
-        <span aria-hidden="true" className="qa-portal pointer-events-none absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full" />
         <div className="qa-grid flex flex-col gap-4">
           {QUICK_GROUPS.map(({ accent, links }, gi) => {
             const start = STARTS[gi];
@@ -95,21 +98,29 @@ export default function QuickAccessWidget() {
                   const cx = (i % COLS) - (COLS - 1) / 2;
                   const cy = start + Math.floor(i / COLS) - (TOTAL_ROWS - 1) / 2;
                   const dist = Math.hypot(cx * 1.4, cy);
-                  const style = { "--cx": cx, "--cy": cy, "--d": (0.05 + dist * 0.1).toFixed(2) } as CSSProperties;
+                  const style = { "--cx": cx, "--cy": cy, "--d": (0.04 + dist * 0.07).toFixed(2), "--acc": ACCENT_RGB[accent] } as CSSProperties;
+                  const follow = (e: ReactPointerEvent<HTMLAnchorElement>) => {
+                    const el = e.currentTarget;
+                    const r = el.getBoundingClientRect();
+                    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+                    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+                  };
                   return (
                     <a
                       key={labelKey}
                       href={href}
                       style={style}
-                      className="qa-item flex items-center gap-2 rounded-xl border border-glass-border bg-glass-bg p-2.5 hover:border-azure/30 hover:bg-glass-bg-strong"
+                      onPointerMove={follow}
+                      className="qa-item relative flex items-center gap-2 overflow-hidden rounded-xl border border-glass-border bg-glass-bg p-2.5 hover:bg-glass-bg-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
                     >
-                      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${ACCENT_CLASS[accent]}`}>
+                      <span className={`qa-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${ACCENT_CLASS[accent]}`}>
                         <Icon size={15} />
                       </span>
-                      <span className="min-w-0">
+                      <span className="qa-text min-w-0 flex-1">
                         <span className="block truncate text-[11px] font-medium text-foreground">{t(labelKey)}</span>
                         <span className="block truncate text-[9px] text-muted">{t(subKey)}</span>
                       </span>
+                      <ArrowUpRight size={13} aria-hidden="true" className="qa-go shrink-0" />
                     </a>
                   );
                 })}
