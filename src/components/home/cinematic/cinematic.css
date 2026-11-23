@@ -422,43 +422,21 @@ html[data-intro="reveal"] [data-hero-content] { animation: intro-rise 1.7s cubic
    Arrival: data-live is "true" while the panel is on screen and "false" once it has left, so it plays again on the way back. Each tile travels
    out of the middle of the panel from a little way behind the screen (a touch smaller and tilted back), the middle tiles first and the outer
    ones after, in one smooth, even movement with no flash or glare (--d is its delay, --cx/--cy where it stands from the middle).
-   Pointing: the tile lifts and grows a little (the individual translate and scale properties, so they sit on top of the arrival's transform and
-   do not wait for its delay), its border takes its group's colour (--acc), its icon pops and tips with a glow, its words step aside, an arrow
-   slides in, and a light of the colour follows the cursor under it (--mx/--my). Reduced motion, or before the page is running, shows the tiles
-   in place and keeps only the colour changes. */
+   Pointing: only the icon reacts (it pops and tips with a glow in its group's colour, --acc); the tile, its border and its words stay still.
+   Reduced motion, or before the page is running, shows the tiles in place and the icon does not move. */
 .qa-grid { perspective: 1400px; perspective-origin: 50% 45%; }
 .qa-item {
   transform-style: preserve-3d;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d, 0) * 1s), opacity 0.7s ease calc(var(--d, 0) * 1s), translate 0.35s cubic-bezier(0.22, 1, 0.36, 1), scale 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.35s ease;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--d, 0) * 1s), opacity 0.7s ease calc(var(--d, 0) * 1s);
 }
 [data-live="false"] .qa-item {
   opacity: 0;
   transform: translate3d(calc(var(--cx, 0) * -22%), calc(var(--cy, 0) * -45%), -260px) rotateX(12deg) scale(0.86);
   transition: none;
 }
-.qa-item::after {
-  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
-  background: radial-gradient(150px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--acc) / 0.22), transparent 70%);
-}
-.qa-item > * { position: relative; z-index: 1; }
-.qa-item:hover, .qa-item:focus-visible {
-  translate: 0 -3px;
-  scale: 1.025;
-  /* The home page's tile rule (a top hairline and no shadow) is more specific than this one, so these two say !important. */
-  border-color: rgb(var(--acc) / 0.65) !important;
-  box-shadow: 0 14px 30px -18px rgb(var(--acc) / 0.8) !important;
-}
-.qa-item:hover::after, .qa-item:focus-visible::after { opacity: 1; }
 .qa-icon { transition: transform 0.45s cubic-bezier(0.34, 1.6, 0.64, 1), box-shadow 0.4s ease; }
-.qa-item:hover .qa-icon, .qa-item:focus-visible .qa-icon { transform: scale(1.18) rotate(-8deg); box-shadow: 0 0 18px -2px rgb(var(--acc) / 0.75); }
-.qa-text { transition: translate 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-.qa-item:hover .qa-text, .qa-item:focus-visible .qa-text { translate: 3px 0; }
-.qa-go { opacity: 0; translate: -6px 4px; color: rgb(var(--acc)); transition: opacity 0.3s ease, translate 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
-.qa-item:hover .qa-go, .qa-item:focus-visible .qa-go { opacity: 1; translate: 0 0; }
+.qa-item:hover .qa-icon, .qa-item:focus-visible .qa-icon { transform: scale(1.22) rotate(-9deg); box-shadow: 0 0 18px -2px rgb(var(--acc) / 0.8); }
 @media (prefers-reduced-motion: reduce) {
-  .qa-item, [data-live="false"] .qa-item { opacity: 1; transform: none; transition: border-color 0.25s ease, background-color 0.25s ease; }
-  .qa-item:hover, .qa-item:focus-visible { translate: none; scale: none; box-shadow: none; }
-  .qa-item::after { display: none; }
-  .qa-item:hover .qa-icon, .qa-item:hover .qa-text { transform: none; translate: none; }
-  .qa-go { translate: none; }
+  .qa-item, [data-live="false"] .qa-item { opacity: 1; transform: none; transition: none; }
+  .qa-item:hover .qa-icon, .qa-item:focus-visible .qa-icon { transform: none; }
 }
