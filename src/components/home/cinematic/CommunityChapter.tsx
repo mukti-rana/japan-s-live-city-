@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight, Camera, HelpCircle } from "lucide-react";
+import type { ReactNode } from "react";
+import { Aperture, ArrowRight, ArrowUpRight, Camera, HelpCircle, LifeBuoy } from "lucide-react";
 import BackdropBand from "@/components/home/cinematic/BackdropBand";
 import Chapter from "@/components/home/cinematic/Chapter";
 import ScrollReveal from "@/components/home/cinematic/ScrollReveal";
@@ -11,10 +12,26 @@ import { fetchFeed, feedKey } from "@/lib/community/queries";
 import { HOME_PHOTOS } from "@/lib/data/homePhotos";
 
 const ring = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-azure focus-visible:ring-offset-2 focus-visible:ring-offset-black";
-const primary = `inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-[15px] font-semibold text-black transition-colors hover:bg-white/90 ${ring}`;
-const secondary = `inline-flex h-12 items-center gap-2 rounded-xl border border-white/25 bg-black/30 px-6 text-[15px] font-semibold text-white transition-colors hover:border-white/60 ${ring}`;
-// "Open Community": a pill with a thin amber, pink and violet edge, and an arrow that slides forward when it is pointed at.
-const open = `group relative inline-flex h-14 items-center gap-3 rounded-full bg-[linear-gradient(110deg,#f5a524,#ff5c93,#9b6bff)] p-px text-[15px] font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 ${ring}`;
+// The three actions are a lead and two supporting players. "Share your experience" is the lead: larger, filled with the amber, pink and violet
+// of the Community, with a slow drifting colour, a ring that breathes around it and a sheen that crosses it when it is pointed at. "Open Community"
+// and "Need Help?" are smaller glass pills. In all three the icon sits in a disc that flips over to a second icon when the button is pointed at
+// (or focused); see .cc-* in cinematic.css. Reduced motion: no drifting, breathing, sheen or flip.
+const lead = `cc-btn cc-lead group relative inline-flex h-16 items-center gap-3.5 rounded-full py-0 pl-3 pr-8 text-[17px] font-semibold text-[#0b0712] ${ring}`;
+const side = `cc-btn cc-side group relative inline-flex h-11 items-center gap-2.5 rounded-full border border-white/20 bg-black/30 py-0 pl-1.5 pr-5 text-sm font-medium text-white/90 backdrop-blur-sm ${ring}`;
+// "Open Community" keeps its thin amber, pink and violet edge.
+const open = `cc-btn group relative inline-flex h-11 items-center rounded-full bg-[linear-gradient(110deg,#f5a524,#ff5c93,#9b6bff)] p-px text-sm font-medium text-white ${ring}`;
+
+// A disc with two faces: the first shows, the second is behind it and turns to the front when the button is pointed at.
+function Flip({ front, back, className }: { front: ReactNode; back: ReactNode; className: string }) {
+  return (
+    <span aria-hidden="true" className={`cc-flip shrink-0 ${className}`}>
+      <span className="cc-flip__in">
+        <span className="cc-flip__f">{front}</span>
+        <span className="cc-flip__f cc-flip__b">{back}</span>
+      </span>
+    </span>
+  );
+}
 
 // The six latest real Community posts, read the same way the Community page reads them
 // (public, published posts only). With no posts it says so honestly; if the community
@@ -45,21 +62,21 @@ export default async function CommunityChapter() {
             </div>
           </ScrollReveal>
         )}
-        <ScrollReveal from="pop" delay={0.15} className="mt-10 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/community" className={open}>
-            <span className="flex h-full items-center gap-3 rounded-full bg-[#09090c] pl-7 pr-3 transition-colors group-hover:bg-[#101016]">
+        <ScrollReveal from="pop" delay={0.15} className="mt-10 flex flex-wrap items-center justify-center gap-x-4 gap-y-5">
+          <Link href="/community" className={`${open} order-2 sm:order-1`}>
+            <span className="flex h-full items-center gap-2.5 rounded-full bg-[#09090c] pl-5 pr-1.5 transition-colors group-hover:bg-[#13131a]">
               <Tx en="Open Community" />
-              <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0">
-                <ArrowRight size={16} />
-              </span>
+              <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><ArrowRight size={15} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,#f5a524,#ff5c93)] text-black"><ArrowUpRight size={15} /></span>} />
             </span>
           </Link>
-          <Link href="/community/new" className={primary}>
-            <Camera size={16} aria-hidden="true" />
-            <Tx en="Share your experience" />
+          <Link href="/community/new" className={`${lead} order-1 w-full justify-center sm:order-2 sm:w-auto`}>
+            <span aria-hidden="true" className="cc-lead__ring" />
+            <span aria-hidden="true" className="cc-lead__sheen"><span /></span>
+            <Flip className="h-11 w-11" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#0b0712] text-white"><Camera size={20} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-[#0b0712] text-[#ffb74d]"><Aperture size={22} /></span>} />
+            <span className="relative"><Tx en="Share your experience" /></span>
           </Link>
-          <Link href="/community/help" className={secondary}>
-            <HelpCircle size={16} aria-hidden="true" />
+          <Link href="/community/help" className={`${side} order-3`}>
+            <Flip className="h-8 w-8" front={<span className="flex h-full w-full items-center justify-center rounded-full bg-white/10 text-white"><HelpCircle size={16} /></span>} back={<span className="flex h-full w-full items-center justify-center rounded-full bg-white text-black"><LifeBuoy size={16} /></span>} />
             <Tx en="Need Help?" />
           </Link>
         </ScrollReveal>
