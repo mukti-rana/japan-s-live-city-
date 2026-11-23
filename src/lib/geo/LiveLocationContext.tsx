@@ -77,7 +77,8 @@ export function LiveLocationProvider({ children }: { children: ReactNode }) {
           fetch(
             `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
           ).then((r) => (r.ok ? (r.json() as Promise<ReverseGeocodeResponse>) : null)),
-          fetch(`/api/weather/live?lat=${latitude}&lon=${longitude}`).then((r) =>
+          // Rounded to about 1 km (plenty for a forecast; the server does the same), so the answer can be shared and cached.
+          fetch(`/api/weather/live?lat=${latitude.toFixed(2)}&lon=${longitude.toFixed(2)}`).then((r) =>
             r.ok ? (r.json() as Promise<WeatherSnapshot>) : null,
           ),
         ]);
