@@ -1,5 +1,6 @@
 import { USER_AGENT } from "@/lib/news/providers";
 import { safeUrl } from "@/lib/news/normalize";
+import { fetchWithinHosts } from "@/lib/news/fetchWithinHosts";
 import { getSource } from "@/lib/news/sources";
 import type { Article } from "@/lib/news/types";
 
@@ -43,14 +44,11 @@ function extractImage(html: string, pageUrl: string): string | null {
 }
 
 async function readHead(url: string, allowedHosts: string[], timeoutMs: number): Promise<string | null> {
-  const res = await fetch(url, {
-    signal: AbortSignal.timeout(timeoutMs),
-    cache: "no-store",
-    redirect: "follow",
-    headers: { "User-Agent": USER_AGENT, Accept: "text/html" },
-  });
-  // A redirect off the publisher's own domain is not followed any further.
-  if (!res.ok || !res.body || !safeUrl(res.url, allowedHosts)) return null;
+  // Redirects are followed by hand and every address is checked BEFORE it is requested (see fetchWithinHosts).
+  const got = await fetchWithinHosts(url, allowedHosts, { signal: AbortSignal.timeout(timeoutMs), headers: { "User-Agent": USER_AGENT, Accept: "text/html" } });
+  if (!got) return null;
+  const res = got.res;
+  if (!res.body) return null;
 
   const reader = res.body.getReader();
   const decoder = new TextDecoder();

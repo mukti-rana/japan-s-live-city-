@@ -6,6 +6,9 @@ import assert from "node:assert/strict";
 import { safeNextPath } from "../src/lib/safeRedirect.ts";
 import { AI_LIMITS, GUEST_LIMIT, MEMBER_LIMIT, clientKey, resetRateLimitsForTests, takeToken, validateAssistantBody } from "../src/lib/ai/guard.ts";
 import nextConfig from "../next.config.ts";
+import { parseCoordinates, roundCoordinate } from "../src/lib/geo/coordinates.ts";
+import { createRateLimiter, clientIp } from "../src/lib/rateLimit.ts";
+import { fetchWithinHosts, hostAllowed } from "../src/lib/news/fetchWithinHosts.ts";
 
 const ORIGIN = "https://livecityjapan.vercel.app";
 
@@ -105,6 +108,83 @@ test("headers: every security header is configured; CSP is report-only and cover
   assert.doesNotMatch(csp, /script-src[^;]*\*/); // no wildcard script sources
 });
 
+test("coordinates: strict parsing, rounded to about 1 km", () => {
+  assert.deepEqual(parseCoordinates("35.689487", "139.691711"), { lat: 35.69, lon: 139.69 });
+  assert.deepEqual(parseCoordinates("-0.001", "0"), { lat: 0, lon: 0 }); // no negative zero
+  assert.deepEqual(parseCoordinates("-90", "180"), { lat: -90, lon: 180 });
+  assert.equal(roundCoordinate(34.12999), 34.13);
+  const bad = [[null, "1"], ["1", null], ["", ""], ["", "1"], ["NaN", "1"], ["Infinity", "1"], ["1e2", "1"], ["0x10", "1"], ["91", "0"], ["0", "181"], ["-91", "0"], ["1.", "1"], [".5", "1"], ["1,5", "1"], ["1 ", "1x"], ["--1", "1"], ["1".repeat(40), "1"], ["35.6; drop table", "1"]];
+  for (const [a, b] of bad) assert.equal(parseCoordinates(a, b), null, `should refuse ${JSON.stringify([a, b])}`);
+  // The number of distinct places that can be asked about is bounded: nearby points collapse to the same key.
+  const keys = new Set();
+  for (let i = 0; i < 1000; i++) keys.add(JSON.stringify(parseCoordinates((35.6 + i * 1e-6).toFixed(6), (139.7 + i * 1e-6).toFixed(6))));
+  assert.ok(keys.size <= 2, `1000 slightly different points -> ${keys.size} distinct places`);
+});
+
+test("rate limiter: per address, per minute and hour, bounded memory", () => {
+  const l = createRateLimiter(100);
+  const lim = { perMinute: 3, perHour: 5 };
+  const t0 = 10_000_000;
+  for (let i = 0; i < 3; i++) assert.equal(l.take("a", lim, t0 + i), 0);
+  const wait = l.take("a", lim, t0 + 5);
+  assert.ok(wait >= 1 && wait <= 60);
+  assert.equal(l.take("b", lim, t0 + 5), 0);
+  assert.equal(l.take("a", lim, t0 + 61_000), 0); // next minute
+  assert.equal(l.take("a", lim, t0 + 62_000), 0);
+  assert.ok(l.take("a", lim, t0 + 63_000) > 0, "the hourly allowance (5) is reached even though the minute reset");
+  for (let i = 0; i < 1000; i++) l.take(`flood-${i}`, lim, t0 + 100_000 + i);
+  assert.ok(l.size() <= 100, `memory stays bounded (${l.size()} keys)`);
+  assert.equal(clientIp({ get: (k) => ({ "x-forwarded-for": "9.9.9.9, 1.1.1.1" })[k] ?? null }), "9.9.9.9");
+});
+
+test("news fetcher: every redirect address is checked BEFORE it is requested", async () => {
+  const hosts = ["nhk.or.jp", "japantoday.com"];
+  assert.ok(hostAllowed("https://www3.nhk.or.jp/news/x", hosts));
+  for (const bad of ["http://www3.nhk.or.jp/x", "https://evil.example/x", "https://nhk.or.jp.evil.example/x", "https://evilnhk.or.jp/x", "ftp://nhk.or.jp/x", "not a url", "https://169.254.169.254/latest/meta-data", "https://localhost/x", "https://user:pw@evil.example/"]) assert.equal(hostAllowed(bad, hosts), null, bad);
+
+  const script = (map) => { const calls = []; const f = async (u) => { calls.push(String(u)); const r = map[String(u)]; if (!r) return new Response("no", { status: 404 }); return r(); }; return { f, calls }; };
+  const page = () => new Response("<html>ok</html>", { status: 200 });
+  const redirect = (to, code = 302) => () => new Response(null, { status: code, headers: { location: to } });
+
+  // direct
+  let { f, calls } = script({ "https://www3.nhk.or.jp/a": page });
+  let got = await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f });
+  assert.ok(got && (await got.res.text()) === "<html>ok</html>" && calls.length === 1);
+  // redirect inside the publisher's domains (absolute and relative)
+  ({ f, calls } = script({ "https://www3.nhk.or.jp/a": redirect("/b"), "https://www3.nhk.or.jp/b": redirect("https://www.nhk.or.jp/c", 301), "https://www.nhk.or.jp/c": page }));
+  got = await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f });
+  assert.ok(got && got.url === "https://www.nhk.or.jp/c" && calls.length === 3);
+  // redirect OFF the domain: the evil address is NEVER requested
+  ({ f, calls } = script({ "https://www3.nhk.or.jp/a": redirect("https://evil.example/steal"), "https://evil.example/steal": page }));
+  got = await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f });
+  assert.equal(got, null);
+  assert.deepEqual(calls, ["https://www3.nhk.or.jp/a"], "only the publisher was contacted");
+  // redirects to internal / plain-http / look-alike addresses are never requested either
+  for (const to of ["http://www3.nhk.or.jp/plain", "https://169.254.169.254/latest/meta-data/", "https://nhk.or.jp.evil.example/", "http://localhost:3000/admin", "//evil.example/x"]) {
+    ({ f, calls } = script({ "https://www3.nhk.or.jp/a": redirect(to) }));
+    got = await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f });
+    assert.equal(got, null, to);
+    assert.equal(calls.length, 1, `${to} must not be requested`);
+  }
+  // a starting address that is not allowed is never requested
+  ({ f, calls } = script({}));
+  assert.equal(await fetchWithinHosts("https://evil.example/", hosts, {}, { fetchImpl: f }), null);
+  assert.equal(calls.length, 0);
+  // loops are capped; a redirect without Location, and error pages, give nothing
+  ({ f, calls } = script({ "https://www3.nhk.or.jp/a": redirect("/a") }));
+  assert.equal(await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f }), null);
+  assert.equal(calls.length, 4, "1 request + 3 hops, then stop");
+  ({ f } = script({ "https://www3.nhk.or.jp/a": () => new Response(null, { status: 302 }) }));
+  assert.equal(await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f }), null);
+  ({ f } = script({ "https://www3.nhk.or.jp/a": () => new Response("x", { status: 500 }) }));
+  assert.equal(await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: f }), null);
+  // redirects are asked for manually and caching is off
+  let seen;
+  await fetchWithinHosts("https://www3.nhk.or.jp/a", hosts, {}, { fetchImpl: async (u, init) => ((seen = init), page()) });
+  assert.equal(seen.redirect, "manual");
+  assert.equal(seen.cache, "no-store");
+});
+
 // ───────────── a running copy of the site ─────────────
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 let up = false;
@@ -174,4 +254,16 @@ test("site: the sign-in callback fails gently (a friendly redirect, never a 5xx,
     assert.ok(msg.length > 0 && msg.length < 120, "a short, friendly message");
     assert.doesNotMatch(msg, /supabase|env|key|token|stack|error:|undefined|configured/i);
   }
+});
+
+test("site: /api/weather/live refuses bad coordinates and rate-limits floods", live, async () => {
+  const get = (q) => fetch(`${BASE}/api/weather/live${q}`);
+  for (const q of ["", "?lat=35.6", "?lon=139.7", "?lat=&lon=", "?lat=abc&lon=1", "?lat=91&lon=0", "?lat=0&lon=181", "?lat=1e2&lon=1", "?lat=35.6;x&lon=139"]) assert.equal((await get(q)).status, 400, `should refuse ${q}`);
+  // A flood of different coordinates from one address is cut off by the allowance (20 a minute).
+  const codes = [];
+  for (let i = 0; i < 26; i++) codes.push((await get(`?lat=35.${String(10 + i)}&lon=139.70`)).status);
+  assert.ok(codes.includes(429), `a flood should hit the limit: ${codes.join(",")}`);
+  assert.ok(codes.every((c) => [200, 429, 502].includes(c)), `unexpected codes ${codes.join(",")}`);
+  const limited = await get("?lat=35.5&lon=139.7");
+  if (limited.status === 429) assert.ok(Number(limited.headers.get("retry-after")) >= 1);
 });
