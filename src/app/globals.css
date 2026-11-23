@@ -1654,6 +1654,19 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
   .wx-icon { animation: none; }
 }
 
+/* Community tab bar as a dock (CommunityTabs): --m (0 to 1) is how near the pointer is to a section; it rises and swells with it, its words brighten
+   and its icon warms to amber. The Community search (CommunitySearch) has a soft light that follows the pointer across it. Reduced motion: none of it. */
+.cm-dock { transform-origin: 50% 100%; transform: translateY(calc(var(--m, 0) * -7px)) scale(calc(1 + var(--m, 0) * 0.2)); transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+.cm-dock__link { transition: color 0.2s ease; }
+.cm-dock:hover .cm-dock__link, .cm-dock__link:focus-visible { color: #fff; }
+.cm-dock__icon { transition: color 0.2s ease, transform 0.35s cubic-bezier(0.34, 1.6, 0.64, 1); }
+.cm-dock:hover .cm-dock__icon { color: #ffb74d; transform: rotate(-8deg) scale(1.12); }
+.cm-search__light { background: radial-gradient(150px circle at var(--mx, 50%) 50%, rgba(255, 255, 255, 0.1), transparent 70%); }
+@media (prefers-reduced-motion: reduce) {
+  .cm-dock { transform: none; transition: none; }
+  .cm-dock:hover .cm-dock__icon { transform: none; }
+}
+
 /* The dock's icons shine (MagneticDock): each icon carries a soft white glow that swells and fades on a slow beat, every icon a little
    out of step with its neighbour (--i), so a glint seems to travel along the row. Only the icons glow; the glass itself is plain. */
 .dock-glint { animation: dock-glint 5s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.55s); }
