@@ -50,6 +50,13 @@ test("AI body: refuses anything malformed, oversized or odd", () => {
   no(good({ image: { base64: 5, mediaType: "image/png" } }), 400);
 });
 
+test("AI image limit: what the pickers accept always fits what the server accepts", () => {
+  assert.equal(AI_LIMITS.maxImageBytes, 3_000_000);
+  assert.ok(Math.ceil((AI_LIMITS.maxImageBytes * 4) / 3) <= AI_LIMITS.maxImageBase64);
+  const b64 = Buffer.alloc(AI_LIMITS.maxImageBytes, 1).toString("base64"); // the biggest allowed picture, as the browser sends it
+  assert.equal(validateAssistantBody(good({ image: { base64: b64, mediaType: "image/jpeg" } })).ok, true);
+});
+
 test("AI rate limit: speed bumps per minute and hour, separate per person, then recovers", () => {
   resetRateLimitsForTests();
   const t0 = 1_000_000;

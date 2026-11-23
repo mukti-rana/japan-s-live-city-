@@ -8,6 +8,7 @@ import ChatInputBar, { type AttachedImage } from "@/components/ai/ChatInputBar";
 import { readNdjsonStream } from "@/lib/ai/ndjsonStream";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { DEFAULT_LANGUAGE } from "@/lib/ai/languages";
+import { AI_LIMITS } from "@/lib/ai/guard";
 import type { UIMessage } from "@/components/ai/uiTypes";
 import AiOffNotice from "@/components/ai/AiOffNotice";
 import { useAssistantOrb } from "@/components/ai/AssistantOrb";
@@ -59,8 +60,8 @@ export default function ChatAssistant({
   }
 
   function handleAttach(file: File) {
-    if (file.size > 5 * 1024 * 1024) {
-      setFetchError("Image is too large — please attach one under 5MB.");
+    if (file.size > AI_LIMITS.maxImageBytes) {
+      setFetchError("Image is too large — please attach one under 3MB.");
       return;
     }
     const reader = new FileReader();

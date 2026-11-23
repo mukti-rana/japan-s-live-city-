@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { AI_LIMITS } from "@/lib/ai/guard";
 
 export interface AttachedImage {
   previewUrl: string;
@@ -8,7 +9,8 @@ export interface AttachedImage {
   mediaType: string;
 }
 
-const MAX_BYTES = 5 * 1024 * 1024;
+// The same limit the server enforces (lib/ai/guard.ts), so an image the picker accepts is never refused for size.
+const MAX_BYTES = AI_LIMITS.maxImageBytes;
 
 export function useImageAttach() {
   const [image, setImage] = useState<AttachedImage | null>(null);
@@ -16,7 +18,7 @@ export function useImageAttach() {
 
   const attach = useCallback((file: File) => {
     if (file.size > MAX_BYTES) {
-      setError("Image is too large — please attach one under 5MB.");
+      setError("Image is too large — please attach one under 3MB.");
       return;
     }
     setError(null);

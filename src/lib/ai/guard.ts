@@ -13,7 +13,9 @@ export const AI_LIMITS = {
   maxMessageChars: 4_000,
   maxAssistantChars: 24_000,
   maxTotalChars: 60_000,
-  // base64 text of an image. Vercel refuses request bodies over 4.5 MB anyway.
+  // The largest image file the pickers accept (3 MB), and the matching size of its base64 text (3 MB x 4/3 = 4,000,000 characters).
+  // The pickers and the server use these same numbers; Vercel refuses request bodies over 4.5 MB anyway.
+  maxImageBytes: 3_000_000,
   maxImageBase64: 4_000_000,
   maxBodyBytes: 4_300_000,
   imageTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"] as const,
