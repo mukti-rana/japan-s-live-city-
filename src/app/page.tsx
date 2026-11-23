@@ -115,7 +115,8 @@ export default function Home() {
         {/* 08 — tools and the emergency numbers */}
         <Chapter id="tools" number="08" label="Tools" heading="Tools & safety" intro="Calculators, language help and the emergency numbers.">
           <div className="flex flex-col gap-8">
-            <ScrollReveal from="stagger">
+            {/* The tiles bring their own entrance (they fly out of the middle of the grid), so this only fades the frame in. */}
+            <ScrollReveal from="fade">
               <QuickAccessWidget />
             </ScrollReveal>
             <ScrollReveal>
