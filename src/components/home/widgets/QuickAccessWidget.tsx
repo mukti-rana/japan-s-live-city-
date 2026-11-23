@@ -82,7 +82,7 @@ export default function QuickAccessWidget() {
   const { t } = useLanguage();
   const ref = useRef<HTMLDivElement>(null);
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
-  const live = useInView(ref, { amount: 0.2, margin: "0px 0px -6% 0px" });
+  const live = useInView(ref, { amount: 0.45, margin: "0px 0px -8% 0px" });
 
   return (
     <WidgetFrame icon={Zap} labelKey="quickaccess.title" accent="azure">
@@ -97,7 +97,7 @@ export default function QuickAccessWidget() {
                   const cx = (i % COLS) - (COLS - 1) / 2;
                   const cy = start + Math.floor(i / COLS) - (TOTAL_ROWS - 1) / 2;
                   const dist = Math.hypot(cx * 1.4, cy);
-                  const style = { "--cx": cx, "--cy": cy, "--d": (0.04 + dist * 0.07).toFixed(2), "--acc": ACCENT_RGB[accent] } as CSSProperties;
+                  const style = { "--cx": cx, "--cy": cy, "--d": (0.12 + dist * 0.17).toFixed(2), "--acc": ACCENT_RGB[accent] } as CSSProperties;
 
                   return (
                     <a
