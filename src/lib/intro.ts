@@ -2,18 +2,36 @@
 
 import { useSyncExternalStore } from "react";
 
-// The cinematic welcome plays every time the site is opened (every full load of the home page, before the main site shows),
-// and never again while moving around inside the site without reloading it. This file holds that one fact for the page, and
+// The cinematic welcome plays only the first time the site is entered in a visit (one browser tab, until it is closed): not
+// again on a refresh, nor when the Home button is pressed, nor when moving around inside the site. A new visit (a new tab, or
+// the browser reopened) plays it again. The "already seen" fact is kept in sessionStorage; if the browser will not store it
+// (private mode), it is kept for as long as the page stays loaded. This file holds that fact for the page, and
 // the few things the intro does to the page around it:
 //   - while it waits or plays, the home page is kept invisible (data-intro="hold") and the top-bar logo hidden;
 //   - when the logo starts to fly, the page arrives (data-intro="reveal": see cinematic.css);
 //   - when the logo lands, the top-bar logo is shown and set to the same moment of its own drawing, so it matches.
 const EVENT = "livecity:intro";
 
+const SEEN_KEY = "livecity:introSeen";
+
 let current: "playing" | "done" | null = null;
 
+// Has the intro already been shown on this visit? Read once per page load, on the client only.
+let checkedStorage = false;
+function seenThisVisit(): boolean {
+  if (!checkedStorage) {
+    checkedStorage = true;
+    try {
+      if (window.sessionStorage.getItem(SEEN_KEY) === "1") current = "done";
+    } catch {
+      /* storage blocked: the intro is then shown once per page load */
+    }
+  }
+  return current === "done";
+}
+
 function getSnapshot(): "play" | "none" {
-  return current === "done" ? "none" : "play";
+  return seenThisVisit() ? "none" : "play";
 }
 
 function subscribe(cb: () => void) {
@@ -29,6 +47,12 @@ export function useIntroMode(): "unknown" | "play" | "none" {
 export function beginIntro() {
   if (current) return;
   current = "playing";
+  // Counted as seen from the moment it starts, so a refresh part-way through does not play it all again.
+  try {
+    window.sessionStorage.setItem(SEEN_KEY, "1");
+  } catch {
+    /* storage blocked */
+  }
   window.dispatchEvent(new Event(EVENT));
 }
 

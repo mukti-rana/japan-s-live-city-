@@ -1400,8 +1400,8 @@ a.flex:is(.min-h-12, .h-12, .min-h-14, .h-14):is(
 
 /* ── Draw it once (Logo drawing="once", used by the welcome intro) ──
    The same pen as the top bar, but it draws a single time and then stays finished. */
-.lg-s.lg-once { animation: lg-line-once 2s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--j, 0) * 0.07s); }
-.lg-art.lg-once { animation: lg-art-once 2s ease-in-out both; animation-iteration-count: 1; }
+.lg-s.lg-once { animation: lg-line-once 1.4s cubic-bezier(0.4, 0, 0.2, 1) both; animation-iteration-count: 1; animation-delay: calc(var(--j, 0) * 0.05s); }
+.lg-art.lg-once { animation: lg-art-once 1.4s ease-in-out both; animation-iteration-count: 1; }
 @keyframes lg-line-once {
   0% { stroke-dashoffset: 1; opacity: 1; }
   42% { stroke-dashoffset: 0; opacity: 1; }

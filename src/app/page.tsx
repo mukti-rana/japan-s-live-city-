@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <LiveLocationProvider network>
       <WelcomeGate />
-      {/* The cinematic welcome: plays every time the site is opened, once the visitor is past the entrance above (see IntroGate). */}
+      {/* The cinematic welcome: plays only the first time the site is entered in a visit, once the visitor is past the entrance above (see IntroGate). */}
       <div className={homeFontVars}>
         <IntroGate />
       </div>

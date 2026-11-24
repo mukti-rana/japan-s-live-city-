@@ -31,15 +31,15 @@ const SCENE = { src: HOME_PHOTOS.kiyomizu.src, pos: "72% 50%" }; // Kyoto at nig
 
 type Step = { kind: "gap" | "words" | "zoom" | "logo"; ms: number };
 const STEPS: Step[] = [
-  { kind: "gap", ms: 600 },
-  { kind: "words", ms: 2400 }, // the reveal (about 1.7s), then a short held beat
-  { kind: "zoom", ms: 1600 }, // the expansion (ZOOM_SECS) plus a breath of black
-  { kind: "logo", ms: 2800 }, // the logo is drawn in 2s, then rests a moment before it flies
+  { kind: "gap", ms: 350 },
+  { kind: "words", ms: 1700 }, // the reveal (about 1.2s), then a short held beat
+  { kind: "zoom", ms: 1150 }, // the expansion (ZOOM_SECS) plus a breath of black
+  { kind: "logo", ms: 2000 }, // the logo is drawn in about 1.9s (globals.css, lg-once), then flies
 ];
-const ZOOM_SECS = 1.5;
+const ZOOM_SECS = 1.05;
 
 const SHADE = "brightness-[0.58] saturate-[0.82] contrast-[1.06]";
-const FLY = 1.25; // seconds the logo takes to fly to the top bar
+const FLY = 0.9; // seconds the logo takes to fly to the top bar
 
 type Phase = "play" | "fly" | "fade";
 
@@ -204,7 +204,7 @@ export default function CinematicIntro({ onDone }: { onDone: () => void }) {
                   className={`${serif} ${step.kind === "zoom" ? "intro-ink" : ""} text-[clamp(46px,8.4vw,120px)] font-normal leading-[1.08] tracking-[-0.02em] [text-shadow:0_0_38px_rgba(255,190,140,0.28),0_2px_44px_rgba(0,0,0,0.7)]`}
                 >
                   {(step.kind === "words" || step.kind === "zoom") && (
-                    <SplittingText type="chars" text={words} stagger={0.04} initial={{ y: "0.38em", opacity: 0, filter: "blur(14px)", rotateX: -55 }} animate={{ y: 0, opacity: 1, filter: "blur(0px)", rotateX: 0 }} transition={{ duration: 1.0, ease: EASE }} />
+                    <SplittingText type="chars" text={words} stagger={0.028} initial={{ y: "0.38em", opacity: 0, filter: "blur(14px)", rotateX: -55 }} animate={{ y: 0, opacity: 1, filter: "blur(0px)", rotateX: 0 }} transition={{ duration: 0.75, ease: EASE }} />
                   )}
                   {step.kind === "gap" && <span className="invisible block">{words}</span>}
                 </motion.div>
